@@ -214,8 +214,6 @@ class Sequencer extends Component {
 
     Tone.Transport.bpm.value = this.state.bpm;
     Tone.Transport.scheduleRepeat((time) => {
-      // use the callback time to schedule events
-      console.log(this.state.step);
       if (this.state.step === 0) {
         const toBePlayed = [];
         this.state.pads.forEach((row, i) => {
@@ -231,7 +229,7 @@ class Sequencer extends Component {
         });
       }
       this.setState((state) => ({
-        step: state.step < state.steps - 1 ? state.step + 1 : 0,
+        step: (state.step + 1) % state.steps,
       }));
     }, "4n");
 
@@ -526,6 +524,7 @@ class Sequencer extends Component {
     const {
       pads,
       step,
+      steps,
       notes,
       loaded,
       nft,
@@ -549,7 +548,8 @@ class Sequencer extends Component {
                     <div
                       key={`pad-group-${i}`}
                       className={cx("modifiedPad", {
-                        active: groupIndex === step,
+                        active:
+                          groupIndex === (((step - 1) % steps) + steps) % steps,
                         on: pad === 1,
                       })}
                     />
