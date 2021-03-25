@@ -9,6 +9,7 @@
   align-items: center;
   background-color: #f2f2f2;
   font-family: 'DM Mono', monospace;
+
 }
 .scrollBar {
   -ms-overflow-style: none;
@@ -28,18 +29,19 @@
   justify-content: flex-start;
   width: 100%;
   box-sizing: border-box;
+  max-width:1440px;
 }
 .beatPackItem {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  margin-right: 60px;
-  margin-bottom: 60px;
+  margin-right: 20px;
+  margin-bottom: 50px;
 }
 .directoryAlbum {
-  width: 350px;
-  height: 350px;
+  width: 300px;
+  height: 300px;
   margin-bottom: 20px;
 }
 .directoryItemName {
@@ -78,6 +80,9 @@
   align-items: flex-start;
   justify-content: flex-start;
 }
+.editionInfoDirectory.current{
+  max-width:none;
+}
 .editionPriceDirectory {
   color: #808080;
   font-size: 14px;
@@ -87,4 +92,129 @@
 }
 .editionOwner {
   margin-left: 5px;
+}
+.currentAuctionTitle{
+  font-size:16px;
+  color:#222222;
+  width:100%;
+  text-align:left;
+  margin-bottom:22px;
+}
+.currentAuctionWrapper{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:flex-start;
+}
+.topPanelWrapper{
+  display:flex;
+  flex-direction:row;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:100px;
+  width:100%;
+}
+.currentAuctionInfo{
+  display:flex;
+  flex-direction:row;
+  align-items:flex-start;
+  justify-content:flex-start;
+  width:60%;
+}
+.currentAuctionDetailsWrapper{
+  display:flex;
+  flex-direction:column;
+  justify-content: flex-start;
+  align-items:flex-start;
+  margin-left:20px;
+  width:100%;
+}
+.currentAuctionPack{
+  font-family: 'Rubik', sans-serif;
+  color:#222222;
+  font-size:24px;
+  text-transform:uppercase;
+
+}
+.currentAuctionPic{
+  width:300px;
+  height:300px;
+}
+.currentAuctionArtist{
+  font-family: 'Rubik', sans-serif;
+  font-size:18px;
+  color:#222222;
+  margin-top:5px;
+}
+.auctionExtraInfo{
+  display:flex;
+  flex-direction:row;
+  width:100%;
+  justify-content: flex-start;
+  align-items:flex-start;
+}
+.currentAuctionInfoItem{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content: flex-start;;
+}
+.currentAuctionInfoItemTitle{
+  font-size:14px;
+  color:#222222;
+  margin-top:30px;
+  width:100%;
+  text-align:left;
+}
+.currentAuctionInfoItemText{
+  font-size:14px;
+  color:#222222;
+  text-align:left;
+  margin-top:5px;
+}
+.editionSection{
+  border-top: solid 1px #808080;
+  padding-top: 36px;
+  width: 100%;
+  margin-top: 36px;
+  max-height: 110px;
+  overflow: scroll;
+}
+.currentAuctionEditionTitle{
+  width:100%;
+  text-align:left;
+  font-size:14px;
+  color:#808080;
+}
+.artistSummary{
+  font-size:14px;
+  color:#808080;
+  line-height:16px;
+  text-align:left;
+  width:30%;
+  overflow:scroll;
+  max-height:300px;
+
+}
+.editionSold{
+  display:flex;
+  flex-direction:row;
+  margin-top:20px;
+  align-items:center;
+  justify-content: space-between;
+  width:100%;
+}
+.editionSoldText{
+  color:#808080;
+  font-size:14px;
+  text-align:left;
+  
+}
+.expandMore{
+  height:8px;
+  width:auto;
+}
+.expandLess{
+  transform:rotate(180deg)
 }

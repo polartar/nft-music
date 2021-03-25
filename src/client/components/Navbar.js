@@ -53,23 +53,22 @@ export default function Navbar(props) {
 
   return (
     <React.Fragment>
-      <div className={white ? 'timerWrapper white' : 'timerWrapper'}>
-        <div className="timer">
-          <div className="time">22:45:32</div>
-          <div className="nextText">until next auction</div>
-        </div>
-      </div>
       <div className={white ? 'navBar scrollBar white' : 'navBar scrollBar'}>
         <img
           src={white ? SecretGardenBlack : SecretGardenLogo}
           className="logo"
         />
+        <div className={white ? 'timer white' : 'timer'}>
+          <div className="time">22:45:32</div>
+          <div className="nextText">until next auction</div>
+        </div>
 
         {!isLoggedIntoMetamask && (
           <div onClick={connectWallet} className="walletText">
             CONNECT WALLET
           </div>
         )}
+
         {isLoggedIntoMetamask && (
           <div className="signedInWrapper">
             <div className="walletOuter">
