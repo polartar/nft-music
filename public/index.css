@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container > div {
+  flex-grow: inherit;
+  margin-top: 25px;
+}
+.loadingLogo {
+  height: 60px;
+}
+.errorBody {
+  font-size: 16px;
+  line-height: 30px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.hoverStyle:hover {
+  background-image: linear-gradient(
+    227deg,
+    #1f4ddb 0%,
+    #44c4ad 100%
+  ) !important;
+}

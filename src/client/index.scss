@@ -1,0 +1,543 @@
+@import url('https://fonts.googleapis.com/css?family=Allan');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Rubik:wght@300;400;500;700&display=swap');
+
+$dark: lighten(#121214, 5%);
+$steps: 10;
+$primary: #0087ff;
+$controller_size: 600px;
+$radius: 4px;
+
+body {
+  // background: #1f1f1f;
+  font-family: 'DM Mono', monospace;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-align: center;
+  margin: 0px;
+}
+html {
+  height: 100%;
+}
+body > div {
+  // height: 100%;
+  // width: 100%;
+}
+.flex {
+  display: flex;
+  flex-direction: row;
+}
+
+.Sequencer {
+  position: relative;
+  display: inline-block;
+  padding: 1em;
+  border-radius: $radius;
+  width: 100%;
+  height: auto;
+}
+
+.notes {
+  list-style-type: none;
+  position: absolute;
+  left: -100px;
+  top: 70px;
+  text-align: right;
+  color: white;
+  line-height: 60px;
+  opacity: 0.3;
+}
+
+.buttons {
+  display: flex;
+  padding: 0.35em 0 0.5em;
+
+  button,
+  select,
+  input {
+    margin: 5px;
+    outline: none;
+    background: lighten($dark, 10%);
+    color: white;
+    padding: 1em;
+    font-size: 12px;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px 0 rgba(black, 0.2);
+    cursor: pointer;
+    border: 2px solid transparent;
+
+    &.active {
+      color: $primary;
+      border: 2px solid $primary;
+    }
+  }
+
+  .select-wrapper {
+    position: relative;
+
+    span {
+      position: absolute;
+      color: white;
+      top: -10px;
+      left: 8px;
+      font-size: 9px;
+      letter-spacing: 1px;
+      opacity: 0.3;
+    }
+  }
+
+  select {
+    position: relative;
+    height: 42px;
+    min-width: 50px;
+  }
+}
+
+.bodyWrapper {
+  justify-content: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+}
+
+.artistName {
+  font-size: 24px;
+  line-height: 28px;
+  width: 100%;
+  text-align: center;
+  font-weight: 500;
+  color: white;
+  margin-top: 10px;
+  font-family: 'Rubik', sans-serif;
+}
+.beatPackTitle {
+  font-size: 30px;
+  line-height: 35px;
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-family: 'Rubik', sans-serif;
+  margin-top: -50px;
+}
+
+.container {
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background: #1f1f1f;
+}
+.container2 {
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #1f1f1f;
+}
+.expand {
+  width: 30px;
+}
+.expandOuter {
+  width: 50px !important;
+  height: 50px !important;
+  z-index: 3000 !important;
+  color: white !important;
+}
+.gridTop {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  z-index: 10000;
+}
+.gridTop > div {
+  position: relative !important;
+}
+.gridOuter {
+  width: 370px;
+  font-size: 0;
+  -webkit-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+  position: relative;
+  left: 185px;
+  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.9);
+  transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.9);
+  margin-top: 260px;
+  z-index: 3000;
+}
+canvas {
+  // border-bottom: solid 1px white;
+  margin-bottom: -2px;
+}
+.currentBid {
+  font-size: 24px;
+  margin-top: -70px;
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-weight: 400;
+  z-index: 3000;
+}
+.ethAmount {
+  margin-top: 10px;
+  font-size: 24px;
+  font-weight: 300;
+  width: 100%;
+  text-align: center;
+  color: white;
+  z-index: 3000;
+}
+
+.gridBox {
+  box-sizing: border-box;
+  width: 44px;
+  height: 44px;
+  display: inline-block;
+  margin: 2px;
+  pointer-events: auto;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.17);
+}
+.pageFooter {
+  position: absolute;
+  bottom: 60px;
+}
+
+.pad {
+  box-sizing: border-box;
+  width: 44px;
+  height: 44px;
+  // background: lighten($dark, 10%);
+  border-radius: 0px;
+  border: 1px solid rgba(0, 0, 0, 0.17);
+  display: inline-block;
+  cursor: pointer;
+  // width: calc(#{$controller_size} / #{$steps} - 10px);
+  // height: calc(#{$controller_size} / 10 - 10px);
+  margin: 5px;
+  background: #2a2a2a;
+
+  box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  // transition: background 10ms ease;
+
+  &:hover {
+    background: #d9d9d9;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+
+  &.active {
+    // background: lighten($dark, 15%);
+    background: #d9d9d9;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+
+  &.on {
+    transform: rotate(-90deg);
+    background: #d9d9d9;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+}
+.modifiedPad {
+  box-sizing: border-box;
+  width: 12.5%;
+  height: 4px;
+  background: #1f1f1f;
+
+  display: inline-block;
+  cursor: pointer;
+  // width: calc(#{$controller_size} / #{$steps} - 10px);
+  // height: calc(#{$controller_size} / 10 - 10px);
+
+  transition: background 100ms ease;
+
+  &:hover {
+    background: lighten($dark, 15%);
+  }
+
+  &.active {
+    background: white;
+  }
+
+  &.on {
+    background: white;
+    box-shadow: 0 0 12px 0 rgba($primary, 0.8);
+  }
+}
+.fakePad {
+  box-sizing: border-box;
+  width: 44px;
+  height: 44px;
+  background: red;
+  border-radius: $radius;
+  border: 1px solid rgba(0, 0, 0, 0.17);
+  display: inline-block;
+  cursor: pointer;
+  // width: calc(#{$controller_size} / #{$steps} - 10px);
+  // height: calc(#{$controller_size} / 10 - 10px);
+  margin: 5px;
+  box-shadow: 0 1px 3px 0 rgba(black, 0.3);
+  transition: background 100ms ease;
+
+  &:hover {
+    background: lighten($dark, 15%);
+  }
+
+  &.active {
+    background: lighten($dark, 15%);
+  }
+
+  &.on {
+    background: $primary !important;
+    box-shadow: 0 0 12px 0 rgba($primary, 0.8);
+  }
+}
+
+@keyframes blinkBlue {
+  50% {
+    background: $primary;
+  }
+}
+@-webkit-keyframes blinkBlue {
+  50% {
+    background: $primary;
+  }
+}
+.blinkBlue {
+  animation: blinkBlue 1s step-start 0s infinite;
+  -webkit-animation: blinkBlue 1s step-start 0s infinite;
+}
+@keyframes blink {
+  50% {
+    background: white;
+  }
+}
+@-webkit-keyframes blink {
+  50% {
+    background: white;
+  }
+}
+.blink {
+  animation: blink 1s step-start 0s infinite;
+  -webkit-animation: blink 1s step-start 0s infinite;
+}
+// .pads {
+//   box-sizing: border-radius;
+//   display: flex;
+//   flex-direction: column-reverse;
+//   flex-wrap: wrap;
+
+//   .pad {
+//     background: lighten($dark, 10%);
+//     border-radius: $radius;
+//     cursor: pointer;
+//     width: calc(#{$controller_size} / #{$steps} - 10px);
+//     height: calc(#{$controller_size} / 10 - 10px);
+//     margin: 5px;
+//     box-shadow: 0 1px 3px 0 rgba(black, 0.3);
+//     transition: background 100ms ease;
+
+//     &:hover {
+//       background: lighten($dark, 15%);
+//     }
+
+//     &.active {
+//       background: lighten($dark, 15%);
+//     }
+
+//     &.on {
+//       background: $primary !important;
+//       box-shadow: 0 0 12px 0 rgba($primary, 0.8);
+//     }
+//   }
+// }
+
+@keyframes colorize {
+  from {
+    background: hsla(0, 100%, 50%, 1);
+  }
+  to {
+    background: hsla(100%, 100%, 50%, 1);
+  }
+}
+
+footer {
+  margin-top: 2em;
+  color: rgba(white, 0.6);
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  text-align: center;
+
+  a {
+    color: white;
+    font-weight: 400;
+    border-bottom: 1px dotted;
+    text-decoration: none;
+
+    &:hover {
+      border-bottom: 1px solid;
+    }
+  }
+}
+.albumWrapper {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: center;
+}
+.albumPicWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.albumPic {
+  height: 145px;
+  width: 145px;
+}
+.albumInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-left: 30px;
+}
+.artistInfo {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+.instaPic {
+  width: 34px;
+  height: 34px;
+  margin-right: 11px;
+}
+.artistTag {
+  color: white;
+  font-size: 14px;
+}
+.packTitle {
+  font-size: 30px;
+  line-height: 35px;
+
+  text-align: left;
+  color: white;
+  font-family: 'Rubik', sans-serif;
+  margin-top: 10px;
+  text-transform: uppercase;
+}
+.bidInfoWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-top: 50px;
+  color: white;
+}
+.bidItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.bidTitle {
+  font-family: 'Rubik', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.bidInfo {
+  margin-top: 15px;
+  font-size: 16px;
+}
+.bidItem.right {
+  margin-left: 65px;
+}
+.offerButton {
+  background: #ffffff !important;
+  font-family: 'Rubik', sans-serif !important;
+  font-size: 16px !important;
+  color: #000000 !important;
+  letter-spacing: 0 !important;
+  text-align: center !important;
+  width: 209px !important;
+  height: 41px !important;
+  border-radius: 0px !important;
+  text-transform: none !important;
+  font-weight: 400 !important;
+  letter-spacing: 1px !important;
+  margin-top: 30px !important;
+}
+.historyWrapper {
+  margin-top: 90px;
+  border-top: solid 1px white;
+  padding-top: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  justify-content: flex-start;
+}
+.auctionTitle {
+  font-family: 'Rubik', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: white;
+}
+.auctionPrices {
+  width: 100%;
+
+  overflow: scroll;
+}
+.auctionPrices > tr > td {
+  color: white;
+  text-align: left;
+  font-size: 14px;
+  padding-bottom: 15px;
+}
+.auctionPrices > tr > th {
+  color: white;
+  text-align: left;
+  color: #999999;
+  font-size: 14px;
+  padding-bottom: 20px;
+}
+.auctionPrices > tbody {
+  height: 30px;
+  display: block;
+}
+
+.tableWrapper {
+  max-height: 150px;
+  overflow: scroll;
+  width: 100%;
+  margin-top: 17px;
+}
+.scrollBar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollBar::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+.makeOfferText {
+  width: 100%;
+  font-size: 12px;
+  color: #999999;
+  margin-top: 15px;
+  z-index: 3000;
+  font-family: 'Rubik', sans-serif;
+}

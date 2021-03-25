@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Rubik:wght@300;400;500;700&display=swap');
+
+.modalTitle {
+  font-size: 16px;
+  line-height: 19px;
+  color: white;
+  font-family: 'DM Mono', monospace;
+}
+.modalHeader {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  border-bottom: solid 1px white;
+  box-sizing: border-box;
+}
+.x {
+  width: 12px;
+  height: 13px;
+}
+.modalBody {
+  /* padding: 30px; */
+}
+.checkoutArt {
+  width: 100px;
+  height: 100px;
+}
+.beatInfoCheckout {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-left: 20px;
+}
+.beatCheckoutName {
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'Rubik', sans-serif;
+  color: white;
+}
+.beatWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  border-bottom: solid 1px #404040;
+  padding: 30px;
+}
+.beatArtist {
+  font-size: 14px;
+  line-height: 16px;
+  color: white;
+  font-family: 'Rubik', sans-serif;
+  margin-top: 5px;
+}
+.checkoutForm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  justify-content: flex-start;
+  padding: 30px;
+  box-sizing: border-box;
+  position: relative;
+}
+.yourBid {
+  font-size: 16px;
+  color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.totalWallet {
+  color: #8c8c8c;
+  font-size: 12px;
+  width: 250px;
+  text-align: right;
+}
+.ethInput {
+  border: solid 1px white;
+  border-radius: 0px;
+  background-color: #1f1f1f;
+  width: 100%;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  box-sizing: border-box;
+  margin-top: 10px;
+  color: white;
+  font-family: 'DM Mono', monospace;
+  font-size: 20px;
+}
+.ethLabel {
+  position: absolute;
+  color: white;
+  font-size: 20px;
+  color: white;
+  top: 74px;
+  right: 60px;
+}
+.modalFooter {
+  padding: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+input:focus {
+  outline: none;
+}
+.continueButton:hover {
+  background-color: white !important;
+}
+.congratsBidSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+}
+.congratsMessage {
+  font-size: 16px;
+  color: white;
+  line-height: 19px;
+  margin-top: 30px;
+}
+.congratsAmount {
+  font-size: 14px;
+  color: white;
+  margin-top: 16px;
+}
+.editionInfo {
+  margin-top: 10px;
+  color: white;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+}

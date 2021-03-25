@@ -1,0 +1,18 @@
+{
+  "mongoDBURL": "mongodb://localhost:27017",
+  "mongoDBName": "properties",
+  "useNgrok": false,
+  "spacesAccessKeyId": "ZDWLTPGVMXC7RX54JFOF",
+  "spacesSecretKey": "nkl9dqPrvF8Lp5KQb3LM7SALYqL2XO8A49FKwqmiAiQ",
+  "twilioSID": "ACb69899cd3f64a4a2d9f6af46e9425b09",
+  "twilioAuthToken": "6d3e66074d6a78d7b08b0776fbd9e240",
+  "twilioAppSID": "AP4ffc9f28267bd6df8d227fe4f05ed0fe",
+  "mailgunAPIKey": "05b24278a43dabdc929835a90db62fea-074fa10c-f630c495",
+  "plaidClientID": "5e9f4d364717120012233304",
+  "plaidPublicKey": "01b8007425de0e61128064aecc87b3",
+  "plaidDevSecret": "be70d7853bd78d58c4cbf187985e31",
+  "plaidSandboxSecret": "eecee4805ec3bcfe01ee236223def1",
+  "stripeSecret": "sk_live_JkdGJTQYtWm7JsvIJjBOYjmt00MJLNqw8X",
+  "googleCloudKey": "AIzaSyCGjkHdjNu04S_okFrViMwACwusDJsxQwE",
+  "dialpadAPIKey": "VuDa6wXZKX2KvtbQetE2wrEAYGubVpC6LP9XZJmgvLtLPXTRHjg9ruyVQjcrqpH2xWDeYR9h6VzBWTyCsgXf2MmGdGm7KkLdUTEB"
+}

@@ -1,0 +1,104 @@
+.navBar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 80px;
+  box-sizing: border-box;
+  position: fixed;
+  z-index: 5000;
+  background-color: #1f1f1f;
+}
+.navBar.white {
+  background-color: #f2f2f2;
+}
+.scrollBar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollBar::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+.logo {
+  width: 170px;
+  height: auto;
+}
+.signedInWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.wallet {
+  width: 19px;
+  height: 13px;
+}
+
+.navBar.white > .signedInWrapper > .walletOuter > .walletAmount {
+  color: #222222;
+}
+.navBar.white > .signedInWrapper > .walletOuter {
+  border: solid 1px #222222;
+}
+.navBar.white > .signedInWrapper > .userName {
+  color: #222222;
+}
+.walletAmount {
+  font-size: 12px;
+  color: white;
+}
+.walletOuter {
+  border: solid 1px white;
+  border-radius: 15px;
+  width: 153px;
+  max-width: 153px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.userName {
+  font-family: 'Rubik', sans-serif;
+  font-size: 14px;
+  color: white;
+  margin-left: 25px;
+}
+.timerWrapper.white > .timer > div {
+  color: #222222;
+}
+
+.timer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: -20px;
+  margin-right: 30px;
+}
+.timerWrapper {
+  z-index: 5001;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  position: fixed;
+  margin-left: 18px;
+}
+.time {
+  font-size: 24px;
+  line-height: 28px;
+  color: white;
+}
+.nextText {
+  margin-top: 3px;
+  font-size: 14px;
+  color: white;
+}
+.walletText {
+  font-size: 16px;
+  line-height: 19px;
+  color: white;
+}
