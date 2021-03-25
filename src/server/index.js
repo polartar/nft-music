@@ -12,6 +12,18 @@ app.use(express.static("public"));
 
 app.enable("trust proxy");
 
+const nftController = require("./controllers/nftController");
+
+app.get("/api/getNFT", async (req, res) => {
+  const { status, response } = await nftController.getNFT(
+    req.query.artistName,
+    req.query.nftName,
+    req.query.edition
+  );
+
+  res.status(status).send(response);
+});
+
 app.get("*", (req, res) => {
   res.sendFile(path.resolve("./dist/index.html"));
 });

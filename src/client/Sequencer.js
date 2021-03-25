@@ -18,7 +18,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import * as Tone from "tone";
 import { ToneAudioNode } from "tone";
-
+import axios from "axios";
 const rhythmPads = [[0], [0], [0], [0], [0], [0], [0], [0]];
 
 const defaultPads = [
@@ -53,6 +53,7 @@ class Sequencer extends Component {
     totalSoundsPlaying: 0,
     testAr: new Array(36).fill("hi"),
     openBidModal: false,
+    nft: null,
   };
 
   constructor(props) {
@@ -171,6 +172,7 @@ class Sequencer extends Component {
         ).toDestination(),
       ],
     ];
+
     this.analysers = [];
     for (var i = 0; i < this.players.length; i++) {
       var group = this.players[i];
@@ -204,7 +206,21 @@ class Sequencer extends Component {
     });
 
     this.canvas = createRef();
+
+    this.fetchNFT();
   }
+
+  fetchNFT = async () => {
+    const nftResponse = await axios.get("/api/getNFT", {
+      params: {
+        artistName: "Robotaki",
+        nftName: "The Grand Mirage",
+        edition: 1,
+      },
+    });
+
+    this.setState({ nft: nftResponse.data });
+  };
 
   componentDidMount() {}
 
@@ -467,9 +483,9 @@ class Sequencer extends Component {
   }
 
   render() {
-    const { pads, step, notes, loaded, testAr } = this.state;
+    const { pads, step, notes, loaded, nft, testAr } = this.state;
 
-    if (loaded) {
+    if (nft && loaded) {
       return (
         <React.StrictMode>
           <BidModal open={this.state.openBidModal} onClose={this.handleClose} />
@@ -492,8 +508,8 @@ class Sequencer extends Component {
 
             <Navbar white={false} />
             <div className="bodyWrapper scrollBar">
-              <div className="beatPackTitle">COMMODITIES VOL. 2</div>
-              <div className="artistName">Crusty Cuts</div>
+              <div className="beatPackTitle">{nft.name}</div>
+              <div className="artistName">{nft.artistName}</div>
               <div className="gridOuter">
                 {pads.map((group, groupIndex) => (
                   <React.Fragment>
@@ -531,15 +547,15 @@ class Sequencer extends Component {
           <div className="container2 scrollBar">
             <div className="albumWrapper">
               <div className="albumPicWrapper">
-                <img src={AlbumArt} className="albumPic" />
+                <img src={nft.imageURL} className="albumPic" />
               </div>
               <div className="albumInfo">
                 <div className="artistInfo" id="album">
-                  <img src={InstaPic} className="instaPic" />
-                  <span className="artistTag">@crustycuts</span>
+                  <img src={nft.artist.imageURL} className="instaPic" />
+                  <span className="artistTag">{nft.artistName}</span>
                 </div>
-                <div className="packTitle">COMMODITIES VOL. 2</div>
-                <div className="editionInfo">Edition: 1/5</div>
+                <div className="packTitle">{nft.name}</div>
+                <div className="editionInfo">{`Edition: ${nft.edition}/5`}</div>
                 <div className="bidInfoWrapper">
                   <div className="bidItem">
                     <div className="bidTitle">Current Bid</div>
