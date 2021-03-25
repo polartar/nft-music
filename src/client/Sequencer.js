@@ -19,6 +19,8 @@ import Footer from "./components/Footer";
 import * as Tone from "tone";
 import { ToneAudioNode } from "tone";
 import axios from "axios";
+import { ethers, utils } from "ethers";
+
 const rhythmPads = [[0], [0], [0], [0], [0], [0], [0], [0]];
 
 const defaultPads = [
@@ -54,6 +56,11 @@ class Sequencer extends Component {
     testAr: new Array(36).fill("hi"),
     openBidModal: false,
     nft: null,
+    isLoggedIntoMetamask: false,
+    provider: null,
+    address: null,
+    balance: 0,
+    playingPadsCoordinates: [],
   };
 
   constructor(props) {
@@ -205,10 +212,64 @@ class Sequencer extends Component {
       }));
     });
 
+    Tone.Transport.bpm.value = this.state.bpm;
+    Tone.Transport.scheduleRepeat((time) => {
+      // use the callback time to schedule events
+      console.log(this.state.step);
+      if (this.state.step === 0) {
+        const toBePlayed = [];
+        this.state.pads.forEach((row, i) => {
+          row.forEach((col, j) => {
+            if (col === 1) {
+              toBePlayed.push([i, j]);
+            }
+          });
+        });
+
+        toBePlayed.forEach((coordinate) => {
+          this.players[coordinate[0]][coordinate[1]].start();
+        });
+      }
+      this.setState((state) => ({
+        step: state.step < state.steps - 1 ? state.step + 1 : 0,
+      }));
+    }, "4n");
+
     this.canvas = createRef();
 
     this.fetchNFT();
+    // this.initWallet();
   }
+
+  initWallet = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    const accounts = await provider.listAccounts();
+
+    if (accounts.length > 0) {
+      const address = await provider.getSigner().getAddress();
+
+      this.setState({
+        isLoggedIntoMetamask: true,
+        provider,
+        address,
+        balance: await provider.getBalance(address),
+      });
+    }
+  };
+
+  connectWallet = async () => {
+    await window.ethereum.enable();
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const address = await provider.getSigner().getAddress();
+
+    this.setState({
+      isLoggedIntoMetamask: true,
+      provider,
+      address,
+    });
+  };
 
   fetchNFT = async () => {
     const nftResponse = await axios.get("/api/getNFT", {
@@ -224,10 +285,17 @@ class Sequencer extends Component {
 
   componentDidMount() {}
 
-  handleClickOpen = () => {
-    this.setState({
-      openBidModal: true,
-    });
+  handleClickOpen = async () => {
+    try {
+      if (!this.state.isLoggedIntoMetamask) {
+        await this.connectWallet();
+      }
+      this.setState({
+        openBidModal: true,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   handleClose = (value) => {
@@ -405,41 +473,12 @@ class Sequencer extends Component {
   }
 
   play() {
-    this.synth = new Synth();
-
-    const { bpm, notes, type, release, delay } = this.state;
+    Tone.start();
+    Tone.Transport.start();
 
     this.setState(() => ({
       playing: true,
     }));
-
-    // START
-    this.state.pads.forEach((row, i) => {
-      row.forEach((col, j) => {
-        if (col === 1) {
-          var player = this.players[i][j];
-          player.start();
-          this.togglePlay();
-        }
-      });
-    });
-
-    this.interval = setInterval(() => {
-      this.setState((state) => ({
-        step: state.step < state.steps - 1 ? state.step + 1 : 0,
-      }));
-
-      if (this.state.step === 0) {
-        this.state.pads.forEach((row, i) => {
-          row.forEach((col, j) => {
-            if (col === 1) {
-              let player = this.players[i][j];
-              player.start();
-            }
-          });
-        });
-      }
-    }, (60 * 1000) / this.state.bpm);
   }
 
   pause() {
@@ -456,6 +495,7 @@ class Sequencer extends Component {
       (state) => {
         const clonedPads = state.pads.slice(0);
         const padState = clonedPads[group][pad];
+
         let numPads = this.state.totalSoundsPlaying;
 
         // Need to limit number of playable sounds?
@@ -483,12 +523,24 @@ class Sequencer extends Component {
   }
 
   render() {
-    const { pads, step, notes, loaded, nft, testAr } = this.state;
+    const {
+      pads,
+      step,
+      notes,
+      loaded,
+      nft,
+      testAr,
+      isLoggedIntoMetamask,
+    } = this.state;
 
     if (nft && loaded) {
       return (
         <React.StrictMode>
-          <BidModal open={this.state.openBidModal} onClose={this.handleClose} />
+          <BidModal
+            nft={nft}
+            open={this.state.openBidModal}
+            onClose={this.handleClose}
+          />
           <div className="container scrollBar">
             <div className="gridTop">
               {rhythmPads.map((group, groupIndex) => (
@@ -506,7 +558,10 @@ class Sequencer extends Component {
               ))}
             </div>
 
-            <Navbar white={false} />
+            <Navbar
+              white={false}
+              loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+            />
             <div className="bodyWrapper scrollBar">
               <div className="beatPackTitle">{nft.name}</div>
               <div className="artistName">{nft.artistName}</div>

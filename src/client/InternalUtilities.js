@@ -64,8 +64,6 @@ class InternalUtilities extends Component {
       tokenId,
     });
 
-    console.log(asset);
-
     const accountAddress = this.address;
 
     console.log({
