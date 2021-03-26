@@ -32,6 +32,12 @@ app.post("/api/updateUser", async (req, res) => {
   res.status(status).send(response);
 });
 
+app.get("/api/getAllNFTs", async (req, res) => {
+  const { status, response } = await nftController.getAllNFTs();
+
+  res.status(status).send(response);
+});
+
 app.get("/api/getNFT", async (req, res) => {
   const { status, response } = await nftController.getNFT(
     req.query.artistName,

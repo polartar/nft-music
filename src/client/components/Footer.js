@@ -13,7 +13,7 @@ export default function Footer(props) {
         }
       >
         <a href="/directory">
-          <div className="bottomItem">DASHBOARD</div>
+          <div className="bottomItem">DIRECTORY</div>
         </a>
         <a href="/artists">
           <div className="bottomItem">ARTISTS</div>

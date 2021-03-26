@@ -20,6 +20,7 @@ export default function Navbar(props) {
   const { white, loggedIntoMetamaskOverride, didConnectWallet } = props;
 
   const [address, setAddress] = useState();
+  const [displayName, setDisplayName] = useState();
   const [provider, setProvider] = useState();
   const [balance, setBalance] = useState(0);
   const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
@@ -44,6 +45,18 @@ export default function Navbar(props) {
       const address = await provider.getSigner().getAddress();
       setAddress(address);
       setBalance(await provider.getBalance(address));
+
+      const userResponse = await axios.get("/api/getUser", {
+        params: {
+          address,
+        },
+      });
+
+      if (userResponse.data.name) {
+        setDisplayName(userResponse.data.name);
+      } else {
+        setDisplayName(address);
+      }
     }
   };
 
@@ -118,7 +131,9 @@ export default function Navbar(props) {
                     utils.formatEther(balance)
                   ).toFixed(4)} ETH`}</span>
                 </div>
-                <div className="userName">{address}</div>
+                <a href="/profile">
+                  <div className="userName">{displayName}</div>
+                </a>
               </div>
             )}
           </div>

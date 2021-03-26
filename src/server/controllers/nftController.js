@@ -55,7 +55,35 @@ async function getNFT(artistName, name, edition) {
   }
 }
 
+async function getAllNFTs() {
+  try {
+    const nftQuery = await db.collection("NFTs").find();
+
+    const nfts = [];
+
+    while (await nftQuery.hasNext()) {
+      const nft = await nftQuery.next();
+
+      const artist = await db.collection("artists").findOne({
+        name: nft.artistName,
+      });
+
+      nft.artist = artist;
+      nfts.push(nft);
+    }
+
+    return {
+      status: 200,
+      response: nfts,
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
+
 module.exports = {
   getNFT,
   getFeaturedNFT,
+  getAllNFTs,
 };
