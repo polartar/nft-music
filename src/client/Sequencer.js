@@ -17,7 +17,7 @@ import BidModal from "./components/BidModal";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import * as Tone from "tone";
-import { ToneAudioNode } from "tone";
+import { Limiter, ToneAudioNode } from "tone";
 import axios from "axios";
 import { ethers, utils } from "ethers";
 import Countdown from "react-countdown";
@@ -28,12 +28,6 @@ import { OrderSide } from "opensea-js/lib/types";
 import * as Web3 from "web3";
 
 const rhythmPads = [[0], [0], [0], [0], [0], [0], [0], [0]];
-
-const defaultPads = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-];
 
 let ctx, x_end, y_end, bar_height;
 
@@ -49,7 +43,7 @@ const center_y = height / 2;
 class Sequencer extends Component {
   state = {
     type: "sine",
-    pads: defaultPads,
+    pads: {},
     bpm: 110,
     release: 100,
     step: 0,
@@ -72,122 +66,12 @@ class Sequencer extends Component {
   constructor(props) {
     super(props);
 
-    this.players = [
-      [
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.1.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.2.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.3.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.4.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.5.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.6.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.7.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.8.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.9.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.10.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.11.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.12.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.13.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.14.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/sounds.1.15.ogg"
-        ).toDestination(),
-      ],
-      [
-        new Tone.Player(
-          "./public/artists/madeon/adventure/bass.1.1.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/bass.1.2.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/bass.1.3.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/bass.1.4.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/bass.1.5.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/bass.1.6.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/bass.1.7.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/bass.1.8.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/bass.1.9.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/bass.1.10.ogg"
-        ).toDestination(),
-      ],
-      [
-        new Tone.Player(
-          "./public/artists/madeon/adventure/drum.1.1.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/drum.1.2.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/drum.1.3.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/drum.1.4.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/drum.1.5.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/drum.1.6.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/drum.1.7.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/drum.1.8.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/drum.1.9.ogg"
-        ).toDestination(),
-        new Tone.Player(
-          "./public/artists/madeon/adventure/drum.1.10.ogg"
-        ).toDestination(),
-      ],
-    ];
+    this.players = {};
+
+    this.fetchNFT();
 
     this.analysers = [];
-    for (var i = 0; i < this.players.length; i++) {
+    for (let i in Object.keys(this.players)) {
       var group = this.players[i];
       var groupAnalyser = [];
       for (var j = 0; j < group.length; j++) {
@@ -222,10 +106,10 @@ class Sequencer extends Component {
     Tone.Transport.scheduleRepeat((time) => {
       if (this.state.step === 0) {
         const toBePlayed = [];
-        this.state.pads.forEach((row, i) => {
-          row.forEach((col, j) => {
-            if (col === 1) {
-              toBePlayed.push([i, j]);
+        Object.keys(this.state.pads).forEach((group) => {
+          this.state.pads[group].forEach((enabled, soundIndex) => {
+            if (enabled) {
+              toBePlayed.push([group, soundIndex]);
             }
           });
         });
@@ -301,6 +185,25 @@ class Sequencer extends Component {
     );
 
     this.setState({ nft: nftResponse.data, bids: orderResponse.data.orders });
+
+    // Initial pads setup
+    if (!Object.keys(this.players).length) {
+      const pads = {};
+      Object.keys(nftResponse.data.filePaths).map((group) => {
+        const filePaths = nftResponse.data.filePaths[group];
+        this.players[group] = [];
+        pads[group] = [];
+
+        filePaths.forEach((filePath) => {
+          this.players[group].push(
+            new Tone.Player(`./public/${filePath}`).toDestination()
+          );
+          pads[group].push(0);
+        });
+      });
+      console.log(pads);
+      this.setState({ pads });
+    }
   };
 
   componentDidMount() {}
@@ -450,7 +353,7 @@ class Sequencer extends Component {
   togglePad(group, pad) {
     this.setState(
       (state) => {
-        const clonedPads = state.pads.slice(0);
+        const clonedPads = { ...state.pads };
         const padState = clonedPads[group][pad];
 
         let numPads = this.state.totalSoundsPlaying;
@@ -533,16 +436,16 @@ class Sequencer extends Component {
               <div className="beatPackTitle">{nft.name}</div>
               <div className="artistName">{nft.artistName}</div>
               <div className="gridOuter">
-                {pads.map((group, groupIndex) => (
+                {Object.keys(pads).map((group) => (
                   <React.Fragment>
-                    {group.map((pad, i) => (
+                    {pads[group].map((pad, i) => (
                       <div
                         key={`pad-group-${i}`}
                         className={cx("pad", {
                           on: pad === 1,
                         })}
                         onClick={() => {
-                          this.togglePad(groupIndex, i);
+                          this.togglePad(group, i);
                         }}
                       />
                     ))}
@@ -581,7 +484,7 @@ class Sequencer extends Component {
                 <div className="bidInfoWrapper">
                   <div className="bidItem">
                     <div className="bidTitle">Current Bid</div>
-                    <div className="bidInfo">50.00 ETH</div>
+                    <div className="bidInfo">{`${currentBidAmount} ETH`}</div>
                   </div>
                   <div className="bidItem right">
                     <div className="bidTitle">TIME LEFT</div>

@@ -56,7 +56,7 @@ export default function SimpleDialog(props) {
   const classes = useStyles();
   const { onClose, open, nft, didCompleteBid, currentBidAmount } = props;
 
-  const startingBid = 0.1;
+  const startingBid = 0.01;
 
   const [seaport, setSeaport] = useState();
   const [wethConversionAmount, setWethConversionAmount] = useState(0);
@@ -157,7 +157,7 @@ export default function SimpleDialog(props) {
   const formattedEthBalance = parseFloat(utils.formatEther(ethBalance));
 
   const nextMinimumBid = currentBidAmount
-    ? Math.min(currentBidAmount * 1.1, 0.1)
+    ? Math.min(currentBidAmount * 1.1, currentBidAmount + 0.1)
     : startingBid;
 
   const nextMinimumBidThreshold = nextMinimumBid.toPrecision(4) / 1;
