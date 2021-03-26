@@ -9,7 +9,7 @@ import AlbumArt from "../images/albumArt.png";
 import InstaPic from "../images/instaPic.png";
 import "../css/bidModal.css";
 import IconButton from "@material-ui/core/IconButton";
-import { ethers } from "ethers";
+import { ethers, Contract, utils } from "ethers";
 import * as Web3 from "web3";
 import axios from "axios";
 import { OpenSeaPort, Network } from "opensea-js";
@@ -61,35 +61,106 @@ export default function SimpleDialog(props) {
   const [address, setAddress] = useState();
   const [wethBalance, setWethBalance] = useState(0);
   const [ethBalance, setEthBalance] = useState(0);
+  const [bidAmount, setBidAmount] = useState(0);
+  const [bidCompleted, setBidCompleted] = useState(false);
 
   const initWallet = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const address = await signer.getAddress();
 
+    const wethAddress = DEV
+      ? "0xc778417e063141139fce010982780140aa0cd5ab"
+      : "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+
+    const contract = new Contract(
+      wethAddress,
+      [
+        {
+          constant: true,
+          inputs: [
+            {
+              name: "_owner",
+              type: "address",
+            },
+          ],
+          name: "balanceOf",
+          outputs: [
+            {
+              name: "balance",
+              type: "uint256",
+            },
+          ],
+          payable: false,
+          type: "function",
+        },
+      ],
+      provider
+    );
+
     setSeaport(
       new OpenSeaPort(window.ethereum, {
         networkName: DEV ? Network.Rinkeby : Network.Main,
       })
     );
 
-    setAddress(await this.signer.getAddress());
+    setAddress(await signer.getAddress());
+    setEthBalance(await provider.getBalance(address));
+    setWethBalance(await contract.balanceOf(address));
+    console.log("called");
   };
 
   useEffect(() => {
-    setSeaport(
-      new OpenSeaPort(window.ethereum, {
-        networkName: DEV ? Network.Rinkeby : Network.Main,
-      })
-    );
+    initWallet();
   }, [open]);
 
   const convertETH = async () => {
-    const wrapTx = await this.seaport.wrapEth({
-      amountInEth: 0.001,
-      accountAddress: this.address,
+    await seaport.wrapEth({
+      amountInEth: bidAmount,
+      accountAddress: address,
     });
+    // Show loading screen here
+
+    initWallet();
   };
+
+  const placeBid = async () => {
+    const asset = await seaport.api.getAsset({
+      tokenAddress: nft.tokenAddress,
+      tokenId: nft.tokenId,
+    });
+
+    console.log({
+      asset: {
+        tokenAddress: nft.tokenAddress,
+        tokenId: nft.tokenId,
+        schemaName: WyvernSchemaName.ERC1155,
+      },
+      accountAddress: address,
+      startAmount: bidAmount,
+    });
+
+    const offer = await seaport.createBuyOrder({
+      asset: {
+        tokenAddress: nft.tokenAddress,
+        tokenId: nft.tokenId,
+        schemaName: WyvernSchemaName.ERC1155,
+      },
+      accountAddress: address,
+      startAmount: bidAmount,
+    });
+    setBidCompleted(true);
+  };
+
+  const goBack = () => {
+    onClose();
+    setTimeout(() => {
+      setBidCompleted(false);
+    }, 500);
+  };
+
+  const formattedWethBalance = parseFloat(utils.formatEther(wethBalance));
+  const formattedEthBalance = parseFloat(utils.formatEther(ethBalance));
 
   return (
     <Dialog
@@ -112,33 +183,76 @@ export default function SimpleDialog(props) {
             <div className="beatArtist">{nft.artist.name}</div>
           </div>
         </div>
-        <div className="checkoutForm">
-          <div className="yourBid">
-            <div className="yourBid">YOUR BID</div>
-            <div className="totalWallet">Balance: 25.6984</div>
+        {!bidCompleted && (
+          <div className="checkoutForm">
+            <div className="yourBid">
+              <div className="yourBid">YOUR BID</div>
+              <div className="totalWallet">{`ETH Balance: ${`${formattedEthBalance.toFixed(
+                4
+              )}`}`}</div>
+              <div className="totalWallet">{`WETH Balance: ${`${formattedWethBalance.toFixed(
+                4
+              )}`}`}</div>
+            </div>
+            <input
+              type="number"
+              step="any"
+              onChange={(event) => setBidAmount(event.target.value)}
+              className="ethInput"
+              placeHolder="0.00"
+            />
+            <div className="ethLabel">WETH</div>
           </div>
-          <input className="ethInput" placeHolder="0.00" />
-          <div className="ethLabel">ETH</div>
-        </div>
-        {/* <div className="congratsBidSection">
-          <div className="congratsMessage">Congrats on placing your bid!</div>
-          <div className="congratsAmount">Bid: 10.2543 WETH</div>
-        </div> */}
+        )}
+        {bidCompleted && (
+          <div className="congratsBidSection">
+            <div className="congratsMessage">Congrats on placing your bid!</div>
+            <div className="congratsAmount">{`Bid: ${bidAmount} WETH`}</div>
+          </div>
+        )}
         <div className="modalFooter">
-          <Button
-            variant="outlined"
-            classes={{ root: classes.backButton }}
-            onClick={onClose}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="outlined"
-            classes={{ root: classes.continueButton }}
-            className="continueButton"
-          >
-            Transfer to WETH
-          </Button>
+          {!bidCompleted && (
+            <React.Fragment>
+              <Button
+                variant="outlined"
+                classes={{ root: classes.backButton }}
+                onClick={onClose}
+              >
+                Cancel
+              </Button>
+
+              {bidAmount > formattedWethBalance && (
+                <Button
+                  variant="outlined"
+                  classes={{ root: classes.continueButton }}
+                  className="continueButton"
+                  onClick={convertETH}
+                >
+                  Convert to WETH
+                </Button>
+              )}
+              {bidAmount <= formattedWethBalance && (
+                <Button
+                  variant="outlined"
+                  classes={{ root: classes.continueButton }}
+                  className="continueButton"
+                  onClick={placeBid}
+                >
+                  Place Bid
+                </Button>
+              )}
+            </React.Fragment>
+          )}
+          {bidCompleted && (
+            <Button
+              variant="outlined"
+              classes={{ root: classes.continueButton }}
+              className="continueButton"
+              onClick={goBack}
+            >
+              Go Back
+            </Button>
+          )}
         </div>
       </div>
     </Dialog>

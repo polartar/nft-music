@@ -370,6 +370,7 @@ class Sequencer extends Component {
       x += barWidth + 1;
     }
   }
+
   animationLooperEmpty(canvas) {
     let analyser = new Array(256).fill(0);
     let frequency_array = new Uint8Array(analyser);
@@ -406,74 +407,10 @@ class Sequencer extends Component {
     }
   }
 
-  componentWillUnmount() {
-    // cancelAnimationFrame(this.rafId)
-    // this.analyser.disconnect()
-    // this.source.disconnect()
-  }
-
-  // toggleTest = () => {
-  //   this.audio.play()
-  // }
-
-  changeRelease(release) {
-    this.setState(
-      {
-        release,
-      },
-      () => {
-        this.pause();
-
-        if (this.state.playing) this.play();
-      }
-    );
-  }
-
-  changeBPM(bpm) {
-    if (bpm > 300 || bpm < 60) return;
-
-    this.setState(
-      () => ({
-        bpm,
-      }),
-      () => {
-        this.pause();
-
-        if (this.state.playing) this.play();
-      }
-    );
-  }
-
-  changeWaveType(type) {
-    this.setState(
-      () => ({
-        type,
-      }),
-      () => {
-        this.pause();
-
-        if (this.state.playing) this.play();
-      }
-    );
-  }
-
-  changeOctave(octave) {
-    this.setState(
-      {
-        octave: Number(octave),
-        notes: getNotesForOctave(Number(octave)),
-      },
-      () => {
-        this.pause();
-
-        if (this.state.playing) this.play();
-      }
-    );
-  }
-
   play() {
     Tone.start();
     Tone.Transport.start();
+    this.togglePlay();
 
     this.setState(() => ({
       playing: true,

@@ -110,9 +110,9 @@ export default function Navbar(props) {
               <div className="signedInWrapper">
                 <div className="walletOuter">
                   <img src={white ? WalletBlack : Wallet} className="wallet" />
-                  <span className="walletAmount">{`${utils.formatEther(
-                    balance
-                  )} ETH`}</span>
+                  <span className="walletAmount">{`${parseFloat(
+                    utils.formatEther(balance)
+                  ).toFixed(4)} ETH`}</span>
                 </div>
                 <div className="userName">{address}</div>
               </div>
