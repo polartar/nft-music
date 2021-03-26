@@ -1,4 +1,5 @@
 import React, { lazy, Suspense } from "react";
+import css from "./app.css";
 import {
   BrowserRouter as Router,
   Switch,
@@ -7,7 +8,6 @@ import {
   withRouter,
   Redirect,
 } from "react-router-dom";
-import css from "./app.css";
 
 const Sequencer = lazy(() => import("./Sequencer"));
 const Settings = lazy(() => import("./components/Settings"));

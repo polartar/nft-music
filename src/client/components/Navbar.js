@@ -17,7 +17,7 @@ import Countdown, { zeroPad } from "react-countdown";
 import { ethers, utils } from "ethers";
 
 export default function Navbar(props) {
-  const { white, loggedIntoMetamaskOverride } = props;
+  const { white, loggedIntoMetamaskOverride, didConnectWallet } = props;
 
   const [address, setAddress] = useState();
   const [provider, setProvider] = useState();
@@ -57,6 +57,10 @@ export default function Navbar(props) {
     setProvider(provider);
     setAddress(address);
     setBalance(await provider.getBalance(address));
+
+    if (didConnectWallet) {
+      didConnectWallet();
+    }
   };
 
   useEffect(() => {

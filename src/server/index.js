@@ -13,6 +13,24 @@ app.use(express.static("public"));
 app.enable("trust proxy");
 
 const nftController = require("./controllers/nftController");
+const userController = require("./controllers/userController");
+
+app.get("/api/getUser", async (req, res) => {
+  const { status, response } = await userController.getUser(req.query.address);
+
+  res.status(status).send(response);
+});
+
+app.post("/api/updateUser", async (req, res) => {
+  const { status, response } = await userController.updateUser(
+    req.body.address,
+    req.body.signature,
+    req.body.displayName,
+    req.body.email
+  );
+
+  res.status(status).send(response);
+});
 
 app.get("/api/getNFT", async (req, res) => {
   const { status, response } = await nftController.getNFT(
