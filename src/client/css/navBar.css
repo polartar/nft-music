@@ -41,7 +41,7 @@
 .navBar.white > .signedInWrapper > .walletOuter {
   border: solid 1px #222222;
 }
-.navBar.white > .signedInWrapper > .userName {
+.navBar.white > .signedInWrapper > a > .userName {
   color: #222222;
 }
 .navBar.white > .walletText {
@@ -68,6 +68,10 @@
   font-size: 14px;
   color: white;
   margin-left: 25px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }
 .timer.white > div {
   color: #222222;
