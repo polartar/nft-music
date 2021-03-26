@@ -10,6 +10,7 @@ import {
 import css from "./app.css";
 
 const Sequencer = lazy(() => import("./Sequencer"));
+const Settings = lazy(() => import("./components/Settings"));
 
 export default function App(props) {
   return (
@@ -19,6 +20,9 @@ export default function App(props) {
           <Switch>
             <Route exact path="/">
               <Sequencer />
+            </Route>
+            <Route exact path="/profile">
+              <Settings />
             </Route>
           </Switch>
         </Suspense>
