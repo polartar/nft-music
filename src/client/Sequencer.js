@@ -20,6 +20,7 @@ import * as Tone from "tone";
 import { ToneAudioNode } from "tone";
 import axios from "axios";
 import { ethers, utils } from "ethers";
+import Countdown from "react-countdown";
 
 const rhythmPads = [[0], [0], [0], [0], [0], [0], [0], [0]];
 
@@ -618,7 +619,29 @@ class Sequencer extends Component {
                   </div>
                   <div className="bidItem right">
                     <div className="bidTitle">TIME LEFT</div>
-                    <div className="bidInfo">22 hrs, 45 min, 32 sec</div>
+                    <Countdown
+                      date={nft.bidEndDate}
+                      renderer={({
+                        days,
+                        hours,
+                        minutes,
+                        seconds,
+                        completed,
+                      }) => {
+                        if (completed) {
+                          // Render a completed state
+                          return (
+                            <div className="bidInfo">Auction Completed</div>
+                          );
+                        } else {
+                          // Render a countdown
+                          return (
+                            <div className="bidInfo">{`${days} days, 
+                              ${hours} hrs, ${minutes} mins, ${seconds} secs`}</div>
+                          );
+                        }
+                      }}
+                    />
                   </div>
                 </div>
                 <Button className="offerButton" onClick={this.handleClickOpen}>

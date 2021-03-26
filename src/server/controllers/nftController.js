@@ -1,4 +1,4 @@
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const config = require("../config.json");
 
 // Create a new MongoClient
@@ -10,6 +10,26 @@ client.connect(function(err) {
 
   db = client.db(config.mongoDBName);
 });
+
+async function getFeaturedNFT() {
+  try {
+    const settings = await db.collection("settings").findOne({
+      _id: ObjectId("605d225f34d1d94b02ef8591"),
+    });
+
+    const featuredNFT = await db.collection("NFTs").findOne({
+      _id: ObjectId(settings.featuredNFTID),
+    });
+
+    return {
+      status: 200,
+      response: featuredNFT,
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
 
 async function getNFT(artistName, name, edition) {
   try {
@@ -37,4 +57,5 @@ async function getNFT(artistName, name, edition) {
 
 module.exports = {
   getNFT,
+  getFeaturedNFT,
 };

@@ -24,6 +24,12 @@ app.get("/api/getNFT", async (req, res) => {
   res.status(status).send(response);
 });
 
+app.get("/api/getFeaturedNFT", async (req, res) => {
+  const { status, response } = await nftController.getFeaturedNFT();
+
+  res.status(status).send(response);
+});
+
 app.get("*", (req, res) => {
   res.sendFile(path.resolve("./dist/index.html"));
 });
