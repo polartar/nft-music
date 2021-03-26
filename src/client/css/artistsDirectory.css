@@ -1,0 +1,211 @@
+.artistDirectoryBody {
+  padding: 80px;
+  padding-top: 140px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 1440px;
+}
+.containerDirectoryArtist {
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #f2f2f2;
+  font-family: "DM Mono", monospace;
+  overflow: scroll;
+  color: #1f1f1f;
+}
+
+.artistTitleDirectory {
+  font-size: 16px;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.artistDirectoryWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom: 92px;
+  width: 300px;
+  margin-right: 20px;
+}
+.artistDirectoryImg {
+  width: 88px;
+  height: 88px;
+  margin-right: 20px;
+}
+.artistDirectoryInfoWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.artistDirectoryName {
+  font-family: "Rubik", sans-serif;
+  font-size: 16px;
+  text-align: left;
+  margin-top: 7px;
+}
+.artistDirectoryHandle {
+  font-size: 14px;
+  color: #808080;
+  margin-top: 7px;
+}
+.artistDirectoryNumPacks {
+  font-size: 16px;
+  margin-top: 15px;
+  color: #808080;
+}
+.artistBioBody {
+  padding: 80px;
+  padding-top: 140px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 1440px;
+}
+.left,
+.right {
+}
+.artistBioBody > .left {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  box-sizing: border-box;
+}
+.artistBioBody > .right {
+  width: 55%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  box-sizing: border-box;
+}
+.artistBioBody > .left > .artistDirectoryWrapper > .artistDirectoryImg {
+  width: 141px;
+  height: 141px;
+}
+.artistBioBody
+  > .left
+  > .artistDirectoryWrapper
+  > .artistDirectoryInfoWrapper
+  > .artistDirectoryName {
+  font-size: 24px;
+  margin-top: 20px;
+}
+.artistBioBody
+  > .left
+  > .artistDirectoryWrapper
+  > .artistDirectoryInfoWrapper
+  > .artistDirectoryHandle {
+  font-size: 18px;
+}
+.artistBioBody
+  > .left
+  > .artistDirectoryWrapper
+  > .artistDirectoryInfoWrapper
+  > .artistDirectoryNumPacks {
+  font-size: 18px;
+  margin-top: 14px;
+}
+.artistBioBody > .left > .artistDirectoryWrapper > .artistDirectoryInfoWrapper {
+  margin-left: 40px;
+  width: auto;
+}
+.artistBioBody > .left > .artistDirectoryWrapper {
+  width: auto;
+}
+.bioTitle {
+  color: #222222;
+  font-size: 16px;
+  width: 100%;
+  text-align: left;
+}
+.artistBioDirectory {
+  color: #808080;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: left;
+  margin-top: 22px;
+  width: 90%;
+}
+.socialsTitle {
+  margin-top: 70px;
+  margin-bottom: 20px;
+}
+.socialItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+  margin-right: 100px;
+}
+.socialImg {
+  width: 34px;
+  height: 34px;
+}
+.socialTag {
+  font-size: 14px;
+  margin-left: 8px;
+}
+.socialItemWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.beatPackTitleArtist {
+  width: 100%;
+  color: #808080;
+  font-size: 16px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  text-align: left;
+  width: 100%;
+}
+.beatPackArtistWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-right: 20px;
+  margin-bottom: 30px;
+}
+.artWork {
+  width: 304px;
+  height: 304px;
+}
+.packTitleDirectory {
+  font-size: 14px;
+  margin-top: 10px;
+  text-transform: uppercase;
+}
+.editionAmountDirectory {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #808080;
+}
+.beatPackArtistOuter {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+}
