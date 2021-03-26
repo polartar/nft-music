@@ -54,7 +54,7 @@ function Directory() {
     (nft) =>
       nft.name === featuredNFTResponse.data.name &&
       nft.artistName === featuredNFTResponse.data.artistName
-  )
+  );
 
   return (
     <React.StrictMode>
@@ -120,23 +120,25 @@ function Directory() {
                     </div>
 
                     <div className="editionSection  scrollBar ">
-                      <div className="currentAuctionEditionTitle">
-                        EDITIONS
-                      </div>
+                      <div className="currentAuctionEditionTitle">EDITIONS</div>
                       {featuredNFTEditions.map((nft) => {
                         return (
                           <div className="bidItemDirectory">
-                        <div className="editionInfoDirectory scrollBar current">
-                          <div className="editionNumber">1.</div>{" "}
-                          <div className="editionOwner">
-                            {nft.ownerName ? nft.ownerName : "Currently bidding"}
+                            <div className="editionInfoDirectory scrollBar current">
+                              <div className="editionNumber">1.</div>{" "}
+                              <div className="editionOwner">
+                                {nft.ownerName
+                                  ? nft.ownerName
+                                  : "Currently bidding"}
+                              </div>
+                            </div>
+                            <div className="editionPriceDirectory">
+                              50.00 ETH
+                            </div>
                           </div>
-                        </div>
-                        <div className="editionPriceDirectory">50.00 ETH</div>
-                      </div>
-                        )
-                      })
-                      // <div className="bidItemDirectory">
+                        );
+                      })}
+                      {/* // <div className="bidItemDirectory">
                       //   <div className="editionInfoDirectory scrollBar current">
                       //     <div className="editionNumber">1.</div>{" "}
                       //     <div className="editionOwner">
@@ -165,7 +167,7 @@ function Directory() {
                       //     <div className="editionOwner">Currently Bidding</div>
                       //   </div>
                       //   <div className="editionPriceDirectory">32:10:03s</div>
-                      // </div>
+                      // </div> */}
                     </div>
                   </div>
                 </div>
