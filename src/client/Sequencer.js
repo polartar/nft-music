@@ -528,7 +528,9 @@ class Sequencer extends Component {
                       return (
                         <tr>
                           <td>{`${formattedBidAmount} ETH`}</td>
-                          <td>{bid.maker.address}</td>
+                          <td>
+                            <div className="makerAddr">{bid.maker.address}</div>
+                          </td>
                           <td>
                             {`${new Date(
                               bid.created_date + "Z"
