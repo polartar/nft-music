@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css?family=Allan');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Rubik:wght@300;400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Allan");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Rubik:wght@300;400;500;700&display=swap");
 
 $dark: lighten(#121214, 5%);
 $steps: 10;
@@ -10,7 +10,7 @@ $radius: 4px;
 
 body {
   // background: #1f1f1f;
-  font-family: 'DM Mono', monospace;
+  font-family: "DM Mono", monospace;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -28,7 +28,16 @@ body > div {
   display: flex;
   flex-direction: row;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 .Sequencer {
   position: relative;
   display: inline-block;
@@ -112,7 +121,7 @@ body > div {
   font-weight: 500;
   color: white;
   margin-top: 10px;
-  font-family: 'Rubik', sans-serif;
+  font-family: "Rubik", sans-serif;
 }
 .beatPackTitle {
   font-size: 30px;
@@ -120,7 +129,7 @@ body > div {
   width: 100%;
   text-align: center;
   color: white;
-  font-family: 'Rubik', sans-serif;
+  font-family: "Rubik", sans-serif;
   margin-top: -50px;
 }
 
@@ -433,7 +442,7 @@ footer {
 
   text-align: left;
   color: white;
-  font-family: 'Rubik', sans-serif;
+  font-family: "Rubik", sans-serif;
   margin-top: 10px;
   text-transform: uppercase;
 }
@@ -452,7 +461,7 @@ footer {
   align-items: flex-start;
 }
 .bidTitle {
-  font-family: 'Rubik', sans-serif;
+  font-family: "Rubik", sans-serif;
   font-size: 16px;
   font-weight: 500;
   text-transform: uppercase;
@@ -466,7 +475,7 @@ footer {
 }
 .offerButton {
   background: #ffffff !important;
-  font-family: 'Rubik', sans-serif !important;
+  font-family: "Rubik", sans-serif !important;
   font-size: 16px !important;
   color: #000000 !important;
   letter-spacing: 0 !important;
@@ -490,7 +499,7 @@ footer {
   justify-content: flex-start;
 }
 .auctionTitle {
-  font-family: 'Rubik', sans-serif;
+  font-family: "Rubik", sans-serif;
   font-size: 16px;
   font-weight: 500;
   text-transform: uppercase;
@@ -539,5 +548,5 @@ footer {
   color: #999999;
   margin-top: 15px;
   z-index: 3000;
-  font-family: 'Rubik', sans-serif;
+  font-family: "Rubik", sans-serif;
 }

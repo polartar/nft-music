@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Rubik:wght@300;400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Rubik:wght@300;400;500;700&display=swap");
 
 .modalTitle {
   font-size: 16px;
   line-height: 19px;
   color: white;
-  font-family: 'DM Mono', monospace;
+  font-family: "DM Mono", monospace;
 }
 .modalHeader {
   width: 100%;
@@ -37,7 +37,7 @@
 .beatCheckoutName {
   font-size: 16px;
   font-weight: 500;
-  font-family: 'Rubik', sans-serif;
+  font-family: "Rubik", sans-serif;
   color: white;
 }
 .beatWrapper {
@@ -52,7 +52,7 @@
   font-size: 14px;
   line-height: 16px;
   color: white;
-  font-family: 'Rubik', sans-serif;
+  font-family: "Rubik", sans-serif;
   margin-top: 5px;
 }
 .checkoutForm {
@@ -80,6 +80,10 @@
   width: 250px;
   text-align: right;
 }
+.minBid {
+  text-align: left;
+  margin-top: 10px;
+}
 .ethInput {
   border: solid 1px white;
   border-radius: 0px;
@@ -92,7 +96,7 @@
   box-sizing: border-box;
   margin-top: 10px;
   color: white;
-  font-family: 'DM Mono', monospace;
+  font-family: "DM Mono", monospace;
   font-size: 20px;
 }
 .ethLabel {

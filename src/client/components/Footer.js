@@ -18,7 +18,7 @@ export default function Footer(props) {
         <a href="/artists">
           <div className="bottomItem">ARTISTS</div>
         </a>
-        <a>
+        <a href="/mybeats">
           <div className="bottomItem">MY BEATS</div>
         </a>
         <a href="/profile">

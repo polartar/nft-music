@@ -203,6 +203,9 @@
   justify-content: space-between;
   width: 100%;
 }
+.boughtFor {
+  margin-top: 10px;
+}
 .editionSoldText {
   color: #808080;
   font-size: 14px;

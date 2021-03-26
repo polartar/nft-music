@@ -202,7 +202,8 @@ export default function SimpleDialog(props) {
               placeHolder={nextMinimumBidThreshold}
             />
             <div className="ethLabel">WETH</div>
-            <div className="totalWallet">{`Minimum Bid: ${nextMinimumBidThreshold}`}</div>
+            <div className="totalWallet minBid">{`Minimum Bid: ${nextMinimumBidThreshold}`}</div>
+            {/* <div className="totalWallet minBid">This is an error message</div> */}
           </div>
         )}
         {bidCompleted && (

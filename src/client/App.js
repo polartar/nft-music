@@ -13,6 +13,7 @@ const Sequencer = lazy(() => import("./Sequencer"));
 const Settings = lazy(() => import("./components/Settings"));
 const Directory = lazy(() => import("./components/Directory"));
 const ArtistsDirectory = lazy(() => import("./components/ArtistsDirectory"));
+const MyBeats = lazy(() => import("./components/MyBeats"));
 
 export default function App(props) {
   return (
@@ -31,6 +32,9 @@ export default function App(props) {
             </Route>
             <Route exact path="/artists">
               <ArtistsDirectory />
+            </Route>
+            <Route exact path="/mybeats">
+              <MyBeats />
             </Route>
           </Switch>
         </Suspense>
