@@ -70,38 +70,6 @@ class Sequencer extends Component {
 
     this.fetchNFT();
 
-    this.analysers = [];
-    for (let i in Object.keys(this.players)) {
-      var group = this.players[i];
-      var groupAnalyser = [];
-      for (var j = 0; j < group.length; j++) {
-        var player = group[j];
-        let analyser = new Tone.FFT(256);
-        if (i == 2) {
-          analyser.set({
-            size: 256,
-            smoothing: 0.99,
-          });
-        } else {
-          analyser.set({
-            size: 256,
-            smoothing: 0.9,
-          });
-        }
-
-        analyser.normalRange = true;
-        player.connect(analyser);
-        groupAnalyser.push(analyser);
-      }
-      this.analysers.push(groupAnalyser);
-    }
-
-    Tone.loaded().then(() => {
-      this.setState(() => ({
-        loaded: true,
-      }));
-    });
-
     Tone.Transport.bpm.value = this.state.bpm;
     Tone.Transport.scheduleRepeat((time) => {
       if (this.state.step === 0) {
@@ -125,7 +93,6 @@ class Sequencer extends Component {
 
     this.canvas = createRef();
 
-    this.fetchNFT();
     this.initWallet();
   }
 
@@ -201,8 +168,34 @@ class Sequencer extends Component {
           pads[group].push(0);
         });
       });
-      console.log(pads);
+
       this.setState({ pads });
+
+      this.analysers = {};
+
+      for (let group in this.players) {
+        var sounds = this.players[group];
+        this.analysers[group] = [];
+        for (var soundIndex = 0; soundIndex < sounds.length; soundIndex++) {
+          var player = sounds[soundIndex];
+          let analyser = new Tone.FFT(256);
+
+          analyser.set({
+            size: 256,
+            smoothing: 0.9,
+          });
+
+          analyser.normalRange = true;
+          player.connect(analyser);
+          this.analysers[group].push(analyser);
+        }
+      }
+
+      Tone.loaded().then(() => {
+        this.setState(() => ({
+          loaded: true,
+        }));
+      });
     }
   };
 
@@ -244,11 +237,11 @@ class Sequencer extends Component {
   animationLooper(canvas) {
     let analyser = new Array(256).fill(0);
 
-    for (var i = 0; i < this.analysers.length; i++) {
-      var group = this.analysers[i];
-      for (var j = 0; j < group.length; j++) {
-        if (this.players[i][j].state == "started") {
-          var analyserTemp = group[j];
+    for (let group in this.analysers) {
+      var sounds = this.analysers[group];
+      for (var soundIndex = 0; soundIndex < sounds.length; soundIndex++) {
+        if (this.players[group][soundIndex].state === "started") {
+          var analyserTemp = sounds[soundIndex];
           var frequency_array_vals = analyserTemp.getValue();
 
           var sum = frequency_array_vals.map(function(num, idx) {
