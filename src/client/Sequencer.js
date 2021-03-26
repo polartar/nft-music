@@ -21,6 +21,11 @@ import { ToneAudioNode } from "tone";
 import axios from "axios";
 import { ethers, utils } from "ethers";
 import Countdown from "react-countdown";
+import config from "./config.json";
+
+import { OpenSeaPort, Network } from "opensea-js";
+import { OrderSide } from "opensea-js/lib/types";
+import * as Web3 from "web3";
 
 const rhythmPads = [[0], [0], [0], [0], [0], [0], [0], [0]];
 
@@ -61,7 +66,7 @@ class Sequencer extends Component {
     provider: null,
     address: null,
     balance: 0,
-    playingPadsCoordinates: [],
+    bids: [],
   };
 
   constructor(props) {
@@ -237,7 +242,7 @@ class Sequencer extends Component {
     this.canvas = createRef();
 
     this.fetchNFT();
-    // this.initWallet();
+    this.initWallet();
   }
 
   initWallet = async () => {
@@ -279,7 +284,23 @@ class Sequencer extends Component {
       },
     });
 
-    this.setState({ nft: nftResponse.data });
+    const orderResponse = await axios.get(
+      config.dev
+        ? "https://rinkeby-api.opensea.io/wyvern/v1/orders"
+        : "https://api.opensea.io/wyvern/v1/orders",
+      {
+        params: {
+          asset_contract_address: nftResponse.data.tokenAddress,
+          token_id: nftResponse.data.tokenId,
+          limit: 50,
+          side: 0,
+          order_by: "eth_price",
+          order_direction: "desc",
+        },
+      }
+    );
+
+    this.setState({ nft: nftResponse.data, bids: orderResponse.data.orders });
   };
 
   componentDidMount() {}
@@ -468,7 +489,13 @@ class Sequencer extends Component {
       nft,
       testAr,
       isLoggedIntoMetamask,
+      bids,
     } = this.state;
+
+    const currentBidAmount =
+      bids.length > 0
+        ? parseFloat(utils.formatEther(bids[0].base_price)).toPrecision(4) / 1
+        : 0;
 
     if (nft && loaded) {
       return (
@@ -477,6 +504,8 @@ class Sequencer extends Component {
             nft={nft}
             open={this.state.openBidModal}
             onClose={this.handleClose}
+            didCompleteBid={this.fetchNFT}
+            currentBidAmount={currentBidAmount}
           />
           <div className="container scrollBar">
             <div className="gridTop">
@@ -522,7 +551,7 @@ class Sequencer extends Component {
                 <div className="pad"></div>
               </div>
               <div className="currentBid">Current Bid</div>
-              <div className="ethAmount">50.00 ETH</div>
+              <div className="ethAmount">{`${currentBidAmount} ETH`}</div>
               <div className="makeOfferText">Make an Offer</div>
               <a href="#album">
                 <IconButton className="expandOuter">
@@ -548,7 +577,7 @@ class Sequencer extends Component {
                   <span className="artistTag">{nft.artistName}</span>
                 </div>
                 <div className="packTitle">{nft.name}</div>
-                <div className="editionInfo">{`Edition: ${nft.edition}/5`}</div>
+                <div className="editionInfo">{`Edition: ${nft.edition}`}</div>
                 <div className="bidInfoWrapper">
                   <div className="bidItem">
                     <div className="bidTitle">Current Bid</div>
@@ -594,37 +623,29 @@ class Sequencer extends Component {
                       <th>Collector</th>
                       <th>Time</th>
                     </tr>
+                    {bids.map((bid) => {
+                      const formattedBidAmount =
+                        parseFloat(
+                          utils.formatEther(bid.base_price)
+                        ).toPrecision(4) / 1;
 
-                    <tr>
-                      <td>50.00 ETH</td>
-                      <td>@NFTBidder</td>
-                      <td>10:22 am</td>
-                    </tr>
-                    <tr>
-                      <td>50.00 ETH</td>
-                      <td>@NFTBidder</td>
-                      <td>10:22 am</td>
-                    </tr>
-                    <tr>
-                      <td>50.00 ETH</td>
-                      <td>@NFTBidder</td>
-                      <td>10:22 am</td>
-                    </tr>
-                    <tr>
-                      <td>50.00 ETH</td>
-                      <td>@NFTBidder</td>
-                      <td>10:22 am</td>
-                    </tr>
-                    <tr>
-                      <td>50.00 ETH</td>
-                      <td>@NFTBidder</td>
-                      <td>10:22 am</td>
-                    </tr>
-                    <tr>
-                      <td>50.00 ETH</td>
-                      <td>@NFTBidder</td>
-                      <td>10:22 am</td>
-                    </tr>
+                      return (
+                        <tr>
+                          <td>{`${formattedBidAmount} ETH`}</td>
+                          <td>{bid.maker.address}</td>
+                          <td>
+                            {`${new Date(
+                              bid.created_date + "Z"
+                            ).toLocaleDateString("en-US", {
+                              month: "numeric",
+                              day: "numeric",
+                            })}, ${new Date(
+                              bid.created_date + "Z"
+                            ).toLocaleTimeString()}`}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </table>
                 </div>
               </div>

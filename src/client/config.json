@@ -1,6 +1,3 @@
 {
-  "domain": "auth.withbanner.com",
-  "clientId": "pNy0h9DUsk4Y6A9fTOooEhV9b3zQRUby",
-  "audience": "https://properties.ngrok.io",
-  "dialpadAPIKey": "VuDa6wXZKX2KvtbQetE2wrEAYGubVpC6LP9XZJmgvLtLPXTRHjg9ruyVQjcrqpH2xWDeYR9h6VzBWTyCsgXf2MmGdGm7KkLdUTEB"
+  "dev": true
 }

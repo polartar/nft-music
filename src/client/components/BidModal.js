@@ -14,6 +14,7 @@ import * as Web3 from "web3";
 import axios from "axios";
 import { OpenSeaPort, Network } from "opensea-js";
 import { WyvernSchemaName } from "opensea-js/lib/types";
+import config from "../config.json";
 
 import Typography from "@material-ui/core/Typography";
 
@@ -53,8 +54,9 @@ const useStyles = makeStyles({
 
 export default function SimpleDialog(props) {
   const classes = useStyles();
-  const { onClose, open, nft } = props;
-  const DEV = true;
+  const { onClose, open, nft, didCompleteBid, currentBidAmount } = props;
+
+  const startingBid = 0.1;
 
   const [seaport, setSeaport] = useState();
   const [wethConversionAmount, setWethConversionAmount] = useState(0);
@@ -63,13 +65,14 @@ export default function SimpleDialog(props) {
   const [ethBalance, setEthBalance] = useState(0);
   const [bidAmount, setBidAmount] = useState(0);
   const [bidCompleted, setBidCompleted] = useState(false);
+  const [awaitingBidSignature, setAwaitingBidSignature] = useState(false);
 
   const initWallet = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const address = await signer.getAddress();
 
-    const wethAddress = DEV
+    const wethAddress = config.dev
       ? "0xc778417e063141139fce010982780140aa0cd5ab"
       : "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
 
@@ -100,14 +103,13 @@ export default function SimpleDialog(props) {
 
     setSeaport(
       new OpenSeaPort(window.ethereum, {
-        networkName: DEV ? Network.Rinkeby : Network.Main,
+        networkName: config.dev ? Network.Rinkeby : Network.Main,
       })
     );
 
     setAddress(await signer.getAddress());
     setEthBalance(await provider.getBalance(address));
     setWethBalance(await contract.balanceOf(address));
-    console.log("called");
   };
 
   useEffect(() => {
@@ -125,31 +127,23 @@ export default function SimpleDialog(props) {
   };
 
   const placeBid = async () => {
-    const asset = await seaport.api.getAsset({
-      tokenAddress: nft.tokenAddress,
-      tokenId: nft.tokenId,
-    });
-
-    console.log({
-      asset: {
-        tokenAddress: nft.tokenAddress,
-        tokenId: nft.tokenId,
-        schemaName: WyvernSchemaName.ERC1155,
-      },
-      accountAddress: address,
-      startAmount: bidAmount,
-    });
-
-    const offer = await seaport.createBuyOrder({
-      asset: {
-        tokenAddress: nft.tokenAddress,
-        tokenId: nft.tokenId,
-        schemaName: WyvernSchemaName.ERC1155,
-      },
-      accountAddress: address,
-      startAmount: bidAmount,
-    });
-    setBidCompleted(true);
+    try {
+      setAwaitingBidSignature(true);
+      const offer = await seaport.createBuyOrder({
+        asset: {
+          tokenAddress: nft.tokenAddress,
+          tokenId: nft.tokenId,
+          schemaName: WyvernSchemaName.ERC1155,
+        },
+        accountAddress: address,
+        startAmount: bidAmount,
+      });
+      setBidCompleted(true);
+      setAwaitingBidSignature(false);
+      didCompleteBid();
+    } catch (error) {
+      setAwaitingBidSignature(false);
+    }
   };
 
   const goBack = () => {
@@ -161,6 +155,12 @@ export default function SimpleDialog(props) {
 
   const formattedWethBalance = parseFloat(utils.formatEther(wethBalance));
   const formattedEthBalance = parseFloat(utils.formatEther(ethBalance));
+
+  const nextMinimumBid = currentBidAmount
+    ? Math.min(currentBidAmount * 1.1, 0.1)
+    : startingBid;
+
+  const nextMinimumBidThreshold = nextMinimumBid.toPrecision(4) / 1;
 
   return (
     <Dialog
@@ -187,21 +187,22 @@ export default function SimpleDialog(props) {
           <div className="checkoutForm">
             <div className="yourBid">
               <div className="yourBid">YOUR BID</div>
-              <div className="totalWallet">{`ETH Balance: ${`${formattedEthBalance.toFixed(
+              <div className="totalWallet">{`ETH Balance: ${`${formattedEthBalance.toPrecision(
                 4
-              )}`}`}</div>
-              <div className="totalWallet">{`WETH Balance: ${`${formattedWethBalance.toFixed(
+              ) / 1}`}`}</div>
+              <div className="totalWallet">{`WETH Balance: ${`${formattedWethBalance.toPrecision(
                 4
-              )}`}`}</div>
+              ) / 1}`}`}</div>
             </div>
             <input
               type="number"
               step="any"
               onChange={(event) => setBidAmount(event.target.value)}
               className="ethInput"
-              placeHolder="0.00"
+              placeHolder={nextMinimumBidThreshold}
             />
             <div className="ethLabel">WETH</div>
+            <div className="totalWallet">{`Minimum Bid: ${nextMinimumBidThreshold}`}</div>
           </div>
         )}
         {bidCompleted && (
@@ -221,26 +222,31 @@ export default function SimpleDialog(props) {
                 Cancel
               </Button>
 
-              {bidAmount > formattedWethBalance && (
-                <Button
-                  variant="outlined"
-                  classes={{ root: classes.continueButton }}
-                  className="continueButton"
-                  onClick={convertETH}
-                >
-                  Convert to WETH
-                </Button>
-              )}
-              {bidAmount <= formattedWethBalance && (
-                <Button
-                  variant="outlined"
-                  classes={{ root: classes.continueButton }}
-                  className="continueButton"
-                  onClick={placeBid}
-                >
-                  Place Bid
-                </Button>
-              )}
+              {bidAmount >= nextMinimumBidThreshold &&
+                bidAmount > formattedWethBalance && (
+                  <Button
+                    variant="outlined"
+                    classes={{ root: classes.continueButton }}
+                    className="continueButton"
+                    onClick={convertETH}
+                  >
+                    Convert to WETH
+                  </Button>
+                )}
+              {bidAmount >= nextMinimumBidThreshold &&
+                bidAmount <= formattedWethBalance && (
+                  <Button
+                    variant="outlined"
+                    classes={{ root: classes.continueButton }}
+                    className="continueButton"
+                    onClick={placeBid}
+                    disabled={awaitingBidSignature}
+                  >
+                    {awaitingBidSignature
+                      ? "Waiting for Metamask signature..."
+                      : "Place Bid"}
+                  </Button>
+                )}
             </React.Fragment>
           )}
           {bidCompleted && (
