@@ -408,14 +408,12 @@ class Sequencer extends Component {
       bids,
       users,
     } = this.state;
-
-    console.log(users);
-
     const currentBidAmount =
       bids.length > 0
         ? parseFloat(utils.formatEther(bids[0].base_price)).toPrecision(4) / 1
         : 0;
 
+    // Set up active sounds limit
     if (nft && loaded) {
       return (
         <React.StrictMode>

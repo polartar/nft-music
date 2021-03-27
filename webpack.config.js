@@ -113,6 +113,7 @@ module.exports = {
       "/api": "http://127.0.0.1:8081",
     },
     historyApiFallback: true,
+    disableHostCheck: true,
   },
   devtool: "cheap-module-source-map",
   plugins: [
