@@ -18,16 +18,19 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import "../css/directory.css";
 import axios from "axios";
-import Countdown from "react-countdown";
+import Countdown, { zeroPad } from "react-countdown";
 
 function Directory() {
-  const [expand, setExpand] = useState(false);
+  const [expand, setExpand] = useState({});
   const [loaded, setLoaded] = useState(false);
   const [featuredNFT, setFeaturedNFT] = useState({});
   const [nfts, setNFTs] = useState([]);
 
-  const expandToggle = () => {
-    setExpand(!expand);
+  const expandToggle = (key) => {
+    const updatedExpand = { ...expand };
+
+    updatedExpand[key] = !updatedExpand[key];
+    setExpand(updatedExpand);
   };
 
   const refreshData = async () => {
@@ -35,13 +38,7 @@ function Directory() {
     const allNFTsResponse = await axios.get("/api/getAllNFTs");
 
     setFeaturedNFT(featuredNFTResponse.data);
-    setNFTs(
-      allNFTsResponse.data.filter(
-        (nft) =>
-          nft.name !== featuredNFTResponse.data.name &&
-          nft.artistName !== featuredNFTResponse.data.artistName
-      )
-    );
+    setNFTs(allNFTsResponse.data);
 
     setLoaded(true);
   };
@@ -52,9 +49,29 @@ function Directory() {
 
   const featuredNFTEditions = nfts.filter(
     (nft) =>
-      nft.name === featuredNFTResponse.data.name &&
-      nft.artistName === featuredNFTResponse.data.artistName
+      nft.name === featuredNFT.name && nft.artistName === featuredNFT.artistName
   );
+
+  const pastNFTs = {};
+
+  nfts.map((nft) => {
+    if (
+      nft.name !== featuredNFT.name ||
+      nft.artistName !== featuredNFT.artistName
+    ) {
+      const key = nft.name + nft.artistName;
+      if (!pastNFTs[key]) {
+        pastNFTs[key] = {
+          name: nft.name,
+          artistName: nft.artistName,
+          imageURL: nft.imageURL,
+          editions: [],
+        };
+      }
+
+      pastNFTs[key].editions.push(nft);
+    }
+  });
 
   return (
     <React.StrictMode>
@@ -125,289 +142,133 @@ function Directory() {
                         return (
                           <div className="bidItemDirectory">
                             <div className="editionInfoDirectory scrollBar current">
-                              <div className="editionNumber">1.</div>{" "}
+                              <div className="editionNumber">{`${nft.edition}.`}</div>
                               <div className="editionOwner">
                                 {nft.ownerName
                                   ? nft.ownerName
                                   : "Currently bidding"}
                               </div>
                             </div>
-                            <div className="editionPriceDirectory">
-                              50.00 ETH
-                            </div>
+                            {nft.saleAmount && (
+                              <div className="editionPriceDirectory">
+                                {nft.saleAmount}
+                              </div>
+                            )}
+                            {!nft.saleAmount && (
+                              <div className="editionPriceDirectory">
+                                <Countdown
+                                  date={nft.bidEndDate}
+                                  renderer={({
+                                    days,
+                                    hours,
+                                    minutes,
+                                    seconds,
+                                    completed,
+                                  }) => {
+                                    if (completed) {
+                                      return <div>Auction Completed</div>;
+                                    } else {
+                                      return (
+                                        <React.Fragment>
+                                          <div>{`${zeroPad(
+                                            days * 24 + hours
+                                          )}:${zeroPad(minutes)}:${zeroPad(
+                                            seconds
+                                          )}`}</div>
+                                        </React.Fragment>
+                                      );
+                                    }
+                                  }}
+                                />
+                              </div>
+                            )}
                           </div>
                         );
                       })}
-                      {/* // <div className="bidItemDirectory">
-                      //   <div className="editionInfoDirectory scrollBar current">
-                      //     <div className="editionNumber">1.</div>{" "}
-                      //     <div className="editionOwner">
-                      //       @kunalchaudharyfe3f2f32f2f
-                      //     </div>
-                      //   </div>
-                      //   <div className="editionPriceDirectory">50.00 ETH</div>
-                      // </div>
-                      // <div className="bidItemDirectory">
-                      //   <div className="editionInfoDirectory scrollBar current">
-                      //     <div className="editionNumber">2.</div>{" "}
-                      //     <div className="editionOwner">@Eric Gao</div>
-                      //   </div>
-                      //   <div className="editionPriceDirectory">53.00 ETH</div>
-                      // </div>
-                      // <div className="bidItemDirectory">
-                      //   <div className="editionInfoDirectory scrollBar current">
-                      //     <div className="editionNumber">3.</div>{" "}
-                      //     <div className="editionOwner">Currently Bidding</div>
-                      //   </div>
-                      //   <div className="editionPriceDirectory">32:10:03s</div>
-                      // </div>
-                      // <div className="bidItemDirectory">
-                      //   <div className="editionInfoDirectory scrollBar current">
-                      //     <div className="editionNumber">3.</div>{" "}
-                      //     <div className="editionOwner">Currently Bidding</div>
-                      //   </div>
-                      //   <div className="editionPriceDirectory">32:10:03s</div>
-                      // </div> */}
                     </div>
                   </div>
                 </div>
                 <div className="artistSummary scrollBar">
-                  Liam O’Neil a.k.a Crusty Cuts is one of the most talented
-                  individuals living in Burlington, VT. With an effortless style
-                  that weaves the worlds of skate, snowboard, and hip hop
-                  cultures, Liam stands in stark contrast to most millennial
-                  DJ’s. Harnessing the authenticity that comes from playing real
-                  vinyl during his live sets and incorporating analog equipment
-                  into his production work, the music he creates under the
-                  Crusty Cuts moniker is an airy reprieve from the heavy digital
-                  sounds coming from most modern speakers. Harnessing the
-                  authenticity that comes from playing real vinyl during his
-                  live sets and incorporating analog equipment into his
-                  production work, the music he creates under the Crusty Cuts
-                  moniker is an airy reprieve from the heavy digital sounds
-                  coming from most modern speakers. Liam O’Neil a.k.a Crusty
-                  Cuts is one of the most talented individuals Liam O’Neil a.k.a
-                  Crusty Cuts is one of the most talented individuals Liam
-                  O’Neil a.k.a Crusty Cuts is one of the most talented
-                  individuals - Matt McGinnis via Hemetic Trading Co.
+                  {featuredNFT.artist ? featuredNFT.artist.description : null}
                 </div>
               </div>
             </div>
             <div className="currentAuctionTitle">PAST AUCTIONS</div>
-            <div className="beatPackItem">
-              <img src={AlbumArt} className="directoryAlbum" />
-              <div className="directoryItemName">COMMODITIES VOL. 2</div>
-              <div className="directoryArtistName">Crusty Cuts</div>
-              <div className="editionSold">
-                <div className="editionSoldText">Editions solid: 5</div>
-                <IconButton onClick={expandToggle}>
-                  <img
-                    src={ExpandMore}
-                    className={expand ? "expandMore expandLess" : "expandMore"}
-                  />
-                </IconButton>
-              </div>
-              {expand && (
-                <React.Fragment>
-                  {" "}
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">1.</div>{" "}
-                      <div className="editionOwner">
-                        @kunalchaudharyfe3f2f32f2f
-                      </div>
-                    </div>
-                    <div className="editionPriceDirectory">50.00 ETH</div>
+            {Object.keys(pastNFTs).map((key) => {
+              const name = pastNFTs[key].name;
+              const artistName = pastNFTs[key].artistName;
+              const imageURL = pastNFTs[key].imageURL;
+              const editions = pastNFTs[key].editions;
+              return (
+                <div className="beatPackItem">
+                  <img src={imageURL} className="directoryAlbum" />
+                  <div className="directoryItemName">{name}</div>
+                  <div className="directoryArtistName">{artistName}</div>
+                  <div className="editionSold">
+                    <div className="editionSoldText">Editions</div>
+                    <IconButton onClick={() => expandToggle(key)}>
+                      <img
+                        src={ExpandMore}
+                        className={
+                          expand ? "expandMore expandLess" : "expandMore"
+                        }
+                      />
+                    </IconButton>
                   </div>
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">2.</div>{" "}
-                      <div className="editionOwner">@Eric Gao</div>
-                    </div>
-                    <div className="editionPriceDirectory">53.00 ETH</div>
-                  </div>
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">3.</div>{" "}
-                      <div className="editionOwner">Currently Bidding</div>
-                    </div>
-                    <div className="editionPriceDirectory">32:10:03s</div>
-                  </div>
-                </React.Fragment>
-              )}
-            </div>
-
-            <div className="beatPackItem">
-              <img src={AlbumArt} className="directoryAlbum" />
-              <div className="directoryItemName">COMMODITIES VOL. 2</div>
-              <div className="directoryArtistName">Crusty Cuts</div>
-              <div className="editionSold">
-                <div className="editionSoldText">Editions solid: 5</div>
-                <IconButton onClick={expandToggle}>
-                  <img
-                    src={ExpandMore}
-                    className={expand ? "expandMore expandLess" : "expandMore"}
-                  />
-                </IconButton>
-              </div>
-              {expand && (
-                <React.Fragment>
-                  {" "}
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">1.</div>{" "}
-                      <div className="editionOwner">
-                        @kunalchaudharyfe3f2f32f2f
-                      </div>
-                    </div>
-                    <div className="editionPriceDirectory">50.00 ETH</div>
-                  </div>
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">2.</div>{" "}
-                      <div className="editionOwner">@Eric Gao</div>
-                    </div>
-                    <div className="editionPriceDirectory">53.00 ETH</div>
-                  </div>
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">3.</div>{" "}
-                      <div className="editionOwner">Currently Bidding</div>
-                    </div>
-                    <div className="editionPriceDirectory">32:10:03s</div>
-                  </div>
-                </React.Fragment>
-              )}
-            </div>
-
-            <div className="beatPackItem">
-              <img src={AlbumArt} className="directoryAlbum" />
-              <div className="directoryItemName">COMMODITIES VOL. 2</div>
-              <div className="directoryArtistName">Crusty Cuts</div>
-              <div className="editionSold">
-                <div className="editionSoldText">Editions solid: 5</div>
-                <IconButton onClick={expandToggle}>
-                  <img
-                    src={ExpandMore}
-                    className={expand ? "expandMore expandLess" : "expandMore"}
-                  />
-                </IconButton>
-              </div>
-              {expand && (
-                <React.Fragment>
-                  {" "}
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">1.</div>{" "}
-                      <div className="editionOwner">
-                        @kunalchaudharyfe3f2f32f2f
-                      </div>
-                    </div>
-                    <div className="editionPriceDirectory">50.00 ETH</div>
-                  </div>
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">2.</div>{" "}
-                      <div className="editionOwner">@Eric Gao</div>
-                    </div>
-                    <div className="editionPriceDirectory">53.00 ETH</div>
-                  </div>
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">3.</div>{" "}
-                      <div className="editionOwner">Currently Bidding</div>
-                    </div>
-                    <div className="editionPriceDirectory">32:10:03s</div>
-                  </div>
-                </React.Fragment>
-              )}
-            </div>
-
-            <div className="beatPackItem">
-              <img src={AlbumArt} className="directoryAlbum" />
-              <div className="directoryItemName">COMMODITIES VOL. 2</div>
-              <div className="directoryArtistName">Crusty Cuts</div>
-              <div className="editionSold">
-                <div className="editionSoldText">Editions solid: 5</div>
-                <IconButton onClick={expandToggle}>
-                  <img
-                    src={ExpandMore}
-                    className={expand ? "expandMore expandLess" : "expandMore"}
-                  />
-                </IconButton>
-              </div>
-              {expand && (
-                <React.Fragment>
-                  {" "}
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">1.</div>{" "}
-                      <div className="editionOwner">
-                        @kunalchaudharyfe3f2f32f2f
-                      </div>
-                    </div>
-                    <div className="editionPriceDirectory">50.00 ETH</div>
-                  </div>
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">2.</div>{" "}
-                      <div className="editionOwner">@Eric Gao</div>
-                    </div>
-                    <div className="editionPriceDirectory">53.00 ETH</div>
-                  </div>
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">3.</div>{" "}
-                      <div className="editionOwner">Currently Bidding</div>
-                    </div>
-                    <div className="editionPriceDirectory">32:10:03s</div>
-                  </div>
-                </React.Fragment>
-              )}
-            </div>
-
-            <div className="beatPackItem">
-              <img src={AlbumArt} className="directoryAlbum" />
-              <div className="directoryItemName">COMMODITIES VOL. 2</div>
-              <div className="directoryArtistName">Crusty Cuts</div>
-              <div className="editionSold">
-                <div className="editionSoldText">Editions solid: 5</div>
-                <IconButton onClick={expandToggle}>
-                  <img
-                    src={ExpandMore}
-                    className={expand ? "expandMore expandLess" : "expandMore"}
-                  />
-                </IconButton>
-              </div>
-              {expand && (
-                <React.Fragment>
-                  {" "}
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">1.</div>{" "}
-                      <div className="editionOwner">
-                        @kunalchaudharyfe3f2f32f2f
-                      </div>
-                    </div>
-                    <div className="editionPriceDirectory">50.00 ETH</div>
-                  </div>
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">2.</div>{" "}
-                      <div className="editionOwner">@Eric Gao</div>
-                    </div>
-                    <div className="editionPriceDirectory">53.00 ETH</div>
-                  </div>
-                  <div className="bidItemDirectory">
-                    <div className="editionInfoDirectory scrollBar">
-                      <div className="editionNumber">3.</div>{" "}
-                      <div className="editionOwner">Currently Bidding</div>
-                    </div>
-                    <div className="editionPriceDirectory">32:10:03s</div>
-                  </div>
-                </React.Fragment>
-              )}
-            </div>
+                  {expand[key] && (
+                    <React.Fragment>
+                      {editions.map((nft) => {
+                        return (
+                          <div className="bidItemDirectory">
+                            <div className="editionInfoDirectory scrollBar current">
+                              <div className="editionNumber">{`${nft.edition}.`}</div>
+                              <div className="editionOwner">
+                                {nft.ownerName
+                                  ? nft.ownerName
+                                  : "Currently bidding"}
+                              </div>
+                            </div>
+                            {nft.saleAmount && (
+                              <div className="editionPriceDirectory">
+                                {`${nft.saleAmount.toFixed(2)} ETH`}
+                              </div>
+                            )}
+                            {!nft.saleAmount && (
+                              <div className="editionPriceDirectory">
+                                <Countdown
+                                  date={nft.bidEndDate}
+                                  renderer={({
+                                    days,
+                                    hours,
+                                    minutes,
+                                    seconds,
+                                    completed,
+                                  }) => {
+                                    if (completed) {
+                                      return <div>Auction Completed</div>;
+                                    } else {
+                                      return (
+                                        <React.Fragment>
+                                          <div>{`${zeroPad(
+                                            days * 24 + hours
+                                          )}:${zeroPad(minutes)}:${zeroPad(
+                                            seconds
+                                          )}`}</div>
+                                        </React.Fragment>
+                                      );
+                                    }
+                                  }}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </React.Fragment>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <Footer white={true} />

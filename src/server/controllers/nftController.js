@@ -1,5 +1,6 @@
 const { MongoClient, ObjectId } = require("mongodb");
 const config = require("../config.json");
+const userController = require("./userController");
 
 // Create a new MongoClient
 const client = new MongoClient(config.mongoDBURL);
@@ -69,6 +70,13 @@ async function getAllNFTs() {
       });
 
       nft.artist = artist;
+
+      if (nft.ownerAddress) {
+        const { response } = await userController.getUser(nft.ownerAddress);
+        if (response) {
+          nft.ownerName = response.name;
+        }
+      }
       nfts.push(nft);
     }
 
