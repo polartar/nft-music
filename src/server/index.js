@@ -8,9 +8,10 @@ const app = express();
 app.use(robots({ UserAgent: "*", Allow: "/" }));
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(express.static("public"));
-app.use("/public", express.static("public"));
 app.use(express.static("dist"));
+app.use(express.static("public"));
+
+app.use("/public", express.static("public"));
 
 app.enable("trust proxy");
 
@@ -73,7 +74,6 @@ app.get("/api/getNFTsForUser", async (req, res) => {
 });
 
 app.get("*", (req, res) => {
-  console.log("pls");
   res.sendFile(path.resolve("./dist/index.html"));
 });
 
