@@ -127,7 +127,7 @@ module.exports = {
         NODE_ENV: JSON.stringify("production"),
       },
     }),
-    // new CompressionPlugin(),
+    new CompressionPlugin(),
     new CaseSensitivePathsPlugin(),
   ],
 };
