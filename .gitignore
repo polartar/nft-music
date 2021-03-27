@@ -40,6 +40,8 @@ jspm_packages/
 # TypeScript v1 declaration files
 typings/
 
+src/client/config.json
+
 # Optional npm cache directory
 .npm
 

@@ -9,7 +9,7 @@ app.use(robots({ UserAgent: "*", Allow: "/" }));
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(express.static("dist"));
-app.use(express.static("public"));
+app.use(express.static(__dirname + "/public"));
 
 app.enable("trust proxy");
 
