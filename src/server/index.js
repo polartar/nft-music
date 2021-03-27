@@ -21,6 +21,14 @@ app.get("/api/getUser", async (req, res) => {
   res.status(status).send(response);
 });
 
+app.get("/api/getUsers", async (req, res) => {
+  const { status, response } = await userController.getUsers(
+    req.query.addresses
+  );
+
+  res.status(status).send(response);
+});
+
 app.post("/api/updateUser", async (req, res) => {
   const { status, response } = await userController.updateUser(
     req.body.address,
@@ -50,6 +58,14 @@ app.get("/api/getNFT", async (req, res) => {
 
 app.get("/api/getFeaturedNFT", async (req, res) => {
   const { status, response } = await nftController.getFeaturedNFT();
+
+  res.status(status).send(response);
+});
+
+app.get("/api/getNFTsForUser", async (req, res) => {
+  const { status, response } = await nftController.getNFTsForUser(
+    req.query.address
+  );
 
   res.status(status).send(response);
 });

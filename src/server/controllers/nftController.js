@@ -22,6 +22,12 @@ async function getFeaturedNFT() {
       _id: ObjectId(settings.featuredNFTID),
     });
 
+    const artist = await db.collection("artists").findOne({
+      name: featuredNFT.artistName,
+    });
+
+    featuredNFT.artist = artist;
+
     return {
       status: 200,
       response: featuredNFT,
@@ -90,8 +96,32 @@ async function getAllNFTs() {
   }
 }
 
+async function getNFTsForUser(address) {
+  try {
+    const nftQuery = await db.collection("NFTs").find({
+      ownerAddress: address.toLowerCase(),
+    });
+
+    const nfts = [];
+    while (await nftQuery.hasNext()) {
+      const nft = await nftQuery.next();
+
+      nfts.push(nft);
+    }
+
+    return {
+      status: 200,
+      response: nfts,
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
+
 module.exports = {
   getNFT,
   getFeaturedNFT,
   getAllNFTs,
+  getNFTsForUser,
 };

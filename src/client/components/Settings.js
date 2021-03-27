@@ -30,6 +30,7 @@ function Settings() {
   const [loaded, setLoaded] = useState(false);
   const [displayName, setDisplayName] = useState();
   const [email, setEmail] = useState();
+  const [feedback, setFeedback] = useState("");
 
   const refreshData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -62,14 +63,22 @@ function Settings() {
   }, [loaded]);
 
   const updateUser = async () => {
-    const signature = await signer.signMessage(address);
+    try {
+      const signature = await signer.signMessage(address);
 
-    const response = await axios.post("/api/updateUser", {
-      address,
-      signature,
-      displayName,
-      email,
-    });
+      const response = await axios.post("/api/updateUser", {
+        address,
+        signature,
+        displayName,
+        email,
+      });
+
+      setFeedback("Successfully updated your profile!");
+    } catch (error) {
+      if (error.response) {
+        setFeedback(error.response.data);
+      }
+    }
   };
 
   return (
@@ -100,6 +109,7 @@ function Settings() {
                 Update
               </Button>
             </div>
+            {feedback}
           </div>
         )}
         {!isLoggedIntoMetamask && (

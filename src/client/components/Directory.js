@@ -19,12 +19,14 @@ import Footer from "./Footer";
 import "../css/directory.css";
 import axios from "axios";
 import Countdown, { zeroPad } from "react-countdown";
+import { ethers, utils } from "ethers";
 
 function Directory() {
   const [expand, setExpand] = useState({});
   const [loaded, setLoaded] = useState(false);
   const [featuredNFT, setFeaturedNFT] = useState({});
   const [nfts, setNFTs] = useState([]);
+  const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
 
   const expandToggle = (key) => {
     const updatedExpand = { ...expand };
@@ -41,6 +43,13 @@ function Directory() {
     setNFTs(allNFTsResponse.data);
 
     setLoaded(true);
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const accounts = await provider.listAccounts();
+
+    if (accounts.length > 0) {
+      setIsLoggedIntoMetamask(true);
+    }
   };
 
   useEffect(() => {
@@ -77,21 +86,29 @@ function Directory() {
     <React.StrictMode>
       {loaded && (
         <div className="containerDirectory scrollBar">
-          <Navbar white={true} />
+          <Navbar white={true} didConnectWallet={refreshData} />
           <div className="directoryBody">
             <div className="currentAuctionWrapper">
               <div className="currentAuctionTitle">CURRENT AUCTION</div>
               <div className="topPanelWrapper">
                 <div className="currentAuctionInfo">
-                  <img
-                    src={featuredNFT.imageURL}
-                    className="currentAuctionPic"
-                  />
+                  <a href="/">
+                    <img
+                      src={featuredNFT.imageURL}
+                      className="currentAuctionPic"
+                    />
+                  </a>
                   <div className="currentAuctionDetailsWrapper">
-                    <div className="currentAuctionPack">{featuredNFT.name}</div>
-                    <div className="currentAuctionArtist">
-                      {featuredNFT.artistName}
-                    </div>
+                    <a href="/">
+                      <div className="currentAuctionPack">
+                        {featuredNFT.name}
+                      </div>
+                    </a>
+                    <a href="/">
+                      <div className="currentAuctionArtist">
+                        {featuredNFT.artistName}
+                      </div>
+                    </a>
                     <div className="auctionExtraInfo">
                       <div className="currentAuctionInfoItem">
                         <div className="currentAuctionInfoItemTitle">
@@ -140,49 +157,53 @@ function Directory() {
                       <div className="currentAuctionEditionTitle">EDITIONS</div>
                       {featuredNFTEditions.map((nft) => {
                         return (
-                          <div className="bidItemDirectory">
-                            <div className="editionInfoDirectory scrollBar current">
-                              <div className="editionNumber">{`${nft.edition}.`}</div>
-                              <div className="editionOwner">
-                                {nft.ownerName
-                                  ? nft.ownerName
-                                  : "Currently bidding"}
+                          <a
+                            href={`/${nft.artistName}/${nft.name}/${nft.edition}`}
+                          >
+                            <div className="bidItemDirectory">
+                              <div className="editionInfoDirectory scrollBar current">
+                                <div className="editionNumber">{`${nft.edition}.`}</div>
+                                <div className="editionOwner">
+                                  {nft.ownerName
+                                    ? nft.ownerName
+                                    : "Currently bidding"}
+                                </div>
                               </div>
+                              {nft.saleAmount && (
+                                <div className="editionPriceDirectory">
+                                  {nft.saleAmount}
+                                </div>
+                              )}
+                              {!nft.saleAmount && (
+                                <div className="editionPriceDirectory">
+                                  <Countdown
+                                    date={nft.bidEndDate}
+                                    renderer={({
+                                      days,
+                                      hours,
+                                      minutes,
+                                      seconds,
+                                      completed,
+                                    }) => {
+                                      if (completed) {
+                                        return <div>Auction Completed</div>;
+                                      } else {
+                                        return (
+                                          <React.Fragment>
+                                            <div>{`${zeroPad(
+                                              days * 24 + hours
+                                            )}:${zeroPad(minutes)}:${zeroPad(
+                                              seconds
+                                            )}`}</div>
+                                          </React.Fragment>
+                                        );
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              )}
                             </div>
-                            {nft.saleAmount && (
-                              <div className="editionPriceDirectory">
-                                {nft.saleAmount}
-                              </div>
-                            )}
-                            {!nft.saleAmount && (
-                              <div className="editionPriceDirectory">
-                                <Countdown
-                                  date={nft.bidEndDate}
-                                  renderer={({
-                                    days,
-                                    hours,
-                                    minutes,
-                                    seconds,
-                                    completed,
-                                  }) => {
-                                    if (completed) {
-                                      return <div>Auction Completed</div>;
-                                    } else {
-                                      return (
-                                        <React.Fragment>
-                                          <div>{`${zeroPad(
-                                            days * 24 + hours
-                                          )}:${zeroPad(minutes)}:${zeroPad(
-                                            seconds
-                                          )}`}</div>
-                                        </React.Fragment>
-                                      );
-                                    }
-                                  }}
-                                />
-                              </div>
-                            )}
-                          </div>
+                          </a>
                         );
                       })}
                     </div>
@@ -219,49 +240,51 @@ function Directory() {
                     <React.Fragment>
                       {editions.map((nft) => {
                         return (
-                          <div className="bidItemDirectory">
-                            <div className="editionInfoDirectory scrollBar current">
-                              <div className="editionNumber">{`${nft.edition}.`}</div>
-                              <div className="editionOwner">
-                                {nft.ownerName
-                                  ? nft.ownerName
-                                  : "Currently bidding"}
+                          <a href={`/${artistName}/${name}/${nft.edition}`}>
+                            <div className="bidItemDirectory">
+                              <div className="editionInfoDirectory scrollBar current">
+                                <div className="editionNumber">{`${nft.edition}.`}</div>
+                                <div className="editionOwner">
+                                  {nft.ownerName
+                                    ? nft.ownerName
+                                    : "Currently bidding"}
+                                </div>
                               </div>
+                              {nft.saleAmount && (
+                                <div className="editionPriceDirectory">
+                                  {`${nft.saleAmount.toFixed(2)} ETH`}
+                                </div>
+                              )}
+                              {!nft.saleAmount && (
+                                <div className="editionPriceDirectory">
+                                  <Countdown
+                                    date={nft.bidEndDate}
+                                    renderer={({
+                                      days,
+                                      hours,
+                                      minutes,
+                                      seconds,
+                                      completed,
+                                    }) => {
+                                      if (completed) {
+                                        return <div>Auction Completed</div>;
+                                      } else {
+                                        return (
+                                          <React.Fragment>
+                                            <div>{`${zeroPad(
+                                              days * 24 + hours
+                                            )}:${zeroPad(minutes)}:${zeroPad(
+                                              seconds
+                                            )}`}</div>
+                                          </React.Fragment>
+                                        );
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              )}
                             </div>
-                            {nft.saleAmount && (
-                              <div className="editionPriceDirectory">
-                                {`${nft.saleAmount.toFixed(2)} ETH`}
-                              </div>
-                            )}
-                            {!nft.saleAmount && (
-                              <div className="editionPriceDirectory">
-                                <Countdown
-                                  date={nft.bidEndDate}
-                                  renderer={({
-                                    days,
-                                    hours,
-                                    minutes,
-                                    seconds,
-                                    completed,
-                                  }) => {
-                                    if (completed) {
-                                      return <div>Auction Completed</div>;
-                                    } else {
-                                      return (
-                                        <React.Fragment>
-                                          <div>{`${zeroPad(
-                                            days * 24 + hours
-                                          )}:${zeroPad(minutes)}:${zeroPad(
-                                            seconds
-                                          )}`}</div>
-                                        </React.Fragment>
-                                      );
-                                    }
-                                  }}
-                                />
-                              </div>
-                            )}
-                          </div>
+                          </a>
                         );
                       })}
                     </React.Fragment>
@@ -271,7 +294,10 @@ function Directory() {
             })}
           </div>
 
-          <Footer white={true} />
+          <Footer
+            white={true}
+            loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+          />
         </div>
       )}
     </React.StrictMode>

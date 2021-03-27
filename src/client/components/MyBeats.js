@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unused-state, react/no-array-index-key */
-import React, { Component, createRef } from "react";
+import React, { Component, createRef, useState, useEffect } from "react";
 import cx from "classnames";
 
 // import Canvas from './Canvas';
@@ -18,80 +18,96 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import "../css/directory.css";
 
-class Sequencer extends Component {
-  state = { expand: false };
+import axios from "axios";
+import { ethers, utils } from "ethers";
 
-  constructor(props) {
-    super(props);
-  }
+function Collection(props) {
+  const [loaded, setLoaded] = useState(false);
+  const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
+  const [nfts, setNFTs] = useState([]);
+  const [displayName, setDisplayName] = useState();
 
-  expandToggle = () => {
-    this.setState({
-      expand: !this.state.expand,
+  const refreshData = async () => {
+    const nftsResponse = await axios.get("/api/getNFTsForUser", {
+      params: {
+        address: props.match.params.address,
+      },
     });
+
+    setNFTs(nftsResponse.data);
+
+    const userResponse = await axios.get("/api/getUser", {
+      params: {
+        address: props.match.params.address,
+      },
+    });
+
+    if (userResponse.data.name) {
+      setDisplayName(userResponse.data.name);
+    } else {
+      setDisplayName(props.match.params.address);
+    }
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const accounts = await provider.listAccounts();
+
+    if (accounts.length > 0) {
+      setIsLoggedIntoMetamask(true);
+    }
+
+    setLoaded(true);
   };
 
-  render() {
-    return (
-      <React.StrictMode>
+  useEffect(() => {
+    refreshData();
+  }, [loaded]);
+
+  console.log(nfts);
+
+  return (
+    <React.StrictMode>
+      {loaded && (
         <div className="containerDirectory scrollBar">
-          <Navbar white={true} />
+          <Navbar white={true} didConnectWallet={refreshData} />
           <div className="directoryBody">
-            <div className="currentAuctionTitle">MY BEAT PACKS</div>
-            {/* <div className="currentAuctionTitle">
-              You currently have no Beat Packs
-            </div> */}
-            <div className="beatPackItem">
-              <img src={AlbumArt} className="directoryAlbum" />
-              <div className="directoryItemName">COMMODITIES VOL. 2</div>
-              <div className="directoryArtistName">Crusty Cuts</div>
-              <div className="editionSold">
-                <div className="editionSoldText">Edition: 01/100</div>
+            <div className="currentAuctionTitle">{`${displayName}'s Collection`}</div>
+            {nfts.length === 0 && (
+              <div className="currentAuctionTitle">
+                This user currently has no stem packs in their collection.
               </div>
-              <div className="editionSold boughtFor">
-                <div className="editionSoldText">Bought for: 1.0832 ETH</div>
-              </div>
-            </div>
-            <div className="beatPackItem">
-              <img src={AlbumArt} className="directoryAlbum" />
-              <div className="directoryItemName">COMMODITIES VOL. 2</div>
-              <div className="directoryArtistName">Crusty Cuts</div>
-              <div className="editionSold">
-                <div className="editionSoldText">Edition: 01/100</div>
-              </div>
-              <div className="editionSold boughtFor">
-                <div className="editionSoldText">Bought for: 1.0832 ETH</div>
-              </div>
-            </div>
-            <div className="beatPackItem">
-              <img src={AlbumArt} className="directoryAlbum" />
-              <div className="directoryItemName">COMMODITIES VOL. 2</div>
-              <div className="directoryArtistName">Crusty Cuts</div>
-              <div className="editionSold">
-                <div className="editionSoldText">Edition: 01/100</div>
-              </div>
-              <div className="editionSold boughtFor">
-                <div className="editionSoldText">Bought for: 1.0832 ETH</div>
-              </div>
-            </div>
-            <div className="beatPackItem">
-              <img src={AlbumArt} className="directoryAlbum" />
-              <div className="directoryItemName">COMMODITIES VOL. 2</div>
-              <div className="directoryArtistName">Crusty Cuts</div>
-              <div className="editionSold">
-                <div className="editionSoldText">Edition: 01/100</div>
-              </div>
-              <div className="editionSold boughtFor">
-                <div className="editionSoldText">Bought for: 1.0832 ETH</div>
-              </div>
-            </div>
+            )}
+            {nfts.length > 0 &&
+              nfts.map((nft) => {
+                return (
+                  <a href={`/${nft.artistName}/${nft.name}/${nft.edition}`}>
+                    <div className="beatPackItem">
+                      <img src={nft.imageURL} className="directoryAlbum" />
+                      <div className="directoryItemName">{nft.name}</div>
+                      <div className="directoryArtistName">
+                        {nft.artistName}
+                      </div>
+                      <div className="editionSold">
+                        <div className="editionSoldText">{`Edition: ${nft.edition}`}</div>
+                      </div>
+                      <div className="editionSold boughtFor">
+                        <div className="editionSoldText">{`Bought for: ${nft.saleAmount.toFixed(
+                          2
+                        )} ETH`}</div>
+                      </div>
+                    </div>
+                  </a>
+                );
+              })}
           </div>
 
-          <Footer white={true} />
+          <Footer
+            white={true}
+            loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+          />
         </div>
-      </React.StrictMode>
-    );
-  }
+      )}
+    </React.StrictMode>
+  );
 }
 
-export default Sequencer;
+export default Collection;

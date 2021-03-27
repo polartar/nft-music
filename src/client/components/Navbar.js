@@ -91,10 +91,12 @@ export default function Navbar(props) {
           <div
             className={white ? "navBar scrollBar white" : "navBar scrollBar"}
           >
-            <img
-              src={white ? SecretGardenBlack : SecretGardenLogo}
-              className="logo"
-            />
+            <a href="/">
+              <img
+                src={white ? SecretGardenBlack : SecretGardenLogo}
+                className="logo"
+              />
+            </a>
             <div className={white ? "timer white" : "timer"}>
               <Countdown
                 date={nft.bidEndDate}

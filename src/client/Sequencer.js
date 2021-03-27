@@ -61,6 +61,7 @@ class Sequencer extends Component {
     address: null,
     balance: 0,
     bids: [],
+    users: {},
   };
 
   constructor(props) {
@@ -127,13 +128,14 @@ class Sequencer extends Component {
   };
 
   fetchNFT = async () => {
-    const nftResponse = await axios.get("/api/getNFT", {
-      params: {
-        artistName: "Robotaki",
-        nftName: "The Grand Mirage",
-        edition: 1,
-      },
-    });
+    let nftResponse;
+    if (this.props.match) {
+      nftResponse = await axios.get("/api/getNFT", {
+        params: this.props.match.params,
+      });
+    } else {
+      nftResponse = await axios.get("/api/getFeaturedNFT");
+    }
 
     const orderResponse = await axios.get(
       config.dev
@@ -151,7 +153,25 @@ class Sequencer extends Component {
       }
     );
 
-    this.setState({ nft: nftResponse.data, bids: orderResponse.data.orders });
+    const addresses = orderResponse.data.orders.map((order) => {
+      return order.maker.address.toLowerCase();
+    });
+
+    const usersResponse = await axios.get("/api/getUsers", {
+      params: {
+        addresses,
+      },
+    });
+
+    this.setState({
+      nft: nftResponse.data,
+      bids: orderResponse.data.orders,
+      users: usersResponse.data,
+    });
+
+    const pathRoot = config.dev
+      ? "https://localhost:3001"
+      : "https://secretgarden.fm";
 
     // Initial pads setup
     if (!Object.keys(this.players).length) {
@@ -163,7 +183,7 @@ class Sequencer extends Component {
 
         filePaths.forEach((filePath) => {
           this.players[group].push(
-            new Tone.Player(`./public/${filePath}`).toDestination()
+            new Tone.Player(`${pathRoot}/public/${filePath}`).toDestination()
           );
           pads[group].push(0);
         });
@@ -386,7 +406,10 @@ class Sequencer extends Component {
       testAr,
       isLoggedIntoMetamask,
       bids,
+      users,
     } = this.state;
+
+    console.log(users);
 
     const currentBidAmount =
       bids.length > 0
@@ -423,6 +446,7 @@ class Sequencer extends Component {
 
             <Navbar
               white={false}
+              didConnectWallet={this.initWallet}
               loggedIntoMetamaskOverride={isLoggedIntoMetamask}
             />
             <div className="bodyWrapper scrollBar">
@@ -460,7 +484,10 @@ class Sequencer extends Component {
               </div>
             </div>
 
-            <Footer white={false} />
+            <Footer
+              white={false}
+              loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+            />
           </div>
           <div className="container2 scrollBar">
             <div className="albumWrapper">
@@ -529,7 +556,11 @@ class Sequencer extends Component {
                         <tr>
                           <td>{`${formattedBidAmount} ETH`}</td>
                           <td>
-                            <div className="makerAddr">{bid.maker.address}</div>
+                            <div className="makerAddr">
+                              {users[bid.maker.address]
+                                ? users[bid.maker.address].name
+                                : bid.maker.address}
+                            </div>
                           </td>
                           <td>
                             {`${new Date(

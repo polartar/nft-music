@@ -24,6 +24,11 @@ export default function App(props) {
             <Route exact path="/">
               <Sequencer />
             </Route>
+            <Route
+              render={(props) => <Sequencer {...props} />}
+              exact
+              path="/:artistName/:nftName/:edition"
+            />
             <Route exact path="/profile">
               <Settings />
             </Route>
@@ -33,9 +38,11 @@ export default function App(props) {
             <Route exact path="/artists">
               <ArtistsDirectory />
             </Route>
-            <Route exact path="/mybeats">
-              <MyBeats />
-            </Route>
+            <Route
+              render={(props) => <MyBeats {...props} />}
+              exact
+              path="/collection/:address"
+            />
           </Switch>
         </Suspense>
       </React.Fragment>
