@@ -170,7 +170,7 @@ class Sequencer extends Component {
     });
 
     const pathRoot = config.dev
-      ? "https://localhost:3001"
+      ? "http://165.22.6.241"
       : "https://secretgarden.fm";
 
     // Initial pads setup
