@@ -62,6 +62,7 @@ class Sequencer extends Component {
     balance: 0,
     bids: [],
     users: {},
+    queue: {},
   };
 
   constructor(props) {
@@ -366,6 +367,7 @@ class Sequencer extends Component {
       (state) => {
         const clonedPads = { ...state.pads };
         const padState = clonedPads[group][pad];
+        const updatedQueue = { ...state.queue };
 
         let numPads = this.state.totalSoundsPlaying;
 
@@ -449,21 +451,31 @@ class Sequencer extends Component {
               <div className="beatPackTitle">{nft.name}</div>
               <div className="artistName">{nft.artistName}</div>
               <div className="gridOuter">
-                {Object.keys(pads).map((group) => (
-                  <React.Fragment>
-                    {pads[group].map((pad, i) => (
-                      <div
-                        key={`pad-group-${i}`}
-                        className={cx("pad", {
-                          on: pad === 1,
-                        })}
-                        onClick={() => {
-                          this.togglePad(group, i);
-                        }}
-                      />
-                    ))}
-                  </React.Fragment>
-                ))}
+                {Object.keys(pads).map((group) => {
+                  return (
+                    <React.Fragment>
+                      {pads[group].map((pad, i) => {
+                        const on = this.players[group][i].state === "started";
+                        const blinkClass =
+                          pad === 1 &&
+                          this.players[group][i].state !== "started"
+                            ? "blink"
+                            : "";
+                        return (
+                          <div
+                            key={`pad-group-${i}`}
+                            className={`${cx("pad", {
+                              on,
+                            })} ${blinkClass}`}
+                            onClick={() => {
+                              this.togglePad(group, i);
+                            }}
+                          />
+                        );
+                      })}
+                    </React.Fragment>
+                  );
+                })}
                 <div className="pad"></div>
               </div>
               <div className="currentBid">Current Bid</div>
