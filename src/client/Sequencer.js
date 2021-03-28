@@ -75,19 +75,18 @@ class Sequencer extends Component {
     Tone.Transport.bpm.value = this.state.bpm;
     Tone.Transport.scheduleRepeat((time) => {
       if (this.state.step === 0) {
-        const toBePlayed = [];
-        Object.keys(this.state.pads).forEach((group) => {
-          this.state.pads[group].forEach((enabled, soundIndex) => {
-            if (enabled) {
-              toBePlayed.push([group, soundIndex]);
-            }
-          });
-        });
-
-        toBePlayed.forEach((coordinate) => {
-          this.players[coordinate[0]][coordinate[1]].start();
+        console.log(this.state.queue);
+        Object.keys(this.state.queue).forEach((group) => {
+          this.state.queue[group]
+            .slice(-this.state.nft.activeSoundLimits[group])
+            .forEach((soundIndex) => {
+              this.players[group][soundIndex].start();
+            });
         });
       }
+
+      // Reset all visual pads
+
       this.setState((state) => ({
         step: (state.step + 1) % state.steps,
       }));
@@ -175,10 +174,12 @@ class Sequencer extends Component {
     // Initial pads setup
     if (!Object.keys(this.players).length) {
       const pads = {};
+      const queue = {};
       Object.keys(nftResponse.data.filePaths).map((group) => {
         const filePaths = nftResponse.data.filePaths[group];
         this.players[group] = [];
         pads[group] = [];
+        queue[group] = [];
 
         filePaths.forEach((filePath) => {
           this.players[group].push(
@@ -188,7 +189,7 @@ class Sequencer extends Component {
         });
       });
 
-      this.setState({ pads });
+      this.setState({ pads, queue });
 
       this.analysers = {};
 
@@ -376,8 +377,10 @@ class Sequencer extends Component {
         if (padState === 1) {
           this.players[group][pad].stop();
         }
+
         if (padState == 0) {
           numPads += 1;
+          updatedQueue[group].push(pad);
         } else {
           numPads -= 1;
         }
@@ -387,6 +390,7 @@ class Sequencer extends Component {
         return {
           pads: clonedPads,
           totalSoundsPlaying: numPads,
+          queue: updatedQueue,
         };
       },
       () => {
