@@ -22,10 +22,7 @@ import axios from "axios";
 import { ethers, utils } from "ethers";
 import Countdown from "react-countdown";
 import config from "./config.json";
-
-import { OpenSeaPort, Network } from "opensea-js";
-import { OrderSide } from "opensea-js/lib/types";
-import * as Web3 from "web3";
+import clone from "clone";
 
 const rhythmPads = [[0], [0], [0], [0], [0], [0], [0], [0]];
 
@@ -45,15 +42,12 @@ class Sequencer extends Component {
     type: "sine",
     pads: {},
     bpm: 110,
-    release: 100,
     step: 0,
     steps: 8,
     playing: false,
-    octave: 4,
     delay: false,
     loaded: false,
     totalSoundsPlaying: 0,
-    testAr: new Array(36).fill("hi"),
     openBidModal: false,
     nft: null,
     isLoggedIntoMetamask: false,
@@ -75,17 +69,22 @@ class Sequencer extends Component {
     Tone.Transport.bpm.value = this.state.bpm;
     Tone.Transport.scheduleRepeat((time) => {
       if (this.state.step === 0) {
-        console.log(this.state.queue);
+        const updatedPads = {};
         Object.keys(this.state.queue).forEach((group) => {
+          updatedPads[group] = Array.from(
+            { length: this.state.pads[group].length },
+            () => 0
+          );
           this.state.queue[group]
             .slice(-this.state.nft.activeSoundLimits[group])
             .forEach((soundIndex) => {
               this.players[group][soundIndex].start();
+              updatedPads[group][soundIndex] = 1;
             });
         });
-      }
 
-      // Reset all visual pads
+        this.setState({ pads: updatedPads });
+      }
 
       this.setState((state) => ({
         step: (state.step + 1) % state.steps,
@@ -376,6 +375,9 @@ class Sequencer extends Component {
         // clonedPads[group] = [0, 0, 0, 0, 0, 0, 0, 0]
         if (padState === 1) {
           this.players[group][pad].stop();
+          updatedQueue[group] = updatedQueue[group].filter(
+            (soundIndex) => soundIndex !== pad
+          );
         }
 
         if (padState == 0) {
@@ -407,7 +409,6 @@ class Sequencer extends Component {
       notes,
       loaded,
       nft,
-      testAr,
       isLoggedIntoMetamask,
       bids,
       users,
@@ -568,11 +569,13 @@ class Sequencer extends Component {
                         <tr>
                           <td>{`${formattedBidAmount} ETH`}</td>
                           <td>
-                            <div className="makerAddr">
-                              {users[bid.maker.address]
-                                ? users[bid.maker.address].name
-                                : bid.maker.address}
-                            </div>
+                            <a href={`/collection/${bid.maker.address}`}>
+                              <div className="makerAddr">
+                                {users[bid.maker.address]
+                                  ? users[bid.maker.address].name
+                                  : bid.maker.address}
+                              </div>
+                            </a>
                           </td>
                           <td>
                             {`${new Date(

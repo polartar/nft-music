@@ -19,6 +19,7 @@
     "babel-polyfill": "^6.26.0",
     "body-parser": "^1.19.0",
     "classnames": "^2.2.6",
+    "clone": "^2.1.2",
     "cors": "^2.8.5",
     "ethers": "^5.0.32",
     "express": "^4.17.1",
