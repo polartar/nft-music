@@ -104,7 +104,7 @@ function Settings() {
                 className="settingsInput"
               />
             </div>
-            <div className="settingsItem">
+            <div className="settingsItem buttonEnd">
               <Button onClick={updateUser} className="updateButton">
                 Update
               </Button>

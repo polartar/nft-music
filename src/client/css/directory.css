@@ -119,6 +119,9 @@
   margin-bottom: 100px;
   width: 100%;
 }
+.beatPackItem > a {
+  width: 100%;
+}
 .currentAuctionInfo {
   display: flex;
   flex-direction: row;
@@ -131,7 +134,7 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  margin-left: 20px;
+  margin-left: 40px;
   width: 100%;
 }
 .currentAuctionPack {

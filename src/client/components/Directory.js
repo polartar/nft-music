@@ -148,7 +148,7 @@ function Directory() {
                           EDITION
                         </div>
                         <div className="currentAuctionInfoItemText">
-                          {featuredNFT.edition}
+                          <div className="bidInfo">{featuredNFT.edition}</div>
                         </div>
                       </div>
                     </div>
@@ -231,7 +231,9 @@ function Directory() {
                       <img
                         src={ExpandMore}
                         className={
-                          expand ? "expandMore expandLess" : "expandMore"
+                          updatedExpand[key]
+                            ? "expandMore expandLess"
+                            : "expandMore"
                         }
                       />
                     </IconButton>
