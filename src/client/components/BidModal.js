@@ -22,6 +22,7 @@ const useStyles = makeStyles({
   dialog: {
     width: "494px",
     maxWidth: "100%",
+    transform: "scale(.8)",
     background: "#1f1f1f",
     border: "1px solid #FFFFFF",
     boxShadow: "0 0 40px 20px rgba(255,255,255,0.12)",

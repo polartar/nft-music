@@ -114,8 +114,8 @@ input[type="number"] {
 }
 
 .artistName {
-  font-size: 24px;
-  line-height: 28px;
+  font-size: 20px;
+  line-height: 24px;
   width: 100%;
   text-align: center;
   font-weight: 500;
@@ -124,13 +124,12 @@ input[type="number"] {
   font-family: "Rubik", sans-serif;
 }
 .beatPackTitle {
-  font-size: 30px;
-  line-height: 35px;
+  font-size: 25px;
+  line-height: 30px;
   width: 100%;
   text-align: center;
   color: white;
   font-family: "Rubik", sans-serif;
-  margin-top: -50px;
 }
 
 .container {
@@ -152,7 +151,7 @@ input[type="number"] {
   background: #1f1f1f;
 }
 .expand {
-  width: 30px;
+  width: 20px;
 }
 .expandOuter {
   width: 50px !important;
@@ -179,18 +178,18 @@ input[type="number"] {
   transform-origin: 50% 50%;
   position: relative;
   left: 185px;
-  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.9);
-  transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.9);
-  margin-top: 260px;
+  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.73);
+  transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.73);
+  margin-top: 210px;
   z-index: 3000;
 }
 canvas {
   // border-bottom: solid 1px white;
-  margin-bottom: -2px;
+  margin-bottom: -8px;
 }
 .currentBid {
-  font-size: 24px;
-  margin-top: -70px;
+  font-size: 20px;
+  margin-top: -130px;
   width: 100%;
   text-align: center;
   color: white;
@@ -199,7 +198,7 @@ canvas {
 }
 .ethAmount {
   margin-top: 10px;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 300;
   width: 100%;
   text-align: center;
@@ -379,7 +378,10 @@ canvas {
     background: hsla(100%, 100%, 50%, 1);
   }
 }
-
+a {
+  text-decoration: none;
+  color: inherit;
+}
 footer {
   margin-top: 2em;
   color: rgba(white, 0.6);
@@ -403,6 +405,7 @@ footer {
   width: 100%;
   align-items: flex-start;
   justify-content: center;
+  transform: scale(0.8);
 }
 .albumPicWrapper {
   display: flex;
@@ -544,7 +547,7 @@ footer {
 }
 .makeOfferText {
   width: 100%;
-  font-size: 12px;
+  font-size: 10px;
   color: #999999;
   margin-top: 15px;
   z-index: 3000;

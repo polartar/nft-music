@@ -22,7 +22,7 @@
   height: 0px;
 }
 .logo {
-  width: 170px;
+  width: 140px;
   height: auto;
 }
 .signedInWrapper {
@@ -62,12 +62,13 @@
   justify-content: space-between;
   padding-left: 15px;
   padding-right: 15px;
+  transform: scale(0.8);
 }
 .userName {
   font-family: "Rubik", sans-serif;
-  font-size: 14px;
+  font-size: 12px;
   color: white;
-  margin-left: 25px;
+  margin-left: 5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -98,8 +99,8 @@
   margin-top: 80px;
 }
 .time {
-  font-size: 24px;
-  line-height: 28px;
+  font-size: 20px;
+  line-height: 24px;
   color: white;
 }
 .nextText {
