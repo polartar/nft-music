@@ -238,20 +238,23 @@ class Sequencer extends Component {
       Tone.Transport.scheduleRepeat((time) => {
         if (this.state.step === 0) {
           const updatedPads = {};
+          const updatedQueue = {};
           Object.keys(this.state.queue).forEach((group) => {
             updatedPads[group] = Array.from(
               { length: this.state.pads[group].length },
               () => 0
             );
-            this.state.queue[group]
-              .slice(-this.state.nft.activeSoundLimits[group])
-              .forEach((soundIndex) => {
-                this.players[group][soundIndex].start();
-                updatedPads[group][soundIndex] = 1;
-              });
+
+            updatedQueue[group] = this.state.queue[group].slice(
+              -this.state.nft.activeSoundLimits[group]
+            );
+            updatedQueue[group].forEach((soundIndex) => {
+              this.players[group][soundIndex].start();
+              updatedPads[group][soundIndex] = 1;
+            });
           });
 
-          this.setState({ pads: updatedPads });
+          this.setState({ pads: updatedPads, queue: updatedQueue });
         }
 
         this.setState((state) => ({
