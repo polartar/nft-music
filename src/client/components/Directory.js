@@ -156,6 +156,9 @@ function Directory() {
                     <div className="editionSection  scrollBar ">
                       <div className="currentAuctionEditionTitle">EDITIONS</div>
                       {featuredNFTEditions.map((nft) => {
+                        const didExpire =
+                          new Date().getTime() >=
+                          new Date(nft.bidEndDate).getTime();
                         return (
                           <a
                             href={`/${nft.artistName}/${nft.name}/${nft.edition}`}
@@ -164,8 +167,10 @@ function Directory() {
                               <div className="editionInfoDirectory scrollBar current">
                                 <div className="editionNumber">{`${nft.edition}.`}</div>
                                 <div className="editionOwner">
-                                  {nft.ownerName
+                                  {didExpire
                                     ? nft.ownerName
+                                      ? nft.ownerName
+                                      : "N/A"
                                     : "Currently bidding"}
                                 </div>
                               </div>
@@ -220,6 +225,7 @@ function Directory() {
               const artistName = pastNFTs[key].artistName;
               const imageURL = pastNFTs[key].imageURL;
               const editions = pastNFTs[key].editions;
+
               return (
                 <div className="beatPackItem">
                   <img src={imageURL} className="directoryAlbum" />
@@ -231,9 +237,7 @@ function Directory() {
                       <img
                         src={ExpandMore}
                         className={
-                          updatedExpand[key]
-                            ? "expandMore expandLess"
-                            : "expandMore"
+                          expand[key] ? "expandMore expandLess" : "expandMore"
                         }
                       />
                     </IconButton>
@@ -241,14 +245,19 @@ function Directory() {
                   {expand[key] && (
                     <React.Fragment>
                       {editions.map((nft) => {
+                        const didExpire =
+                          new Date().getTime() >=
+                          new Date(nft.bidEndDate).getTime();
                         return (
                           <a href={`/${artistName}/${name}/${nft.edition}`}>
                             <div className="bidItemDirectory">
                               <div className="editionInfoDirectory scrollBar current">
                                 <div className="editionNumber">{`${nft.edition}.`}</div>
                                 <div className="editionOwner">
-                                  {nft.ownerName
+                                  {didExpire
                                     ? nft.ownerName
+                                      ? nft.ownerName
+                                      : "N/A"
                                     : "Currently bidding"}
                                 </div>
                               </div>
