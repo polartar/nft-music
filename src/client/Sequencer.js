@@ -521,13 +521,13 @@ class Sequencer extends Component {
                       this.players[group][soundIndex].state !== "started"
                         ? "blink"
                         : "";
-                    // const whitePadClass = i % 2 == 0 ? "whitePad" : "";
+                    const whiteClass = group === "sounds" ? "whitePad" : "";
                     return (
                       <div
                         key={`pad-group-${i}`}
                         className={`${cx("pad", {
                           on,
-                        })} ${blinkClass}`}
+                        })} ${blinkClass} ${whiteClass}`}
                         onClick={() => {
                           this.togglePad(group, soundIndex);
                         }}
