@@ -226,9 +226,12 @@ canvas {
   box-sizing: border-box;
   width: 44px;
   height: 44px;
+
+  border: 1px solid #666666;
+
   // background: lighten($dark, 10%);
   border-radius: 0px;
-  border: 1px solid rgba(0, 0, 0, 0.17);
+  // border: 1px solid rgba(0, 0, 0, 0.17);
   display: inline-block;
   cursor: pointer;
   // width: calc(#{$controller_size} / #{$steps} - 10px);
