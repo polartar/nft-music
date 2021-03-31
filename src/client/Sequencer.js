@@ -162,36 +162,43 @@ class Sequencer extends Component {
       nftResponse = await axios.get("/api/getFeaturedNFT");
     }
 
-    const orderResponse = await axios.get(
-      config.dev
-        ? "https://rinkeby-api.opensea.io/wyvern/v1/orders"
-        : "https://api.opensea.io/wyvern/v1/orders",
-      {
+    try {
+      const orderResponse = await axios.get(
+        config.dev
+          ? "https://rinkeby-api.opensea.io/wyvern/v1/orders"
+          : "https://api.opensea.io/wyvern/v1/orders",
+        {
+          params: {
+            asset_contract_address: nftResponse.data.tokenAddress,
+            token_id: nftResponse.data.tokenId,
+            limit: 50,
+            side: 0,
+            order_by: "eth_price",
+            order_direction: "desc",
+          },
+        }
+      );
+
+      const addresses = orderResponse.data.orders.map((order) => {
+        return order.maker.address.toLowerCase();
+      });
+
+      const usersResponse = await axios.get("/api/getUsers", {
         params: {
-          asset_contract_address: nftResponse.data.tokenAddress,
-          token_id: nftResponse.data.tokenId,
-          limit: 50,
-          side: 0,
-          order_by: "eth_price",
-          order_direction: "desc",
+          addresses,
         },
-      }
-    );
+      });
 
-    const addresses = orderResponse.data.orders.map((order) => {
-      return order.maker.address.toLowerCase();
-    });
-
-    const usersResponse = await axios.get("/api/getUsers", {
-      params: {
-        addresses,
-      },
-    });
+      this.setState({
+        bids: orderResponse.data.orders,
+        users: usersResponse.data,
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
     this.setState({
       nft: nftResponse.data,
-      bids: orderResponse.data.orders,
-      users: usersResponse.data,
     });
 
     const pathRoot = config.root;
