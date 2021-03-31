@@ -73,6 +73,15 @@ app.get("/api/getNFTsForUser", async (req, res) => {
   res.status(status).send(response);
 });
 
+app.get("/api/getOrdersForNFT", async (req, res) => {
+  const { status, response } = await nftController.getOrdersForNFT(
+    req.query.nftID,
+    req.query.useTestnet
+  );
+
+  res.status(status).send(response);
+});
+
 app.get("*", (req, res) => {
   res.sendFile(path.resolve("./dist/index.html"));
 });

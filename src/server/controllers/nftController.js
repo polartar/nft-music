@@ -1,6 +1,7 @@
 const { MongoClient, ObjectId } = require("mongodb");
 const config = require("../config.json");
 const userController = require("./userController");
+const axios = require("axios");
 
 // Create a new MongoClient
 const client = new MongoClient(config.mongoDBURL);
@@ -119,9 +120,42 @@ async function getNFTsForUser(address) {
   }
 }
 
+async function getOrdersForNFT(nftID, useTestnet) {
+  try {
+    const nft = await db.collection("NFTs").findOne({
+      _id: ObjectId(nftID),
+    });
+
+    const orderResponse = await axios.get(
+      useTestnet
+        ? "https://rinkeby-api.opensea.io/wyvern/v1/orders/"
+        : "https://api.opensea.io/wyvern/v1/orders",
+      {
+        params: {
+          asset_contract_address: nft.tokenAddress,
+          token_id: nft.tokenId,
+          limit: 50,
+          side: 0,
+          order_by: "eth_price",
+          order_direction: "desc",
+        },
+      }
+    );
+
+    return {
+      status: 200,
+      response: orderResponse.data,
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
+
 module.exports = {
   getNFT,
   getFeaturedNFT,
   getAllNFTs,
   getNFTsForUser,
+  getOrdersForNFT,
 };

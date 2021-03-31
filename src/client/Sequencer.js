@@ -163,21 +163,12 @@ class Sequencer extends Component {
     }
 
     try {
-      const orderResponse = await axios.get(
-        config.dev
-          ? "https://rinkeby-api.opensea.io/wyvern/v1/orders"
-          : "https://api.opensea.io/wyvern/v1/orders",
-        {
-          params: {
-            asset_contract_address: nftResponse.data.tokenAddress,
-            token_id: nftResponse.data.tokenId,
-            limit: 50,
-            side: 0,
-            order_by: "eth_price",
-            order_direction: "desc",
-          },
-        }
-      );
+      const orderResponse = await axios.get("/api/getOrdersForNFT", {
+        params: {
+          nftID: nftResponse.data._id,
+          useTestnet: config.dev,
+        },
+      });
 
       const addresses = orderResponse.data.orders.map((order) => {
         return order.maker.address.toLowerCase();
