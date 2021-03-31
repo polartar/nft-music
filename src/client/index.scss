@@ -235,27 +235,47 @@ canvas {
   // height: calc(#{$controller_size} / 10 - 10px);
   margin: 5px;
   background: #2a2a2a;
-
-  box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  //#d9d9d9;
+  box-shadow: 0 0 27px 4px rgba(255, 255, 255, 0.2);
   // transition: background 10ms ease;
 
   &:hover {
-    background: #d9d9d9;
+    background: white;
     box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
   }
 
   &.active {
     // background: lighten($dark, 15%);
-    background: #d9d9d9;
+    background: white;
     box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
   }
 
   &.on {
     transform: rotate(-90deg);
-    background: #d9d9d9;
+    background: white;
     box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
   }
 }
+.whitePad.pad {
+  background: rgba(217, 217, 217, 0.38);
+  &:hover {
+    background: white;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+
+  &.active {
+    // background: lighten($dark, 15%);
+    background: white;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+
+  &.on {
+    transform: rotate(-90deg);
+    background: white;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+}
+
 .modifiedPad {
   box-sizing: border-box;
   width: 12.5%;
