@@ -4,6 +4,8 @@ const CleanWebpackPlugin = require("clean-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const webpack = require("webpack");
 const CaseSensitivePathsPlugin = require("case-sensitive-paths-webpack-plugin");
+const WebpackObfuscator = require("webpack-obfuscator");
+const TerserPlugin = require("terser-webpack-plugin");
 
 const context = path.resolve(__dirname, "src");
 
@@ -127,11 +129,14 @@ module.exports = {
         NODE_ENV: JSON.stringify("production"),
       },
     }),
-    // new CompressionPlugin(),
+    new CompressionPlugin(),
     new CaseSensitivePathsPlugin(),
+    new WebpackObfuscator({
+      rotateStringArray: true,
+    }),
   ],
   optimization: {
-    minimize: false, // <---- disables uglify.
-    // minimizer: [new UglifyJsPlugin()] if you want to customize it.
+    minimize: true, // <---- disables uglify.
+    minimizer: [new TerserPlugin()],
   },
 };
