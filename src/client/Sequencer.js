@@ -197,10 +197,10 @@ class Sequencer extends Component {
         this.analysers[group] = [];
         for (var soundIndex = 0; soundIndex < sounds.length; soundIndex++) {
           var player = sounds[soundIndex];
-          let analyser = new Tone.FFT(1024);
+          let analyser = new Tone.FFT(256);
 
           analyser.set({
-            size: 1024,
+            size: 256,
             smoothing: 0.9,
           });
 
@@ -254,7 +254,7 @@ class Sequencer extends Component {
   };
 
   animationLooper(canvas) {
-    let analyser = new Array(1024).fill(0);
+    let analyser = new Array(256).fill(0);
 
     for (let group in this.analysers) {
       var sounds = this.analysers[group];
@@ -308,7 +308,7 @@ class Sequencer extends Component {
   }
 
   animationLooperEmpty(canvas) {
-    let analyser = new Array(1024).fill(0);
+    let analyser = new Array(256).fill(0);
     let frequency_array = new Uint8Array(analyser);
 
     canvas.width = window.innerWidth;
