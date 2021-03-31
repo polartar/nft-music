@@ -26,6 +26,57 @@ import clone from "clone";
 
 const rhythmPads = [[0], [0], [0], [0], [0], [0], [0], [0]];
 
+const sixBySixThreeGroups = [
+  [
+    ["sounds", 0],
+    ["sounds", 1],
+    ["basses", 0],
+    ["basses", 1],
+    ["basses", 2],
+    ["basses", 3],
+  ],
+  [
+    ["sounds", 2],
+    ["sounds", 3],
+    ["sounds", 4],
+    ["basses", 4],
+    ["basses", 5],
+    ["basses", 6],
+  ],
+  [
+    ["drums", 0],
+    ["sounds", 5],
+    ["sounds", 6],
+    ["sounds", 7],
+    ["basses", 7],
+    ["basses", 8],
+  ],
+  [
+    ["drums", 1],
+    ["drums", 2],
+    ["sounds", 8],
+    ["sounds", 9],
+    ["sounds", 10],
+    ["basses", 9],
+  ],
+  [
+    ["drums", 3],
+    ["drums", 4],
+    ["drums", 5],
+    ["sounds", 11],
+    ["sounds", 12],
+    ["sounds", 13],
+  ],
+  [
+    ["drums", 6],
+    ["drums", 7],
+    ["drums", 8],
+    ["drums", 9],
+    ["sounds", 14],
+    ["sounds", 15],
+  ],
+];
+
 let ctx, x_end, y_end, bar_height;
 
 // constants
@@ -41,7 +92,6 @@ class Sequencer extends Component {
   state = {
     type: "sine",
     pads: {},
-    bpm: 110,
     step: 0,
     steps: 8,
     playing: false,
@@ -57,6 +107,7 @@ class Sequencer extends Component {
     bids: [],
     users: {},
     queue: {},
+    padFormat: [],
   };
 
   constructor(props) {
@@ -65,31 +116,6 @@ class Sequencer extends Component {
     this.players = {};
 
     this.fetchNFT();
-
-    Tone.Transport.bpm.value = this.state.bpm;
-    Tone.Transport.scheduleRepeat((time) => {
-      if (this.state.step === 0) {
-        const updatedPads = {};
-        Object.keys(this.state.queue).forEach((group) => {
-          updatedPads[group] = Array.from(
-            { length: this.state.pads[group].length },
-            () => 0
-          );
-          this.state.queue[group]
-            .slice(-this.state.nft.activeSoundLimits[group])
-            .forEach((soundIndex) => {
-              this.players[group][soundIndex].start();
-              updatedPads[group][soundIndex] = 1;
-            });
-        });
-
-        this.setState({ pads: updatedPads });
-      }
-
-      this.setState((state) => ({
-        step: (state.step + 1) % state.steps,
-      }));
-    }, "4n");
 
     this.canvas = createRef();
 
@@ -188,7 +214,7 @@ class Sequencer extends Component {
         });
       });
 
-      this.setState({ pads, queue });
+      this.setState({ pads, queue, padFormat: sixBySixThreeGroups });
 
       this.analysers = {};
 
@@ -209,6 +235,31 @@ class Sequencer extends Component {
           this.analysers[group].push(analyser);
         }
       }
+
+      Tone.Transport.bpm.value = nftResponse.data.bpm;
+      Tone.Transport.scheduleRepeat((time) => {
+        if (this.state.step === 0) {
+          const updatedPads = {};
+          Object.keys(this.state.queue).forEach((group) => {
+            updatedPads[group] = Array.from(
+              { length: this.state.pads[group].length },
+              () => 0
+            );
+            this.state.queue[group]
+              .slice(-this.state.nft.activeSoundLimits[group])
+              .forEach((soundIndex) => {
+                this.players[group][soundIndex].start();
+                updatedPads[group][soundIndex] = 1;
+              });
+          });
+
+          this.setState({ pads: updatedPads });
+        }
+
+        this.setState((state) => ({
+          step: (state.step + 1) % state.steps,
+        }));
+      }, "4n");
 
       Tone.loaded().then(() => {
         this.setState(() => ({
@@ -412,7 +463,9 @@ class Sequencer extends Component {
       isLoggedIntoMetamask,
       bids,
       users,
+      padFormat,
     } = this.state;
+
     const currentBidAmount =
       bids.length > 0
         ? parseFloat(utils.formatEther(bids[0].base_price)).toPrecision(4) / 1
@@ -456,32 +509,30 @@ class Sequencer extends Component {
               <div className="beatPackTitle">{nft.name}</div>
               <div className="artistName">{nft.artistName}</div>
               <div className="gridOuter">
-                {Object.keys(pads).map((group) => {
-                  return (
-                    <React.Fragment>
-                      {pads[group].map((pad, i) => {
-                        const on = this.players[group][i].state === "started";
-                        const blinkClass =
-                          pad === 1 &&
-                          this.players[group][i].state !== "started"
-                            ? "blink"
-                            : "";
-                        return (
-                          <div
-                            key={`pad-group-${i}`}
-                            className={`${cx("pad", {
-                              on,
-                            })} ${blinkClass}`}
-                            onClick={() => {
-                              this.togglePad(group, i);
-                            }}
-                          />
-                        );
-                      })}
-                    </React.Fragment>
-                  );
+                {padFormat.map((column, j) => {
+                  return column.map((remappedCoordinates, i) => {
+                    const group = remappedCoordinates[0];
+                    const soundIndex = remappedCoordinates[1];
+                    const on =
+                      this.players[group][soundIndex].state === "started";
+                    const blinkClass =
+                      pads[group][soundIndex] === 1 &&
+                      this.players[group][soundIndex].state !== "started"
+                        ? "blink"
+                        : "";
+                    return (
+                      <div
+                        key={`pad-group-${i}`}
+                        className={`${cx("pad", {
+                          on,
+                        })} ${blinkClass}`}
+                        onClick={() => {
+                          this.togglePad(group, soundIndex);
+                        }}
+                      />
+                    );
+                  });
                 })}
-                <div className="pad"></div>
               </div>
               <div className="currentBid">Current Bid</div>
               <div className="ethAmount">{`${currentBidAmount} ETH`}</div>
