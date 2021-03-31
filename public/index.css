@@ -7,8 +7,8 @@
 }
 
 .container > div {
-  flex-grow: inherit;
-  margin-top: 25px;
+  /* flex-grow: inherit;
+  margin-top: 25px; */
 }
 .loadingLogo {
   height: 60px;

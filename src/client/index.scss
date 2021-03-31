@@ -468,10 +468,12 @@ footer {
   font-size: 16px;
   font-weight: 500;
   text-transform: uppercase;
+  text-align: left;
 }
 .bidInfo {
   margin-top: 15px;
   font-size: 16px;
+  text-align: left;
 }
 .bidItem.right {
   margin-left: 65px;
@@ -558,4 +560,63 @@ footer {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
+}
+.bidOnDesktop {
+  display: none;
+}
+
+@media only screen and (max-width: 700px) {
+  .albumPicWrapper {
+    display: none;
+  }
+  .offerButton {
+    display: none !important;
+  }
+  .bidOnDesktop {
+    font-size: 14px;
+    color: white;
+    text-align: left;
+    margin-top: 20px;
+    display: block;
+  }
+  .albumWrapper {
+    transform: scale(0.75);
+  }
+}
+@media only screen and (max-width: 400px) {
+  .albumWrapper {
+    transform: scale(0.7);
+  }
+  .beatPackTitle {
+    font-size: 20px;
+    line-height: 25px;
+    margin-top: -40px;
+  }
+  .bidOnDesktop {
+    font-size: 14px;
+    color: white;
+    text-align: left;
+    margin-top: 20px;
+    display: block;
+  }
+  .artistName {
+    font-size: 18px;
+    line-height: 22px;
+  }
+  .gridOuter {
+    -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg)
+      scale(0.6);
+    transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.6);
+    margin-top: 160px;
+  }
+  .currentBid {
+    font-size: 14px;
+    margin-top: -170px;
+  }
+  .ethAmount {
+    font-size: 12px;
+  }
+  .makeOfferText {
+    font-size: 10px;
+  }
 }

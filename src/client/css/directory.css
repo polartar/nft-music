@@ -225,3 +225,39 @@
 .expandLess {
   transform: rotate(180deg);
 }
+@media only screen and (max-width: 1000px) {
+  .artistSummary {
+    display: none;
+  }
+  .currentAuctionInfo {
+    width: 100%;
+  }
+}
+@media only screen and (max-width: 700px) {
+  .directoryBody {
+    padding: 40px;
+    padding-bottom: 100px;
+  }
+  .currentAuctionInfo {
+    flex-wrap: wrap;
+  }
+  .currentAuctionDetailsWrapper {
+    margin-left: 0px;
+    margin-top: 20px;
+  }
+}
+@media only screen and (max-width: 400px) {
+  .currentAuctionDetailsWrapper {
+    transform: scale(0.9);
+  }
+  .currentAuctionPic {
+    width: 250px;
+    height: 250px;
+  }
+  .currentAuctionInfo {
+    justify-content: center;
+  }
+  .beatPackItem {
+    transform: scale(0.9);
+  }
+}

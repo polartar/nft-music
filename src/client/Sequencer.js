@@ -549,6 +549,9 @@ class Sequencer extends Component {
                 <Button className="offerButton" onClick={this.handleClickOpen}>
                   Make an Offer
                 </Button>
+                <div className="bidOnDesktop">
+                  Sign in on Desktop to place bid
+                </div>
                 <div className="historyWrapper">
                   <div className="auctionTitle">Auction History</div>
                 </div>

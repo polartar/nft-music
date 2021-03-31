@@ -34,18 +34,18 @@ export default function Footer(props) {
         }
       >
         <a href="/">
-          <div className="bottomItem">LIVE AUCTION</div>
+          <div className="bottomItem mobileLink">LIVE AUCTION</div>
         </a>
         <a href="/directory">
-          <div className="bottomItem">DIRECTORY</div>
+          <div className="bottomItem mobileLink">DIRECTORY</div>
         </a>
         {isLoggedIntoMetamask && (
-          <a href={`/collection/${address}`}>
+          <a href={`/collection/${address}`} className="notMobileLink">
             <div className="bottomItem">MY COLLECTION</div>
           </a>
         )}
         {isLoggedIntoMetamask && (
-          <a href={`/profile`}>
+          <a href={`/profile`} className=" notMobileLink">
             <div className="bottomItem">PROFILE</div>
           </a>
         )}

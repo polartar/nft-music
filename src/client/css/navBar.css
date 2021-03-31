@@ -113,3 +113,22 @@
   line-height: 19px;
   color: white;
 }
+
+@media only screen and (max-width: 1100px) {
+  .timer {
+    display: none;
+  }
+}
+@media only screen and (max-width: 700px) {
+  .signedInWrapper {
+    display: none;
+  }
+  .navBar {
+    padding: 20px 40px;
+  }
+}
+@media only screen and (max-width: 400px) {
+  .navBar {
+    padding: 20px 20px;
+  }
+}
