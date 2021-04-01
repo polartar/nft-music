@@ -77,6 +77,10 @@ const sixBySixThreeGroups = [
   ],
 ];
 
+const padFormatMappings = {
+  sixBySixThreeGroups,
+};
+
 let ctx, x_end, y_end, bar_height;
 
 // constants
@@ -108,6 +112,7 @@ class Sequencer extends Component {
     users: {},
     queue: {},
     padFormat: [],
+    shareablePadNumbers: [],
   };
 
   constructor(props) {
@@ -198,6 +203,7 @@ class Sequencer extends Component {
     if (!Object.keys(this.players).length) {
       const pads = {};
       const queue = {};
+
       Object.keys(nftResponse.data.filePaths).map((group) => {
         const filePaths = nftResponse.data.filePaths[group];
         this.players[group] = [];
@@ -208,11 +214,14 @@ class Sequencer extends Component {
           this.players[group].push(
             new Tone.Player(`${pathRoot}/public/${filePath}`).toDestination()
           );
+
           pads[group].push(0);
         });
       });
 
-      this.setState({ pads, queue, padFormat: sixBySixThreeGroups });
+      const padFormat = padFormatMappings[nftResponse.data.padFormatName];
+
+      this.setState({ pads, queue, padFormat });
 
       this.analysers = {};
 
@@ -254,7 +263,24 @@ class Sequencer extends Component {
             });
           });
 
-          this.setState({ pads: updatedPads, queue: updatedQueue });
+          const updatedShareablePadNumbers = [];
+          this.state.padFormat.forEach((column, j) => {
+            column.forEach((remappedCoordinates, i) => {
+              const group = remappedCoordinates[0];
+              const soundIndex = remappedCoordinates[1];
+              if (updatedQueue[group].includes(soundIndex)) {
+                updatedShareablePadNumbers.push(
+                  j * this.state.padFormat.length + i
+                );
+              }
+            });
+          });
+
+          this.setState({
+            pads: updatedPads,
+            queue: updatedQueue,
+            shareablePadNumbers: updatedShareablePadNumbers,
+          });
         }
 
         this.setState((state) => ({
@@ -263,9 +289,27 @@ class Sequencer extends Component {
       }, "4n");
 
       Tone.loaded().then(() => {
-        this.setState(() => ({
-          loaded: true,
-        }));
+        this.setState(
+          () => ({
+            loaded: true,
+          }),
+          () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedPadNumbers = urlParams.get("share")
+              ? JSON.parse(urlParams.get("share"))
+              : [];
+
+            sharedPadNumbers.forEach((padNumber) => {
+              const col = parseInt(padNumber / this.state.padFormat.length);
+              const row = parseInt(padNumber % this.state.padFormat.length);
+
+              const remappedCoordinates = this.state.padFormat[col][row];
+              const group = remappedCoordinates[0];
+              const soundIndex = remappedCoordinates[1];
+              this.togglePad(group, soundIndex);
+            });
+          }
+        );
       });
     }
   };
