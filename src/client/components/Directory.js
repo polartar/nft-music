@@ -14,6 +14,7 @@ import InstaPic from "../images/instaPic.png";
 import Wallet from "../images/wallet.png";
 import Expand from "../images/expand.png";
 import ExpandMore from "../images/expandMore.png";
+import Waterpond from "../images/waterpond.mp4";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import "../css/directory.css";
@@ -228,7 +229,17 @@ function Directory() {
 
               return (
                 <div className="beatPackItem">
-                  <img src={imageURL} className="directoryAlbum" />
+                  {/* <img src={imageURL} className="directoryAlbum" /> */}
+                  <video
+                    width="300"
+                    height="300"
+                    autoplay="true"
+                    muted="true"
+                    loop="true"
+                    style={{ marginBottom: "20px" }}
+                  >
+                    <source src={Waterpond} type="video/mp4" />
+                  </video>
                   <div className="directoryItemName">{name}</div>
                   <div className="directoryArtistName">{artistName}</div>
                   <div className="editionSold">

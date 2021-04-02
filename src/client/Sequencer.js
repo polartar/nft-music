@@ -11,6 +11,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import SecretGardenLogo from "./images/SecretGarden.png";
 import AlbumArt from "./images/albumArt.png";
 import InstaPic from "./images/instaPic.png";
+import Waterpond from "./images/waterpond.mp4";
 import Wallet from "./images/wallet.png";
 import Expand from "./images/expand.png";
 import BidModal from "./components/BidModal";
@@ -602,7 +603,20 @@ class Sequencer extends Component {
           <div className="container2 scrollBar">
             <div className="albumWrapper">
               <div className="albumPicWrapper">
-                <img src={nft.imageURL} className="albumPic" />
+                {/* <div> */}
+                <video
+                  width="140"
+                  height="140"
+                  autoplay="true"
+                  muted="true"
+                  loop="true"
+                >
+                  <source src={Waterpond} type="video/mp4" />
+                </video>
+
+                {/* </div> */}
+
+                {/* <img src={nft.imageURL} className="albumPic" /> */}
               </div>
               <div className="albumInfo">
                 <div className="artistInfo" id="album">
