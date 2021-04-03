@@ -301,6 +301,7 @@ class Sequencer extends Component {
             updatedQueue[group] = this.state.queue[group].slice(
               -this.state.nft.activeSoundLimits[group]
             );
+
             updatedQueue[group].forEach((soundIndex) => {
               this.players[group][soundIndex].start();
               updatedPads[group][soundIndex] = 1;
