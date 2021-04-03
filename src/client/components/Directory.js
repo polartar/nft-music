@@ -83,6 +83,13 @@ function Directory() {
     }
   });
 
+  const featuredNFTMediaExtension = featuredNFT.imageURL
+    ? featuredNFT.imageURL
+        .split(".")
+        .pop()
+        .toLowerCase()
+    : "";
+
   return (
     <React.StrictMode>
       {loaded && (
@@ -94,10 +101,24 @@ function Directory() {
               <div className="topPanelWrapper">
                 <div className="currentAuctionInfo">
                   <a href="/">
-                    <img
-                      src={featuredNFT.imageURL}
-                      className="currentAuctionPic"
-                    />
+                    {featuredNFTMediaExtension === "mp4" && (
+                      <video
+                        width="300"
+                        height="300"
+                        autoplay="true"
+                        muted="true"
+                        loop="true"
+                        style={{ marginBottom: "20px" }}
+                      >
+                        <source src={featuredNFT.imageURL} type="video/mp4" />
+                      </video>
+                    )}
+                    {featuredNFTMediaExtension !== "mp4" && (
+                      <img
+                        src={featuredNFT.imageURL}
+                        className="currentAuctionPic"
+                      />
+                    )}
                   </a>
                   <div className="currentAuctionDetailsWrapper">
                     <a href="/">
@@ -226,20 +247,30 @@ function Directory() {
               const artistName = pastNFTs[key].artistName;
               const imageURL = pastNFTs[key].imageURL;
               const editions = pastNFTs[key].editions;
+              const mediaFileExtension = pastNFTs[key].imageURL
+                .split(".")
+                .pop()
+                .toLowerCase();
 
               return (
                 <div className="beatPackItem">
-                  {/* <img src={imageURL} className="directoryAlbum" /> */}
-                  <video
-                    width="300"
-                    height="300"
-                    autoplay="true"
-                    muted="true"
-                    loop="true"
-                    style={{ marginBottom: "20px" }}
-                  >
-                    <source src={Waterpond} type="video/mp4" />
-                  </video>
+                  <a href={`/${artistName}/${name}/1`}>
+                    {mediaFileExtension === "mp4" && (
+                      <video
+                        width="300"
+                        height="300"
+                        autoplay="true"
+                        muted="true"
+                        loop="true"
+                        style={{ marginBottom: "20px" }}
+                      >
+                        <source src={imageURL} type="video/mp4" />
+                      </video>
+                    )}
+                    {mediaFileExtension !== "mp4" && (
+                      <img src={imageURL} className="directoryAlbum" />
+                    )}
+                  </a>
                   <div className="directoryItemName">{name}</div>
                   <div className="directoryArtistName">{artistName}</div>
                   <div className="editionSold">

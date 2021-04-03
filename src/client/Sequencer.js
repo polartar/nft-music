@@ -24,8 +24,7 @@ import { ethers, utils } from "ethers";
 import Countdown from "react-countdown";
 import config from "./config.json";
 import clone from "clone";
-
-const rhythmPads = [[0], [0], [0], [0], [0], [0], [0], [0]];
+import Loading from "./components/Loading";
 
 const sixBySixThreeGroups = [
   [
@@ -121,6 +120,11 @@ const padFormatMappings = {
   fiveByFiveThreeGroups,
 };
 
+const padFormatTileStyleMappings = {
+  sixBySixThreeGroups: "tile36",
+  fiveByFiveThreeGroups: "tile25",
+};
+
 let ctx, x_end, y_end, bar_height;
 
 // constants
@@ -137,7 +141,7 @@ class Sequencer extends Component {
     type: "sine",
     pads: {},
     step: 0,
-    steps: 16,
+    steps: 0,
     playing: false,
     delay: false,
     loaded: false,
@@ -152,6 +156,7 @@ class Sequencer extends Component {
     users: {},
     queue: {},
     padFormat: [],
+    padFormatStyleClass: "",
     shareablePadNumbers: [],
   };
 
@@ -159,6 +164,7 @@ class Sequencer extends Component {
     super(props);
 
     this.players = {};
+    this.rhythmPads = [];
 
     this.fetchNFT();
 
@@ -261,11 +267,15 @@ class Sequencer extends Component {
         });
       });
 
-      console.log(this.players);
-
       const padFormat = padFormatMappings[nftResponse.data.padFormatName];
+      const padFormatStyleClass =
+        padFormatTileStyleMappings[nftResponse.data.padFormatName];
 
-      this.setState({ pads, queue, padFormat });
+      const steps = nftResponse.data.steps;
+
+      this.rhythmPads = new Array(steps).fill([0]);
+
+      this.setState({ pads, queue, padFormat, steps, padFormatStyleClass });
 
       this.analysers = {};
 
@@ -554,6 +564,7 @@ class Sequencer extends Component {
       bids,
       users,
       padFormat,
+      padFormatStyleClass,
     } = this.state;
 
     const currentBidAmount =
@@ -563,6 +574,10 @@ class Sequencer extends Component {
 
     // Set up active sounds limit
     if (nft && loaded) {
+      const mediaFileExtension = nft.imageURL
+        .split(".")
+        .pop()
+        .toLowerCase();
       return (
         <React.StrictMode>
           <BidModal
@@ -574,7 +589,7 @@ class Sequencer extends Component {
           />
           <div className="container scrollBar">
             <div className="gridTop">
-              {rhythmPads.map((group, groupIndex) => (
+              {this.rhythmPads.map((group, groupIndex) => (
                 <React.Fragment>
                   {group.map((pad, i) => (
                     <div
@@ -598,7 +613,7 @@ class Sequencer extends Component {
             <div className="bodyWrapper scrollBar">
               <div className="beatPackTitle">{nft.name}</div>
               <div className="artistName">{nft.artistName}</div>
-              <div className="gridOuter tile25">
+              <div className={`gridOuter ${padFormatStyleClass}`}>
                 {padFormat.map((column, j) => {
                   return column.map((remappedCoordinates, i) => {
                     const group = remappedCoordinates[0];
@@ -647,20 +662,20 @@ class Sequencer extends Component {
           <div className="container2 scrollBar">
             <div className="albumWrapper">
               <div className="albumPicWrapper">
-                {/* <div> */}
-                <video
-                  width="140"
-                  height="140"
-                  autoplay="true"
-                  muted="true"
-                  loop="true"
-                >
-                  <source src={Waterpond} type="video/mp4" />
-                </video>
-
-                {/* </div> */}
-
-                {/* <img src={nft.imageURL} className="albumPic" /> */}
+                {mediaFileExtension === "mp4" && (
+                  <video
+                    width="140"
+                    height="140"
+                    autoplay="true"
+                    muted="true"
+                    loop="true"
+                  >
+                    <source src={nft.imageURL} type="video/mp4" />
+                  </video>
+                )}
+                {mediaFileExtension !== "mp4" && (
+                  <img src={nft.imageURL} className="albumPic" />
+                )}
               </div>
               <div className="albumInfo">
                 <div className="artistInfo" id="album">
@@ -756,7 +771,7 @@ class Sequencer extends Component {
         </React.StrictMode>
       );
     } else {
-      return <div>Loading samples...</div>;
+      return <Loading />;
     }
   }
 }
