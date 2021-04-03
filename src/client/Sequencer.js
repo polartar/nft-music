@@ -78,8 +78,47 @@ const sixBySixThreeGroups = [
   ],
 ];
 
+const fiveByFiveThreeGroups = [
+  [
+    ["sounds", 0],
+    ["sounds", 1],
+    ["basses", 0],
+    ["basses", 1],
+    ["basses", 2],
+  ],
+  [
+    ["sounds", 2],
+    ["sounds", 3],
+    ["sounds", 4],
+    ["basses", 3],
+    ["basses", 4],
+  ],
+  [
+    ["drums", 0],
+    ["sounds", 5],
+    ["sounds", 6],
+    ["sounds", 7],
+    ["basses", 5],
+  ],
+  [
+    ["drums", 1],
+    ["drums", 2],
+    ["sounds", 8],
+    ["sounds", 9],
+    ["sounds", 10],
+  ],
+  [
+    ["drums", 3],
+    ["drums", 4],
+    ["drums", 5],
+    ["sounds", 11],
+    ["sounds", 12],
+  ],
+];
+
 const padFormatMappings = {
   sixBySixThreeGroups,
+  fiveByFiveThreeGroups,
 };
 
 let ctx, x_end, y_end, bar_height;
@@ -98,7 +137,7 @@ class Sequencer extends Component {
     type: "sine",
     pads: {},
     step: 0,
-    steps: 8,
+    steps: 16,
     playing: false,
     delay: false,
     loaded: false,
@@ -213,12 +252,16 @@ class Sequencer extends Component {
 
         filePaths.forEach((filePath) => {
           this.players[group].push(
-            new Tone.Player(`${pathRoot}/public/${filePath}`).toDestination()
+            new Tone.Player(
+              `${pathRoot}/public/${encodeURIComponent(filePath)}`
+            ).toDestination()
           );
 
           pads[group].push(0);
         });
       });
+
+      console.log(this.players);
 
       const padFormat = padFormatMappings[nftResponse.data.padFormatName];
 
