@@ -598,7 +598,7 @@ class Sequencer extends Component {
             <div className="bodyWrapper scrollBar">
               <div className="beatPackTitle">{nft.name}</div>
               <div className="artistName">{nft.artistName}</div>
-              <div className="gridOuter">
+              <div className="gridOuter tile25">
                 {padFormat.map((column, j) => {
                   return column.map((remappedCoordinates, i) => {
                     const group = remappedCoordinates[0];
@@ -625,7 +625,7 @@ class Sequencer extends Component {
                   });
                 })}
               </div>
-              <div className="currentBid">Current Bid</div>
+              <div className="currentBid tile25">Current Bid</div>
               <div className="ethAmount">{`${currentBidAmount} ETH`}</div>
               <div className="makeOfferText">Make an Offer</div>
               <a href="#album">

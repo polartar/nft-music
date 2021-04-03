@@ -196,6 +196,9 @@ canvas {
   font-weight: 400;
   z-index: 3000;
 }
+.currentBid.tile25 {
+  margin-top: -70px;
+}
 .ethAmount {
   margin-top: 10px;
   font-size: 20px;
@@ -435,6 +438,18 @@ footer {
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
+}
+.gridOuter.tile25 {
+  width: 270px;
+  font-size: 0;
+  -webkit-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+  position: relative;
+  left: 135px;
+  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.88);
+  transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.88);
+  margin-top: 194px;
+  z-index: 3000;
 }
 .albumPic {
   height: 145px;

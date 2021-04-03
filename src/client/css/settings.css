@@ -8,6 +8,16 @@
   background-color: #1f1f1f;
   font-family: "DM Mono", monospace;
 }
+.loadingSettings {
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  font-family: "DM Mono", monospace;
+}
 .settingsBody {
   display: flex;
   flex-direction: column;

@@ -14,6 +14,7 @@ const Settings = lazy(() => import("./components/Settings"));
 const Directory = lazy(() => import("./components/Directory"));
 const ArtistsDirectory = lazy(() => import("./components/ArtistsDirectory"));
 const MyBeats = lazy(() => import("./components/MyBeats"));
+const Loading = lazy(() => import("./components/Loading"));
 
 export default function App(props) {
   return (
@@ -37,6 +38,9 @@ export default function App(props) {
             </Route>
             <Route exact path="/artists">
               <ArtistsDirectory />
+            </Route>
+            <Route exact path="/loading">
+              <Loading />
             </Route>
             <Route
               render={(props) => <MyBeats {...props} />}
