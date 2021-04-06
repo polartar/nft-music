@@ -99,8 +99,12 @@ module.exports = {
       //   test: /\.js$/,
       // },
       {
-        test: /\.(png|woff|woff2|eot|ttf|svg|jpg|jpeg)$/,
+        test: /\.(png|woff|woff2|eot|ttf|svg|jpg|jpeg|gif)$/,
         loader: "url-loader?limit=100000",
+      },
+      {
+        test: /\.mp4$/,
+        use: "file-loader?name=videos/[name].[ext]",
       },
     ],
   },
