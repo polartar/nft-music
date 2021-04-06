@@ -640,6 +640,18 @@ class Sequencer extends Component {
                   });
                 })}
               </div>
+              {/* <div className="currentBid tile25 tutorialStep">
+                Welcome to Secret Garden.
+              </div> */}
+              {/* <div className="tutorialInfo"> */}
+              {/* To begin, press one of the highlighted squares on the left. These are the
+                drum loops. <br/>Only one will play at a time. */}
+              {/* Now, press one of the highlighted squares on the right. These
+                are the bass loops. <br /> Only one will play at a time. */}
+              {/* Next, press one of grey squares in the middle. These are the
+                sounds. Up to 3 can play at at time. */}
+              {/* Great, now go make some music */}
+              {/* </div> */}
               <div className="currentBid tile25">Current Bid</div>
               <div className="ethAmount">{`${currentBidAmount} ETH`}</div>
               <div className="makeOfferText">Make an Offer</div>

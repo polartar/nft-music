@@ -187,6 +187,18 @@ canvas {
   // border-bottom: solid 1px white;
   margin-bottom: -8px;
 }
+.tutorialStep {
+}
+.tutorialInfo {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 300;
+  width: 100%;
+  text-align: center;
+  color: white;
+  z-index: 3000;
+  line-height: 20px;
+}
 .currentBid {
   font-size: 20px;
   margin-top: -130px;
@@ -602,7 +614,12 @@ footer {
 .bidOnDesktop {
   display: none;
 }
-
+.tutorialPad {
+  opacity: 0.1;
+}
+.tutorialPad.on {
+  opacity: 1;
+}
 @media only screen and (max-width: 700px) {
   .albumPicWrapper {
     display: none;
