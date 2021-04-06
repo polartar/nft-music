@@ -156,7 +156,7 @@ input[type="number"] {
 .expandOuter {
   width: 50px !important;
   height: 50px !important;
-  z-index: 3000 !important;
+  z-index: 1200 !important;
   color: white !important;
 }
 .gridTop {
@@ -181,7 +181,7 @@ input[type="number"] {
   -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.73);
   transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.73);
   margin-top: 210px;
-  z-index: 3000;
+  z-index: 1200;
 }
 canvas {
   // border-bottom: solid 1px white;
@@ -196,7 +196,7 @@ canvas {
   width: 100%;
   text-align: center;
   color: white;
-  z-index: 3000;
+  z-index: 1200;
   line-height: 20px;
 }
 .currentBid {
@@ -206,7 +206,7 @@ canvas {
   text-align: center;
   color: white;
   font-weight: 400;
-  z-index: 3000;
+  z-index: 1200;
 }
 .currentBid.tile25 {
   margin-top: -70px;
@@ -218,7 +218,7 @@ canvas {
   width: 100%;
   text-align: center;
   color: white;
-  z-index: 3000;
+  z-index: 1200;
 }
 
 .gridBox {
@@ -461,7 +461,7 @@ footer {
   -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.88);
   transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.88);
   margin-top: 194px;
-  z-index: 3000;
+  z-index: 1200;
 }
 .albumPic {
   height: 145px;
@@ -602,7 +602,7 @@ footer {
   font-size: 10px;
   color: #999999;
   margin-top: 15px;
-  z-index: 3000;
+  z-index: 1200;
   font-family: "Rubik", sans-serif;
 }
 .makerAddr {

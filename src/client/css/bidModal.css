@@ -22,12 +22,26 @@
   border-bottom: solid 1px white;
   box-sizing: border-box;
 }
+.modalHeader2 {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  border-bottom: solid 1px white;
+  box-sizing: border-box;
+}
 .x {
   width: 12px;
   height: 13px;
 }
+
 .modalBody {
   /* padding: 30px; */
+}
+.modalBody2 {
+  padding: 40px;
 }
 .checkoutArt {
   width: 100px;
@@ -149,4 +163,22 @@ input:focus {
   width: 100%;
   text-align: left;
   font-size: 14px;
+}
+.shareText {
+  font-size: 14px;
+  font-family: "DM Mono", monospace;
+  color: white;
+  margin-left: 25px;
+  margin-top: -5px;
+}
+.shareItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 40px;
+}
+.socialIcon {
+  width: 28px;
+  cursor: pointer;
 }

@@ -23,6 +23,7 @@
 .bottomItem {
   font-size: 12px;
   color: white;
+  cursor: pointer;
 }
 .scrollBar {
   -ms-overflow-style: none;
