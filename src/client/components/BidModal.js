@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+
 import X from "../images/x.png";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
@@ -51,6 +54,12 @@ const useStyles = makeStyles({
     textTransform: "none",
     fontWeight: "400",
   },
+  checkBox: {
+    color: "white!important",
+  },
+  checkBoxText: {
+    color: "white",
+  },
 });
 
 export default function SimpleDialog(props) {
@@ -58,7 +67,7 @@ export default function SimpleDialog(props) {
   const { onClose, open, nft, didCompleteBid, currentBidAmount } = props;
 
   const startingBid = 0.01;
-
+  const [checked, setChecked] = React.useState(true);
   const [seaport, setSeaport] = useState();
   const [wethConversionAmount, setWethConversionAmount] = useState(0);
   const [address, setAddress] = useState();
@@ -69,6 +78,9 @@ export default function SimpleDialog(props) {
   const [awaitingBidSignature, setAwaitingBidSignature] = useState(false);
   const [awaitingConversion, setAwaitingConversion] = useState(false);
 
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
+  };
   const initWallet = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -211,6 +223,23 @@ export default function SimpleDialog(props) {
             <div className="ethLabel">WETH</div>
             <div className="totalWallet minBid">{`Minimum Bid: ${nextMinimumBidThreshold}`}</div>
             {/* <div className="totalWallet minBid">This is an error message</div> */}
+            <FormControlLabel
+              className="tosLabel"
+              control={
+                <Checkbox
+                  disableRipple
+                  checked={checked}
+                  onChange={handleChange}
+                  name="checkedBox"
+                  classes={{ root: classes.checkBox }}
+                />
+              }
+              label={
+                <a href="/tos" target="_blank">
+                  I agree to the terms and conditions
+                </a>
+              }
+            />
           </div>
         )}
         {bidCompleted && (

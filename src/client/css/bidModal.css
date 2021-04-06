@@ -6,6 +6,12 @@
   color: white;
   font-family: "DM Mono", monospace;
 }
+.tosLabel {
+  font-family: "DM Mono", monospace !important;
+  color: #8c8c8c !important;
+  margin-top: 10px !important;
+}
+
 .modalHeader {
   width: 100%;
   display: flex;

@@ -18,6 +18,21 @@
   background-color: black;
   font-family: "DM Mono", monospace;
 }
+.tosContainer {
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  max-width: 1440px;
+  background-color: #1f1f1f;
+  font-family: "DM Mono", monospace;
+  color: white;
+  overflow: scroll;
+  text-align: left;
+  padding: 80px;
+}
 .settingsBody {
   display: flex;
   flex-direction: column;
