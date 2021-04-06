@@ -67,6 +67,7 @@ export default function SimpleDialog(props) {
   const [bidAmount, setBidAmount] = useState(0);
   const [bidCompleted, setBidCompleted] = useState(false);
   const [awaitingBidSignature, setAwaitingBidSignature] = useState(false);
+  const [awaitingConversion, setAwaitingConversion] = useState(false);
 
   const initWallet = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -118,13 +119,18 @@ export default function SimpleDialog(props) {
   }, [open]);
 
   const convertETH = async () => {
-    await seaport.wrapEth({
-      amountInEth: bidAmount,
-      accountAddress: address,
-    });
-    // Show loading screen here
+    try {
+      setAwaitingConversion(true);
+      await seaport.wrapEth({
+        amountInEth: bidAmount,
+        accountAddress: address,
+      });
+      setAwaitingConversion(false);
 
-    initWallet();
+      initWallet();
+    } catch (error) {
+      setAwaitingConversion(false);
+    }
   };
 
   const placeBid = async () => {
@@ -231,8 +237,11 @@ export default function SimpleDialog(props) {
                     classes={{ root: classes.continueButton }}
                     className="continueButton"
                     onClick={convertETH}
+                    disabled={awaitingConversion}
                   >
-                    Convert to WETH
+                    {awaitingConversion
+                      ? "Waiting for WETH conversion..."
+                      : "Convert to WETH"}
                   </Button>
                 )}
               {bidAmount >= nextMinimumBidThreshold &&

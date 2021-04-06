@@ -15,7 +15,7 @@ import "../css/settings.css";
 import axios from "axios";
 import { ethers, utils } from "ethers";
 
-function Settings() {
+function LoadingScreen() {
   return (
     <React.StrictMode>
       <div className="loadingSettings scrollBar">
@@ -27,4 +27,4 @@ function Settings() {
   );
 }
 
-export default Settings;
+export default LoadingScreen;

@@ -32,7 +32,7 @@ async function getUser(address) {
 async function getUsers(addresses) {
   try {
     const userQuery = await db.collection("users").find({
-      address: { $in: addresses },
+      address: { $in: addresses ? addresses : [] },
     });
 
     const users = {};
