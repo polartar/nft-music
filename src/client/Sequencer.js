@@ -525,8 +525,6 @@ class Sequencer extends Component {
 
         let numPads = this.state.totalSoundsPlaying;
 
-        // Need to limit number of playable sounds?
-        // clonedPads[group] = [0, 0, 0, 0, 0, 0, 0, 0]
         if (padState === 1) {
           this.players[group][pad].stop();
           updatedQueue[group] = updatedQueue[group].filter(
@@ -542,6 +540,36 @@ class Sequencer extends Component {
         }
 
         clonedPads[group][pad] = padState === 1 ? 0 : 1;
+
+        const unstartedQueueGroup = updatedQueue[group].filter(
+          (soundIndex) => this.players[group][soundIndex].state !== "started"
+        );
+
+        const startedQueueGroup = updatedQueue[group].filter(
+          (soundIndex) => this.players[group][soundIndex].state === "started"
+        ); // We should ignore everything within the limit, started or unstarted?
+
+        console.log(`Filtered queue group: ${unstartedQueueGroup}`);
+        console.log(`Started queue group: ${startedQueueGroup}`);
+
+        // We shaved something off, let's make it stop blinking
+        if (unstartedQueueGroup.length > state.nft.activeSoundLimits[group]) {
+          const toRemove = unstartedQueueGroup.slice(
+            0,
+            -state.nft.activeSoundLimits[group]
+          );
+
+          console.log(`To remove: ${toRemove}`);
+
+          toRemove.forEach((soundIndex) => {
+            clonedPads[group][soundIndex] = 0;
+          });
+
+          updatedQueue[group] = [
+            ...startedQueueGroup,
+            ...unstartedQueueGroup.slice(-state.nft.activeSoundLimits[group]),
+          ];
+        }
 
         return {
           pads: clonedPads,
