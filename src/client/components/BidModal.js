@@ -67,7 +67,7 @@ export default function SimpleDialog(props) {
   const { onClose, open, nft, didCompleteBid, currentBidAmount } = props;
 
   const startingBid = 0.01;
-  const [checked, setChecked] = React.useState(true);
+  const [checked, setChecked] = useState(false);
   const [seaport, setSeaport] = useState();
   const [wethConversionAmount, setWethConversionAmount] = useState(0);
   const [address, setAddress] = useState();
@@ -81,6 +81,7 @@ export default function SimpleDialog(props) {
   const handleChange = (event) => {
     setChecked(event.target.checked);
   };
+
   const initWallet = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -181,6 +182,22 @@ export default function SimpleDialog(props) {
 
   const nextMinimumBidThreshold = nextMinimumBid.toPrecision(4) / 1;
 
+  const mediaFileExtension = nft.imageURL
+    .split(".")
+    .pop()
+    .toLowerCase();
+
+  let convertETHButtonText = "Convert to WETH";
+  let placeBidButtonText = "Place Bid";
+
+  if (awaitingConversion) {
+    convertETHButtonText = "Waiting for WETH conversion...";
+  }
+
+  if (awaitingBidSignature) {
+    placeBidButtonText = "Waiting for your bid transaction...";
+  }
+
   return (
     <Dialog
       onClose={onClose}
@@ -196,7 +213,20 @@ export default function SimpleDialog(props) {
       </div>
       <div className="modalBody">
         <div className="beatWrapper">
-          <img src={nft.imageURL} className="checkoutArt" />
+          {mediaFileExtension === "mp4" && (
+            <video
+              width="140"
+              height="140"
+              autoplay="true"
+              muted="true"
+              loop="true"
+            >
+              <source src={nft.imageURL} type="video/mp4" />
+            </video>
+          )}
+          {mediaFileExtension !== "mp4" && (
+            <img src={nft.imageURL} className="albumPic" />
+          )}
           <div className="beatInfoCheckout">
             <div className="beatCheckoutName">{nft.name}</div>
             <div className="beatArtist">{nft.artist.name}</div>
@@ -266,11 +296,9 @@ export default function SimpleDialog(props) {
                     classes={{ root: classes.continueButton }}
                     className="continueButton"
                     onClick={convertETH}
-                    disabled={awaitingConversion}
+                    disabled={awaitingConversion || !checked}
                   >
-                    {awaitingConversion
-                      ? "Waiting for WETH conversion..."
-                      : "Convert to WETH"}
+                    {convertETHButtonText}
                   </Button>
                 )}
               {bidAmount >= nextMinimumBidThreshold &&
@@ -280,11 +308,9 @@ export default function SimpleDialog(props) {
                     classes={{ root: classes.continueButton }}
                     className="continueButton"
                     onClick={placeBid}
-                    disabled={awaitingBidSignature}
+                    disabled={awaitingBidSignature || !checked}
                   >
-                    {awaitingBidSignature
-                      ? "Waiting for Metamask signature..."
-                      : "Place Bid"}
+                    {placeBidButtonText}
                   </Button>
                 )}
             </React.Fragment>
