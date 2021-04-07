@@ -25,6 +25,7 @@ import Countdown from "react-countdown";
 import config from "./config.json";
 import clone from "clone";
 import Loading from "./components/Loading";
+import Cookies from "universal-cookie";
 
 const sixBySixThreeGroups = [
   [
@@ -136,6 +137,15 @@ const radius = 0;
 const center_x = width / 2;
 const center_y = height / 2;
 
+const cookies = new Cookies();
+const current = new Date();
+const nextYear = new Date();
+
+nextYear.setFullYear(current.getFullYear() + 1);
+
+const didVisitSite = Boolean(cookies.get("didVisitSecretGarden"));
+cookies.set("didVisitSecretGarden", true, { path: "/", expires: nextYear });
+
 class Sequencer extends Component {
   state = {
     type: "sine",
@@ -158,7 +168,7 @@ class Sequencer extends Component {
     padFormat: [],
     padFormatStyleClass: "",
     shareablePadNumbers: [],
-    showTutorial: true,
+    showTutorial: !didVisitSite,
     tutorialStep: 0,
   };
 
@@ -632,6 +642,8 @@ class Sequencer extends Component {
       showTutorial,
       tutorialStep,
     } = this.state;
+
+    console.log(showTutorial);
 
     const currentBidAmount =
       bids.length > 0
