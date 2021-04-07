@@ -171,6 +171,7 @@ class Sequencer extends Component {
     this.canvas = createRef();
 
     this.initWallet();
+    this.myRef = React.createRef();
   }
 
   initWallet = async () => {
@@ -389,6 +390,8 @@ class Sequencer extends Component {
       openBidModal: false,
     });
   };
+
+  executeScroll = () => this.myRef.current.scrollIntoView();
 
   togglePlay = () => {
     this.rafId = requestAnimationFrame(() => this.tick());
@@ -655,11 +658,11 @@ class Sequencer extends Component {
               <div className="currentBid tile25">Current Bid</div>
               <div className="ethAmount">{`${currentBidAmount} ETH`}</div>
               <div className="makeOfferText">Make an Offer</div>
-              <a href="#album">
-                <IconButton className="expandOuter">
-                  <img src={Expand} className="expand" />
-                </IconButton>
-              </a>
+              {/* <a href="#album"> */}
+              <IconButton className="expandOuter" onClick={this.executeScroll}>
+                <img src={Expand} className="expand" />
+              </IconButton>
+              {/* </a> */}
 
               <div className="pageFooter scrollBar">
                 <canvas ref={this.canvas} style={{ minWidth: "100%" }} />
@@ -689,7 +692,7 @@ class Sequencer extends Component {
                   <img src={nft.imageURL} className="albumPic" />
                 )}
               </div>
-              <div className="albumInfo">
+              <div className="albumInfo" ref={this.myRef}>
                 <div className="artistInfo" id="album">
                   <img src={nft.artist.imageURL} className="instaPic" />
                   <span className="artistTag">{nft.artistName}</span>
