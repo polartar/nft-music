@@ -158,6 +158,8 @@ class Sequencer extends Component {
     padFormat: [],
     padFormatStyleClass: "",
     shareablePadNumbers: [],
+    showTutorial: true,
+    tutorialStep: 0,
   };
 
   constructor(props) {
@@ -303,6 +305,11 @@ class Sequencer extends Component {
         if (this.state.step === 0) {
           const updatedPads = {};
           const updatedQueue = {};
+          let updatedTutorialStep = this.state.tutorialStep;
+          let updatedShowTutorial = this.state.showTutorial;
+          let didPlayDrums = false;
+          let didPlayBasses = false;
+          let didPlaySounds = false;
           Object.keys(this.state.queue).forEach((group) => {
             updatedPads[group] = Array.from(
               { length: this.state.pads[group].length },
@@ -316,8 +323,30 @@ class Sequencer extends Component {
             updatedQueue[group].forEach((soundIndex) => {
               this.players[group][soundIndex].start();
               updatedPads[group][soundIndex] = 1;
+
+              if (group === "drums") {
+                didPlayDrums = true;
+              } else if (group === "basses") {
+                didPlayBasses = true;
+              } else if (group === "sounds") {
+                didPlaySounds = true;
+              }
             });
           });
+
+          if (this.state.showTutorial) {
+            if (this.state.tutorialStep === 3) {
+              updatedShowTutorial = false;
+            }
+
+            if (
+              (this.state.tutorialStep === 0 && didPlayDrums) ||
+              (this.state.tutorialStep === 1 && didPlayBasses) ||
+              (this.state.tutorialStep === 2 && didPlaySounds)
+            ) {
+              updatedTutorialStep += 1;
+            }
+          }
 
           const updatedShareablePadNumbers = [];
           this.state.padFormat.forEach((column, j) => {
@@ -336,6 +365,8 @@ class Sequencer extends Component {
             pads: updatedPads,
             queue: updatedQueue,
             shareablePadNumbers: updatedShareablePadNumbers,
+            showTutorial: updatedShowTutorial,
+            tutorialStep: updatedTutorialStep,
           });
         }
 
@@ -517,6 +548,14 @@ class Sequencer extends Component {
   }
 
   togglePad(group, pad) {
+    if (this.state.showTutorial) {
+      if (group === "basses" && this.state.tutorialStep < 1) {
+        return;
+      } else if (group === "sounds" && this.state.tutorialStep < 2) {
+        return;
+      }
+    }
+
     this.setState(
       (state) => {
         const clonedPads = { ...state.pads };
@@ -525,18 +564,16 @@ class Sequencer extends Component {
 
         let numPads = this.state.totalSoundsPlaying;
 
-        if (padState === 1) {
-          this.players[group][pad].stop();
-          updatedQueue[group] = updatedQueue[group].filter(
-            (soundIndex) => soundIndex !== pad
-          );
-        }
-
+        // If pad was previously off, we're turning it on
         if (padState == 0) {
           numPads += 1;
           updatedQueue[group].push(pad);
         } else {
           numPads -= 1;
+          this.players[group][pad].stop();
+          updatedQueue[group] = updatedQueue[group].filter(
+            (soundIndex) => soundIndex !== pad
+          );
         }
 
         clonedPads[group][pad] = padState === 1 ? 0 : 1;
@@ -592,6 +629,8 @@ class Sequencer extends Component {
       padFormat,
       padFormatStyleClass,
       shareablePadNumbers,
+      showTutorial,
+      tutorialStep,
     } = this.state;
 
     const currentBidAmount =
@@ -653,12 +692,23 @@ class Sequencer extends Component {
                         ? "blink"
                         : "";
                     const whiteClass = group === "sounds" ? "whitePad" : "";
+                    let tutorialClass = "";
+
+                    if (showTutorial) {
+                      if (tutorialStep === 0 && group !== "drums") {
+                        tutorialClass = "tutorialPad";
+                      } else if (tutorialStep === 1 && group !== "basses") {
+                        tutorialClass = "tutorialPad";
+                      } else if (tutorialStep === 2 && group !== "sounds") {
+                        tutorialClass = "tutorialPad";
+                      }
+                    }
                     return (
                       <div
                         key={`pad-group-${i}`}
                         className={`${cx("pad", {
                           on,
-                        })} ${blinkClass} ${whiteClass}`}
+                        })} ${blinkClass} ${whiteClass} ${tutorialClass}`}
                         onClick={() => {
                           this.togglePad(group, soundIndex);
                         }}
@@ -667,26 +717,63 @@ class Sequencer extends Component {
                   });
                 })}
               </div>
-              {/* <div className="currentBid tile25 tutorialStep">
-                Welcome to Secret Garden.
-              </div> */}
-              {/* <div className="tutorialInfo"> */}
-              {/* To begin, press one of the highlighted squares on the left. These are the
-                drum loops. <br/>Only one will play at a time. */}
-              {/* Now, press one of the highlighted squares on the right. These
-                are the bass loops. <br /> Only one will play at a time. */}
-              {/* Next, press one of grey squares in the middle. These are the
-                sounds. Up to 3 can play at at time. */}
-              {/* Great, now go make some music */}
-              {/* </div> */}
-              <div className="currentBid tile25">Current Bid</div>
-              <div className="ethAmount">{`${currentBidAmount} ETH`}</div>
-              <div className="makeOfferText">Make an Offer</div>
-              {/* <a href="#album"> */}
-              <IconButton className="expandOuter" onClick={this.executeScroll}>
-                <img src={Expand} className="expand" />
-              </IconButton>
-              {/* </a> */}
+              {showTutorial && (
+                <React.Fragment>
+                  {tutorialStep === 0 && (
+                    <React.Fragment>
+                      <div className="currentBid tile25 tutorialStep">
+                        Welcome to Secret Garden.
+                      </div>
+                      <div className="tutorialInfo">
+                        To begin, press one of the highlighted squares on the
+                        left. These are the drum loops. <br />
+                        Only one will play at a time.
+                      </div>
+                    </React.Fragment>
+                  )}
+                  {tutorialStep === 1 && (
+                    <div className="tutorialInfo">
+                      Now, press one of the highlighted squares on the right.
+                      These are the bass loops. <br />
+                      When the pad is flashing, the sound will wait to play
+                      until the next bar.
+                      <br /> Only one will play at a time.
+                    </div>
+                  )}
+                  {tutorialStep === 2 && (
+                    <div className="tutorialInfo">
+                      {`Lastly, press one of grey squares in the middle. These are
+                      chords and melodies. Up to ${nft.activeSoundLimits["sounds"]} can play at at time.`}
+                    </div>
+                  )}
+                  {tutorialStep === 3 && (
+                    <div className="tutorialInfo">
+                      You're ready to make some music! <br />
+                      Try out different combinations and share them with friends
+                      below. <br />
+                      If you'd like to make an offer on this sequencer, click
+                      the arrow below or scroll down.
+                    </div>
+                  )}
+                </React.Fragment>
+              )}
+              {!showTutorial && (
+                <React.Fragment>
+                  <div className="currentBid tile25">Current Bid</div>
+                  <div className="ethAmount">{`${currentBidAmount} ETH`}</div>
+                </React.Fragment>
+              )}
+              {(tutorialStep === 3 || !showTutorial) && (
+                <React.Fragment>
+                  <div className="makeOfferText">Make an Offer</div>
+                  <IconButton
+                    className="expandOuter"
+                    onClick={this.executeScroll}
+                  >
+                    <img src={Expand} className="expand" />
+                  </IconButton>
+                </React.Fragment>
+              )}
 
               <div className="pageFooter scrollBar">
                 <canvas ref={this.canvas} style={{ minWidth: "100%" }} />
