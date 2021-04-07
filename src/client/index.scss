@@ -280,7 +280,44 @@ canvas {
     box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
   }
 }
-.whitePad.pad {
+.padWhiteVersion {
+  box-sizing: border-box;
+  width: 44px;
+  height: 44px;
+
+  border: 1px solid #666666;
+
+  // background: lighten($dark, 10%);
+  border-radius: 0px;
+  // border: 1px solid rgba(0, 0, 0, 0.17);
+  display: inline-block;
+  cursor: pointer;
+  // width: calc(#{$controller_size} / #{$steps} - 10px);
+  // height: calc(#{$controller_size} / 10 - 10px);
+  margin: 5px;
+  background: #2a2a2a;
+  //#d9d9d9;
+  box-shadow: 0 0 27px 4px rgba(255, 255, 255, 0.2);
+  // transition: background 10ms ease;
+
+  &:hover {
+    background: white;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+
+  &.active {
+    // background: lighten($dark, 15%);
+    background: white;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+
+  &.on {
+    transform: rotate(-90deg);
+    background: white;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+}
+.whitePad.padWhiteVersion {
   background: rgba(217, 217, 217, 0.38);
   &:hover {
     background: white;
@@ -369,20 +406,60 @@ canvas {
   animation: blinkBlue 1s step-start 0s infinite;
   -webkit-animation: blinkBlue 1s step-start 0s infinite;
 }
-@keyframes blink {
-  50% {
-    background: white;
-  }
-}
 @-webkit-keyframes blink {
+  0% {
+    background: white;
+  }
   50% {
+    background: #1f1f1f;
+  }
+  100% {
     background: white;
   }
 }
-.blink {
-  animation: blink 0.5s ease-in-out 0s infinite;
-  -webkit-animation: blink 0.5s ease-in-out 0s infinite;
+@keyframes blink {
+  0% {
+    background: white;
+  }
+  50% {
+    background: #1f1f1f;
+  }
+  100% {
+    background: white;
+  }
 }
+@-webkit-keyframes blinkWhite {
+  0% {
+    background: white;
+  }
+  50% {
+    background: rgba(217, 217, 217, 0.38);
+  }
+  100% {
+    background: white;
+  }
+}
+@keyframes blinkWhite {
+  0% {
+    background: white;
+  }
+  50% {
+    background: rgba(217, 217, 217, 0.38);
+  }
+  100% {
+    background: white;
+  }
+}
+
+.blink.pad {
+  -webkit-animation: blink 0.5s ease-in-out 0s infinite;
+  animation: blink 0.5s ease-in-out 0s infinite;
+}
+.blink.padWhiteVersion {
+  -webkit-animation: blinkWhite 0.5s ease-in-out 0s infinite;
+  animation: blinkWhite 0.5s ease-in-out 0s infinite;
+}
+
 // .pads {
 //   box-sizing: border-radius;
 //   display: flex;

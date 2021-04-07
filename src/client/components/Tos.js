@@ -20,7 +20,7 @@ import { ethers, utils } from "ethers";
 function Tos(props) {
   return (
     <React.StrictMode>
-      <div className="tosContainer">
+      <div className="tosContainer scrollBar">
         {/* <Navbar white={false} didConnectWallet={refreshData} /> */}
 
         <p class="p1">

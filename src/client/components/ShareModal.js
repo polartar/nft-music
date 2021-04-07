@@ -83,7 +83,7 @@ const useStyles = makeStyles({
 export default function SimpleDialog(props) {
   const classes = useStyles();
   const { onClose, open, shareURL } = props;
-
+  const [text, setText] = React.useState("Copy Link");
   return (
     <Dialog
       onClose={onClose}
@@ -136,13 +136,14 @@ export default function SimpleDialog(props) {
         </div> */}
         <div
           className="shareItem"
-          onClick={() =>
-            copy(`Check out this beat I made on Secret Garden! ${shareURL}`)
-          }
+          onClick={() => {
+            copy(`Check out this beat I made on Secret Garden! ${shareURL}`);
+            setText("Copied!");
+          }}
         >
           <div className="shareWrapper">
             <img src={CopyLink} className="socialIcon" />
-            <div className="shareText">Copy Link</div>
+            <div className="shareText">{text}</div>
           </div>
         </div>
       </div>

@@ -693,6 +693,8 @@ class Sequencer extends Component {
                         : "";
                     const whiteClass = group === "sounds" ? "whitePad" : "";
                     let tutorialClass = "";
+                    const padClass =
+                      group == "sounds" ? "padWhiteVersion" : "pad";
 
                     if (showTutorial) {
                       if (tutorialStep === 0 && group !== "drums") {
@@ -706,7 +708,7 @@ class Sequencer extends Component {
                     return (
                       <div
                         key={`pad-group-${i}`}
-                        className={`${cx("pad", {
+                        className={`${cx(padClass, {
                           on,
                         })} ${blinkClass} ${whiteClass} ${tutorialClass}`}
                         onClick={() => {
