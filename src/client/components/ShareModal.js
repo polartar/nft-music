@@ -103,9 +103,11 @@ export default function SimpleDialog(props) {
             title="Check out this beat I made on Secret Garden!"
             url={shareURL}
           >
-            <img src={Telegram} className="socialIcon" />
+            <div className="shareWrapper">
+              <img src={Telegram} className="socialIcon" />
 
-            <div className="shareText">Share to Telegram</div>
+              <div className="shareText">Share to Telegram</div>
+            </div>
           </TelegramShareButton>
         </div>
         <div className="shareItem">
@@ -113,29 +115,35 @@ export default function SimpleDialog(props) {
             title="Check out this beat I made on Secret Garden!"
             url={shareURL}
           >
-            <img src={Twitter} className="socialIcon" />
+            <div className="shareWrapper">
+              <img src={Twitter} className="socialIcon" />
 
-            <div className="shareText">Share to Twitter</div>
+              <div className="shareText">Share to Twitter</div>
+            </div>
           </TwitterShareButton>
         </div>
-        <div className="shareItem">
+        {/* <div className="shareItem">
           <FacebookMessengerShareButton
             title="Check out this beat I made on Secret Garden!"
             url={shareURL}
           >
-            <img src={Messenger} className="socialIcon" />
+            <div className="shareWrapper">
+              <img src={Messenger} className="socialIcon" />
 
-            <div className="shareText">Share to Messenger</div>
+              <div className="shareText">Share to Messenger</div>
+            </div>
           </FacebookMessengerShareButton>
-        </div>
+        </div> */}
         <div
           className="shareItem"
           onClick={() =>
             copy(`Check out this beat I made on Secret Garden! ${shareURL}`)
           }
         >
-          <img src={CopyLink} className="socialIcon" />
-          <div className="shareText">Copy Link</div>
+          <div className="shareWrapper">
+            <img src={CopyLink} className="socialIcon" />
+            <div className="shareText">Copy Link</div>
+          </div>
         </div>
       </div>
     </Dialog>

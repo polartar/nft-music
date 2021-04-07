@@ -732,7 +732,7 @@ class Sequencer extends Component {
                     </React.Fragment>
                   )}
                   {tutorialStep === 1 && (
-                    <div className="tutorialInfo">
+                    <div className="tutorialInfo tutorialFormatting">
                       Now, press one of the highlighted squares on the right.
                       These are the bass loops. <br />
                       When the pad is flashing, the sound will wait to play
@@ -741,13 +741,13 @@ class Sequencer extends Component {
                     </div>
                   )}
                   {tutorialStep === 2 && (
-                    <div className="tutorialInfo">
+                    <div className="tutorialInfo tutorialFormatting">
                       {`Lastly, press one of grey squares in the middle. These are
                       chords and melodies. Up to ${nft.activeSoundLimits["sounds"]} can play at at time.`}
                     </div>
                   )}
                   {tutorialStep === 3 && (
-                    <div className="tutorialInfo">
+                    <div className="tutorialInfo tutorialFormatting">
                       You're ready to make some music! <br />
                       Try out different combinations and share them with friends
                       below. <br />
