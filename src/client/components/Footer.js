@@ -6,7 +6,7 @@ import "../css/footer.css";
 import { ethers, utils } from "ethers";
 
 export default function Footer(props) {
-  const { loggedIntoMetamaskOverride } = props;
+  const { loggedIntoMetamaskOverride, showShare, shareURL } = props;
   const [loaded, setLoaded] = useState(false);
   const [address, setAddress] = useState();
   const [openShare, setOpenShare] = useState();
@@ -31,7 +31,7 @@ export default function Footer(props) {
 
   return (
     <React.Fragment>
-      <ShareModal onClose={handleClose} open={openShare} />
+      <ShareModal shareURL={shareURL} onClose={handleClose} open={openShare} />
       <div
         className={
           props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
@@ -40,16 +40,18 @@ export default function Footer(props) {
         <a href="/">
           <div className="bottomItem mobileLink">LIVE AUCTION</div>
         </a>
-        <div
-          className="bottomItem mobileLink"
-          onClick={() => setOpenShare(true)}
-          style={{ fontWeight: "700" }}
-        >
-          SHARE
-        </div>
         <a href="/directory">
           <div className="bottomItem mobileLink">DIRECTORY</div>
         </a>
+        {showShare && (
+          <div
+            className="bottomItem mobileLink"
+            onClick={() => setOpenShare(true)}
+            style={{ fontWeight: "700" }}
+          >
+            SHARE
+          </div>
+        )}
 
         {isLoggedIntoMetamask && (
           <a href={`/collection/${address}`} className="notMobileLink">

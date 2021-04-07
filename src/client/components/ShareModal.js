@@ -82,7 +82,7 @@ const useStyles = makeStyles({
 
 export default function SimpleDialog(props) {
   const classes = useStyles();
-  const { onClose, open } = props;
+  const { onClose, open, shareURL } = props;
 
   return (
     <Dialog
@@ -100,39 +100,41 @@ export default function SimpleDialog(props) {
       <div className="modalBody2">
         <div className="shareItem">
           <TelegramShareButton
-            title="Secret Garden"
-            url="https://www.secretgarden.fm"
+            title="Check out this beat I made on Secret Garden!"
+            url={shareURL}
           >
             <img src={Telegram} className="socialIcon" />
+
+            <div className="shareText">Share to Telegram</div>
           </TelegramShareButton>
-          <div className="shareText">Share to Telegram</div>
         </div>
         <div className="shareItem">
           <TwitterShareButton
-            title="Secret Garden"
-            url="https://www.secretgarden.fm"
+            title="Check out this beat I made on Secret Garden!"
+            url={shareURL}
           >
             <img src={Twitter} className="socialIcon" />
+
+            <div className="shareText">Share to Twitter</div>
           </TwitterShareButton>
-          <div className="shareText">Share to Twitter</div>
         </div>
         <div className="shareItem">
           <FacebookMessengerShareButton
-            title="Secret Garden"
-            url="https://www.secretgarden.fm"
+            title="Check out this beat I made on Secret Garden!"
+            url={shareURL}
           >
             <img src={Messenger} className="socialIcon" />
+
+            <div className="shareText">Share to Messenger</div>
           </FacebookMessengerShareButton>
-          <div className="shareText">Share to Messenger</div>
         </div>
         <div
           className="shareItem"
           onClick={() =>
-            copy("Check out Secret Garden (https://www.secretgarden.fm)")
+            copy(`Check out this beat I made on Secret Garden! ${shareURL}`)
           }
         >
           <img src={CopyLink} className="socialIcon" />
-
           <div className="shareText">Copy Link</div>
         </div>
       </div>

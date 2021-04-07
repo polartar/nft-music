@@ -352,7 +352,7 @@ class Sequencer extends Component {
           () => {
             const urlParams = new URLSearchParams(window.location.search);
             const sharedPadNumbers = urlParams.get("share")
-              ? JSON.parse(urlParams.get("share"))
+              ? urlParams.get("share").split(",")
               : [];
 
             sharedPadNumbers.forEach((padNumber) => {
@@ -547,10 +547,7 @@ class Sequencer extends Component {
 
         const startedQueueGroup = updatedQueue[group].filter(
           (soundIndex) => this.players[group][soundIndex].state === "started"
-        ); // We should ignore everything within the limit, started or unstarted?
-
-        console.log(`Filtered queue group: ${unstartedQueueGroup}`);
-        console.log(`Started queue group: ${startedQueueGroup}`);
+        );
 
         // We shaved something off, let's make it stop blinking
         if (unstartedQueueGroup.length > state.nft.activeSoundLimits[group]) {
@@ -558,8 +555,6 @@ class Sequencer extends Component {
             0,
             -state.nft.activeSoundLimits[group]
           );
-
-          console.log(`To remove: ${toRemove}`);
 
           toRemove.forEach((soundIndex) => {
             clonedPads[group][soundIndex] = 0;
@@ -596,6 +591,7 @@ class Sequencer extends Component {
       users,
       padFormat,
       padFormatStyleClass,
+      shareablePadNumbers,
     } = this.state;
 
     const currentBidAmount =
@@ -699,6 +695,10 @@ class Sequencer extends Component {
 
             <Footer
               white={false}
+              showShare
+              shareURL={`https://secretgarden.fm/?share=${shareablePadNumbers.join(
+                ","
+              )}`}
               loggedIntoMetamaskOverride={isLoggedIntoMetamask}
             />
           </div>
