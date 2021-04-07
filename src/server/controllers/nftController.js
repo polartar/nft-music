@@ -139,6 +139,9 @@ async function getOrdersForNFT(nftID, useTestnet) {
           order_by: "eth_price",
           order_direction: "desc",
         },
+        headers: {
+          "X-API-KEY": "e6de7b0f341949a1a3258887428c1ebc",
+        },
       }
     );
 

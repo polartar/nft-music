@@ -40,10 +40,19 @@ export default function Footer(props) {
         <a href="/">
           <div className="bottomItem mobileLink">LIVE AUCTION</div>
         </a>
+        {showShare && !isLoggedIntoMetamask && (
+          <div
+            className="bottomItem mobileLink"
+            onClick={() => setOpenShare(true)}
+            style={{ fontWeight: "700" }}
+          >
+            SHARE
+          </div>
+        )}
         <a href="/directory">
           <div className="bottomItem mobileLink">DIRECTORY</div>
         </a>
-        {showShare && (
+        {showShare && isLoggedIntoMetamask && (
           <div
             className="bottomItem mobileLink"
             onClick={() => setOpenShare(true)}
