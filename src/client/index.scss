@@ -34,10 +34,28 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+.ourSocials {
+  text-align: right;
+  position: absolute;
+  bottom: 70px;
+  right: 40px;
+  color: white;
+  font-size: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
 
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
+}
+.ourTwitter {
+  width: 15px;
+  height: auto;
+  margin-left: 10px;
+  cursor: pointer;
 }
 .Sequencer {
   position: relative;
@@ -363,6 +381,15 @@ canvas {
     box-shadow: 0 0 12px 0 rgba($primary, 0.8);
   }
 }
+.nftDetails {
+  font-size: 14px;
+  color: white;
+  text-align: left;
+  margin-top: 20px;
+  display: block;
+  /* display: none; */
+  max-width: 370px;
+}
 .fakePad {
   box-sizing: border-box;
   width: 44px;
@@ -627,7 +654,7 @@ footer {
   margin-top: 30px !important;
 }
 .historyWrapper {
-  margin-top: 90px;
+  margin-top: 70px;
   border-top: solid 1px white;
   padding-top: 25px;
   display: flex;
@@ -719,6 +746,12 @@ footer {
   }
   .albumWrapper {
     transform: scale(0.75);
+  }
+  .tutorialInfo {
+    font-size: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
+    box-sizing: border-box;
   }
 }
 @media only screen and (max-width: 400px) {

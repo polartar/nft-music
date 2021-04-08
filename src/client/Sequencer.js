@@ -17,6 +17,7 @@ import Expand from "./images/expand.png";
 import BidModal from "./components/BidModal";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Twitter from "./images/twitter.png";
 import * as Tone from "tone";
 import { Limiter, ToneAudioNode } from "tone";
 import axios from "axios";
@@ -863,7 +864,11 @@ class Sequencer extends Component {
                 <Button className="offerButton" onClick={this.handleClickOpen}>
                   Make an Offer
                 </Button>
-                <div className="bidOnDesktop">
+                <div className="nftDetails">
+                  Winning bid receives an NFT, the sound files, and distribution
+                  rights.
+                </div>
+                <div className=" bidOnDesktop">
                   Sign in on Desktop to place bid
                 </div>
                 <div className="historyWrapper">
@@ -910,6 +915,12 @@ class Sequencer extends Component {
                   </table>
                 </div>
               </div>
+            </div>
+            <div className="ourSocials">
+              <span>inquiries@secretgarden.fm</span>
+              <a href="https://twitter.com/SecretG59357898" target="_blank">
+                <img src={Twitter} className="ourTwitter" />
+              </a>
             </div>
           </div>
         </React.StrictMode>
