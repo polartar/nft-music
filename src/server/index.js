@@ -76,7 +76,7 @@ app.get("/api/getNFTsForUser", async (req, res) => {
 app.get("/api/getOrdersForNFT", async (req, res) => {
   const { status, response } = await nftController.getOrdersForNFT(
     req.query.nftID,
-    req.query.useTestnet
+    req.query.useTestnet === "true"
   );
 
   res.status(status).send(response);
