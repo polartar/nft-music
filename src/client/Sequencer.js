@@ -865,8 +865,8 @@ class Sequencer extends Component {
                   Make an Offer
                 </Button>
                 <div className="nftDetails">
-                  Winning bid receives an NFT, the sound files, and distribution
-                  rights.
+                  Winning bid receives an NFT for the artwork, lossless sound
+                  files, and a non-exclusive license for distribution.
                 </div>
                 <div className=" bidOnDesktop">
                   Sign in on Desktop to place bid
