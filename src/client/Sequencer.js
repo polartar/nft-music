@@ -387,15 +387,26 @@ class Sequencer extends Component {
       }, "4n");
 
       Tone.loaded().then(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sharedPadNumbers = urlParams.get("share");
+
         this.setState(
           () => ({
             loaded: true,
+            showTutorial:
+              this.state.showTutorial && sharedPadNumbers !== null
+                ? false
+                : this.state.showTutorial,
           }),
           () => {
             const urlParams = new URLSearchParams(window.location.search);
             const sharedPadNumbers = urlParams.get("share")
               ? urlParams.get("share").split(",")
               : [];
+
+            if (sharedPadNumbers.length > 0) {
+              this.setState({ showTutorial: false });
+            }
 
             sharedPadNumbers.forEach((padNumber) => {
               const col = parseInt(padNumber / this.state.padFormat.length);
