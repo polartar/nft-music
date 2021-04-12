@@ -321,6 +321,7 @@ class Sequencer extends Component {
           let didPlayDrums = false;
           let didPlayBasses = false;
           let didPlaySounds = false;
+
           Object.keys(this.state.queue).forEach((group) => {
             updatedPads[group] = Array.from(
               { length: this.state.pads[group].length },
@@ -332,7 +333,7 @@ class Sequencer extends Component {
             );
 
             updatedQueue[group].forEach((soundIndex) => {
-              this.players[group][soundIndex].start();
+              this.players[group][soundIndex].start(time);
               updatedPads[group][soundIndex] = 1;
 
               if (group === "drums") {
