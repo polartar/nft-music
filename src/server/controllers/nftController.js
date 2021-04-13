@@ -13,21 +13,34 @@ client.connect(function(err) {
   db = client.db(config.mongoDBName);
 });
 
+async function getNFTWithMetadata(nftID) {
+  const nft = await db.collection("NFTs").findOne({
+    _id: ObjectId(nftID),
+  });
+
+  const artist = await db.collection("artists").findOne({
+    name: nft.artistName,
+  });
+
+  nft.artist = artist;
+
+  if (nft.ownerAddress) {
+    const { response } = await userController.getUser(nft.ownerAddress);
+    if (response) {
+      nft.ownerName = response.name;
+    }
+  }
+
+  return nft;
+}
+
 async function getFeaturedNFT() {
   try {
     const settings = await db.collection("settings").findOne({
       _id: ObjectId("605d225f34d1d94b02ef8591"),
     });
 
-    const featuredNFT = await db.collection("NFTs").findOne({
-      _id: ObjectId(settings.featuredNFTID),
-    });
-
-    const artist = await db.collection("artists").findOne({
-      name: featuredNFT.artistName,
-    });
-
-    featuredNFT.artist = artist;
+    const featuredNFT = await getNFTWithMetadata(settings.featuredNFTID);
 
     return {
       status: 200,
@@ -41,17 +54,13 @@ async function getFeaturedNFT() {
 
 async function getNFT(artistName, name, edition) {
   try {
-    const nft = await db.collection("NFTs").findOne({
+    let nft = await db.collection("NFTs").findOne({
       artistName,
       name,
       edition: parseFloat(edition),
     });
 
-    const artist = await db.collection("artists").findOne({
-      name: artistName,
-    });
-
-    nft.artist = artist;
+    nft = await getNFTWithMetadata(nft._id.toString());
 
     return {
       status: 200,
@@ -70,20 +79,9 @@ async function getAllNFTs() {
     const nfts = [];
 
     while (await nftQuery.hasNext()) {
-      const nft = await nftQuery.next();
+      let nft = await nftQuery.next();
 
-      const artist = await db.collection("artists").findOne({
-        name: nft.artistName,
-      });
-
-      nft.artist = artist;
-
-      if (nft.ownerAddress) {
-        const { response } = await userController.getUser(nft.ownerAddress);
-        if (response) {
-          nft.ownerName = response.name;
-        }
-      }
+      nft = await getNFTWithMetadata(nft._id.toString());
       nfts.push(nft);
     }
 

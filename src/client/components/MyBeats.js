@@ -42,6 +42,8 @@ function Collection(props) {
       },
     });
 
+    console.log(userResponse);
+
     if (userResponse.data.name) {
       setDisplayName(userResponse.data.name);
     } else {
@@ -62,8 +64,6 @@ function Collection(props) {
     refreshData();
   }, [loaded]);
 
-  console.log(nfts);
-
   return (
     <React.StrictMode>
       {loaded && (
@@ -78,10 +78,28 @@ function Collection(props) {
             )}
             {nfts.length > 0 &&
               nfts.map((nft) => {
+                const mediaFileExtension = nft.imageURL
+                  .split(".")
+                  .pop()
+                  .toLowerCase();
                 return (
                   <a href={`/${nft.artistName}/${nft.name}/${nft.edition}`}>
                     <div className="beatPackItem">
-                      <img src={nft.imageURL} className="directoryAlbum" />
+                      {mediaFileExtension === "mp4" && (
+                        <video
+                          width="300"
+                          height="300"
+                          autoplay="true"
+                          muted="true"
+                          loop="true"
+                          style={{ marginBottom: "20px" }}
+                        >
+                          <source src={nft.imageURL} type="video/mp4" />
+                        </video>
+                      )}
+                      {mediaFileExtension !== "mp4" && (
+                        <img src={nft.imageURL} className="directoryAlbum" />
+                      )}
                       <div className="directoryItemName">{nft.name}</div>
                       <div className="directoryArtistName">
                         {nft.artistName}

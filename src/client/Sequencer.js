@@ -784,15 +784,25 @@ class Sequencer extends Component {
                   )}
                 </React.Fragment>
               )}
-              {!showTutorial && (
+              {!showTutorial && !nft.ownerAddress && (
                 <React.Fragment>
                   <div className="currentBid tile25">Current Bid</div>
                   <div className="ethAmount">{`${currentBidAmount} ETH`}</div>
                 </React.Fragment>
               )}
+              {!showTutorial && nft.ownerAddress && (
+                <React.Fragment>
+                  <a href={`/collection/${nft.ownerAddress}`}>
+                    <div className="currentBid tile25">{`Owner: ${nft.ownerName}`}</div>
+                  </a>
+                  <div className="ethAmount">{`Sold for ${nft.saleAmount} ETH`}</div>
+                </React.Fragment>
+              )}
               {(tutorialStep === 3 || !showTutorial) && (
                 <React.Fragment>
-                  <div className="makeOfferText">Make an Offer</div>
+                  <div className="makeOfferText">
+                    {nft.ownerAddress ? "View Bid History" : "Make an Offer"}
+                  </div>
                   <IconButton
                     className="expandOuter"
                     onClick={this.executeScroll}
@@ -843,7 +853,9 @@ class Sequencer extends Component {
                 <div className="editionInfo">{`Edition: ${nft.edition}`}</div>
                 <div className="bidInfoWrapper">
                   <div className="bidItem">
-                    <div className="bidTitle">Current Bid</div>
+                    <div className="bidTitle">
+                      {nft.ownerAddress ? "Sale Price" : "Current Bid"}
+                    </div>
                     <div className="bidInfo">{`${currentBidAmount} ETH`}</div>
                   </div>
                   <div className="bidItem right">
@@ -873,12 +885,18 @@ class Sequencer extends Component {
                     />
                   </div>
                 </div>
-                <Button className="offerButton" onClick={this.handleClickOpen}>
-                  Make an Offer
-                </Button>
+                {!nft.ownerAddress && (
+                  <Button
+                    className="offerButton"
+                    onClick={this.handleClickOpen}
+                  >
+                    Make an Offer
+                  </Button>
+                )}
                 <div className="nftDetails">
-                  Winning bid receives an NFT for the artwork, lossless sound
-                  files, and a non-exclusive license for distribution.
+                  The winning bidder will receive an NFT for the artwork and
+                  lossless sound files. The winner will also be granted a
+                  non-exclusive license for distribution.
                 </div>
                 <div className=" bidOnDesktop">
                   Sign in on Desktop to place bid
@@ -930,7 +948,7 @@ class Sequencer extends Component {
             </div>
             <div className="ourSocials">
               <span>inquiries@secretgarden.fm</span>
-              <a href="https://twitter.com/SecretG59357898" target="_blank">
+              <a href="https://twitter.com/SecretGarden_FM" target="_blank">
                 <img src={Twitter} className="ourTwitter" />
               </a>
             </div>
