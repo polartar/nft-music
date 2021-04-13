@@ -656,8 +656,6 @@ class Sequencer extends Component {
       tutorialStep,
     } = this.state;
 
-    console.log(showTutorial);
-
     const currentBidAmount =
       bids.length > 0
         ? parseFloat(utils.formatEther(bids[0].base_price)).toPrecision(4) / 1
@@ -669,6 +667,7 @@ class Sequencer extends Component {
         .split(".")
         .pop()
         .toLowerCase();
+
       return (
         <React.StrictMode>
           <BidModal
@@ -784,17 +783,20 @@ class Sequencer extends Component {
                   )}
                 </React.Fragment>
               )}
-              {!showTutorial && !nft.ownerAddress && (
+              {!showTutorial && nft.ownerAddress === null && (
                 <React.Fragment>
                   <div className="currentBid tile25">Current Bid</div>
                   <div className="ethAmount">{`${currentBidAmount} ETH`}</div>
                 </React.Fragment>
               )}
-              {!showTutorial && nft.ownerAddress && (
+              {!showTutorial && nft.ownerAddress !== null && (
                 <React.Fragment>
-                  <a href={`/collection/${nft.ownerAddress}`}>
-                    <div className="currentBid tile25">{`Owner: ${nft.ownerName}`}</div>
-                  </a>
+                  <div className="currentBid tile25">
+                    <a
+                      href={`/collection/${nft.ownerAddress}`}
+                    >{`Owner: ${nft.ownerName}`}</a>
+                  </div>
+
                   <div className="ethAmount">{`Sold for ${nft.saleAmount} ETH`}</div>
                 </React.Fragment>
               )}
