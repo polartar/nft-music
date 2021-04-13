@@ -11,7 +11,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import SecretGardenLogo from "./images/SecretGarden.png";
 import AlbumArt from "./images/albumArt.png";
 import InstaPic from "./images/instaPic.png";
-import Waterpond from "./images/waterpond.mp4";
+import WaterLoop from "./images/waterLoop.mp4";
 import Wallet from "./images/wallet.png";
 import Expand from "./images/expand.png";
 import BidModal from "./components/BidModal";
@@ -493,8 +493,9 @@ class Sequencer extends Component {
     var barWidth = (canvas.width / bufferLength) * 2.5;
     // ctx.globalCompositeOperation = 'destination-over'
 
-    ctx.fillStyle = "#1f1f1f";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // ctx.fillStyle = "#1f1f1f";
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (var i = 0; i < bufferLength; i++) {
       var barHeight;
       if (frequency_array[i] < 20) {
@@ -679,6 +680,14 @@ class Sequencer extends Component {
             currentBidAmount={currentBidAmount}
           />
           <div className="container scrollBar">
+            <video
+              className="waterLoopVideo"
+              autoplay="true"
+              muted="true"
+              loop="true"
+            >
+              <source src={WaterLoop} type="video/mp4" />
+            </video>
             <div className="gridTop">
               {this.rhythmPads.map((group, groupIndex) => (
                 <React.Fragment>
