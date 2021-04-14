@@ -526,7 +526,7 @@ class Sequencer extends Component {
     let frequency_array = new Uint8Array(analyser.map((x) => x * 7000));
 
     const isAllZero = frequency_array.every((item) => item === 0);
-    console.log(isAllZero);
+
     if (!isAllZero) {
       canvas.width = window.innerWidth;
       canvas.height = 500;
