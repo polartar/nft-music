@@ -73,7 +73,7 @@ async function updateUser(address, signature, name, email) {
       }
 
       await db.collection("users").updateOne(
-        { address },
+        { address: address.toLowerCase() },
         {
           $set: {
             address: address.toLowerCase(),
