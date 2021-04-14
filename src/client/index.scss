@@ -52,8 +52,20 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 .ourTwitter {
-  width: 15px;
-  height: auto;
+  height: 13px;
+  width: auto;
+  margin-left: 10px;
+  cursor: pointer;
+}
+.ourInsta {
+  height: 14px;
+  width: auto;
+  margin-left: 10px;
+  cursor: pointer;
+}
+.ourDiscord {
+  height: 14px;
+  width: auto;
   margin-left: 10px;
   cursor: pointer;
 }
@@ -161,6 +173,7 @@ input[type="number"] {
   align-items: center;
   // background: #1f1f1f;
   background: transparent;
+  overflow: hidden;
 }
 .container2 {
   height: 100vh;
@@ -271,7 +284,7 @@ canvas {
   border: 1px solid white;
 
   // background: lighten($dark, 10%);
-  border-radius: 0px;
+  border-radius: 10px;
   // border: 1px solid rgba(0, 0, 0, 0.17);
   display: inline-block;
   cursor: pointer;
@@ -300,15 +313,20 @@ canvas {
     box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
   }
 }
+.circlePad,
+.circlePad.padWhiteVersion,
+.circlePad.pad {
+  border-radius: 50%;
+}
 .padWhiteVersion {
   box-sizing: border-box;
   width: 44px;
   height: 44px;
-
+  border-radius: 10px;
   border: 1px solid white;
 
   // background: lighten($dark, 10%);
-  border-radius: 0px;
+
   // border: 1px solid rgba(0, 0, 0, 0.17);
   display: inline-block;
   cursor: pointer;
@@ -450,7 +468,7 @@ canvas {
     background: white;
   }
   50% {
-    background: #1f1f1f;
+    background: transparent;
   }
   100% {
     background: white;
@@ -461,7 +479,7 @@ canvas {
     background: white;
   }
   50% {
-    background: #1f1f1f;
+    background: transparent;
   }
   100% {
     background: white;

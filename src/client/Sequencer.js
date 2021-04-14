@@ -11,13 +11,16 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import SecretGardenLogo from "./images/SecretGarden.png";
 import AlbumArt from "./images/albumArt.png";
 import InstaPic from "./images/instaPic.png";
-import WaterLoop from "./images/waterLoop.mp4";
+import WaterLoop from "./images/waterLoop720.mp4";
 import Wallet from "./images/wallet.png";
 import Expand from "./images/expand.png";
 import BidModal from "./components/BidModal";
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Twitter from "./images/twitter.png";
+import Discord from "./images/discord.png";
+import Instagram from "./images/instagram.png";
 import * as Tone from "tone";
 import { Limiter, ToneAudioNode } from "tone";
 import axios from "axios";
@@ -529,8 +532,8 @@ class Sequencer extends Component {
     var bufferLength = frequency_array.length;
     var barWidth = (canvas.width / bufferLength) * 2;
 
-    ctx.fillStyle = "#1f1f1f";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // ctx.fillStyle = "#1f1f1f";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (var i = 0; i < bufferLength; i++) {
       var barHeight;
@@ -886,8 +889,9 @@ class Sequencer extends Component {
                   Make an Offer
                 </Button>
                 <div className="nftDetails">
-                  Winning bid receives an NFT for the artwork, lossless sound
-                  files, and a non-exclusive license for distribution.
+                  Winning bid receives an NFT for the artwork and beat pack,
+                  lossless sound files, and a non-exclusive license for
+                  distribution.
                 </div>
                 <div className=" bidOnDesktop">
                   Sign in on Desktop to place bid
@@ -941,6 +945,16 @@ class Sequencer extends Component {
               <span>inquiries@secretgarden.fm</span>
               <a href="https://twitter.com/SecretG59357898" target="_blank">
                 <img src={Twitter} className="ourTwitter" />
+              </a>
+
+              <a href="https://discord.gg/ykrzXB9ZsV" target="_blank">
+                <img src={Discord} className="ourDiscord" />
+              </a>
+              <a
+                href="https://www.instagram.com/secretgarden_fm/"
+                target="_blank"
+              >
+                <img src={Instagram} className="ourInsta" />
               </a>
             </div>
           </div>
