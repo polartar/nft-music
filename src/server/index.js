@@ -43,6 +43,12 @@ app.post("/api/updateUser", async (req, res) => {
   res.status(status).send(response);
 });
 
+app.post("/api/addEmail", async (req, res) => {
+  const { status, response } = await userController.addEmail(req.body.email);
+
+  res.status(status).send(response);
+});
+
 app.get("/api/getAllNFTs", async (req, res) => {
   const { status, response } = await nftController.getAllNFTs();
 

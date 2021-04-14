@@ -120,14 +120,54 @@ const fiveByFiveThreeGroups = [
   ],
 ];
 
+const fiveByFiveFlower = [
+  [
+    ["sounds", 4],
+    ["sounds", 1],
+    ["sounds", 2],
+    ["basses", 0],
+    ["basses", 1],
+  ],
+  [
+    ["sounds", 3],
+    ["sounds", 0, "circlePad"],
+    ["sounds", 5],
+    ["basses", 2],
+    ["basses", 3],
+  ],
+  [
+    ["sounds", 6],
+    ["sounds", 7],
+    ["sounds", 8],
+    ["basses", 4],
+    ["sounds", 9],
+  ],
+  [
+    ["drums", 0],
+    ["drums", 1],
+    ["drums", 2],
+    ["sounds", 10],
+    ["basses", 5],
+  ],
+  [
+    ["drums", 3],
+    ["drums", 4],
+    ["sounds", 11],
+    ["drums", 5],
+    ["sounds", 12],
+  ],
+];
+
 const padFormatMappings = {
   sixBySixThreeGroups,
   fiveByFiveThreeGroups,
+  fiveByFiveFlower,
 };
 
 const padFormatTileStyleMappings = {
   sixBySixThreeGroups: "tile36",
   fiveByFiveThreeGroups: "tile25",
+  fiveByFiveFlower: "tile25",
 };
 
 let ctx, x_end, y_end, bar_height;
@@ -720,8 +760,10 @@ class Sequencer extends Component {
                   return column.map((remappedCoordinates, i) => {
                     const group = remappedCoordinates[0];
                     const soundIndex = remappedCoordinates[1];
+                    const additionalClasses = remappedCoordinates[2];
                     const on =
                       this.players[group][soundIndex].state === "started";
+
                     const blinkClass =
                       pads[group][soundIndex] === 1 &&
                       this.players[group][soundIndex].state !== "started"
@@ -746,7 +788,7 @@ class Sequencer extends Component {
                         key={`pad-group-${i}`}
                         className={`${cx(padClass, {
                           on,
-                        })} ${blinkClass} ${whiteClass} ${tutorialClass}`}
+                        })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
                         onClick={() => {
                           this.togglePad(group, soundIndex);
                         }}
@@ -908,11 +950,9 @@ class Sequencer extends Component {
                   </Button>
                 )}
                 <div className="nftDetails">
-
                   Winning bid receives an NFT for the artwork and beat pack,
                   lossless sound files, and a non-exclusive license for
                   distribution.
-
                 </div>
                 <div className=" bidOnDesktop">
                   Sign in on Desktop to place bid

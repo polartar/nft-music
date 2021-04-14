@@ -83,7 +83,24 @@ const useStyles = makeStyles({
 export default function SimpleDialog(props) {
   const classes = useStyles();
   const { onClose, open, shareURL } = props;
-  const [text, setText] = React.useState("Copy Link");
+  const [email, setEmail] = React.useState();
+  const [feedback, setFeedback] = React.useState();
+
+  const addEmail = async () => {
+    try {
+      const response = await axios.post("/api/addEmail", {
+        email,
+      });
+
+      setFeedback(
+        "Thanks for subscribing! We'll keep you in the loop about future drops."
+      );
+    } catch (error) {
+      if (error.response) {
+        setFeedback(error.response.data);
+      }
+    }
+  };
   return (
     <Dialog
       onClose={onClose}
@@ -92,15 +109,20 @@ export default function SimpleDialog(props) {
       open={open}
     >
       <div className="modalHeader2">
-        <div className="modalTitle">Stroll Through</div>
+        <div className="modalTitle">Stroll through the Secret Garden</div>
         <IconButton>
           <img src={X} className="x" onClick={onClose} />
         </IconButton>
       </div>
       <div className="modalBody2">
-        <div className="modalTitle">Sign up to hear about future drops</div>
-        <input className="ethInput emailInput" placeHolder={"Enter Email"} />
+        <div className="modalTitle">Subscribe to hear about future drops</div>
+        <input
+          onBlur={(event) => setEmail(event.target.value)}
+          className="ethInput emailInput"
+          placeHolder={"Enter Email"}
+        />
       </div>
+      <div style={{ color: "white" }}>{feedback}</div>
       <div className="modalFooter">
         <Button
           variant="outlined"
@@ -113,8 +135,9 @@ export default function SimpleDialog(props) {
           variant="outlined"
           classes={{ root: classes.continueButton }}
           className="continueButton"
+          onClick={addEmail}
         >
-          Sign Up
+          Subscribe
         </Button>
       </div>
     </Dialog>
