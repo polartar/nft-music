@@ -524,38 +524,43 @@ class Sequencer extends Component {
     }
 
     let frequency_array = new Uint8Array(analyser.map((x) => x * 7000));
-    canvas.width = window.innerWidth;
-    canvas.height = 500;
 
-    var x = 0;
+    const isAllZero = frequency_array.every((item) => item === 0);
+    console.log(isAllZero);
+    if (!isAllZero) {
+      canvas.width = window.innerWidth;
+      canvas.height = 500;
 
-    let ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+      var x = 0;
 
-    var bufferLength = frequency_array.length;
-    var barWidth = (canvas.width / bufferLength) * 2.5;
-    // ctx.globalCompositeOperation = 'destination-over'
+      let ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // ctx.fillStyle = "#1f1f1f";
+      var bufferLength = frequency_array.length;
+      var barWidth = (canvas.width / bufferLength) * 2.5;
+      // ctx.globalCompositeOperation = 'destination-over'
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (var i = 0; i < bufferLength; i++) {
-      var barHeight;
-      if (frequency_array[i] < 20) {
-        barHeight = frequency_array[i] * 3;
-      } else {
-        barHeight = frequency_array[i] * 1;
+      // ctx.fillStyle = "#1f1f1f";
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (var i = 0; i < bufferLength; i++) {
+        var barHeight;
+        if (frequency_array[i] < 20) {
+          barHeight = frequency_array[i] * 3;
+        } else {
+          barHeight = frequency_array[i] * 1;
+        }
+
+        var r = barHeight + 25 * (i / bufferLength);
+        var g = 250 * (i / bufferLength);
+        var b = 50;
+
+        // ctx.fillStyle = 'rgb(' + 255 + ',' + 255 + ',' + 255 + ')'
+        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+
+        x += barWidth + 1;
       }
-
-      var r = barHeight + 25 * (i / bufferLength);
-      var g = 250 * (i / bufferLength);
-      var b = 50;
-
-      // ctx.fillStyle = 'rgb(' + 255 + ',' + 255 + ',' + 255 + ')'
-      ctx.fillStyle = "rgba(255, 255, 255, 1)";
-      ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-
-      x += barWidth + 1;
     }
   }
 
