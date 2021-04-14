@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import ShareModal from "./ShareModal";
+import EmailModal from "./EmailModal";
 import "../css/footer.css";
 import { ethers, utils } from "ethers";
 
@@ -9,7 +10,8 @@ export default function Footer(props) {
   const { loggedIntoMetamaskOverride, showShare, shareURL } = props;
   const [loaded, setLoaded] = useState(false);
   const [address, setAddress] = useState();
-  const [openShare, setOpenShare] = useState();
+  const [openShare, setOpenShare] = useState(false);
+  const [openEmail, setOpenEmail] = useState(false);
   const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
 
   const refreshData = async () => {
@@ -25,6 +27,13 @@ export default function Footer(props) {
   const handleClose = () => {
     setOpenShare(false);
   };
+  const handleClickOpenEmail = () => {
+    setOpenEmail(true);
+  };
+
+  const handleCloseEmail = () => {
+    setOpenEmail(false);
+  };
   useEffect(() => {
     refreshData();
   }, [loaded, loggedIntoMetamaskOverride]);
@@ -32,6 +41,7 @@ export default function Footer(props) {
   return (
     <React.Fragment>
       <ShareModal shareURL={shareURL} onClose={handleClose} open={openShare} />
+      <EmailModal onClose={handleCloseEmail} open={openEmail} />
       <div
         className={
           props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
@@ -62,11 +72,16 @@ export default function Footer(props) {
           </div>
         )}
 
-        {isLoggedIntoMetamask && (
+        {/* {isLoggedIntoMetamask && (
           <a href={`/collection/${address}`} className="notMobileLink">
             <div className="bottomItem">MY COLLECTION</div>
           </a>
-        )}
+        )} */}
+
+        <div onClick={handleClickOpenEmail} className="bottomItem mobileLink">
+          FUTURE DROPS
+        </div>
+
         {isLoggedIntoMetamask && (
           <a href={`/profile`} className=" notMobileLink">
             <div className="bottomItem">PROFILE</div>

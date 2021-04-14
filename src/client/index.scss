@@ -52,8 +52,20 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 .ourTwitter {
-  width: 15px;
-  height: auto;
+  height: 13px;
+  width: auto;
+  margin-left: 10px;
+  cursor: pointer;
+}
+.ourInsta {
+  height: 14px;
+  width: auto;
+  margin-left: 10px;
+  cursor: pointer;
+}
+.ourDiscord {
+  height: 14px;
+  width: auto;
   margin-left: 10px;
   cursor: pointer;
 }
@@ -130,6 +142,7 @@ input[type="number"] {
   flex-direction: column;
   align-items: center;
   height: 100vh;
+  z-index: 400;
 }
 
 .artistName {
@@ -158,7 +171,9 @@ input[type="number"] {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  background: #1f1f1f;
+  // background: #1f1f1f;
+  background: transparent;
+  overflow: hidden;
 }
 .container2 {
   height: 100vh;
@@ -266,17 +281,17 @@ canvas {
   width: 44px;
   height: 44px;
 
-  border: 1px solid #666666;
+  border: 1px solid white;
 
   // background: lighten($dark, 10%);
-  border-radius: 0px;
+  border-radius: 10px;
   // border: 1px solid rgba(0, 0, 0, 0.17);
   display: inline-block;
   cursor: pointer;
   // width: calc(#{$controller_size} / #{$steps} - 10px);
   // height: calc(#{$controller_size} / 10 - 10px);
   margin: 5px;
-  background: #2a2a2a;
+  background: transparent;
   //#d9d9d9;
   box-shadow: 0 0 27px 4px rgba(255, 255, 255, 0.2);
   // transition: background 10ms ease;
@@ -298,15 +313,20 @@ canvas {
     box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
   }
 }
+.circlePad,
+.circlePad.padWhiteVersion,
+.circlePad.pad {
+  border-radius: 50%;
+}
 .padWhiteVersion {
   box-sizing: border-box;
   width: 44px;
   height: 44px;
-
-  border: 1px solid #666666;
+  border-radius: 10px;
+  border: 1px solid white;
 
   // background: lighten($dark, 10%);
-  border-radius: 0px;
+
   // border: 1px solid rgba(0, 0, 0, 0.17);
   display: inline-block;
   cursor: pointer;
@@ -354,12 +374,22 @@ canvas {
     box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
   }
 }
-
+.waterLoopVideo {
+  position: absolute;
+  min-width: 100%;
+  min-height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  filter: brightness(50%);
+}
 .modifiedPad {
   box-sizing: border-box;
   width: 12.5%;
   height: 4px;
-  background: #1f1f1f;
+  background: transparent;
+  // background: #1f1f1f;
 
   display: inline-block;
   cursor: pointer;
@@ -438,7 +468,7 @@ canvas {
     background: white;
   }
   50% {
-    background: #1f1f1f;
+    background: transparent;
   }
   100% {
     background: white;
@@ -449,7 +479,7 @@ canvas {
     background: white;
   }
   50% {
-    background: #1f1f1f;
+    background: transparent;
   }
   100% {
     background: white;

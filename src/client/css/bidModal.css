@@ -5,6 +5,7 @@
   line-height: 19px;
   color: white;
   font-family: "DM Mono", monospace;
+  text-align: left;
 }
 .tosLabel {
   font-family: "DM Mono", monospace !important;
@@ -21,6 +22,10 @@
   padding: 20px 30px;
   border-bottom: solid 1px white;
   box-sizing: border-box;
+}
+.emailInput,
+.emailInput.ethInput {
+  margin-top: 25px;
 }
 .modalHeader2 {
   width: 100%;
@@ -130,7 +135,7 @@
   color: white;
   font-size: 20px;
   color: white;
-  top: 74px;
+  top: 86px;
   right: 60px;
 }
 .modalFooter {
