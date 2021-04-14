@@ -11,7 +11,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import SecretGardenLogo from "./images/SecretGarden.png";
 import AlbumArt from "./images/albumArt.png";
 import InstaPic from "./images/instaPic.png";
-import WaterLoop from "./images/waterLoop720.mp4";
+import WaterLoop from "./images/waterScaleLoop.mp4";
 import Wallet from "./images/wallet.png";
 import Expand from "./images/expand.png";
 import BidModal from "./components/BidModal";
@@ -723,6 +723,7 @@ class Sequencer extends Component {
           />
           <div className="container scrollBar">
             <video
+              playsinline={true}
               className="waterLoopVideo"
               autoplay="true"
               muted="true"

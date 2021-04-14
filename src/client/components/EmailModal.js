@@ -121,8 +121,9 @@ export default function SimpleDialog(props) {
           className="ethInput emailInput"
           placeHolder={"Enter Email"}
         />
+        <div style={{ color: "white", marginTop: "10px" }}>{feedback}</div>
       </div>
-      <div style={{ color: "white" }}>{feedback}</div>
+
       <div className="modalFooter">
         <Button
           variant="outlined"
