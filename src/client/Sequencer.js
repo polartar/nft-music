@@ -30,6 +30,7 @@ import config from "./config.json";
 import clone from "clone";
 import Loading from "./components/Loading";
 import Cookies from "universal-cookie";
+import mixpanel from "mixpanel-browser";
 
 const sixBySixThreeGroups = [
   [
@@ -228,6 +229,8 @@ class Sequencer extends Component {
 
     this.initWallet();
     this.myRef = React.createRef();
+
+    mixpanel.track("Visited sequencer");
   }
 
   initWallet = async () => {

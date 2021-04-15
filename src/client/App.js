@@ -9,6 +9,8 @@ import {
   Redirect,
 } from "react-router-dom";
 
+import mixpanel from "mixpanel-browser";
+
 const Sequencer = lazy(() => import("./Sequencer"));
 const Settings = lazy(() => import("./components/Settings"));
 const Directory = lazy(() => import("./components/Directory"));
@@ -16,6 +18,8 @@ const ArtistsDirectory = lazy(() => import("./components/ArtistsDirectory"));
 const MyBeats = lazy(() => import("./components/MyBeats"));
 const Loading = lazy(() => import("./components/Loading"));
 const Tos = lazy(() => import("./components/Tos"));
+
+mixpanel.init("f54426da70deebfa5eb9d8c75dc5c829");
 
 export default function App(props) {
   return (
