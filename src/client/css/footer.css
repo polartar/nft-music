@@ -20,6 +20,9 @@
 .bottomNav.white > a > .bottomItem {
   color: #222222;
 }
+.bottomNav.white > .bottomItem {
+  color: #222222;
+}
 
 .bottomItem {
   font-size: 12px;
