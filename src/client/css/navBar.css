@@ -132,4 +132,7 @@
   .navBar {
     padding: 20px 20px;
   }
+  .logo {
+    width: 100px;
+  }
 }

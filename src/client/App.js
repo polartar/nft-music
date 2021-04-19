@@ -18,6 +18,7 @@ const ArtistsDirectory = lazy(() => import("./components/ArtistsDirectory"));
 const MyBeats = lazy(() => import("./components/MyBeats"));
 const Loading = lazy(() => import("./components/Loading"));
 const Tos = lazy(() => import("./components/Tos"));
+const Privacy = lazy(() => import("./components/Privacy"));
 
 mixpanel.init("f54426da70deebfa5eb9d8c75dc5c829");
 
@@ -49,6 +50,9 @@ export default function App(props) {
             </Route>
             <Route exact path="/tos">
               <Tos />
+            </Route>
+            <Route exact path="/privacy">
+              <Privacy />
             </Route>
             <Route
               render={(props) => <MyBeats {...props} />}
