@@ -265,9 +265,15 @@ export default function SimpleDialog(props) {
                 />
               }
               label={
-                <a href="/tos" target="_blank">
-                  I agree to the terms and conditions
-                </a>
+                <React.Fragment>
+                  I agree to the{" "}
+                  <a href="/tos" target="_blank">
+                    terms and conditions{" "}
+                  </a>{" "}
+                  <a href="/privacy" target="_blank">
+                    and privacy policy{" "}
+                  </a>
+                </React.Fragment>
               }
             />
           </div>

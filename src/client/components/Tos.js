@@ -24,30 +24,31 @@ function Tos(props) {
         {/* <Navbar white={false} didConnectWallet={refreshData} /> */}
 
         <p class="p1">
-          <span class="s1">SecretGarden - Terms of Platform</span>
-        </p>
-        <p class="p1">
-          <span class="s1">Last Updated:&nbsp;</span>
-          <span class="s2">April 5, 202</span>
-          <span class="s1">1</span>
-        </p>
-        <p class="p2">
           <br />
         </p>
         <p class="p2">
+          <span class="s1">SecretGarden - Terms of Platform</span>
+        </p>
+        <p class="p2">
+          <span class="s1">Last Updated: April 10, 2021</span>
+        </p>
+        <p class="p3">
           <br />
         </p>
         <p class="p3">
+          <br />
+        </p>
+        <p class="p4">
           <span class="s1">
             <strong>Welcome</strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
-            SecretGarden (&ldquo;SecretGarden,&rdquo; &ldquo;we,&rdquo;
+            [Kyber Corp.] (&ldquo;SecretGarden,&rdquo; &ldquo;we,&rdquo;
             &ldquo;us,&rdquo; &ldquo;our&rdquo;) provides its marketplace and
             services (described below) to you (&ldquo;you&rdquo; or
             &ldquo;User&quot;) through its website, platform, and marketplace
@@ -57,20 +58,16 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>By signing up
             for an account on the Platform or otherwise using or accessing the
             Platform, you acknowledge that you have read and agree to these
-            Terms.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>The&nbsp;
-          </span>
-          <span class="s2">Privacy Policy</span>
-          <span class="s1">
-            , and all such additional terms, guidelines, and rules are hereby
-            incorporated by reference into these Terms and expressly agreed to
-            and acknowledged by the User.
+            Terms.<span class="Apple-converted-space">&nbsp;&nbsp;</span>The
+            Privacy Policy, and all such additional terms, guidelines, and rules
+            are hereby incorporated by reference into these Terms and expressly
+            agreed to and acknowledged by the User.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p4">
+        <p class="p5">
           <span class="s1">
             <strong>
               <em>
@@ -92,10 +89,10 @@ function Tos(props) {
             </strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             We reserve the right, at our sole discretion, to change or modify
             portions of these Terms of Service at any time.
@@ -115,18 +112,18 @@ function Tos(props) {
             Service.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>What is SecretGarden?</strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             SecretGarden is a platform for artists (&ldquo;Creators&rdquo;) and
             collectors (&ldquo;Collectors&rdquo;) to sell, purchase, list for
@@ -136,10 +133,10 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             <strong>Smart-Contract Enabled.</strong>
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>The Digital
@@ -164,24 +161,24 @@ function Tos(props) {
             visible whenever you engage in a transaction on the Platform.&nbsp;
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             &nbsp; &nbsp; <strong>Curated Digital Artwork</strong>.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>
-            SecretGarden offers a marketplace for Digital Artwork in which
-            SecretGarden enables Creators to sell and Collectors to buy Digital
-            Artwork. The User understands and acknowledges that the Smart
-            Contracts give SecretGarden custody, possession, or control of any
-            Digital Artwork or cryptocurrency for the purpose of facilitating
-            Digital Artwork transactions. &nbsp;You affirm that you are aware
-            and acknowledge that SecretGarden takes custody of the Digital
-            Artwork during the period after SecretGarden reviews and accepts a
-            Creator&rsquo;s Digital Artwork submission and such Digital Artwork
-            is sold to a Collector or the Creator requests to take custody of
-            the Digital Artwork prior to a sale.
+            <span class="Apple-converted-space">&nbsp;&nbsp;</span>SecretGarden
+            offers a marketplace for Digital Artwork in which SecretGarden
+            enables Creators to sell and Collectors to buy Digital Artwork. The
+            User understands and acknowledges that the Smart Contracts give
+            SecretGarden custody, possession, or control of any Digital Artwork
+            or cryptocurrency for the purpose of facilitating Digital Artwork
+            transactions. &nbsp;You affirm that you are aware and acknowledge
+            that SecretGarden takes custody of the Digital Artwork during the
+            period after SecretGarden reviews and accepts a Creator&rsquo;s
+            Digital Artwork submission and such Digital Artwork is sold to a
+            Collector or the Creator requests to take custody of the Digital
+            Artwork prior to a sale.
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>As a
             marketplace, SecretGarden cannot make any representation or
             guarantee that Creators will achieve any particular outcome as the
@@ -189,32 +186,31 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>How do I use SecretGarden?</strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             <strong>Your Registration Obligations</strong>:
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>Anyone can
             browse SecretGarden without registering for an account. You may be
             required to register with SecretGarden in order to access and use
             certain features on the Platform, such as participating as a Creator
-            or Collector.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>If you choose
-            to register for the Platform, you agree to provide and maintain
-            true, accurate, current, and complete information about yourself as
-            prompted by our registration form.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>
-            Registration data and certain other information about you are
-            governed by our Privacy Policy.
+            or Collector.<span class="Apple-converted-space">&nbsp;&nbsp;</span>
+            If you choose to register for the Platform, you agree to provide and
+            maintain true, accurate, current, and complete information about
+            yourself as prompted by our registration form.
+            <span class="Apple-converted-space">&nbsp;&nbsp;</span>Registration
+            data and certain other information about you are governed by our
+            Privacy Policy.
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>You must be
             at least 13 years old to register for an account as a Creator, and
             at least 18 years old to place a bid on any Digital Artwork. If you
@@ -225,10 +221,10 @@ function Tos(props) {
             account.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>
               &nbsp; &nbsp; Member Account, Password, and Security:&nbsp;
@@ -241,32 +237,30 @@ function Tos(props) {
             password or account or any other breach of security, and (b) ensure
             that you exit from your account at the end of each session when
             accessing SecretGarden.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>
-            SecretGarden will not be liable for any loss or damage arising from
-            your failure to comply with this Section.
+            <span class="Apple-converted-space">&nbsp;&nbsp;</span>SecretGarden
+            will not be liable for any loss or damage arising from your failure
+            to comply with this Section.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             <strong>Connecting your Wallet:</strong>
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>In order to
             participate as a Collector in the marketplace, you must connect to a
             browser extension called MetaMask. MetaMask is an electronic wallet
             which allows you to purchase , store, and engage in transactions
-            using the native Ethereum cryptocurrency, ETH.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>All
-            transactions on SecretGarden are in the native Ethereum
-            cryptocurrency, ETH.
+            using the native Ethereum cryptocurrency, ETH. All transactions on
+            SecretGarden are in the native Ethereum cryptocurrency, ETH.
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>&nbsp; &nbsp; Modifications to the Platform:&nbsp;</strong>
             SecretGarden reserves the right to modify or discontinue,
@@ -277,34 +271,34 @@ function Tos(props) {
             for any modification, suspension, or discontinuance of the Platform.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>What are the rules for using SecretGarden?</strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             When using SecretGarden, no User is allowed to:
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
         <ul class="ul1">
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               manipulate the price of a Digital Artwork in any way, including
               bidding on your own items, preventing bidding, or using
               SecretGarden to conceal economic activity.
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               email or otherwise upload any content that (i) infringes any
               intellectual property or other proprietary rights of any party;
@@ -329,16 +323,15 @@ function Tos(props) {
               liability of any type;
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               interfere with or disrupt the Platform or servers or networks
               connected to the Platform, or disobey any requirements,
               procedures, policies or regulations of networks connected to the
-              Platform ; or
-              <span class="Apple-converted-space">&nbsp;</span>
+              Platform ; or<span class="Apple-converted-space">&nbsp;</span>
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               violate any applicable local, state, national or international
               law, or any regulations having the force of law, including but not
@@ -348,18 +341,18 @@ function Tos(props) {
               <span class="Apple-converted-space">&nbsp;</span>
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               impersonate any person or entity, or falsely state or otherwise
               misrepresent your affiliation with a person or entity;
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               solicit personal information from anyone under the age of 18;
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               harvest or collect email addresses or other contact information of
               other Users from the Platform by electronic or other means for the
@@ -367,13 +360,13 @@ function Tos(props) {
               communications;
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               advertise or offer to sell or buy any goods or services for any
               business purpose that is not specifically authorized;
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               further or promote any criminal activity or enterprise or provide
               instructional information about illegal activities, including for
@@ -382,7 +375,7 @@ function Tos(props) {
               <span class="Apple-converted-space">&nbsp;</span>
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               obtain or attempt to access or otherwise obtain any materials or
               information through any means not intentionally made available or
@@ -390,7 +383,7 @@ function Tos(props) {
               <span class="Apple-converted-space">&nbsp;</span>
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               &nbsp;use any robot, spider, site search/retrieval application, or
               other device to retrieve or index any portion of the Platform or
@@ -398,14 +391,14 @@ function Tos(props) {
               about its Users for any unauthorized purpose;
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               create user accounts by automated means or under false or
               fraudulent pretenses;
               <span class="Apple-converted-space">&nbsp;</span>
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               access or use the Platform for the purpose of creating a product
               or service that is competitive with any of our products or
@@ -413,33 +406,27 @@ function Tos(props) {
             </span>
           </li>
         </ul>
-        <p class="p6">
+        <p class="p7">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>How do I become a creator?</strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             SecretGarden is currently invite only, and Artists need an
             invitation in order to become a Creator on SecretGarden.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>Selling
-            invitations is strictly prohibited.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>If
-            SecretGarden become aware that any invitation is being sold to a
-            third party, SecretGarden may suspend or otherwise terminate your
-            access to SecretGarden.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             SecretGarden maintains complete discretion in selecting the artists
             in its marketplace, and makes no guarantees or promises that any
@@ -447,28 +434,28 @@ function Tos(props) {
             the request.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>
               What are the intellectual property rights on the Platform?
             </strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             <strong>Creator Rights</strong>
           </span>
         </p>
-        <p class="p7">
+        <p class="p8">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             The Creator owns all legal right, title, and interest in all
             intellectual property rights underlying the Digital Artwork minted
@@ -479,10 +466,10 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p7">
+        <p class="p8">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             Creators hereby acknowledges, understands, and agrees that selling a
             Digital Artwork on SecretGarden constitutes an express
@@ -496,10 +483,10 @@ function Tos(props) {
             the Creator under copyright law.
           </span>
         </p>
-        <p class="p7">
+        <p class="p8">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             The Creator hereby acknowledges, understands, and agrees that
             launching a Digital Artwork on SecretGarden constitutes an express
@@ -523,10 +510,10 @@ function Tos(props) {
             directing, or soliciting others to do so.
           </span>
         </p>
-        <p class="p7">
+        <p class="p8">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             Creators expressly represent and warrant that their Digital Artwork
             listed on SecretGarden contains only original content otherwise
@@ -540,18 +527,18 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p7">
+        <p class="p8">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             <strong>Collectors Rights</strong>
           </span>
         </p>
-        <p class="p7">
+        <p class="p8">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             Collectors receive a cryptographic token representing the
             Creator&rsquo;s Digital Artwork as a piece of property, but do not
@@ -567,10 +554,10 @@ function Tos(props) {
             by the Collector.
           </span>
         </p>
-        <p class="p7">
+        <p class="p8">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             The Collector&rsquo;s limited license to display the Digital
             Artwork, includes, but is not limited to, the right to display the
@@ -586,10 +573,10 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p7">
+        <p class="p8">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             Collectors have the right to sell, trade, transfer, or use their
             Digital Artwork, but Collectors may not make &ldquo;commercial
@@ -597,10 +584,10 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p7">
+        <p class="p8">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             The Collector agrees that it may not, nor permit any third party, to
             do or attempt to do any of the foregoing without the Creator&rsquo;s
@@ -629,10 +616,10 @@ function Tos(props) {
             commercial benefit.
           </span>
         </p>
-        <p class="p7">
+        <p class="p8">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             Collectors irrevocably release, acquit, and forever discharge
             SecretGarden and its subsidiaries, affiliates, officers, and
@@ -641,13 +628,13 @@ function Tos(props) {
             accordance with these Terms.
           </span>
         </p>
-        <p class="p7">
+        <p class="p8">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
-            <strong>Platform Content, Software and Trademarks:&nbsp;</strong>
-            You acknowledge and agree that the Platform may contain content or
+            <strong>Platform Content, Software and Trademarks:&nbsp;</strong>You
+            acknowledge and agree that the Platform may contain content or
             features (&ldquo;Platform Content&rdquo;) that are protected by
             copyright, patent, trademark, trade secret or other proprietary
             rights and laws.
@@ -659,12 +646,11 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>In connection
             with your use of the Platform you will not engage in or use any data
             mining, robots, scraping or similar data gathering or extraction
-            methods.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>If you are
-            blocked by SecretGarden from accessing the Platform (including by
-            blocking your IP address), you agree not to implement any measures
-            to circumvent such blocking (e.g., by masking your IP address or
-            using a proxy IP address).
+            methods.<span class="Apple-converted-space">&nbsp;&nbsp;</span>If
+            you are blocked by SecretGarden from accessing the Platform
+            (including by blocking your IP address), you agree not to implement
+            any measures to circumvent such blocking (e.g., by masking your IP
+            address or using a proxy IP address).
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>Any use of
             the Platform or the Platform Content other than as specifically
             authorized herein is strictly prohibited.
@@ -676,15 +662,14 @@ function Tos(props) {
             to copy, modify, create a derivative work of, reverse engineer,
             reverse assemble or otherwise attempt to discover any source code,
             sell, assign, sublicense, or otherwise transfer any right in the
-            Software.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>Any rights
-            not expressly granted herein are reserved by SecretGarden.
+            Software.<span class="Apple-converted-space">&nbsp;&nbsp;</span>Any
+            rights not expressly granted herein are reserved by SecretGarden.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             The SecretGarden name and logos are trademarks and service marks of
             SecretGarden (collectively the &ldquo;SecretGarden
@@ -700,10 +685,10 @@ function Tos(props) {
             benefit.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             &nbsp; &nbsp;{" "}
             <strong>
@@ -729,10 +714,10 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             &nbsp; &nbsp;{" "}
             <strong>
@@ -756,10 +741,10 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             Any questions, comments, suggestions, ideas, feedback or other
             information about the Platform (&ldquo;Submissions&rdquo;), provided
@@ -770,10 +755,10 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             SecretGarden may preserve content and may also disclose content if
             required to do so by law or in the good faith belief that such
@@ -789,10 +774,10 @@ function Tos(props) {
             devices.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>&nbsp; &nbsp; Copyright Complaints:&nbsp;</strong>
             SecretGarden respects the intellectual property of others, and we
@@ -804,39 +789,39 @@ function Tos(props) {
             infringement claim in accordance with the procedure set forth below.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             SecretGarden will process and investigate notices of alleged
             infringement and will take appropriate actions under the Digital
             Millennium Copyright Act (&ldquo;DMCA&rdquo;) and other applicable
             intellectual property laws with respect to any alleged or actual
-            infringement.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>A
-            notification of claimed copyright infringement should be emailed to
-            SecretGarden&rsquo;s Copyright Agent (Subject line:
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>
-            &ldquo;DMCA Takedown Request&rdquo;).{" "}
+            infringement.<span class="Apple-converted-space">&nbsp;&nbsp;</span>
+            A notification of claimed copyright infringement should be emailed
+            to SecretGarden&rsquo;s Copyright Agent inquiries@secretgarden.fm
+            (Subject line:
+            <span class="Apple-converted-space">&nbsp;&nbsp;</span>&ldquo;DMCA
+            Takedown Request&rdquo;).{" "}
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             To be effective, the notification must be in writing and contain the
             following information:
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
         <ul class="ul1">
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               an electronic or physical signature of the person authorized to
               act on behalf of the owner of the copyright or other intellectual
@@ -844,28 +829,27 @@ function Tos(props) {
               <span class="Apple-converted-space">&nbsp;</span>
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               a description of the copyrighted work or other intellectual
               property that you claim has been infringed;
               <span class="Apple-converted-space">&nbsp;</span>
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               a description of where the material that you claim is infringing
               is located on the Platform, with enough detail that we may find it
-              on the Platform;
-              <span class="Apple-converted-space">&nbsp;</span>
+              on the Platform;<span class="Apple-converted-space">&nbsp;</span>
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               your address, telephone number, and email address;
               <span class="Apple-converted-space">&nbsp;</span>
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               a statement by you that you have a good faith belief that the
               disputed use is not authorized by the copyright or intellectual
@@ -873,7 +857,7 @@ function Tos(props) {
               <span class="Apple-converted-space">&nbsp;</span>
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               a statement by you, made under penalty of perjury, that the above
               information in your Notice is accurate and that you are the
@@ -883,10 +867,10 @@ function Tos(props) {
             </span>
           </li>
         </ul>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>Counter-Notice</strong>: If you believe your User Content
             that was removed (or to which access was disabled) is not
@@ -894,18 +878,17 @@ function Tos(props) {
             owner, the copyright owner&rsquo;s agent, or pursuant to the law, to
             upload and use the content in your User Content, you may send a
             written counter-notice containing the following information to the
-            Copyright Agent:
-            <span class="Apple-converted-space">&nbsp;</span>
+            Copyright Agent:<span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
         <ul class="ul1">
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               your physical or electronic signature;
               <span class="Apple-converted-space">&nbsp;</span>
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               identification of the content that has been removed or to which
               access has been disabled and the location at which the content
@@ -913,7 +896,7 @@ function Tos(props) {
               <span class="Apple-converted-space">&nbsp;</span>
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               a statement that you have a good faith belief that the content was
               removed or disabled as a result of mistake or a misidentification
@@ -921,7 +904,7 @@ function Tos(props) {
               <span class="Apple-converted-space">&nbsp;</span>
             </span>
           </li>
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               your name, address, telephone number, and email address, a
               statement that you consent to the jurisdiction of the federal
@@ -932,7 +915,7 @@ function Tos(props) {
             </span>
           </li>
         </ul>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             If a counter-notice is received by the Copyright Agent, SecretGarden
             will send a copy of the counter-notice to the original complaining
@@ -944,10 +927,10 @@ function Tos(props) {
             receipt of the counter-notice, at our sole discretion.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>&nbsp; &nbsp; Repeat Infringer Policy</strong>:
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>In accordance
@@ -955,27 +938,27 @@ function Tos(props) {
             policy of terminating, in appropriate circumstances and at
             SecretGarden&apos;s sole discretion, Users who are deemed to be
             repeat infringers.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>
-            SecretGarden may also at its sole discretion limit access to the
-            Platform and/or terminate the memberships of any users who infringe
-            any intellectual property rights of others, whether or not there is
-            any repeat infringement.
+            <span class="Apple-converted-space">&nbsp;&nbsp;</span>SecretGarden
+            may also at its sole discretion limit access to the Platform and/or
+            terminate the memberships of any users who infringe any intellectual
+            property rights of others, whether or not there is any repeat
+            infringement.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>
               &nbsp; &nbsp; User Agree to Cooperate with SecretGarden
             </strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             Creators expressly agree to refund to the Collector and/or
             SecretGarden the entire portion of Fees received from the sale of a
@@ -987,10 +970,10 @@ function Tos(props) {
             DMCA.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             Creators, Collectors, and all Users expressly agree to cooperate and
             timely respond to SecretGarden&rsquo;s investigations, requests, and
@@ -1002,18 +985,18 @@ function Tos(props) {
             infringing.
           </span>
         </p>
-        <p class="p6">
+        <p class="p7">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>What fees does SecretGarden charge?</strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             &nbsp; &nbsp; <strong>Auction and Fees</strong>.
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>The terms of
@@ -1023,10 +1006,10 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p6">
+        <p class="p7">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             SecretGarden does not generally collect any fees, commissions, or
             royalties for transactions occurring outside of SecretGarden. Users
@@ -1036,10 +1019,10 @@ function Tos(props) {
             off-market transaction.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             All transactions on SecretGarden, including without limitation
             minting, tokenizing, bidding, listing, offering, purchasing, or
@@ -1056,10 +1039,10 @@ function Tos(props) {
             transaction was unknown, too high, or otherwise unacceptable.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             <strong>Taxes</strong>.
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>Users are
@@ -1071,10 +1054,10 @@ function Tos(props) {
             sale, or creation of any artworks).
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             &nbsp; &nbsp; <strong>Beta Platforms</strong>.
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>Certain
@@ -1095,18 +1078,18 @@ function Tos(props) {
             Platforms.
           </span>
         </p>
-        <p class="p6">
+        <p class="p7">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>What about my privacy?</strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             Our privacy policy is a part of these Terms. Please review the
             SecretGarden Privacy Policy, which also governs the Platform and
@@ -1114,15 +1097,15 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>Other Legal Terms</strong>
           </span>
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             <strong>Indemnity and Release</strong>:
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>You agree to
@@ -1147,10 +1130,10 @@ function Tos(props) {
             another jurisdiction, you waive any comparable statute or doctrine.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             <strong>Disclaimer of Warranties</strong>: Platform transactions,
             including but not limited to primary sales, secondary market sales,
@@ -1174,10 +1157,10 @@ function Tos(props) {
             PURPOSE, TITLE AND NON-INFRINGEMENT.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             SECRETGARDEN MAKES NO WARRANTY THAT (I) THE PLATFORM WILL MEET YOUR
             REQUIREMENTS, (II) THE PLATFORM WILL BE UNINTERRUPTED, TIMELY,
@@ -1188,10 +1171,10 @@ function Tos(props) {
             EXPECTATIONS.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             <strong>
               Limitation of Liability:
@@ -1218,10 +1201,10 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             SOME JURISDICTIONS DO NOT ALLOW THE DISCLAIMER OR EXCLUSION OF
             CERTAIN WARRANTIES OR THE LIMITATION OR EXCLUSION OF LIABILITY FOR
@@ -1233,10 +1216,10 @@ function Tos(props) {
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             IF YOU ARE A USER FROM NEW JERSEY, THE FOREGOING SECTIONS TITLED
             &ldquo;DISCLAIMER OF WARRANTIES&rdquo; AND &ldquo;LIMITATION OF
@@ -1249,10 +1232,10 @@ function Tos(props) {
             SECTIONS.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>
               Here are our termination rights.{" "}
@@ -1260,10 +1243,10 @@ function Tos(props) {
             </strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             You agree that SecretGarden, in its sole discretion, may suspend or
             terminate your account (or any part thereof) or use of the Platform
@@ -1285,10 +1268,10 @@ function Tos(props) {
             any third party for any termination of your access to the Platform.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>
               We do not get involved with User disputes.{" "}
@@ -1296,32 +1279,31 @@ function Tos(props) {
             </strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             You agree that you are solely responsible for your interactions with
             any other Users in connection with the Platform and SecretGarden
             will have no liability or responsibility with respect thereto.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>
-            SecretGarden reserves the right, but has no obligation, to become
-            involved in any way with disputes between you and any other user of
-            the Platform.
+            <span class="Apple-converted-space">&nbsp;&nbsp;</span>SecretGarden
+            reserves the right, but has no obligation, to become involved in any
+            way with disputes between you and any other user of the Platform.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>General Legal Terms</strong>
           </span>
         </p>
-        <p class="p7">
+        <p class="p8">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             These Terms of Service constitute the entire agreement between you
             and SecretGarden and govern your use of the Platform, superseding
@@ -1361,19 +1343,19 @@ function Tos(props) {
             displaying notices or links to notices generally on the Platform.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>Your Privacy</strong>
             <span class="Apple-converted-space">&nbsp;</span>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             At SecretGarden, we respect the privacy of our users. For details
             please see our Privacy Policy.
@@ -1382,18 +1364,18 @@ function Tos(props) {
             outlined therein.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>Notice for California Users</strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             Under California Civil Code Section 1789.3, users of the Platform
             from California are entitled to the following specific consumer
@@ -1401,18 +1383,25 @@ function Tos(props) {
             Consumer Platforms of the California Department of Consumer Affairs
             may be contacted in writing at 1625 North Market Blvd., Suite N 112,
             Sacramento, CA 95834, or by telephone at (916) 445-1254 or (800)
-            952-5210. You may contact us at SecretGarden, Inc.,&nbsp;
-          </span>
-          <span class="s2">
+            952-5210. You may contact us at Kyber Corp.,{" "}
+            <a href="mailto:inquiries@secretgarden.fm">
+              <span class="s4">
+                <strong>
+                  <em>inquiries@secretgarden.fm</em>
+                </strong>
+              </span>
+            </a>
             <strong>
-              <em>[]</em>
+              <em>
+                <span class="Apple-converted-space">&nbsp;</span>
+              </em>
             </strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p5">
+        <p class="p6">
           <span class="s1">
             <strong>
               Dispute Resolution By Binding Arbitration: PLEASE READ THIS
@@ -1420,20 +1409,20 @@ function Tos(props) {
             </strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
         <ol class="ol1">
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               <strong>Agreement to Arbitrate</strong>
             </span>
           </li>
         </ol>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             This Dispute Resolution by Binding Arbitration section is referred
             to in this Terms of Service as the &ldquo;Arbitration
@@ -1447,15 +1436,14 @@ function Tos(props) {
             and binding arbitration, rather than a court, in accordance with the
             terms of this Arbitration Agreement, except that you may assert
             individual claims in small claims court, if your claims qualify.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>
-            Further, this Arbitration Agreement does not preclude you from
-            bringing issues to the attention of federal, state, or local
-            agencies, and such agencies can, if the law allows, seek relief
-            against us on your behalf.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>You agree
-            that, by entering into this Terms of Service, you and SecretGarden
-            are each waiving the right to a trial by jury or to participate in a
-            class action.
+            <span class="Apple-converted-space">&nbsp;&nbsp;</span>Further, this
+            Arbitration Agreement does not preclude you from bringing issues to
+            the attention of federal, state, or local agencies, and such
+            agencies can, if the law allows, seek relief against us on your
+            behalf.<span class="Apple-converted-space">&nbsp;&nbsp;</span>You
+            agree that, by entering into this Terms of Service, you and
+            SecretGarden are each waiving the right to a trial by jury or to
+            participate in a class action.
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>Your rights
             will be determined by a neutral arbitrator, not a judge or jury.
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>The Federal
@@ -1463,11 +1451,11 @@ function Tos(props) {
             Arbitration Agreement.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
         <ol class="ol1">
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               <strong>
                 Prohibition of Class and Representative Actions and
@@ -1476,10 +1464,10 @@ function Tos(props) {
             </span>
           </li>
         </ol>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             <strong>
               <em>
@@ -1487,9 +1475,9 @@ function Tos(props) {
                 AGAINST THE OTHER ONLY ON AN INDIVIDUAL BASIS AND NOT AS A
                 PLAINTIFF OR CLASS MEMBER IN ANY PURPORTED CLASS OR
                 REPRESENTATIVE ACTION OR PROCEEDING.
-                <span class="Apple-converted-space">&nbsp;&nbsp;</span>
-                UNLESS BOTH YOU AND SECRETGARDEN AGREE OTHERWISE, THE ARBITRATOR
-                MAY NOT CONSOLIDATE OR JOIN MORE THAN ONE PERSON&rsquo;S OR
+                <span class="Apple-converted-space">&nbsp;&nbsp;</span>UNLESS
+                BOTH YOU AND SECRETGARDEN AGREE OTHERWISE, THE ARBITRATOR MAY
+                NOT CONSOLIDATE OR JOIN MORE THAN ONE PERSON&rsquo;S OR
                 PARTY&rsquo;S CLAIMS AND MAY NOT OTHERWISE PRESIDE OVER ANY FORM
                 OF A CONSOLIDATED, REPRESENTATIVE, OR CLASS PROCEEDING.
                 <span class="Apple-converted-space">&nbsp;&nbsp;</span>ALSO, THE
@@ -1505,35 +1493,32 @@ function Tos(props) {
             </strong>
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
         <ol class="ol1">
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               <strong>Pre-Arbitration Dispute Resolution</strong>
             </span>
           </li>
         </ol>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             SecretGarden is always interested in resolving disputes amicably and
             efficiently, and most customer concerns can be resolved quickly and
             to the customer&rsquo;s satisfaction by emailing customer support at
-            [______________].
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>If such
-            efforts prove unsuccessful, a party who intends to seek arbitration
-            must first send to the other, by certified mail, a written Notice of
-            Dispute (&ldquo;Notice&rdquo;).
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>The Notice to
-            SecretGarden should be sent to [__________________] (&ldquo;Notice
-            Address&rdquo;).
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>The Notice
-            must (i) describe the nature and basis of the claim or dispute and
-            (ii) set forth the specific relief sought.
+            inquiries@secretgarden.fm. The Notice to SecretGarden should be sent
+            to{" "}
+            <a href="mailto:inquiries@secretgarden.fm">
+              <span class="s4">inquiries@secretgarden.fm</span>
+            </a>{" "}
+            (&ldquo;Notice Address&rdquo;). The Notice must (i) describe the
+            nature and basis of the claim or dispute and (ii) set forth the
+            specific relief sought.
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>If
             SecretGarden and you do not resolve the claim within sixty (60)
             calendar days after the Notice is received, you or SecretGarden may
@@ -1545,32 +1530,32 @@ function Tos(props) {
             SecretGarden is entitled.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
         <ol class="ol1">
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               <strong>Arbitration Procedures</strong>
             </span>
           </li>
         </ol>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             Arbitration will be conducted by a neutral arbitrator in accordance
             with the American Arbitration Association&rsquo;s
             (&ldquo;AAA&rdquo;) rules and procedures, including the AAA&rsquo;s
             Consumer Arbitration Rules (collectively, the &ldquo;AAA
             Rules&rdquo;), as modified by this Arbitration Agreement.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>
-            For information on the AAA, please visit its website,
+            <span class="Apple-converted-space">&nbsp;&nbsp;</span>For
+            information on the AAA, please visit its website,
             http://www.adr.org.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>
-            Information about the AAA Rules and fees for consumer disputes can
-            be found at the AAA&rsquo;s consumer arbitration page,{" "}
+            <span class="Apple-converted-space">&nbsp;&nbsp;</span>Information
+            about the AAA Rules and fees for consumer disputes can be found at
+            the AAA&rsquo;s consumer arbitration page,{" "}
             <a href="http://www.adr.org/">
               <span class="s5">http://www.adr.org/</span>
             </a>{" "}
@@ -1593,16 +1578,15 @@ function Tos(props) {
             than trials and other judicial proceedings, the arbitrator can award
             the same damages and relief on an individual basis that a court can
             award to an individual under the Terms of Service and applicable
-            law.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>Decisions by
-            the arbitrator are enforceable in court and may be overturned by a
-            court only for very limited reasons.
+            law.<span class="Apple-converted-space">&nbsp;&nbsp;</span>Decisions
+            by the arbitrator are enforceable in court and may be overturned by
+            a court only for very limited reasons.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             Unless SecretGarden and you agree otherwise, any arbitration
             hearings will take place in a reasonably convenient location for
@@ -1618,35 +1602,33 @@ function Tos(props) {
             or by an in-person hearing as established by the AAA Rules.
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>If your claim
             exceeds $10,000, the right to a hearing will be determined by the
-            AAA Rules.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>
+            AAA Rules.<span class="Apple-converted-space">&nbsp;&nbsp;</span>
             Regardless of the manner in which the arbitration is conducted, the
             arbitrator shall issue a reasoned written decision sufficient to
             explain the essential findings and conclusions on which the award is
             based.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
         <ol class="ol1">
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               <strong>Costs of Arbitration</strong>
             </span>
           </li>
         </ol>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             Payment of all filing, administration, and arbitrator fees
             (collectively, the &ldquo;Arbitration Fees&rdquo;) will be governed
             by the AAA Rules, unless otherwise provided in this Arbitration
-            Agreement.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>If the value
-            of the relief sought is $75,000 or less, at your request,
+            Agreement.<span class="Apple-converted-space">&nbsp;&nbsp;</span>If
+            the value of the relief sought is $75,000 or less, at your request,
             SecretGarden will pay all Arbitration Fees.
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>If the value
             of relief sought is more than $75,000 and you are able to
@@ -1665,40 +1647,40 @@ function Tos(props) {
             of attorneys&rsquo; fees will be governed by the AAA Rules.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
         <ol class="ol1">
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               <strong>Confidentiality</strong>
             </span>
           </li>
         </ol>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             All aspects of the arbitration proceeding, and any ruling, decision,
             or award by the arbitrator, will be strictly confidential for the
             benefit of all parties.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
         <ol class="ol1">
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               <strong>Severability</strong>
             </span>
           </li>
         </ol>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             If a court or the arbitrator decides that any term or provision of
             this Arbitration Agreement (other than the subsection (b) titled
@@ -1708,33 +1690,32 @@ function Tos(props) {
             provision that is valid and enforceable and that comes closest to
             expressing the intention of the invalid or unenforceable term or
             provision, and this Arbitration Agreement shall be enforceable as so
-            modified.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>If a court or
-            the arbitrator decides that any of the provisions of subsection (b)
-            above titled &ldquo;Prohibition of Class and Representative Actions
-            and Non-Individualized Relief&rdquo; are invalid or unenforceable,
-            then the entirety of this Arbitration Agreement shall be null and
-            void, unless such provisions are deemed to be invalid or
-            unenforceable solely with respect to claims for public injunctive
-            relief.
+            modified.<span class="Apple-converted-space">&nbsp;&nbsp;</span>If a
+            court or the arbitrator decides that any of the provisions of
+            subsection (b) above titled &ldquo;Prohibition of Class and
+            Representative Actions and Non-Individualized Relief&rdquo; are
+            invalid or unenforceable, then the entirety of this Arbitration
+            Agreement shall be null and void, unless such provisions are deemed
+            to be invalid or unenforceable solely with respect to claims for
+            public injunctive relief.
             <span class="Apple-converted-space">&nbsp;&nbsp;</span>The remainder
             of the Terms of Service will continue to apply.
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
         <ol class="ol1">
-          <li class="li3">
+          <li class="li4">
             <span class="s1">
               <strong>Future Changes to Arbitration Agreement</strong>
             </span>
           </li>
         </ol>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
-        <p class="p3">
+        <p class="p4">
           <span class="s1">
             Notwithstanding any provision in this Terms of Service to the
             contrary, SecretGarden agrees that if it makes any future change to
@@ -1742,16 +1723,15 @@ function Tos(props) {
             Address) while you are a user of the Platforms, you may reject any
             such change by sending SecretGarden written notice within thirty
             (30) calendar days of the change to the Notice Address provided
-            above.
-            <span class="Apple-converted-space">&nbsp;&nbsp;</span>By rejecting
-            any future change, you are agreeing that you will arbitrate any
-            dispute between us in accordance with the language of this
-            Arbitration Agreement as of the date you first accepted these Terms
-            of Service (or accepted any subsequent changes to these Terms of
-            Service).
+            above.<span class="Apple-converted-space">&nbsp;&nbsp;</span>By
+            rejecting any future change, you are agreeing that you will
+            arbitrate any dispute between us in accordance with the language of
+            this Arbitration Agreement as of the date you first accepted these
+            Terms of Service (or accepted any subsequent changes to these Terms
+            of Service).
           </span>
         </p>
-        <p class="p2">
+        <p class="p3">
           <br />
         </p>
       </div>
