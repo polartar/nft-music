@@ -84,7 +84,7 @@ export default function SimpleDialog(props) {
 
   const initWallet = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
+    const signer = provider.getSigner(0);
     const address = await signer.getAddress();
 
     const wethAddress = config.dev
