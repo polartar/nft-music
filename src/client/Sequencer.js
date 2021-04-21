@@ -1011,6 +1011,15 @@ class Sequencer extends Component {
                 </div>
               </div>
             </div>
+            <div className="privacyAndTos">
+              <a href="/tos" target="_blank">
+                Terms of Service
+              </a>
+
+              <a href="/privacy" target="_blank">
+                Privacy Policy
+              </a>
+            </div>
             <div className="ourSocials">
               <span>inquiries@secretgarden.fm</span>
               <a href="https://twitter.com/SecretGarden_FM" target="_blank">

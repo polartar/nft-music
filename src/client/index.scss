@@ -411,6 +411,21 @@ canvas {
     box-shadow: 0 0 12px 0 rgba($primary, 0.8);
   }
 }
+.privacyAndTos {
+  text-align: left;
+  position: absolute;
+  bottom: 70px;
+  left: 40px;
+  color: #999999;
+  font-size: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+.privacyAndTos > a {
+  margin-right: 20px;
+}
 .nftDetails {
   font-size: 14px;
   color: white;
