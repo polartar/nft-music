@@ -742,7 +742,7 @@ class Sequencer extends Component {
             <video
               playsinline={true}
               className="waterLoopVideo"
-	      autoplay="true"
+              autoplay="true"
               muted="true"
               loop="true"
             >
@@ -1025,10 +1025,15 @@ class Sequencer extends Component {
               </div>
             </div>
             <div className="privacyAndTos">
+              <a
+                href={`https://opensea.io/assets/${nft.tokenAddress}/${nft.tokenId}`}
+                target="_blank"
+              >
+                View on OpenSea
+              </a>
               <a href="/tos" target="_blank">
                 Terms of Service
               </a>
-
               <a href="/privacy" target="_blank">
                 Privacy Policy
               </a>
