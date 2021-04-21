@@ -254,7 +254,7 @@ class Sequencer extends Component {
     await window.ethereum.enable();
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const address = await provider.getSigner().getAddress();
+    const address = await provider.getSigner(0).getAddress();
 
     this.setState({
       isLoggedIntoMetamask: true,
