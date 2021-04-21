@@ -17,7 +17,7 @@ export default function Footer(props) {
   const refreshData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const accounts = await provider.listAccounts();
-    const address = await provider.getSigner().getAddress();
+    const address = await provider.getSigner(0).getAddress();
 
     if (accounts.length > 0) {
       setIsLoggedIntoMetamask(true);

@@ -42,7 +42,7 @@ export default function Navbar(props) {
       setIsLoggedIntoMetamask(true);
       setProvider(provider);
 
-      const address = await provider.getSigner().getAddress();
+      const address = await provider.getSigner(0).getAddress();
       setAddress(address);
       setBalance(await provider.getBalance(address));
 
@@ -64,7 +64,7 @@ export default function Navbar(props) {
     await window.ethereum.enable();
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const address = await provider.getSigner().getAddress();
+    const address = await provider.getSigner(0).getAddress();
 
     setIsLoggedIntoMetamask(true);
     setProvider(provider);

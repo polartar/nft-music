@@ -34,10 +34,18 @@ function Settings() {
 
   const refreshData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    setSigner(provider.getSigner());
+    setSigner(provider.getSigner(0));
 
     const accounts = await provider.listAccounts();
-    const address = await provider.getSigner().getAddress();
+    const address = await provider.getSigner(0).getAddress();
+
+    window.ethereum.on("accountsChanged", function(accounts) {
+      location.reload();
+    });
+
+    window.ethereum.on("chainChanged", (chainId) => {
+      location.reload();
+    });
 
     if (accounts.length > 0) {
       setIsLoggedIntoMetamask(true);

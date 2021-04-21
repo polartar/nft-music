@@ -30,7 +30,7 @@ class InternalUtilities extends Component {
   async mint() {
     await window.ethereum.enable();
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    this.signer = provider.getSigner();
+    this.signer = provider.getSigner(0);
     this.address = await this.signer.getAddress();
     this.seaport = new OpenSeaPort(window.ethereum, {
       networkName: DEV ? Network.Rinkeby : Network.Main,

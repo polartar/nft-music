@@ -238,8 +238,16 @@ class Sequencer extends Component {
 
     const accounts = await provider.listAccounts();
 
+    window.ethereum.on("accountsChanged", function(accounts) {
+      location.reload();
+    });
+
+    window.ethereum.on("chainChanged", (chainId) => {
+      location.reload();
+    });
+
     if (accounts.length > 0) {
-      const address = await provider.getSigner().getAddress();
+      const address = await provider.getSigner(0).getAddress();
 
       this.setState({
         isLoggedIntoMetamask: true,
@@ -254,7 +262,7 @@ class Sequencer extends Component {
     await window.ethereum.enable();
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const address = await provider.getSigner().getAddress();
+    const address = await provider.getSigner(0).getAddress();
 
     this.setState({
       isLoggedIntoMetamask: true,
@@ -701,6 +709,7 @@ class Sequencer extends Component {
       isLoggedIntoMetamask,
       bids,
       users,
+      provider,
       padFormat,
       padFormatStyleClass,
       shareablePadNumbers,
@@ -731,7 +740,7 @@ class Sequencer extends Component {
           />
           <div className="container scrollBar">
             <video
-              playsinline={true}
+              playsinline="true"
               className="waterLoopVideo"
               autoplay="true"
               muted="true"
@@ -898,6 +907,7 @@ class Sequencer extends Component {
                   <video
                     width="140"
                     height="140"
+                    playsinline="true"
                     autoplay="true"
                     muted="true"
                     loop="true"
@@ -954,8 +964,11 @@ class Sequencer extends Component {
                   <Button
                     className="offerButton"
                     onClick={this.handleClickOpen}
+                    disabled={provider && provider._network.chainId !== 1}
                   >
-                    Make an Offer
+                    {provider && provider._network.chainId === 1
+                      ? "Make an Offer"
+                      : "Please use Mainnet"}
                   </Button>
                 )}
                 <div className="nftDetails">
