@@ -25,13 +25,13 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  max-width: 1440px;
   background-color: #1f1f1f;
   font-family: "DM Mono", monospace;
   color: white;
   overflow: scroll;
   text-align: left;
   padding: 80px;
+  box-sizing: border-box;
 }
 .settingsBody {
   display: flex;
