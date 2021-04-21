@@ -105,6 +105,7 @@ function Directory() {
                       <video
                         width="300"
                         height="300"
+                        playsinline="true"
                         autoplay="true"
                         muted="true"
                         loop="true"
@@ -259,6 +260,7 @@ function Directory() {
                       <video
                         width="300"
                         height="300"
+                        playsinline="true"
                         autoplay="true"
                         muted="true"
                         loop="true"

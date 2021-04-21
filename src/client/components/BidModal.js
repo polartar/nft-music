@@ -217,6 +217,7 @@ export default function SimpleDialog(props) {
             <video
               width="140"
               height="140"
+              playsinline="true"
               autoplay="true"
               muted="true"
               loop="true"

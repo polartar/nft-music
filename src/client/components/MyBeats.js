@@ -89,6 +89,7 @@ function Collection(props) {
                         <video
                           width="300"
                           height="300"
+                          playsinline="true"
                           autoplay="true"
                           muted="true"
                           loop="true"
