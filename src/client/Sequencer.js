@@ -740,10 +740,10 @@ class Sequencer extends Component {
           />
           <div className="container scrollBar">
             <video
-              playsinline={true}
+              playsinline
               className="waterLoopVideo"
-              autoplay="true"
-              muted="true"
+              autoplay
+              muted
               loop="true"
             >
               <source src={WaterLoop} type="video/mp4" />
