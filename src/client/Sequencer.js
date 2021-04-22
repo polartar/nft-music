@@ -995,9 +995,11 @@ class Sequencer extends Component {
                           utils.formatEther(bid.base_price)
                         ).toPrecision(4) / 1;
 
+                      const bidCurrency = bid.payment_token_contract.symbol;
+
                       return (
                         <tr>
-                          <td>{`${formattedBidAmount} ETH`}</td>
+                          <td>{`${formattedBidAmount} ${bidCurrency}`}</td>
                           <td>
                             <a href={`/collection/${bid.maker.address}`}>
                               <div className="makerAddr">
