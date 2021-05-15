@@ -225,6 +225,7 @@ class Sequencer extends Component {
 
     this.fetchNFT();
 
+    this.cablesCanvas = createRef();
     this.canvas = createRef();
 
     this.initWallet();
@@ -478,7 +479,27 @@ class Sequencer extends Component {
     }
   };
 
-  componentDidMount() {}
+  didRender = async (blob) => {
+    console.log(blob);
+    try {
+      const form = new FormData();
+
+      form.append("video", blob[0]);
+
+      const response = await axios.post("/api/upload", form);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  componentDidMount() {
+    const script = document.createElement("script");
+
+    script.src = "/public/artists/oksami/garden/visualizer/js/patch.js";
+    script.async = true;
+
+    document.body.appendChild(script);
+  }
 
   handleClickOpen = async () => {
     try {
@@ -722,6 +743,23 @@ class Sequencer extends Component {
         ? parseFloat(utils.formatEther(bids[0].base_price)).toPrecision(4) / 1
         : 0;
 
+    if (this.patch === undefined && this.cablesCanvas.current) {
+      this.patch = new window.CABLES.Patch({
+        patch: window.CABLES.exportedPatch,
+        doRequestAnimation: true,
+        clearCanvasColor: false,
+        clearCanvasDepth: false,
+        glCanvas: this.cablesCanvas.current,
+        glCanvasResizeToWindow: false,
+        prefixAssetPath: "/public/artists/oksami/garden/visualizer/",
+        onError: function(e) {
+          console.error("err", e);
+        },
+      });
+
+      this.patch.config.didRender = this.didRender;
+    }
+
     // Set up active sounds limit
     if (nft && loaded) {
       const mediaFileExtension = nft.imageURL
@@ -738,6 +776,12 @@ class Sequencer extends Component {
             didCompleteBid={this.fetchNFT}
             currentBidAmount={currentBidAmount}
           />
+          <canvas
+            ref={this.cablesCanvas}
+            id="glcanvas"
+            width="500"
+            height="500"
+          ></canvas>
           <div className="container scrollBar">
             <video
               playsinline={true}

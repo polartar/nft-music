@@ -3,7 +3,9 @@ const bodyParser = require("body-parser");
 const robots = require("express-robots-txt");
 const path = require("path");
 const cors = require("cors");
+const multer = require("multer");
 
+const upload = multer();
 const app = express();
 
 app.use(function(req, res, next) {
@@ -72,6 +74,13 @@ app.post("/api/addEmail", async (req, res) => {
   const { status, response } = await userController.addEmail(req.body.email);
 
   res.status(status).send(response);
+});
+
+app.post("/api/upload", upload.single("video"), async (req, res) => {
+  console.log(req.file);
+  // const { status, response } = await userController.addEmail(req.body.email);
+
+  // res.status(status).send(response);
 });
 
 app.get("/api/getAllNFTs", async (req, res) => {
