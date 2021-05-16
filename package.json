@@ -27,6 +27,7 @@
     "ethers": "^5.0.32",
     "express": "^4.17.1",
     "express-robots-txt": "^0.5.0",
+    "fluent-ffmpeg": "^2.1.2",
     "md5": "^2.3.0",
     "mixpanel-browser": "^2.41.0",
     "mongodb": "^3.6.5",

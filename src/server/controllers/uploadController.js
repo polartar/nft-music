@@ -2,11 +2,35 @@ const AWS = require("aws-sdk");
 const md5 = require("md5");
 const Bottleneck = require("bottleneck/es5");
 const config = require("../config.json");
+const fs = require("fs");
+const ffmpeg = require("fluent-ffmpeg");
 
 const AWS_ENDPOINT = "sfo2.digitaloceanspaces.com";
 const limiter = new Bottleneck({
   minTime: 10,
 });
+
+// Takes a video blob, merges in audio, then uploads it and reassigns our smart contract link
+async function commitVideo(video, soundPaths) {
+  fs.writeFileSync(`${video.originalname}.webm`, video.buffer, () =>
+    console.log("video saved!")
+  );
+
+  ffmpeg()
+    .addInput("./public/artists/oksami/garden/Garden Sounds 2.mp3")
+    .addInput("./public/artists/oksami/garden/Garden Sounds 3.mp3")
+    .addInput("./public/artists/oksami/garden/Garden Sounds 4.mp3")
+    .addInput("./public/artists/oksami/garden/Garden Bass 4.mp3")
+    .addInput("./public/artists/oksami/garden/Garden Drums 4.mp3")
+    .complexFilter("amix=inputs=5")
+    .save("output.mp3")
+    .on("end", () => {
+      ffmpeg()
+        .addInput(`output.mp3`)
+        .addInput(`${video.originalname}.webm`)
+        .save("output.mp4");
+    });
+}
 
 async function uploadFile(file, folder, extension) {
   const spacesEndpoint = new AWS.Endpoint(`https://${AWS_ENDPOINT}/${folder}`);
@@ -60,6 +84,7 @@ async function deleteFileWithURL(url) {
 }
 
 module.exports = {
+  commitVideo,
   uploadFile,
   deleteFileWithURL,
 };

@@ -44,6 +44,7 @@ app.enable("trust proxy");
 
 const nftController = require("./controllers/nftController");
 const userController = require("./controllers/userController");
+const uploadController = require("./controllers/uploadController");
 
 app.get("/api/getUser", async (req, res) => {
   const { status, response } = await userController.getUser(req.query.address);
@@ -77,10 +78,8 @@ app.post("/api/addEmail", async (req, res) => {
 });
 
 app.post("/api/upload", upload.single("video"), async (req, res) => {
+  uploadController.commitVideo(req.file);
   console.log(req.file);
-  // const { status, response } = await userController.addEmail(req.body.email);
-
-  // res.status(status).send(response);
 });
 
 app.get("/api/getAllNFTs", async (req, res) => {
