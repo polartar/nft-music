@@ -776,12 +776,12 @@ class Sequencer extends Component {
             didCompleteBid={this.fetchNFT}
             currentBidAmount={currentBidAmount}
           />
-          <canvas
+          {/* <canvas
             ref={this.cablesCanvas}
             id="glcanvas"
             width="500"
             height="500"
-          ></canvas>
+          ></canvas> */}
           <div className="container scrollBar">
             <video
               playsinline={true}
