@@ -133,7 +133,6 @@ app.get("/api/getOrdersForNFT", async (req, res) => {
 });
 
 app.get("*", (req, res) => {
-  console.log("Called");
   res.sendFile(path.resolve("./dist/index.html"));
 });
 
