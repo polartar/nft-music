@@ -12,6 +12,7 @@ import {
 import mixpanel from "mixpanel-browser";
 
 const Sequencer = lazy(() => import("./Sequencer"));
+const SequencerNFT = lazy(() => import("./SequencerNFT"));
 const Settings = lazy(() => import("./components/Settings"));
 const Directory = lazy(() => import("./components/Directory"));
 const ArtistsDirectory = lazy(() => import("./components/ArtistsDirectory"));
@@ -36,6 +37,9 @@ export default function App(props) {
               exact
               path="/:artistName/:nftName/:edition"
             />
+            <Route exact path="/sequencer/">
+              <SequencerNFT />
+            </Route>
             <Route exact path="/profile">
               <Settings />
             </Route>
