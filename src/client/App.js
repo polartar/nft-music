@@ -20,9 +20,6 @@ const Loading = lazy(() => import("./components/Loading"));
 const Tos = lazy(() => import("./components/Tos"));
 const Privacy = lazy(() => import("./components/Privacy"));
 
-import mixpanel from "mixpanel-browser";
-mixpanel.init("f54426da70deebfa5eb9d8c75dc5c829");
-
 export default function App(props) {
   return (
     <Router>
@@ -40,9 +37,9 @@ export default function App(props) {
             <Route exact path="/sequencer/">
               <SequencerNFT />
             </Route>
-            {/* <Route exact path="/sequenceriframe/">
+            <Route exact path="/sequenceriframe/">
               <SequencerIFrame />
-            </Route> */}
+            </Route>
             <Route exact path="/profile">
               <Settings />
             </Route>
