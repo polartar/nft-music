@@ -493,7 +493,7 @@ class Sequencer extends Component {
           x,
           canvas.height - barHeight,
           barWidth,
-          max(barHeight, window.innerHeight / 4)
+          Math.max(barHeight, window.innerHeight / 4)
         );
 
         x += barWidth + 1;
