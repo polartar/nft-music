@@ -489,7 +489,12 @@ class Sequencer extends Component {
 
         // ctx.fillStyle = 'rgb(' + 255 + ',' + 255 + ',' + 255 + ')'
         ctx.fillStyle = "rgba(255, 255, 255, 1)";
-        ctx.fillRect(x, canvas.height - barHeight, barWidth, max(barHeight, window.innerHeight / 4);
+        ctx.fillRect(
+          x,
+          canvas.height - barHeight,
+          barWidth,
+          max(barHeight, window.innerHeight / 4)
+        );
 
         x += barWidth + 1;
       }
@@ -725,10 +730,7 @@ class Sequencer extends Component {
                 })}
               </div>
               <div className="pageFooter scrollBar">
-                <canvas
-                  ref={this.canvas}
-                  style={{ minWidth: "100%" }}
-                />
+                <canvas ref={this.canvas} style={{ minWidth: "100%" }} />
               </div>
             </div>
           </div>
