@@ -5,7 +5,6 @@ import React, { Component, createRef } from "react";
 import * as Tone from "tone";
 import Loading from "./components/Loading";
 import config from "./config.json";
-import WaterLoop from "./images/waterScaleLoop.mp4";
 
 const sixBySixThreeGroups = [
   [
@@ -666,7 +665,10 @@ class Sequencer extends Component {
               muted="true"
               loop="true"
             >
-              <source src={WaterLoop} type="video/mp4" />
+              <source
+                src="https://secretgarden.nyc3.digitaloceanspaces.com/artists/oksami/garden/waterScaleLoop.mp4"
+                type="video/mp4"
+              />
             </video>
             <div className="gridTop">
               {this.rhythmPads.map((group, groupIndex) => (
