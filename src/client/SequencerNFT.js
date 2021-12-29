@@ -1,27 +1,11 @@
 /* eslint-disable react/no-unused-state, react/no-array-index-key */
-import React, { Component, createRef } from "react";
-import cx from "classnames";
-import Synth from "./Synth";
-// import Canvas from './Canvas';
-import IconButton from "@material-ui/core/IconButton";
-import Button from "@material-ui/core/Button";
-
-import { makeStyles } from "@material-ui/core/styles";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import SecretGardenLogo from "./images/SecretGarden.png";
-import AlbumArt from "./images/albumArt.png";
-import InstaPic from "./images/instaPic.png";
-import WaterLoop from "./images/waterScaleLoop.mp4";
-import Wallet from "./images/wallet.png";
-import Expand from "./images/expand.png";
-
-import * as Tone from "tone";
-import { Limiter, ToneAudioNode } from "tone";
 import axios from "axios";
-import config from "./config.json";
-import clone from "clone";
+import cx from "classnames";
+import React, { Component, createRef } from "react";
+import * as Tone from "tone";
 import Loading from "./components/Loading";
-import { TumblrShareCount } from "react-share";
+import config from "./config.json";
+import WaterLoop from "./images/waterScaleLoop.mp4";
 
 const sixBySixThreeGroups = [
   [

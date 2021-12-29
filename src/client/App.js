@@ -11,7 +11,7 @@ import {
 
 import mixpanel from "mixpanel-browser";
 
-const Sequencer = lazy(() => import("./Sequencer"));
+// const Sequencer = lazy(() => import("./Sequencer"));
 const SequencerNFT = lazy(() => import("./SequencerNFT"));
 const Settings = lazy(() => import("./components/Settings"));
 const Directory = lazy(() => import("./components/Directory"));
@@ -29,14 +29,14 @@ export default function App(props) {
       <React.Fragment>
         <Suspense fallback={<div />}>
           <Switch>
-            <Route exact path="/">
+            {/* <Route exact path="/">
               <Sequencer />
             </Route>
             <Route
               render={(props) => <Sequencer {...props} />}
               exact
               path="/:artistName/:nftName/:edition"
-            />
+            /> */}
             <Route exact path="/sequencer/">
               <SequencerNFT />
             </Route>
