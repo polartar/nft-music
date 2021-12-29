@@ -461,7 +461,7 @@ class Sequencer extends Component {
 
     if (!isAllZero) {
       canvas.width = window.innerWidth;
-      canvas.height = 500;
+      canvas.height = window.innerHeight;
 
       var x = 0;
 
@@ -489,7 +489,7 @@ class Sequencer extends Component {
 
         // ctx.fillStyle = 'rgb(' + 255 + ',' + 255 + ',' + 255 + ')'
         ctx.fillStyle = "rgba(255, 255, 255, 1)";
-        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, max(barHeight, window.innerHeight / 4);
 
         x += barWidth + 1;
       }
@@ -680,8 +680,8 @@ class Sequencer extends Component {
               ))}
             </div>
             <div className="bodyWrapper scrollBar">
-              <div className="beatPackTitle">{nft.name}</div>
-              <div className="artistName">{nft.artistName}</div>
+              {/* <div className="beatPackTitle">{nft.name}</div>
+              <div className="artistName">{nft.artistName}</div> */}
               <div className={`gridOuter ${padFormatStyleClass}`}>
                 {padFormat.map((column, j) => {
                   return column.map((remappedCoordinates, i) => {
@@ -724,10 +724,13 @@ class Sequencer extends Component {
                   });
                 })}
               </div>
+              <div className="pageFooter scrollBar">
+                <canvas
+                  ref={this.canvas}
+                  style={{ minWidth: "100%" }}
+                />
+              </div>
             </div>
-          </div>
-          <div className="pageFooter scrollBar">
-            <canvas ref={this.canvas} style={{ minWidth: "100%" }} />
           </div>
         </React.StrictMode>
       );

@@ -9,7 +9,7 @@ import {
   Redirect,
 } from "react-router-dom";
 
-// const Sequencer = lazy(() => import("./Sequencer"));
+const Sequencer = lazy(() => import("./Sequencer"));
 const SequencerNFT = lazy(() => import("./SequencerNFT"));
 const SequencerIFrame = lazy(() => import("./SequencerIFrame"));
 const Settings = lazy(() => import("./components/Settings"));
@@ -20,26 +20,29 @@ const Loading = lazy(() => import("./components/Loading"));
 const Tos = lazy(() => import("./components/Tos"));
 const Privacy = lazy(() => import("./components/Privacy"));
 
+import mixpanel from "mixpanel-browser";
+mixpanel.init("f54426da70deebfa5eb9d8c75dc5c829");
+
 export default function App(props) {
   return (
     <Router>
       <React.Fragment>
         <Suspense fallback={<div />}>
           <Switch>
-            {/* <Route exact path="/">
+            <Route exact path="/">
               <Sequencer />
             </Route>
             <Route
               render={(props) => <Sequencer {...props} />}
               exact
               path="/:artistName/:nftName/:edition"
-            /> */}
+            />
             <Route exact path="/sequencer/">
               <SequencerNFT />
             </Route>
-            <Route exact path="/sequenceriframe/">
+            {/* <Route exact path="/sequenceriframe/">
               <SequencerIFrame />
-            </Route>
+            </Route> */}
             <Route exact path="/profile">
               <Settings />
             </Route>
