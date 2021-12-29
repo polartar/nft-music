@@ -207,35 +207,14 @@ class Sequencer extends Component {
     if (this.props.match) {
       nftResponse = await axios.get("/api/getNFT", {
         params: this.props.match.params,
+        xsrfCookieName: null,
+        withCredentials: false,
       });
     } else {
-      nftResponse = await axios.get("/api/getFeaturedNFT");
-    }
-
-    try {
-      const orderResponse = await axios.get("/api/getOrdersForNFT", {
-        params: {
-          nftID: nftResponse.data._id,
-          useTestnet: config.dev,
-        },
+      nftResponse = await axios.get("/api/getFeaturedNFT", {
+        xsrfCookieName: null,
+        withCredentials: false,
       });
-
-      const addresses = orderResponse.data.orders.map((order) => {
-        return order.maker.address.toLowerCase();
-      });
-
-      const usersResponse = await axios.get("/api/getUsers", {
-        params: {
-          addresses,
-        },
-      });
-
-      this.setState({
-        bids: orderResponse.data.orders,
-        users: usersResponse.data,
-      });
-    } catch (error) {
-      console.log(error);
     }
 
     this.setState({

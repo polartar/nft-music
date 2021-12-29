@@ -11,6 +11,7 @@ import {
 
 // const Sequencer = lazy(() => import("./Sequencer"));
 const SequencerNFT = lazy(() => import("./SequencerNFT"));
+const SequencerIFrame = lazy(() => import("./SequencerIFrame"));
 const Settings = lazy(() => import("./components/Settings"));
 const Directory = lazy(() => import("./components/Directory"));
 const ArtistsDirectory = lazy(() => import("./components/ArtistsDirectory"));
@@ -35,6 +36,9 @@ export default function App(props) {
             /> */}
             <Route exact path="/sequencer/">
               <SequencerNFT />
+            </Route>
+            <Route exact path="/sequenceriframe/">
+              <SequencerIFrame />
             </Route>
             <Route exact path="/profile">
               <Settings />
