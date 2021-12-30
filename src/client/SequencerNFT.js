@@ -665,10 +665,7 @@ class Sequencer extends Component {
               muted="true"
               loop="true"
             >
-              <source
-                src="https://secretgarden.nyc3.digitaloceanspaces.com/artists/oksami/garden/waterScaleLoop.mp4"
-                type="video/mp4"
-              />
+              <source src={nft.lowResImageURL} type="video/mp4" />
             </video>
             <div className="gridTop">
               {this.rhythmPads.map((group, groupIndex) => (
