@@ -47,8 +47,8 @@ export default function Footer(props) {
           props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
         }
       >
-        <a href="/">
-          <div className="bottomItem mobileLink">LIVE AUCTION</div>
+        <a href="/featured">
+          <div className="bottomItem mobileLink">FEATURED</div>
         </a>
         {showShare && !isLoggedIntoMetamask && (
           <div

@@ -229,6 +229,7 @@ class Sequencer extends Component {
 
     this.initWallet();
     this.myRef = React.createRef();
+    this.FAQ = React.createRef();
   }
 
   initWallet = async () => {
@@ -519,7 +520,7 @@ class Sequencer extends Component {
 
   executeScroll = () => this.myRef.current.scrollIntoView();
 
-  executeScroll = () => this.myRef.current.scrollIntoView();
+  executeScrollFAQ = () => this.FAQ.current.scrollIntoView();
 
   togglePlay = () => {
     this.rafId = requestAnimationFrame(() => this.tick());
@@ -801,7 +802,8 @@ class Sequencer extends Component {
                   Stems form a special music player laid out in a grid.
                 </div>
                 <div className="details">
-                  Each button corresponds to a unique sound layer designed by
+                  The Stems NFT is the first music NFT that allows holders to
+                  generate their own mix using unique sound layers designed by
                   our resident musicians.
                 </div>
                 <div className="details">
@@ -980,7 +982,7 @@ class Sequencer extends Component {
                   <div className="ethAmount">Learn More</div>
                   <IconButton
                     className="expandOuter"
-                    onClick={this.executeScroll}
+                    onClick={this.executeScrollFAQ}
                   >
                     <img src={Expand} className="expand" />
                   </IconButton>
@@ -994,14 +996,13 @@ class Sequencer extends Component {
 
             <Footer
               white={false}
-              showShare
               shareURL={`https://secretgarden.fm/?share=${shareablePadNumbers.join(
                 ","
               )}`}
               loggedIntoMetamaskOverride={isLoggedIntoMetamask}
             />
           </div>
-          <div className="container3 scrollBar">
+          <div className="container3 scrollBar" ref={this.FAQ}>
             <div className="albumWrapper">
               <div>
                 <div className="packTitle">FAQ</div>
@@ -1009,8 +1010,9 @@ class Sequencer extends Component {
                   What do I get by buying a Stems NFT?
                 </div>
                 <div className="details">
-                  When you own a Stems NFT, you own the entire player and all
-                  the sounds in it.
+                  When you own a Stems NFT, you get a non-exclusive license to
+                  the interactive player, art, and every sound file on the
+                  player for personal or commercial use.
                   <br />
                   Yes, the player still works even as an NFT - click here to see
                   it in action:{" "}
@@ -1022,7 +1024,7 @@ class Sequencer extends Component {
                   </a>
                   <br />
                   <br />
-                  In addition, you can:
+                  You will be able to In addition, you can:
                   <br />
                   <br />
                   - set the default mix for the player, which will load in your

@@ -100,7 +100,7 @@ function Directory() {
               <div className="currentAuctionTitle">CURRENT AUCTION</div>
               <div className="topPanelWrapper">
                 <div className="currentAuctionInfo">
-                  <a href="/">
+                  <a href="/featured">
                     {featuredNFTMediaExtension === "mp4" && (
                       <video
                         width="300"
@@ -122,12 +122,12 @@ function Directory() {
                     )}
                   </a>
                   <div className="currentAuctionDetailsWrapper">
-                    <a href="/">
+                    <a href="/featured">
                       <div className="currentAuctionPack">
                         {featuredNFT.name}
                       </div>
                     </a>
-                    <a href="/">
+                    <a href="/featured">
                       <div className="currentAuctionArtist">
                         {featuredNFT.artistName}
                       </div>

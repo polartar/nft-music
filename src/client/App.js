@@ -35,6 +35,9 @@ export default function App(props) {
               exact
               path="/:artistName/:nftName/:edition"
             />
+            <Route exact path="/featured/">
+              <Sequencer />
+            </Route>
             <Route exact path="/sequencer/">
               <SequencerNFT />
             </Route>
