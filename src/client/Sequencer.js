@@ -787,7 +787,7 @@ class Sequencer extends Component {
               muted="true"
               loop="true"
             >
-              <source src={WaterLoop} type="video/mp4" />
+              <source src={nft.imageURL} type="video/mp4" />
             </video>
             <div className="gridTop">
               {this.rhythmPads.map((group, groupIndex) => (
