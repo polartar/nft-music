@@ -270,7 +270,6 @@ class Sequencer extends Component {
   };
 
   fetchNFT = async () => {
-    console.log(this.props.match.params);
     let nftResponse;
     if (this.props.match) {
       nftResponse = await axios.get("/api/getNFT", {
@@ -517,6 +516,8 @@ class Sequencer extends Component {
       openBidModal: false,
     });
   };
+
+  executeScroll = () => this.myRef.current.scrollIntoView();
 
   executeScroll = () => this.myRef.current.scrollIntoView();
 
@@ -780,6 +781,66 @@ class Sequencer extends Component {
             width="500"
             height="500"
           ></canvas> */}
+          {/* <div className="container scrollBar">
+            <Footer
+              white={false}
+              loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+            />
+          </div> */}
+
+          <div className="container2 scrollBar">
+            <div className="albumWrapper">
+              <div>
+                <div className="packTitle">Welcome to the Secret Garden.</div>
+                <div className="details">
+                  We curate interactive, playable music NFTs from talented music
+                  producers and artists.
+                </div>
+                <div className="details">We call these NFTs, "Stems".</div>
+                <div className="details">
+                  Stems form a special music player laid out in a grid.
+                </div>
+                <div className="details">
+                  Each button corresponds to a unique sound layer designed by
+                  our resident musicians.
+                </div>
+                <div className="details">
+                  Try out your favorite combinations out below!
+                </div>
+
+                <IconButton
+                  className="expandOuter"
+                  onClick={this.executeScroll}
+                >
+                  <img src={Expand} className="expand" />
+                </IconButton>
+              </div>
+            </div>
+            <div className="privacyAndTos">
+              <a href="/tos" target="_blank">
+                Terms of Service
+              </a>
+              <a href="/privacy" target="_blank">
+                Privacy Policy
+              </a>
+            </div>
+            <div className="ourSocials">
+              <span>inquiries@secretgarden.fm</span>
+              <a href="https://twitter.com/SecretGarden_FM" target="_blank">
+                <img src={Twitter} className="ourTwitter" />
+              </a>
+
+              <a href="https://discord.gg/ykrzXB9ZsV" target="_blank">
+                <img src={Discord} className="ourDiscord" />
+              </a>
+              <a
+                href="https://www.instagram.com/secretgarden_fm/"
+                target="_blank"
+              >
+                <img src={Instagram} className="ourInsta" />
+              </a>
+            </div>
+          </div>
           <div className="container scrollBar">
             <video
               playsinline={true}
@@ -812,7 +873,7 @@ class Sequencer extends Component {
               didConnectWallet={this.initWallet}
               loggedIntoMetamaskOverride={isLoggedIntoMetamask}
             />
-            <div className="bodyWrapper scrollBar">
+            <div className="bodyWrapper scrollBar" ref={this.myRef}>
               <div className="beatPackTitle">{nft.name}</div>
               <div className="artistName">{nft.artistName}</div>
               <div className={`gridOuter ${padFormatStyleClass}`}>
@@ -897,7 +958,7 @@ class Sequencer extends Component {
                   )}
                 </React.Fragment>
               )}
-              {!showTutorial && nft.ownerAddress === null && (
+              {/* {!showTutorial && nft.ownerAddress === null && (
                 <React.Fragment>
                   <div className="currentBid tile25">Current Price</div>
                   <div className="ethAmount">{`${currentBidAmount} ETH`}</div>
@@ -913,12 +974,10 @@ class Sequencer extends Component {
 
                   <div className="ethAmount">{`Sold for ${nft.saleAmount} ETH`}</div>
                 </React.Fragment>
-              )}
+              )} */}
               {(tutorialStep === 3 || !showTutorial) && (
                 <React.Fragment>
-                  <div className="makeOfferText">
-                    {nft.ownerAddress ? "View Bid History" : "Make an Offer"}
-                  </div>
+                  <div className="ethAmount">Learn More</div>
                   <IconButton
                     className="expandOuter"
                     onClick={this.executeScroll}
@@ -942,139 +1001,62 @@ class Sequencer extends Component {
               loggedIntoMetamaskOverride={isLoggedIntoMetamask}
             />
           </div>
-          <div className="container2 scrollBar">
+          <div className="container3 scrollBar">
             <div className="albumWrapper">
-              <div className="albumPicWrapper">
-                {mediaFileExtension === "mp4" && (
-                  <video
-                    width="140"
-                    height="140"
-                    playsinline="true"
-                    autoplay="true"
-                    muted="true"
-                    loop="true"
+              <div>
+                <div className="packTitle">FAQ</div>
+                <div className="question">
+                  What do I get by buying a Stems NFT?
+                </div>
+                <div className="details">
+                  When you own a Stems NFT, you own the entire player and all
+                  the sounds in it.
+                  <br />
+                  Yes, the player still works even as an NFT - click here to see
+                  it in action:{" "}
+                  <a
+                    target="_blank"
+                    href="https://testnets.opensea.io/assets/0x52b1dd5c27705aa4dfd3889db223b5c4c84f6b54/1"
                   >
-                    <source src={nft.imageURL} type="video/mp4" />
-                  </video>
-                )}
-                {mediaFileExtension !== "mp4" && (
-                  <img src={nft.imageURL} className="albumPic" />
-                )}
-              </div>
-              <div className="albumInfo" ref={this.myRef}>
-                <div className="artistInfo" id="album">
-                  <img src={nft.artist.imageURL} className="instaPic" />
-                  <span className="artistTag">{nft.artistName}</span>
+                    View on OpenSea
+                  </a>
+                  <br />
+                  <br />
+                  In addition, you can:
+                  <br />
+                  <br />
+                  - set the default mix for the player, which will load in your
+                  choice of sounds whenever your NFT loads.
+                  <br />
+                  - receive a non-exclusive license to every sound file on the
+                  player for personal or commercial use.
+                  <br />- gain access to a private holders channel on our
+                  Discord. <br />- gain access to potential additional goodies
+                  such as concert tickets, meet and greets, merch, and more
+                  (depending on artist).
                 </div>
-                <div className="packTitle">{nft.name}</div>
-                <div className="editionInfo">{`Editions Left: ${nft.edition}`}</div>
-                <div className="bidInfoWrapper">
-                  <div className="bidItem">
-                    <div className="bidTitle">
-                      {nft.ownerAddress ? "Sale Price" : "Current Bid"}
-                    </div>
-                    <div className="bidInfo">{`${currentBidAmount} ETH`}</div>
-                  </div>
-                  <div className="bidItem right">
-                    <div className="bidTitle">TIME UNTIL NEXT PRICE DROP</div>
-                    <Countdown
-                      date={nft.bidEndDate}
-                      renderer={({
-                        days,
-                        hours,
-                        minutes,
-                        seconds,
-                        completed,
-                      }) => {
-                        if (completed) {
-                          // Render a completed state
-                          return (
-                            <div className="bidInfo">No more price drops</div>
-                          );
-                        } else {
-                          // Render a countdown
-                          return (
-                            <div className="bidInfo">{`${days} days, 
-                              ${hours} hrs, ${minutes} mins, ${seconds} secs`}</div>
-                          );
-                        }
-                      }}
-                    />
-                  </div>
+                <div className="question">How do I purchase a Stems NFT?</div>
+                <div className="details">
+                  Join our{" "}
+                  <a target="_blank" href="https://discord.gg/ykrzXB9ZsV">
+                    Discord
+                  </a>{" "}
+                  or follow us on{" "}
+                  <a target="_blank" href="https://twitter.com/SecretGarden_FM">
+                    Twitter
+                  </a>{" "}
+                  to get notified when a new Stems NFT drop is happening.
+                  <br />
+                  We will sell 25 to 50 NFTs for each artist, in the form of a
+                  dutch auction.
                 </div>
-                {!nft.ownerAddress && (
-                  <Button
-                    className="offerButton"
-                    onClick={this.handleClickOpen}
-                    disabled={provider && provider._network.chainId !== 1}
-                  >
-                    {provider && provider._network.chainId === 1
-                      ? "Mint"
-                      : "Please use Mainnet"}
-                  </Button>
-                )}
-                <div className="nftDetails">
-                  Owners receive an interactive NFT of the stem player, ability
-                  to set their own mixes on the NFT, lossless sound files, and a
-                  non-exclusive license for distribution.
+                <div className="question">How do I apply to be an artist?</div>
+                <div className="details">
+                  Please email us at inquiries@secretgarden.fm
                 </div>
-                <div className=" bidOnDesktop">
-                  Sign in on Desktop to place bid
-                </div>
-                {/* <div className="historyWrapper">
-                  <div className="auctionTitle">Auction History</div>
-                </div>
-                <div className="tableWrapper scrollBar">
-                  <table className="auctionPrices">
-                    <tr>
-                      <th>Price</th>
-                      <th>Collector</th>
-                      <th>Time</th>
-                    </tr>
-                    {bids.map((bid) => {
-                      const formattedBidAmount =
-                        parseFloat(
-                          utils.formatEther(bid.base_price)
-                        ).toPrecision(4) / 1;
-
-                      const bidCurrency = bid.payment_token_contract.symbol;
-
-                      return (
-                        <tr>
-                          <td>{`${formattedBidAmount} ${bidCurrency}`}</td>
-                          <td>
-                            <a href={`/collection/${bid.maker.address}`}>
-                              <div className="makerAddr">
-                                {users[bid.maker.address]
-                                  ? users[bid.maker.address].name
-                                  : bid.maker.address}
-                              </div>
-                            </a>
-                          </td>
-                          <td>
-                            {`${new Date(
-                              bid.created_date + "Z"
-                            ).toLocaleDateString("en-US", {
-                              month: "numeric",
-                              day: "numeric",
-                            })}, ${new Date(
-                              bid.created_date + "Z"
-                            ).toLocaleTimeString()}`}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </table>
-                </div> */}
               </div>
             </div>
             <div className="privacyAndTos">
-              <a
-                href={`https://opensea.io/assets/${nft.tokenAddress}/${nft.tokenId}`}
-                target="_blank"
-              >
-                View on OpenSea
-              </a>
               <a href="/tos" target="_blank">
                 Terms of Service
               </a>

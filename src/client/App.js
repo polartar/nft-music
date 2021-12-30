@@ -9,6 +9,7 @@ import {
   Redirect,
 } from "react-router-dom";
 
+const Landing = lazy(() => import("./Landing"));
 const Sequencer = lazy(() => import("./Sequencer"));
 const SequencerNFT = lazy(() => import("./SequencerNFT"));
 const SequencerIFrame = lazy(() => import("./SequencerIFrame"));
@@ -27,7 +28,7 @@ export default function App(props) {
         <Suspense fallback={<div />}>
           <Switch>
             <Route exact path="/">
-              <Sequencer />
+              <Landing />
             </Route>
             <Route
               render={(props) => <Sequencer {...props} />}
