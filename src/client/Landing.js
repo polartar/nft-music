@@ -844,15 +844,20 @@ class Sequencer extends Component {
             </div>
           </div>
           <div className="container scrollBar">
-            <video
-              playsinline={true}
-              className="waterLoopVideo"
-              autoplay="true"
-              muted="true"
-              loop="true"
-            >
-              <source src={WaterLoop} type="video/mp4" />
-            </video>
+            {mediaFileExtension === "mp4" && (
+              <video
+                playsinline={true}
+                className="waterLoopVideo"
+                autoplay="true"
+                muted="true"
+                loop="true"
+              >
+                <source src={nft.imageURL} type="video/mp4" />
+              </video>
+            )}
+            {mediaFileExtension !== "mp4" && (
+              <img className="waterLoopVideo" src={nft.imageURL} />
+            )}
             <div className="gridTop">
               {this.rhythmPads.map((group, groupIndex) => (
                 <React.Fragment>
@@ -1024,7 +1029,7 @@ class Sequencer extends Component {
                   </a>
                   <br />
                   <br />
-                  You will be able to In addition, you can:
+                  You will be able to:
                   <br />
                   <br />
                   - set the default mix for the player, which will load in your

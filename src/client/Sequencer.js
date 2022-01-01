@@ -780,15 +780,20 @@ class Sequencer extends Component {
             height="500"
           ></canvas> */}
           <div className="container scrollBar">
-            <video
-              playsinline={true}
-              className="waterLoopVideo"
-              autoplay="true"
-              muted="true"
-              loop="true"
-            >
-              <source src={nft.imageURL} type="video/mp4" />
-            </video>
+            {mediaFileExtension === "mp4" && (
+              <video
+                playsinline={true}
+                className="waterLoopVideo"
+                autoplay="true"
+                muted="true"
+                loop="true"
+              >
+                <source src={nft.imageURL} type="video/mp4" />
+              </video>
+            )}
+            {mediaFileExtension !== "mp4" && (
+              <img className="waterLoopVideo" src={nft.imageURL} />
+            )}
             <div className="gridTop">
               {this.rhythmPads.map((group, groupIndex) => (
                 <React.Fragment>
