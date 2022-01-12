@@ -170,7 +170,6 @@ input[type="number"] {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
   // background: #1f1f1f;
   background: transparent;
   overflow: hidden;
@@ -390,7 +389,7 @@ canvas {
   position: absolute;
   min-width: 100%;
   min-height: 100%;
-  // top: 50%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 100;

@@ -72,11 +72,11 @@ export default function Footer(props) {
           </div>
         )}
 
-        {/* {isLoggedIntoMetamask && (
+        {isLoggedIntoMetamask && (
           <a href={`/collection/${address}`} className="notMobileLink">
             <div className="bottomItem">MY COLLECTION</div>
           </a>
-        )} */}
+        )}
 
         <div onClick={handleClickOpenEmail} className="bottomItem mobileLink">
           FUTURE DROPS
