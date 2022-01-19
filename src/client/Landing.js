@@ -280,32 +280,6 @@ class Sequencer extends Component {
       nftResponse = await axios.get("/api/getFeaturedNFT");
     }
 
-    try {
-      const orderResponse = await axios.get("/api/getOrdersForNFT", {
-        params: {
-          nftID: nftResponse.data._id,
-          useTestnet: config.dev,
-        },
-      });
-
-      const addresses = orderResponse.data.orders.map((order) => {
-        return order.maker.address.toLowerCase();
-      });
-
-      const usersResponse = await axios.get("/api/getUsers", {
-        params: {
-          addresses,
-        },
-      });
-
-      this.setState({
-        bids: orderResponse.data.orders,
-        users: usersResponse.data,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-
     this.setState({
       nft: nftResponse.data,
     });
@@ -825,7 +799,7 @@ class Sequencer extends Component {
               didConnectWallet={this.initWallet}
               loggedIntoMetamaskOverride={isLoggedIntoMetamask}
             />
-            <div className="bodyWrapper scrollBar" ref={this.myRef}>
+            <div className="bodyWrapper scrollBar">
               <div className="beatPackTitle">{nft.name}</div>
               <div className="artistName">{nft.artistName}</div>
               <div className={`gridOuter ${padFormatStyleClass}`}>
@@ -875,7 +849,7 @@ class Sequencer extends Component {
                   {tutorialStep === 0 && (
                     <React.Fragment>
                       <div className="currentBid tile25 tutorialStep">
-                        Welcome to Secret Garden.
+                        Welcome to the Secret Garden.
                       </div>
                       <div className="tutorialInfo">
                         To begin, press one of the highlighted squares on the
@@ -932,7 +906,7 @@ class Sequencer extends Component {
                   <div className="ethAmount">Learn More</div>
                   <IconButton
                     className="expandOuter"
-                    onClick={this.executeScrollFAQ}
+                    onClick={this.executeScroll}
                   >
                     <img src={Expand} className="expand" />
                   </IconButton>
@@ -952,7 +926,7 @@ class Sequencer extends Component {
               loggedIntoMetamaskOverride={isLoggedIntoMetamask}
             />
           </div>
-          <div className="container2 scrollBar">
+          <div className="container2 scrollBar" ref={this.myRef}>
             <div className="albumWrapper">
               <div>
                 <div className="packTitle">
@@ -977,7 +951,7 @@ class Sequencer extends Component {
 
                 <IconButton
                   className="expandOuter"
-                  onClick={this.executeScroll}
+                  onClick={this.executeScrollFAQ}
                 >
                   <img src={Expand} className="expand" />
                 </IconButton>

@@ -97,7 +97,7 @@ export default function Navbar(props) {
                 className="logo"
               />
             </a>
-            <div className={white ? "timer white" : "timer"}>
+            {/* <div className={white ? "timer white" : "timer"}>
               <Countdown
                 date={nft.bidEndDate}
                 renderer={({ days, hours, minutes, seconds, completed }) => {
@@ -117,13 +117,13 @@ export default function Navbar(props) {
                   }
                 }}
               />
-            </div>
+            </div> */}
 
-            {!isLoggedIntoMetamask && (
+            {/* {!isLoggedIntoMetamask && (
               <div onClick={connectWallet} className="walletText">
                 CONNECT WALLET
               </div>
-            )}
+            )} */}
 
             {isLoggedIntoMetamask && (
               <div className="signedInWrapper">
