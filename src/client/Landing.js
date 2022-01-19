@@ -788,61 +788,6 @@ class Sequencer extends Component {
               loggedIntoMetamaskOverride={isLoggedIntoMetamask}
             />
           </div> */}
-
-          <div className="container2 scrollBar">
-            <div className="albumWrapper">
-              <div>
-                <div className="packTitle">Welcome to the Secret Garden.</div>
-                <div className="details">
-                  We curate interactive, playable music NFTs from talented music
-                  producers and artists.
-                </div>
-                <div className="details">We call these NFTs, "Stems".</div>
-                <div className="details">
-                  Stems form a special music player laid out in a grid.
-                </div>
-                <div className="details">
-                  The Stems NFT is the first music NFT that allows holders to
-                  generate their own mix using unique sound layers designed by
-                  our resident musicians.
-                </div>
-                <div className="details">
-                  Try out your favorite combinations out below!
-                </div>
-
-                <IconButton
-                  className="expandOuter"
-                  onClick={this.executeScroll}
-                >
-                  <img src={Expand} className="expand" />
-                </IconButton>
-              </div>
-            </div>
-            <div className="privacyAndTos">
-              <a href="/tos" target="_blank">
-                Terms of Service
-              </a>
-              <a href="/privacy" target="_blank">
-                Privacy Policy
-              </a>
-            </div>
-            <div className="ourSocials">
-              <span>inquiries@secretgarden.fm</span>
-              <a href="https://twitter.com/SecretGarden_FM" target="_blank">
-                <img src={Twitter} className="ourTwitter" />
-              </a>
-
-              <a href="https://discord.gg/ykrzXB9ZsV" target="_blank">
-                <img src={Discord} className="ourDiscord" />
-              </a>
-              <a
-                href="https://www.instagram.com/secretgarden_fm/"
-                target="_blank"
-              >
-                <img src={Instagram} className="ourInsta" />
-              </a>
-            </div>
-          </div>
           <div className="container scrollBar">
             {mediaFileExtension === "mp4" && (
               <video
@@ -1006,6 +951,62 @@ class Sequencer extends Component {
               )}`}
               loggedIntoMetamaskOverride={isLoggedIntoMetamask}
             />
+          </div>
+          <div className="container2 scrollBar">
+            <div className="albumWrapper">
+              <div>
+                <div className="packTitle">
+                  ...Welcome to the Secret Garden.
+                </div>
+                <div className="details">
+                  We curate interactive, playable music NFTs from talented music
+                  producers and artists.
+                </div>
+                <div className="details">We call these NFTs, "Stems".</div>
+                <div className="details">
+                  Stems form a special music player laid out in a grid.
+                </div>
+                <div className="details">
+                  The Stems NFT is the first music NFT that allows holders to
+                  generate their own mix using unique sound layers designed by
+                  our resident musicians.
+                </div>
+                <div className="details">
+                  Try out your favorite combinations out below!
+                </div>
+
+                <IconButton
+                  className="expandOuter"
+                  onClick={this.executeScroll}
+                >
+                  <img src={Expand} className="expand" />
+                </IconButton>
+              </div>
+            </div>
+            <div className="privacyAndTos">
+              <a href="/tos" target="_blank">
+                Terms of Service
+              </a>
+              <a href="/privacy" target="_blank">
+                Privacy Policy
+              </a>
+            </div>
+            <div className="ourSocials">
+              <span>inquiries@secretgarden.fm</span>
+              <a href="https://twitter.com/SecretGarden_FM" target="_blank">
+                <img src={Twitter} className="ourTwitter" />
+              </a>
+
+              <a href="https://discord.gg/ykrzXB9ZsV" target="_blank">
+                <img src={Discord} className="ourDiscord" />
+              </a>
+              <a
+                href="https://www.instagram.com/secretgarden_fm/"
+                target="_blank"
+              >
+                <img src={Instagram} className="ourInsta" />
+              </a>
+            </div>
           </div>
           <div className="container3 scrollBar" ref={this.FAQ}>
             <div className="albumWrapper">
