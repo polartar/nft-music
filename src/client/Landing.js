@@ -31,6 +31,34 @@ import clone from "clone";
 import Loading from "./components/Loading";
 import Cookies from "universal-cookie";
 
+import Slider from '@material-ui/core/Slider';
+import { createTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
+
+// const muiTheme = createTheme({
+//   overrides:{
+//     MuiSlider: {
+//       thumb:{
+//       color: "white",
+//       },
+//       track: {
+//         color: 'white'
+//       },
+//       rail: {
+//         color: 'white'
+//       }
+//     }
+// }
+// });
+
+// const volumeControl = () => {
+//   return (
+//     <ThemeProvider theme={muiTheme}>
+//       <Slider min={0} max={100} defaultValue={40} />
+//     </ThemeProvider>
+//   );
+// }
+
 const sixBySixThreeGroups = [
   [
     ["sounds", 0],
@@ -214,6 +242,7 @@ class Sequencer extends Component {
     shareablePadNumbers: [],
     showTutorial: !didVisitSite,
     tutorialStep: 0,
+    volume: 0,
   };
 
   constructor(props) {
@@ -719,6 +748,47 @@ class Sequencer extends Component {
     );
   }
 
+  muiTheme = createTheme({
+    overrides:{
+      MuiSlider: {
+        thumb:{
+        color: "white",
+        },
+        track: {
+          color: 'white'
+        },
+        rail: {
+          color: 'white'
+        }
+      }
+  }
+  });
+
+  setVolume(volume) {
+    this.setState({
+      volume: volume,
+    })
+    // console.log("this.state.volume: ", this.state.volume)
+    console.log("this.players: ", this.players)
+    this.players['basses'].forEach(index => {
+      index.volume.value = this.state.volume
+    })
+    this.players['drums'].forEach(index => {
+      index.volume.value = this.state.volume
+    })
+    this.players['sounds'].forEach(index => {
+      index.volume.value = this.state.volume
+    })
+  }
+  
+  volumeControl() {
+    return (
+      <ThemeProvider theme={this.muiTheme}>
+        <Slider min={-60} max={0} defaultValue={this.state.volume} onChange={(event) => this.setVolume(event.target.ariaValueNow)}/>
+      </ThemeProvider>
+    );
+  }
+
   render() {
     const {
       pads,
@@ -736,6 +806,7 @@ class Sequencer extends Component {
       shareablePadNumbers,
       showTutorial,
       tutorialStep,
+      volume,
     } = this.state;
 
     const currentBidAmount =
@@ -827,7 +898,11 @@ class Sequencer extends Component {
             />
             <div className="bodyWrapper scrollBar" ref={this.myRef}>
               <div className="beatPackTitle">{nft.name}</div>
-              <div className="artistName">{nft.artistName}</div>
+              {/* <div className="artistName">{nft.artistName}</div> */}
+              <div className="artistName" onClick={() => console.log(screen.width)}>{'ASDASDASD'}</div>
+              <div className="volumeContainer">
+                {this.volumeControl()}
+              </div>
               <div className={`gridOuter ${padFormatStyleClass}`}>
                 {padFormat.map((column, j) => {
                   return column.map((remappedCoordinates, i) => {
@@ -940,7 +1015,7 @@ class Sequencer extends Component {
               )}
 
               <div className="pageFooter scrollBar">
-                <canvas ref={this.canvas} style={{ minWidth: "100%" }} />
+                <canvas ref={this.canvas} style={{ minWidth: "100%", zIndex: "-10" }} />
               </div>
             </div>
 
