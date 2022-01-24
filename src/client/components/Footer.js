@@ -47,9 +47,9 @@ export default function Footer(props) {
           props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
         }
       >
-        <a href="/featured">
+        {/* <a href="/featured">
           <div className="bottomItem mobileLink">FEATURED</div>
-        </a>
+        </a> */}
         {showShare && !isLoggedIntoMetamask && (
           <div
             className="bottomItem mobileLink"
@@ -59,9 +59,9 @@ export default function Footer(props) {
             SHARE
           </div>
         )}
-        <a href="/directory">
+        {/* <a href="/directory">
           <div className="bottomItem mobileLink">DIRECTORY</div>
-        </a>
+        </a> */}
         {showShare && isLoggedIntoMetamask && (
           <div
             className="bottomItem mobileLink"
@@ -72,21 +72,28 @@ export default function Footer(props) {
           </div>
         )}
 
-        {isLoggedIntoMetamask && (
+        <a href="https://discord.gg/ykrzXB9ZsV">
+          <div className="bottomItem mobileLink">DISCORD</div>
+        </a>
+        <a href="https://twitter.com/SecretGarden_FM">
+          <div className="bottomItem mobileLink">TWITTER</div>
+        </a>
+
+        {/* {isLoggedIntoMetamask && (
           <a href={`/collection/${address}`} className="notMobileLink">
             <div className="bottomItem">MY COLLECTION</div>
           </a>
-        )}
-
+        )} */}
+        {/* 
         <div onClick={handleClickOpenEmail} className="bottomItem mobileLink">
           FUTURE DROPS
-        </div>
+        </div> */}
 
-        {isLoggedIntoMetamask && (
+        {/* {isLoggedIntoMetamask && (
           <a href={`/profile`} className=" notMobileLink">
             <div className="bottomItem">PROFILE</div>
           </a>
-        )}
+        )} */}
       </div>
     </React.Fragment>
   );

@@ -750,29 +750,19 @@ class Sequencer extends Component {
             didCompleteBid={this.fetchNFT}
             currentBidAmount={currentBidAmount}
           />
-          {/* <canvas
-            ref={this.cablesCanvas}
-            id="glcanvas"
-            width="500"
-            height="500"
-          ></canvas> */}
-          {/* <div className="container scrollBar">
-            <Footer
-              white={false}
-              loggedIntoMetamaskOverride={isLoggedIntoMetamask}
-            />
-          </div> */}
           <div className="container scrollBar">
             {mediaFileExtension === "mp4" && (
-              <video
-                playsinline={true}
-                className="waterLoopVideo"
-                autoplay="true"
-                muted="true"
-                loop="true"
-              >
-                <source src={nft.imageURL} type="video/mp4" />
-              </video>
+              <div className="video-container">
+                <video
+                  playsinline={true}
+                  className="waterLoopVideo"
+                  autoplay="true"
+                  muted="true"
+                  loop="true"
+                >
+                  <source src={nft.imageURL} type="video/mp4" />
+                </video>
+              </div>
             )}
             {mediaFileExtension !== "mp4" && (
               <img className="waterLoopVideo" src={nft.imageURL} />
@@ -801,7 +791,9 @@ class Sequencer extends Component {
             />
             <div className="bodyWrapper scrollBar">
               <div className="beatPackTitle">{nft.name}</div>
-              <div className="artistName">{nft.artistName}</div>
+              <div className="artistName">{`by ${nft.artistName} ${
+                nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
+              }`}</div>
               <div className={`gridOuter ${padFormatStyleClass}`}>
                 {padFormat.map((column, j) => {
                   return column.map((remappedCoordinates, i) => {
@@ -923,6 +915,7 @@ class Sequencer extends Component {
               shareURL={`https://secretgarden.fm/?share=${shareablePadNumbers.join(
                 ","
               )}`}
+              showShare={true}
               loggedIntoMetamaskOverride={isLoggedIntoMetamask}
             />
           </div>
@@ -945,10 +938,9 @@ class Sequencer extends Component {
                   generate their own mix using unique sound layers designed by
                   our resident musicians.
                 </div>
-                <div className="details">
-                  Try out your favorite combinations out below!
-                </div>
-
+                <br />
+                <br />
+                <div className="ethAmount">FAQ</div>
                 <IconButton
                   className="expandOuter"
                   onClick={this.executeScrollFAQ}
@@ -956,30 +948,6 @@ class Sequencer extends Component {
                   <img src={Expand} className="expand" />
                 </IconButton>
               </div>
-            </div>
-            <div className="privacyAndTos">
-              <a href="/tos" target="_blank">
-                Terms of Service
-              </a>
-              <a href="/privacy" target="_blank">
-                Privacy Policy
-              </a>
-            </div>
-            <div className="ourSocials">
-              <span>inquiries@secretgarden.fm</span>
-              <a href="https://twitter.com/SecretGarden_FM" target="_blank">
-                <img src={Twitter} className="ourTwitter" />
-              </a>
-
-              <a href="https://discord.gg/ykrzXB9ZsV" target="_blank">
-                <img src={Discord} className="ourDiscord" />
-              </a>
-              <a
-                href="https://www.instagram.com/secretgarden_fm/"
-                target="_blank"
-              >
-                <img src={Instagram} className="ourInsta" />
-              </a>
             </div>
           </div>
           <div className="container3 scrollBar" ref={this.FAQ}>
@@ -990,12 +958,9 @@ class Sequencer extends Component {
                   What do I get by buying a Stems NFT?
                 </div>
                 <div className="details">
-                  When you own a Stems NFT, you get a non-exclusive license to
-                  the interactive player, art, and every sound file on the
-                  player for personal or commercial use.
-                  <br />
-                  Yes, the player still works even as an NFT - click here to see
-                  it in action:{" "}
+                  When you purchase a Stems NFT, you get to own this
+                  one-of-a-kind interactive, playable experience as an NFT. Yes,
+                  it works as an NFT! Check it out here:{" "}
                   <a
                     target="_blank"
                     href="https://testnets.opensea.io/assets/0x52b1dd5c27705aa4dfd3889db223b5c4c84f6b54/1"
@@ -1004,7 +969,7 @@ class Sequencer extends Component {
                   </a>
                   <br />
                   <br />
-                  You will be able to:
+                  You will also be able to:
                   <br />
                   <br />
                   - set the default mix for the player, which will load in your
@@ -1015,7 +980,7 @@ class Sequencer extends Component {
                   <br />- gain access to a private holders channel on our
                   Discord. <br />- gain access to potential additional goodies
                   such as concert tickets, meet and greets, merch, and more
-                  (depending on artist).
+                  (will vary per artist).
                 </div>
                 <div className="question">How do I purchase a Stems NFT?</div>
                 <div className="details">
