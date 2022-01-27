@@ -35,31 +35,6 @@ import Slider from '@material-ui/core/Slider';
 import { createTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
-import cloneDeep from 'lodash.clonedeep'
-
-// const muiTheme = createTheme({
-//   overrides:{
-//     MuiSlider: {
-//       thumb:{
-//       color: "white",
-//       },
-//       track: {
-//         color: 'white'
-//       },
-//       rail: {
-//         color: 'white'
-//       }
-//     }
-// }
-// });
-
-// const volumeControl = () => {
-//   return (
-//     <ThemeProvider theme={muiTheme}>
-//       <Slider min={0} max={100} defaultValue={40} />
-//     </ThemeProvider>
-//   );
-// }
 
 const sixBySixThreeGroups = [
   [
@@ -371,7 +346,6 @@ class Sequencer extends Component {
         });
       });
 
-      // this.initialPlayers = cloneDeep(this.players)
       const padFormat = padFormatMappings[nftResponse.data.padFormatName];
       const padFormatStyleClass =
         padFormatTileStyleMappings[nftResponse.data.padFormatName];
@@ -710,10 +684,14 @@ class Sequencer extends Component {
         if (padState == 0) {
           numPads += 1;
           updatedQueue[group].push(pad);
+
+          // update active pads
           this.activePlayers[group].push(pad);
         } else {
           numPads -= 1;
           this.players[group][pad].stop();
+
+          // update active pads
           this.activePlayers[group] = this.activePlayers[group].filter(activePad => activePad !== pad)
           updatedQueue[group] = updatedQueue[group].filter(
             (soundIndex) => soundIndex !== pad
@@ -793,10 +771,6 @@ class Sequencer extends Component {
   }
 
   clearSelections() {
-    console.log("this.state: ", this.state)
-    console.log("this.players: ", this.players)
-    console.log("this.rhythmPads: ", this.rhythmPads)
-    console.log("this.initialPlayers: ", this.activePlayers)
     this.setState({
       pads: {
         basses: [0, 0, 0, 0, 0, 0],
@@ -810,77 +784,17 @@ class Sequencer extends Component {
         sounds: [],
       },
       shareablePadNumbers: [],
-      // step: 0,
       steps: 16,
       totalSoundsPlaying: 0,
     })
-    // this.players = cloneDeep(this.initialPlayers)
     for (const group in this.activePlayers) {
-      console.log("group: ", this.activePlayers[group])
       if (this.activePlayers[group].length > 0) {
+        // loop to stop active pads instead of entire player list
         for (let i = 0; i < this.activePlayers[group].length; i++) {
-          // console.log("group[i]: ", group[i])
-          console.log("pad: ", this.activePlayers[group][i])
           this.players[group][this.activePlayers[group][i]].stop()
         }
       }
     }
-    // this.setState(
-    //   (state) => {
-    //     const clonedPads = { ...state.pads };
-    //     const updatedQueue = { ...state.queue };
-
-    //     let numPads = this.state.totalSoundsPlaying;
-
-    //     // If pad was previously on, we're turning it off
-    //     numPads = 0;
-        // for (const group in this.players) {
-        //   // console.log("group: ", group)
-        //   for (let i = 0; i < group.length - 1; i++) {
-        //     this.players[group][i].stop()
-    //         console.log("group/pad: ", this.players[group])
-    //         console.log("pad.state: ", this.players[group][i].state)
-    //         updatedQueue[group] = updatedQueue[group].filter(
-    //           (soundIndex) => soundIndex !== i
-    //           );
-    //         clonedPads[group][i] = 0;
-    //         const unstartedQueueGroup = updatedQueue[group].filter(
-    //           (soundIndex) => this.players[group][soundIndex].state !== "started"
-    //         );
-    
-    //         const startedQueueGroup = updatedQueue[group].filter(
-    //           (soundIndex) => this.players[group][soundIndex].state === "started"
-    //         );
-
-    //         //  // We shaved something off, let's make it stop blinking
-    //         // if (unstartedQueueGroup.length > state.nft.activeSoundLimits[group]) {
-    //         //   const toRemove = unstartedQueueGroup.slice(
-    //         //     0,
-    //         //     -state.nft.activeSoundLimits[group]
-    //         //   );
-
-    //         //   toRemove.forEach((soundIndex) => {
-    //         //     clonedPads[group][soundIndex] = 0;
-    //         //   });
-
-    //         //   updatedQueue[group] = [
-    //         //     ...startedQueueGroup,
-    //         //     ...unstartedQueueGroup.slice(-state.nft.activeSoundLimits[group]),
-    //         //   ];
-    //         // }
-    //       }
-    //     }
-
-    //     return {
-    //       pads: {},
-    //       totalSoundsPlaying: numPads,
-    //       queue: {},
-    //     };
-    //   },
-    //   () => {
-    //     if (this.state.playing) this.pause();
-    //   }
-    // )
   }
 
   stopButton() {
@@ -1014,9 +928,6 @@ class Sequencer extends Component {
               <div className="beatPackTitle">{nft.name}</div>
               <div className="artistName">{nft.artistName}</div>
               <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%', alignItems: 'center', height: '100vh' }}>
-                {/* <div className="volumeContainer">
-                  {this.volumeControl()}
-                </div> */}
                 <div className={`gridOuter ${padFormatStyleClass}`}>
                   {padFormat.map((column, j) => {
                     return column.map((remappedCoordinates, i) => {
@@ -1129,7 +1040,7 @@ class Sequencer extends Component {
                 </React.Fragment>
               )}
 
-              <div style={{ display: 'flex', justifyContent: 'space-around', position: 'absolute', bottom: '60px'}}>
+              <div style={{ display: 'flex', justifyContent: 'space-around', position: 'absolute', bottom: '60px', width: '100vw'}}>
                 <div className="stopBtnContainer">
                   {this.stopButton()}
                 </div>
