@@ -209,8 +209,7 @@ input[type="range"] {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  // background: #1f1f1f;
-  background: transparent;
+  background: #1f1f1f;
   overflow: hidden;
   scroll-snap-align: start;
 }
@@ -428,7 +427,7 @@ canvas {
 }
 .waterLoopVideo {
   position: absolute;
-  min-width: 100%;
+  // min-width: 100%;
   min-height: 100%;
   top: 50%;
   left: 50%;
@@ -902,7 +901,7 @@ footer {
   }
 }
 
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 414px) {
   .privacyAndTos {
     display: none;
   }
@@ -947,6 +946,12 @@ footer {
   .ethAmount {
     font-size: 12px;
   }
+
+  .learnMore {
+    position: 'absolute';
+    bottom: '110px'
+  }
+
   .makeOfferText {
     font-size: 10px;
   }

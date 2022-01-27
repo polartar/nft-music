@@ -84,6 +84,13 @@ export default function SimpleDialog(props) {
   const classes = useStyles();
   const { onClose, open, shareURL } = props;
   const [text, setText] = React.useState("Copy Link");
+
+  useEffect(() => {
+    if (open) {
+      setText("Copy Link");
+    }
+  }, [open]);
+
   return (
     <Dialog
       onClose={onClose}
@@ -137,7 +144,7 @@ export default function SimpleDialog(props) {
         <div
           className="shareItem"
           onClick={() => {
-            copy(`Check out this beat I made on Secret Garden! ${shareURL}`);
+            copy(`${shareURL}`);
             setText("Copied!");
           }}
         >

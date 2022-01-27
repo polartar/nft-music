@@ -242,7 +242,9 @@ function Directory() {
                 </div>
               </div>
             </div>
-            <div className="currentAuctionTitle">PAST AUCTIONS</div>
+            {Object.keys(pastNFTs).length > 0 && (
+              <div className="currentAuctionTitle">PAST AUCTIONS</div>
+            )}
             {Object.keys(pastNFTs).map((key) => {
               const name = pastNFTs[key].name;
               const artistName = pastNFTs[key].artistName;
