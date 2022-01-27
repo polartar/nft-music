@@ -164,11 +164,32 @@ input[type="number"] {
   font-family: "Rubik", sans-serif;
 }
 
-.volumeContainer{
-  width: 20%;
-  // position: relative;
-  // transform: translate(-50%, -50%)
+.stopBtnContainer {
+  // width: 10%;
+  // position: absolute;
+  // bottom: 60px;
   z-index: 1200;
+}
+
+.stopBtnWrapper {
+  position: absolute;
+  bottom: 0px;
+}
+
+.volumeContainer {
+  width: 20%;
+  // height: 325px;
+  // position: absolute;
+  // bottom: 60px;
+  // left: 35vw;
+  z-index: 1200;
+  // margin-top: -70px
+}
+
+.volumeWrapper {
+  position: absolute;
+  bottom: 5px;
+  width: 20%
 }
 
 input[type="range"] {
@@ -251,8 +272,10 @@ input[type="range"] {
   font-size: 0;
   -webkit-transform-origin: 50% 50%;
   transform-origin: 50% 50%;
-  position: relative;
-  left: 185px;
+  // position: relative;
+  // left: 185px;
+  position: absolute;
+  left: 50vw;
   -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.73);
   transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.73);
   margin-top: 210px;
@@ -804,6 +827,10 @@ footer {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+.volumeMeter {
+  -ms-overflow-style: none;
+  width: 60%;
+}
 .scrollBar::-webkit-scrollbar {
   width: 0px;
   height: 0px;
@@ -861,6 +888,9 @@ footer {
     padding-right: 10px;
     box-sizing: border-box;
   }
+  .volumeWrapper {
+    bottom: -10px;
+  }
 }
 @media only screen and (max-width: 400px) {
   .privacyAndTos {
@@ -913,5 +943,25 @@ footer {
 
   .scrollSnap {
     scroll-snap-type: y mandatory;
+  }
+
+  .stopBtnWrapper {
+    position: absolute;
+    bottom: -4px;
+    left: 10px;
+  }
+
+  .volumeContainer {
+    width: 50%;
+  }
+
+  .volumeWrapper {
+    position: absolute;
+    width: 30%;
+    left: 70px;
+  }
+
+  .volumeMeter {
+    width: 45%;
   }
 }

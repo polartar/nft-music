@@ -34,6 +34,8 @@ import Cookies from "universal-cookie";
 import Slider from '@material-ui/core/Slider';
 import { createTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import cloneDeep from 'lodash.clonedeep'
 
 // const muiTheme = createTheme({
 //   overrides:{
@@ -259,6 +261,12 @@ class Sequencer extends Component {
     this.initWallet();
     this.myRef = React.createRef();
     this.FAQ = React.createRef();
+    this.clearSelections = this.clearSelections.bind(this);
+    this.activePlayers = {
+      basses: [],
+      drums: [],
+      sounds: [],
+    };
   }
 
   initWallet = async () => {
@@ -363,6 +371,7 @@ class Sequencer extends Component {
         });
       });
 
+      // this.initialPlayers = cloneDeep(this.players)
       const padFormat = padFormatMappings[nftResponse.data.padFormatName];
       const padFormatStyleClass =
         padFormatTileStyleMappings[nftResponse.data.padFormatName];
@@ -701,9 +710,11 @@ class Sequencer extends Component {
         if (padState == 0) {
           numPads += 1;
           updatedQueue[group].push(pad);
+          this.activePlayers[group].push(pad);
         } else {
           numPads -= 1;
           this.players[group][pad].stop();
+          this.activePlayers[group] = this.activePlayers[group].filter(activePad => activePad !== pad)
           updatedQueue[group] = updatedQueue[group].filter(
             (soundIndex) => soundIndex !== pad
           );
@@ -765,27 +776,130 @@ class Sequencer extends Component {
   });
 
   setVolume(volume) {
-    this.setState({
-      volume: volume,
-    })
-    // console.log("this.state.volume: ", this.state.volume)
+    if (volume != null) {
+      this.setState({
+        volume: volume,
+      })
+      this.players['basses'].forEach(index => {
+        index.volume.value = volume
+      })
+      this.players['drums'].forEach(index => {
+        index.volume.value = volume
+      })
+      this.players['sounds'].forEach(index => {
+        index.volume.value = volume
+      })
+    }
+  }
+
+  clearSelections() {
+    console.log("this.state: ", this.state)
     console.log("this.players: ", this.players)
-    this.players['basses'].forEach(index => {
-      index.volume.value = this.state.volume
+    console.log("this.rhythmPads: ", this.rhythmPads)
+    console.log("this.initialPlayers: ", this.activePlayers)
+    this.setState({
+      pads: {
+        basses: [0, 0, 0, 0, 0, 0],
+        drums: [0, 0, 0, 0, 0, 0],
+        sounds: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      },
+      playing: false,
+      queue: {
+        basses: [],
+        drums: [],
+        sounds: [],
+      },
+      shareablePadNumbers: [],
+      // step: 0,
+      steps: 16,
+      totalSoundsPlaying: 0,
     })
-    this.players['drums'].forEach(index => {
-      index.volume.value = this.state.volume
-    })
-    this.players['sounds'].forEach(index => {
-      index.volume.value = this.state.volume
-    })
+    // this.players = cloneDeep(this.initialPlayers)
+    for (const group in this.activePlayers) {
+      console.log("group: ", this.activePlayers[group])
+      if (this.activePlayers[group].length > 0) {
+        for (let i = 0; i < this.activePlayers[group].length; i++) {
+          // console.log("group[i]: ", group[i])
+          console.log("pad: ", this.activePlayers[group][i])
+          this.players[group][this.activePlayers[group][i]].stop()
+        }
+      }
+    }
+    // this.setState(
+    //   (state) => {
+    //     const clonedPads = { ...state.pads };
+    //     const updatedQueue = { ...state.queue };
+
+    //     let numPads = this.state.totalSoundsPlaying;
+
+    //     // If pad was previously on, we're turning it off
+    //     numPads = 0;
+        // for (const group in this.players) {
+        //   // console.log("group: ", group)
+        //   for (let i = 0; i < group.length - 1; i++) {
+        //     this.players[group][i].stop()
+    //         console.log("group/pad: ", this.players[group])
+    //         console.log("pad.state: ", this.players[group][i].state)
+    //         updatedQueue[group] = updatedQueue[group].filter(
+    //           (soundIndex) => soundIndex !== i
+    //           );
+    //         clonedPads[group][i] = 0;
+    //         const unstartedQueueGroup = updatedQueue[group].filter(
+    //           (soundIndex) => this.players[group][soundIndex].state !== "started"
+    //         );
+    
+    //         const startedQueueGroup = updatedQueue[group].filter(
+    //           (soundIndex) => this.players[group][soundIndex].state === "started"
+    //         );
+
+    //         //  // We shaved something off, let's make it stop blinking
+    //         // if (unstartedQueueGroup.length > state.nft.activeSoundLimits[group]) {
+    //         //   const toRemove = unstartedQueueGroup.slice(
+    //         //     0,
+    //         //     -state.nft.activeSoundLimits[group]
+    //         //   );
+
+    //         //   toRemove.forEach((soundIndex) => {
+    //         //     clonedPads[group][soundIndex] = 0;
+    //         //   });
+
+    //         //   updatedQueue[group] = [
+    //         //     ...startedQueueGroup,
+    //         //     ...unstartedQueueGroup.slice(-state.nft.activeSoundLimits[group]),
+    //         //   ];
+    //         // }
+    //       }
+    //     }
+
+    //     return {
+    //       pads: {},
+    //       totalSoundsPlaying: numPads,
+    //       queue: {},
+    //     };
+    //   },
+    //   () => {
+    //     if (this.state.playing) this.pause();
+    //   }
+    // )
+  }
+
+  stopButton() {
+    return (
+      <div className="stopBtnWrapper">
+        <IconButton className="expandOuter">
+          <StopCircleIcon fontSize="large" onClick={this.clearSelections}/>
+        </IconButton>
+      </div>
+    );
   }
   
   volumeControl() {
     return (
-      <ThemeProvider theme={this.muiTheme}>
-        <Slider min={-60} max={0} defaultValue={this.state.volume} onChange={(event) => this.setVolume(event.target.ariaValueNow)}/>
-      </ThemeProvider>
+      <div className="volumeWrapper">
+        <ThemeProvider theme={this.muiTheme}>
+          <Slider min={-50} max={0} defaultValue={this.state.volume} onChange={(event, newValue) => this.setVolume(newValue)}/>
+        </ThemeProvider>
+      </div>
     );
   }
 
@@ -898,52 +1012,53 @@ class Sequencer extends Component {
             />
             <div className="bodyWrapper scrollBar" ref={this.myRef}>
               <div className="beatPackTitle">{nft.name}</div>
-              {/* <div className="artistName">{nft.artistName}</div> */}
-              <div className="artistName" onClick={() => console.log(screen.width)}>{'ASDASDASD'}</div>
-              <div className="volumeContainer">
-                {this.volumeControl()}
-              </div>
-              <div className={`gridOuter ${padFormatStyleClass}`}>
-                {padFormat.map((column, j) => {
-                  return column.map((remappedCoordinates, i) => {
-                    const group = remappedCoordinates[0];
-                    const soundIndex = remappedCoordinates[1];
-                    const additionalClasses = remappedCoordinates[2];
-                    const on =
-                      this.players[group][soundIndex].state === "started";
+              <div className="artistName">{nft.artistName}</div>
+              <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%', alignItems: 'center', height: '100vh' }}>
+                {/* <div className="volumeContainer">
+                  {this.volumeControl()}
+                </div> */}
+                <div className={`gridOuter ${padFormatStyleClass}`}>
+                  {padFormat.map((column, j) => {
+                    return column.map((remappedCoordinates, i) => {
+                      const group = remappedCoordinates[0];
+                      const soundIndex = remappedCoordinates[1];
+                      const additionalClasses = remappedCoordinates[2];
+                      const on =
+                        this.players[group][soundIndex].state === "started";
 
-                    const blinkClass =
-                      pads[group][soundIndex] === 1 &&
-                      this.players[group][soundIndex].state !== "started"
-                        ? "blink"
-                        : "";
-                    const whiteClass = group === "sounds" ? "whitePad" : "";
-                    let tutorialClass = "";
-                    const padClass =
-                      group == "sounds" ? "padWhiteVersion" : "pad";
+                      const blinkClass =
+                        pads[group][soundIndex] === 1 &&
+                        this.players[group][soundIndex].state !== "started"
+                          ? "blink"
+                          : "";
+                      const whiteClass = group === "sounds" ? "whitePad" : "";
+                      let tutorialClass = "";
+                      const padClass =
+                        group == "sounds" ? "padWhiteVersion" : "pad";
 
-                    if (showTutorial) {
-                      if (tutorialStep === 0 && group !== "drums") {
-                        tutorialClass = "tutorialPad";
-                      } else if (tutorialStep === 1 && group !== "basses") {
-                        tutorialClass = "tutorialPad";
-                      } else if (tutorialStep === 2 && group !== "sounds") {
-                        tutorialClass = "tutorialPad";
+                      if (showTutorial) {
+                        if (tutorialStep === 0 && group !== "drums") {
+                          tutorialClass = "tutorialPad";
+                        } else if (tutorialStep === 1 && group !== "basses") {
+                          tutorialClass = "tutorialPad";
+                        } else if (tutorialStep === 2 && group !== "sounds") {
+                          tutorialClass = "tutorialPad";
+                        }
                       }
-                    }
-                    return (
-                      <div
-                        key={`pad-group-${i}`}
-                        className={`${cx(padClass, {
-                          on,
-                        })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                        onClick={() => {
-                          this.togglePad(group, soundIndex);
-                        }}
-                      />
-                    );
-                  });
-                })}
+                      return (
+                        <div
+                          key={`pad-group-${i}`}
+                          className={`${cx(padClass, {
+                            on,
+                          })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                          onClick={() => {
+                            this.togglePad(group, soundIndex);
+                          }}
+                        />
+                      );
+                    });
+                  })}
+                </div>
               </div>
               {showTutorial && (
                 <React.Fragment>
@@ -1014,8 +1129,16 @@ class Sequencer extends Component {
                 </React.Fragment>
               )}
 
-              <div className="pageFooter scrollBar">
-                <canvas ref={this.canvas} style={{ minWidth: "100%", zIndex: "-10" }} />
+              <div style={{ display: 'flex', justifyContent: 'space-around', position: 'absolute', bottom: '60px'}}>
+                <div className="stopBtnContainer">
+                  {this.stopButton()}
+                </div>
+                <div className="volumeContainer">
+                    {this.volumeControl()}
+                </div>
+                <div className="volumeMeter">
+                  <canvas ref={this.canvas} style={{ minWidth: "75%", zIndex: "-10" }} />
+                </div>
               </div>
             </div>
 
