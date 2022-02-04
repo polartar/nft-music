@@ -32,6 +32,11 @@ import Loading from "./components/Loading";
 import Cookies from "universal-cookie";
 import { Controller, Scene } from "react-scrollmagic";
 
+import Slider from '@material-ui/core/Slider';
+import { createTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+
 const sixBySixThreeGroups = [
   [
     ["sounds", 0],
@@ -215,6 +220,7 @@ class Sequencer extends Component {
     shareablePadNumbers: [],
     showTutorial: !didVisitSite,
     tutorialStep: 0,
+    volume: 0,
   };
 
   constructor(props) {
@@ -231,6 +237,12 @@ class Sequencer extends Component {
     this.initWallet();
     this.myRef = React.createRef();
     this.FAQ = React.createRef();
+    this.clearSelections = this.clearSelections.bind(this);
+    this.activePlayers = {
+      basses: [],
+      drums: [],
+      sounds: [],
+    };
   }
 
   initWallet = async () => {
@@ -647,9 +659,15 @@ class Sequencer extends Component {
         if (padState == 0) {
           numPads += 1;
           updatedQueue[group].push(pad);
+
+          // update active pads
+          this.activePlayers[group].push(pad);
         } else {
           numPads -= 1;
           this.players[group][pad].stop();
+
+          // update active pads
+          this.activePlayers[group] = this.activePlayers[group].filter(activePad => activePad !== pad)
           updatedQueue[group] = updatedQueue[group].filter(
             (soundIndex) => soundIndex !== pad
           );
@@ -694,6 +712,86 @@ class Sequencer extends Component {
     );
   }
 
+  muiTheme = createTheme({
+    overrides:{
+      MuiSlider: {
+        thumb:{
+        color: "white",
+        },
+        track: {
+          color: 'white'
+        },
+        rail: {
+          color: 'white'
+        }
+      }
+  }
+  });
+
+  setVolume(volume) {
+    if (volume != null) {
+      this.setState({
+        volume: volume,
+      })
+      this.players['basses'].forEach(index => {
+        index.volume.value = volume
+      })
+      this.players['drums'].forEach(index => {
+        index.volume.value = volume
+      })
+      this.players['sounds'].forEach(index => {
+        index.volume.value = volume
+      })
+    }
+  }
+
+  clearSelections() {
+    this.setState({
+      pads: {
+        basses: [0, 0, 0, 0, 0, 0],
+        drums: [0, 0, 0, 0, 0, 0],
+        sounds: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      },
+      playing: false,
+      queue: {
+        basses: [],
+        drums: [],
+        sounds: [],
+      },
+      shareablePadNumbers: [],
+      steps: 16,
+      totalSoundsPlaying: 0,
+    })
+    for (const group in this.activePlayers) {
+      if (this.activePlayers[group].length > 0) {
+        // loop to stop active pads instead of entire player list
+        for (let i = 0; i < this.activePlayers[group].length; i++) {
+          this.players[group][this.activePlayers[group][i]].stop()
+        }
+      }
+    }
+  }
+
+  stopButton() {
+    return (
+      <div className="stopBtnWrapper">
+        <IconButton className="expandOuter">
+          <StopCircleIcon fontSize="large" onClick={this.clearSelections}/>
+        </IconButton>
+      </div>
+    );
+  }
+  
+  volumeControl() {
+    return (
+      <div className="volumeWrapper">
+        <ThemeProvider theme={this.muiTheme}>
+          <Slider min={-50} max={0} defaultValue={this.state.volume} onChange={(event, newValue) => this.setVolume(newValue)}/>
+        </ThemeProvider>
+      </div>
+    );
+  }
+
   render() {
     const {
       pads,
@@ -711,6 +809,7 @@ class Sequencer extends Component {
       shareablePadNumbers,
       showTutorial,
       tutorialStep,
+      volume,
     } = this.state;
 
     const currentBidAmount =
@@ -743,29 +842,85 @@ class Sequencer extends Component {
         .toLowerCase();
 
       return (
-        <Controller globalSceneOptions={{ triggerHook: "onLeave" }}>
-          <Scene>
-            <div className="container scrollBar">
-              {mediaFileExtension === "mp4" && (
-                <div className="video-container">
-                  <video
-                    playsinline={true}
-                    className="waterLoopVideo"
-                    autoplay="true"
-                    muted="true"
-                    loop="true"
-                  >
-                    <source src={nft.imageURL} type="video/mp4" />
-                  </video>
-                </div>
-              )}
-              {mediaFileExtension !== "mp4" && (
-                <img className="waterLoopVideo" src={nft.imageURL} />
-              )}
-              <div className="gridTop">
-                {this.rhythmPads.map((group, groupIndex) => (
-                  <React.Fragment>
-                    {group.map((pad, i) => (
+        <React.StrictMode>
+          <BidModal
+            nft={nft}
+            open={this.state.openBidModal}
+            onClose={this.handleClose}
+            didCompleteBid={this.fetchNFT}
+            currentBidAmount={currentBidAmount}
+          />
+          <div className="container scrollBar">
+            {mediaFileExtension === "mp4" && (
+              <div className="video-container">
+                <video
+                  playsinline={true}
+                  className="waterLoopVideo"
+                  autoplay="true"
+                  muted="true"
+                  loop="true"
+                >
+                  <source src={nft.imageURL} type="video/mp4" />
+                </video>
+              </div>
+            )}
+            {mediaFileExtension !== "mp4" && (
+              <img className="waterLoopVideo" src={nft.imageURL} />
+            )}
+            <div className="gridTop">
+              {this.rhythmPads.map((group, groupIndex) => (
+                <React.Fragment>
+                  {group.map((pad, i) => (
+                    <div
+                      key={`pad-group-${i}`}
+                      className={cx("modifiedPad", {
+                        active:
+                          groupIndex === (((step - 1) % steps) + steps) % steps,
+                        on: pad === 1,
+                      })}
+                    />
+                  ))}
+                </React.Fragment>
+              ))}
+            </div>
+
+            <Navbar
+              white={false}
+              didConnectWallet={this.initWallet}
+              loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+            />
+            <div className="bodyWrapper scrollBar">
+              <div className="beatPackTitle">{nft.name}</div>
+              <div className="artistName">{`by ${nft.artistName} ${nft.visualArtistName ? `& ${nft.visualArtistName}` : ""}`}</div>
+              <div className={`gridOuter ${padFormatStyleClass}`}>
+                {padFormat.map((column, j) => {
+                  return column.map((remappedCoordinates, i) => {
+                    const group = remappedCoordinates[0];
+                    const soundIndex = remappedCoordinates[1];
+                    const additionalClasses = remappedCoordinates[2];
+                    const on =
+                      this.players[group][soundIndex].state === "started";
+
+                    const blinkClass =
+                      pads[group][soundIndex] === 1 &&
+                      this.players[group][soundIndex].state !== "started"
+                        ? "blink"
+                        : "";
+                    const whiteClass = group === "sounds" ? "whitePad" : "";
+                    let tutorialClass = "";
+                    const padClass =
+                      group == "sounds" ? "padWhiteVersion" : "pad";
+
+                    if (showTutorial) {
+                      if (tutorialStep === 0 && group !== "drums") {
+                        tutorialClass = "tutorialPad";
+                      } else if (tutorialStep === 1 && group !== "basses") {
+                        tutorialClass = "tutorialPad";
+                      } else if (tutorialStep === 2 && group !== "sounds") {
+                        tutorialClass = "tutorialPad";
+                      }
+                    }
+                    return (
                       <div
                         key={`pad-group-${i}`}
                         className={cx("modifiedPad", {
@@ -775,9 +930,9 @@ class Sequencer extends Component {
                           on: pad === 1,
                         })}
                       />
-                    ))}
-                  </React.Fragment>
-                ))}
+                    );
+                  });
+                })};
               </div>
 
               <Navbar
@@ -889,8 +1044,9 @@ class Sequencer extends Component {
                   <div className="ethAmount">{`Sold for ${nft.saleAmount} ETH`}</div>
                 </React.Fragment>
               )} */}
-                {(tutorialStep === 3 || !showTutorial) && (
-                  <React.Fragment>
+              {(tutorialStep === 3 || !showTutorial) && (
+                <React.Fragment>
+                  <div className="learnMore">
                     <div className="ethAmount">Learn More</div>
                     <IconButton
                       className="expandOuter"
@@ -898,41 +1054,19 @@ class Sequencer extends Component {
                     >
                       <img src={Expand} className="expand" />
                     </IconButton>
-                  </React.Fragment>
-                )}
-
-                <div className="pageFooter scrollBar">
-                  <canvas ref={this.canvas} style={{ minWidth: "100%" }} />
-                </div>
-              </div>
-
-              <Footer
-                white={false}
-                shareURL={`https://secretgarden.fm/?share=${shareablePadNumbers.join(
-                  ","
-                )}`}
-                showShare={true}
-                loggedIntoMetamaskOverride={isLoggedIntoMetamask}
-              />
-            </div>
-          </Scene>
-          <Scene>
-            <div className="container2 scrollBar" ref={this.myRef}>
-              <div className="albumWrapper">
-                <div>
-                  <div className="packTitle">WELCOME TO THE SECRET GARDEN</div>
-                  <div className="details">
-                    We believe that the inception of Web3 has fundamentally
-                    unlocked value for all artists.
                   </div>
-                  <br />
-                  <br />
-                  <IconButton
-                    className="expandOuter"
-                    onClick={this.executeScrollFAQ}
-                  >
-                    <img src={Expand} className="expand" />
-                  </IconButton>
+                </React.Fragment>
+              )}
+
+              <div style={{ display: 'flex', justifyContent: 'space-around', position: 'absolute', bottom: '60px', width: '100vw'}}>
+                <div className="stopBtnContainer">
+                  {this.stopButton()}
+                </div>
+                <div className="volumeContainer">
+                    {this.volumeControl()}
+                </div>
+                <div className="volumeMeter">
+                  <canvas ref={this.canvas} style={{ minWidth: "75%", zIndex: "-10" }} />
                 </div>
               </div>
             </div>
