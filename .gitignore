@@ -62,5 +62,3 @@ src/client/config.json
 
 # next.js build output
 .next
-
-package-lock.json
