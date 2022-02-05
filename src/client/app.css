@@ -42,6 +42,4 @@ div#root {
 }
 #root {
   color: red;
-  scroll-snap-type: y mandatory;
-  overflow-y: scroll;
 }

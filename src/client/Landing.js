@@ -36,6 +36,7 @@ import Slider from "@material-ui/core/Slider";
 import { createTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import StopCircleIcon from "@mui/icons-material/StopCircle";
+import ReactFullpage from "@fullpage/react-fullpage";
 
 const sixBySixThreeGroups = [
   [
@@ -195,6 +196,10 @@ nextYear.setFullYear(current.getFullYear() + 1);
 
 const didVisitSite = Boolean(cookies.get("didVisitSecretGarden"));
 cookies.set("didVisitSecretGarden", true, { path: "/", expires: nextYear });
+
+const pluginWrapper = () => {
+  require("./fullpage.fadingEffect.min");
+};
 
 class Sequencer extends Component {
   state = {
@@ -849,339 +854,406 @@ class Sequencer extends Component {
         .toLowerCase();
 
       return (
-        <Controller>
-          <BidModal
+        <ReactFullpage
+          //fullpage options
+          licenseKey={"DFB914DB-F4FD44B2-AFF60DE3-B80ABA47"}
+          scrollingSpeed={1000} /* Options here */
+          scrollBar={false}
+          fixedElements=".bottomNav"
+          pluginWrapper={pluginWrapper}
+          fadingEffect={true}
+          fadingEffectKey={
+            "c2VjcmV0Z2FyZGVuLmZtXzM2R1ptRmthVzVuUldabVpXTjAxMVc="
+          }
+          render={({ state, fullpageApi }) => {
+            return (
+              <ReactFullpage.Wrapper>
+                {/* <BidModal
             nft={nft}
             open={this.state.openBidModal}
             onClose={this.handleClose}
             didCompleteBid={this.fetchNFT}
             currentBidAmount={currentBidAmount}
-          />
-          <div className="container scrollBar">
-            {mediaFileExtension === "mp4" && (
-              <div className="video-container">
-                <video
-                  playsinline={true}
-                  className="waterLoopVideo"
-                  autoplay="true"
-                  muted="true"
-                  loop="true"
-                >
-                  <source src={nft.imageURL} type="video/mp4" />
-                </video>
-              </div>
-            )}
-            {mediaFileExtension !== "mp4" && (
-              <img className="waterLoopVideo" src={nft.imageURL} />
-            )}
-            <div className="gridTop">
-              {this.rhythmPads.map((group, groupIndex) => (
-                <React.Fragment>
-                  {group.map((pad, i) => (
-                    <div
-                      key={`pad-group-${i}`}
-                      className={cx("modifiedPad", {
-                        active:
-                          groupIndex === (((step - 1) % steps) + steps) % steps,
-                        on: pad === 1,
-                      })}
+          /> */}
+                <div className="section">
+                  <div className="container">
+                    {mediaFileExtension === "mp4" && (
+                      <div className="video-container">
+                        <video
+                          playsinline={true}
+                          className="waterLoopVideo"
+                          autoplay="true"
+                          muted="true"
+                          loop="true"
+                          data-autoplay
+                        >
+                          <source src={nft.imageURL} type="video/mp4" />
+                        </video>
+                      </div>
+                    )}
+                    {mediaFileExtension !== "mp4" && (
+                      <img className="waterLoopVideo" src={nft.imageURL} />
+                    )}
+                    <div className="gridTop">
+                      {this.rhythmPads.map((group, groupIndex) => (
+                        <React.Fragment>
+                          {group.map((pad, i) => (
+                            <div
+                              key={`pad-group-${i}`}
+                              className={cx("modifiedPad", {
+                                active:
+                                  groupIndex ===
+                                  (((step - 1) % steps) + steps) % steps,
+                                on: pad === 1,
+                              })}
+                            />
+                          ))}
+                        </React.Fragment>
+                      ))}
+                    </div>
+
+                    <Navbar
+                      white={false}
+                      didConnectWallet={this.initWallet}
+                      loggedIntoMetamaskOverride={isLoggedIntoMetamask}
                     />
-                  ))}
-                </React.Fragment>
-              ))}
-            </div>
+                    <div className="bodyWrapper scrollBar">
+                      <div className="beatPackTitle">{nft.name}</div>
+                      <div className="artistName">{`by ${nft.artistName} ${
+                        nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
+                      }`}</div>
+                      <div className={`gridOuter ${padFormatStyleClass}`}>
+                        {padFormat.map((column, j) => {
+                          return column.map((remappedCoordinates, i) => {
+                            const group = remappedCoordinates[0];
+                            const soundIndex = remappedCoordinates[1];
+                            const additionalClasses = remappedCoordinates[2];
+                            const on =
+                              this.players[group][soundIndex].state ===
+                              "started";
 
-            <Navbar
-              white={false}
-              didConnectWallet={this.initWallet}
-              loggedIntoMetamaskOverride={isLoggedIntoMetamask}
-            />
-            <div className="bodyWrapper scrollBar">
-              <div className="beatPackTitle">{nft.name}</div>
-              <div className="artistName">{`by ${nft.artistName} ${
-                nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
-              }`}</div>
-              <div className={`gridOuter ${padFormatStyleClass}`}>
-                {padFormat.map((column, j) => {
-                  return column.map((remappedCoordinates, i) => {
-                    const group = remappedCoordinates[0];
-                    const soundIndex = remappedCoordinates[1];
-                    const additionalClasses = remappedCoordinates[2];
-                    const on =
-                      this.players[group][soundIndex].state === "started";
+                            const blinkClass =
+                              pads[group][soundIndex] === 1 &&
+                              this.players[group][soundIndex].state !==
+                                "started"
+                                ? "blink"
+                                : "";
+                            const whiteClass =
+                              group === "sounds" ? "whitePad" : "";
+                            let tutorialClass = "";
+                            const padClass =
+                              group == "sounds" ? "padWhiteVersion" : "pad";
 
-                    const blinkClass =
-                      pads[group][soundIndex] === 1 &&
-                      this.players[group][soundIndex].state !== "started"
-                        ? "blink"
-                        : "";
-                    const whiteClass = group === "sounds" ? "whitePad" : "";
-                    let tutorialClass = "";
-                    const padClass =
-                      group == "sounds" ? "padWhiteVersion" : "pad";
+                            if (showTutorial) {
+                              if (tutorialStep === 0 && group !== "drums") {
+                                tutorialClass = "tutorialPad";
+                              } else if (
+                                tutorialStep === 1 &&
+                                group !== "basses"
+                              ) {
+                                tutorialClass = "tutorialPad";
+                              } else if (
+                                tutorialStep === 2 &&
+                                group !== "sounds"
+                              ) {
+                                tutorialClass = "tutorialPad";
+                              }
+                            }
+                            return (
+                              <div
+                                key={`pad-group-${i}`}
+                                className={`${cx(padClass, {
+                                  on,
+                                })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                                onClick={() => {
+                                  this.togglePad(group, soundIndex);
+                                }}
+                              />
+                            );
+                          });
+                        })}
+                      </div>
+                      {showTutorial && (
+                        <React.Fragment>
+                          {tutorialStep === 0 && (
+                            <React.Fragment>
+                              <div className="currentBid tile25 tutorialStep">
+                                Welcome to the Secret Garden.
+                              </div>
+                              <div className="tutorialInfo">
+                                To begin, press one of the highlighted squares
+                                on the left. These are the drum loops. <br />
+                                Only one will play at a time.
+                              </div>
+                            </React.Fragment>
+                          )}
+                          {tutorialStep === 1 && (
+                            <div className="tutorialInfo tutorialFormatting">
+                              Now, press one of the highlighted squares on the
+                              right. These are the bass loops. <br />
+                              When the pad is flashing, the sound will wait to
+                              play until the next bar.
+                              <br /> Only one will play at a time.
+                            </div>
+                          )}
+                          {tutorialStep === 2 && (
+                            <div className="tutorialInfo tutorialFormatting">
+                              {`Lastly, press one of grey squares in the middle. These are
+                        chords and melodies. Up to ${nft.activeSoundLimits["sounds"]} can play at at time.`}
+                            </div>
+                          )}
+                          {tutorialStep === 3 && (
+                            <div className="tutorialInfo tutorialFormatting">
+                              You're ready to make some music! <br />
+                              Try out different combinations and share them with
+                              friends below. <br />
+                              If you'd like to learn more about Secret Garden,
+                              scroll down.
+                            </div>
+                          )}
+                        </React.Fragment>
+                      )}
+                      {/* {!showTutorial && nft.ownerAddress === null && (
+                  <React.Fragment>
+                    <div className="currentBid tile25">Current Price</div>
+                    <div className="ethAmount">{`${currentBidAmount} ETH`}</div>
+                  </React.Fragment>
+                )}
+                {!showTutorial && nft.ownerAddress !== null && (
+                  <React.Fragment>
+                    <div className="currentBid tile25">
+                      <a
+                        href={`/collection/${nft.ownerAddress}`}
+                      >{`Owner: ${nft.ownerName}`}</a>
+                    </div>
 
-                    if (showTutorial) {
-                      if (tutorialStep === 0 && group !== "drums") {
-                        tutorialClass = "tutorialPad";
-                      } else if (tutorialStep === 1 && group !== "basses") {
-                        tutorialClass = "tutorialPad";
-                      } else if (tutorialStep === 2 && group !== "sounds") {
-                        tutorialClass = "tutorialPad";
-                      }
-                    }
-                    return (
+                    <div className="ethAmount">{`Sold for ${nft.saleAmount} ETH`}</div>
+                  </React.Fragment>
+                )} */}
+                      {(tutorialStep === 3 || !showTutorial) && (
+                        <React.Fragment>
+                          <div className="learnMore">
+                            <div className="ethAmount">Learn More</div>
+                            <IconButton
+                              className="expandOuter"
+                              onClick={() => fullpageApi.moveSectionDown()}
+                            >
+                              <img src={Expand} className="expand" />
+                            </IconButton>
+                          </div>
+                        </React.Fragment>
+                      )}
+
                       <div
-                        key={`pad-group-${i}`}
-                        className={`${cx(padClass, {
-                          on,
-                        })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                        onClick={() => {
-                          this.togglePad(group, soundIndex);
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-around",
+                          position: "absolute",
+                          bottom: "60px",
+                          width: "100vw",
                         }}
-                      />
-                    );
-                  });
-                })}
-              </div>
-              {showTutorial && (
-                <React.Fragment>
-                  {tutorialStep === 0 && (
-                    <React.Fragment>
-                      <div className="currentBid tile25 tutorialStep">
-                        Welcome to the Secret Garden.
+                      >
+                        <div className="stopBtnContainer">
+                          {this.stopButton()}
+                        </div>
+                        <div className="volumeContainer">
+                          {this.volumeControl()}
+                        </div>
+                        <div className="volumeMeter">
+                          <canvas
+                            ref={this.canvas}
+                            style={{ minWidth: "75%", zIndex: "-10" }}
+                          />
+                        </div>
                       </div>
-                      <div className="tutorialInfo">
-                        To begin, press one of the highlighted squares on the
-                        left. These are the drum loops. <br />
-                        Only one will play at a time.
+                    </div>
+                  </div>
+                </div>
+                <div className="section">
+                  <div className="container2" ref={this.myRef}>
+                    <div className="albumWrapper">
+                      <div>
+                        <div className="packTitle">
+                          WELCOME TO THE SECRET GARDEN
+                        </div>
+                        <div className="details">
+                          We believe that Web3 can fundamentally unlock value
+                          for all artists.
+                        </div>
+                        <br />
+                        <br />
+                        <IconButton
+                          className="expandOuter"
+                          onClick={() => fullpageApi.moveSectionDown()}
+                        >
+                          <img src={Expand} className="expand" />
+                        </IconButton>
                       </div>
-                    </React.Fragment>
-                  )}
-                  {tutorialStep === 1 && (
-                    <div className="tutorialInfo tutorialFormatting">
-                      Now, press one of the highlighted squares on the right.
-                      These are the bass loops. <br />
-                      When the pad is flashing, the sound will wait to play
-                      until the next bar.
-                      <br /> Only one will play at a time.
                     </div>
-                  )}
-                  {tutorialStep === 2 && (
-                    <div className="tutorialInfo tutorialFormatting">
-                      {`Lastly, press one of grey squares in the middle. These are
-                      chords and melodies. Up to ${nft.activeSoundLimits["sounds"]} can play at at time.`}
-                    </div>
-                  )}
-                  {tutorialStep === 3 && (
-                    <div className="tutorialInfo tutorialFormatting">
-                      You're ready to make some music! <br />
-                      Try out different combinations and share them with friends
-                      below. <br />
-                      If you'd like to make an offer on this sequencer, click
-                      the arrow below or scroll down.
-                    </div>
-                  )}
-                </React.Fragment>
-              )}
-              {/* {!showTutorial && nft.ownerAddress === null && (
-                <React.Fragment>
-                  <div className="currentBid tile25">Current Price</div>
-                  <div className="ethAmount">{`${currentBidAmount} ETH`}</div>
-                </React.Fragment>
-              )}
-              {!showTutorial && nft.ownerAddress !== null && (
-                <React.Fragment>
-                  <div className="currentBid tile25">
-                    <a
-                      href={`/collection/${nft.ownerAddress}`}
-                    >{`Owner: ${nft.ownerName}`}</a>
                   </div>
-
-                  <div className="ethAmount">{`Sold for ${nft.saleAmount} ETH`}</div>
-                </React.Fragment>
-              )} */}
-              {(tutorialStep === 3 || !showTutorial) && (
-                <React.Fragment>
-                  <div className="learnMore">
-                    <div className="ethAmount">Learn More</div>
-                    <IconButton
-                      className="expandOuter"
-                      onClick={this.executeScroll}
-                    >
-                      <img src={Expand} className="expand" />
-                    </IconButton>
+                </div>
+                <div className="section">
+                  <div className="container2" ref={this.myRef}>
+                    <div className="albumWrapper">
+                      <div>
+                        <div className="packTitle">BUT THERE'S A GAP</div>
+                        <div className="details">
+                          Digital art is breaking all time highs on a daily
+                          basis while music is still underserved.
+                        </div>
+                        <div className="details">
+                          We are here to crack the code by pushing the
+                          boundaries of art and NFTs.
+                        </div>
+                        <br />
+                        <br />
+                        <IconButton
+                          className="expandOuter"
+                          onClick={() => fullpageApi.moveSectionDown()}
+                        >
+                          <img src={Expand} className="expand" />
+                        </IconButton>
+                      </div>
+                    </div>
                   </div>
-                </React.Fragment>
-              )}
+                </div>
+                <div className="section">
+                  <div className="container2" ref={this.myRef}>
+                    <div className="albumWrapper">
+                      <div>
+                        <div className="packTitle">INTRODUCING BOUQUET</div>
+                        <div className="details">
+                          Bouquet is a music NFT that forms an interactive music
+                          player.
+                        </div>
+                        <div className="details">
+                          The Bouquet NFT is the first music NFT that allows
+                          holders to generate their own mix using unique sounds
+                          produced by our resident artists.
+                          <br />
+                          <br />
+                          <a
+                            target="_blank"
+                            href="https://testnets.opensea.io/assets/0x52b1dd5c27705aa4dfd3889db223b5c4c84f6b54/1"
+                          >
+                            View on OpenSea
+                          </a>
+                        </div>
+                        <br />
+                        <br />
+                        <IconButton
+                          className="expandOuter"
+                          onClick={() => fullpageApi.moveSectionDown()}
+                        >
+                          <img src={Expand} className="expand" />
+                        </IconButton>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="section">
+                  <div className="container2" ref={this.FAQ}>
+                    <div className="albumWrapper">
+                      <div>
+                        <div className="packTitle">FAQ</div>
+                        <div className="question">
+                          What do I get by buying a Bouquet?
+                        </div>
+                        <div className="details">
+                          When you purchase a Bouquet, you get to own this
+                          one-of-a-kind interactive, playable experience as an
+                          NFT. The experience is fully functional, even on
+                          OpenSea:{" "}
+                          <a
+                            target="_blank"
+                            href="https://testnets.opensea.io/assets/0x52b1dd5c27705aa4dfd3889db223b5c4c84f6b54/1"
+                          >
+                            View on OpenSea
+                          </a>
+                          <br />
+                          <br />
+                          Bonus Features:
+                          <br />
+                          <br />
+                          - Set the default mix for the player.
+                          <br />
+                          - Receive a non-exclusive license to every sound file
+                          on the player for personal or commercial use.
+                          <br />
+                          - Access an exclusive holders channel on our Secret
+                          Garden Discord.
+                          <br />- Access to additional utility such as concert
+                          tickets, meet and greets, merch, and more (will vary
+                          per artist).
+                        </div>
+                        <div className="question">
+                          How do I purchase a Bouquet?
+                        </div>
+                        <div className="details">
+                          Join our{" "}
+                          <a
+                            target="_blank"
+                            href="https://discord.gg/ykrzXB9ZsV"
+                          >
+                            Discord
+                          </a>{" "}
+                          or follow us on{" "}
+                          <a
+                            target="_blank"
+                            href="https://twitter.com/SecretGarden_FM"
+                          >
+                            Twitter
+                          </a>{" "}
+                          to get notified when a new Bouquet drops.
+                          <br />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="privacyAndTos">
+                      <a href="/tos" target="_blank">
+                        Terms of Service
+                      </a>
+                      <a href="/privacy" target="_blank">
+                        Privacy Policy
+                      </a>
+                    </div>
+                    <div className="ourSocials">
+                      <span>inquiries@secretgarden.fm</span>
+                      <a
+                        href="https://twitter.com/SecretGarden_FM"
+                        target="_blank"
+                      >
+                        <img src={Twitter} className="ourTwitter" />
+                      </a>
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-around",
-                  position: "absolute",
-                  bottom: "60px",
-                  width: "100vw",
-                }}
-              >
-                <div className="stopBtnContainer">{this.stopButton()}</div>
-                <div className="volumeContainer">{this.volumeControl()}</div>
-                <div className="volumeMeter">
-                  <canvas
-                    ref={this.canvas}
-                    style={{ minWidth: "75%", zIndex: "-10" }}
-                  />
+                      <a href="https://discord.gg/ykrzXB9ZsV" target="_blank">
+                        <img src={Discord} className="ourDiscord" />
+                      </a>
+                      <a
+                        href="https://www.instagram.com/secretgarden_fm/"
+                        target="_blank"
+                      >
+                        <img src={Instagram} className="ourInsta" />
+                      </a>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div className="container2 scrollBar" ref={this.myRef}>
-            <div className="albumWrapper">
-              <div>
-                <div className="packTitle">WELCOME TO THE SECRET GARDEN</div>
-                <div className="details">
-                  We believe that Web3 can fundamentally unlock value for all
-                  artists.
-                </div>
-                <br />
-                <br />
-                <IconButton
-                  className="expandOuter"
-                  onClick={this.executeScrollFAQ}
-                >
-                  <img src={Expand} className="expand" />
-                </IconButton>
-              </div>
-            </div>
-          </div>
-          <div className="container2 scrollBar" ref={this.myRef}>
-            <div className="albumWrapper">
-              <div>
-                <div className="packTitle">BUT THERE'S A GAP</div>
-                <div className="details">
-                  Digital art is breaking all time highs on a daily basis while
-                  music is still underserved.
-                </div>
-                <div className="details">
-                  We are here to crack the code by pushing the boundaries of art
-                  and NFTs.
-                </div>
-                <br />
-                <br />
-                <IconButton
-                  className="expandOuter"
-                  onClick={this.executeScrollFAQ}
-                >
-                  <img src={Expand} className="expand" />
-                </IconButton>
-              </div>
-            </div>
-          </div>
-          <div className="container2 scrollBar" ref={this.myRef}>
-            <div className="albumWrapper">
-              <div>
-                <div className="packTitle">INTRODUCING BOUQUET</div>
-                <div className="details">
-                  Bouquet is a music NFT that forms an interactive music player.
-                </div>
-                <div className="details">
-                  The Bouquet NFT is the first music NFT that allows holders to
-                  generate their own mix using unique sounds produced by our
-                  resident artists.
-                </div>
-                <a
-                  target="_blank"
-                  href="https://testnets.opensea.io/assets/0x52b1dd5c27705aa4dfd3889db223b5c4c84f6b54/1"
-                >
-                  View on OpenSea
-                </a>
-                <br />
-                <br />
-                <IconButton
-                  className="expandOuter"
-                  onClick={this.executeScrollFAQ}
-                >
-                  <img src={Expand} className="expand" />
-                </IconButton>
-              </div>
-            </div>
-          </div>
-          <div className="container3 scrollBar" ref={this.FAQ}>
-            <div className="albumWrapper">
-              <div>
-                <div className="packTitle">FAQ</div>
-                <div className="question">
-                  What do I get by buying a Bouquet?
-                </div>
-                <div className="details">
-                  When you purchase a Bouquet, you get to own this one-of-a-kind
-                  interactive, playable experience as an NFT. The experience is
-                  fully functional, even on OpenSea:{" "}
-                  <a
-                    target="_blank"
-                    href="https://testnets.opensea.io/assets/0x52b1dd5c27705aa4dfd3889db223b5c4c84f6b54/1"
-                  >
-                    View on OpenSea
-                  </a>
-                  <br />
-                  <br />
-                  Bonus Features:
-                  <br />
-                  <br />
-                  - Set the default mix for the player.
-                  <br />
-                  - Receive a non-exclusive license to every sound file on the
-                  player for personal or commercial use.
-                  <br />
-                  - Access an exclusive holders channel on our Secret Garden
-                  Discord.
-                  <br />- Access to additional utility such as concert tickets,
-                  meet and greets, merch, and more (will vary per artist).
-                </div>
-                <div className="question">How do I purchase a Bouquet?</div>
-                <div className="details">
-                  Join our{" "}
-                  <a target="_blank" href="https://discord.gg/ykrzXB9ZsV">
-                    Discord
-                  </a>{" "}
-                  or follow us on{" "}
-                  <a target="_blank" href="https://twitter.com/SecretGarden_FM">
-                    Twitter
-                  </a>{" "}
-                  to get notified when a new Bouquet drops.
-                  <br />
-                </div>
-              </div>
-            </div>
-            <div className="privacyAndTos">
-              <a href="/tos" target="_blank">
-                Terms of Service
-              </a>
-              <a href="/privacy" target="_blank">
-                Privacy Policy
-              </a>
-            </div>
-            <div className="ourSocials">
-              <span>inquiries@secretgarden.fm</span>
-              <a href="https://twitter.com/SecretGarden_FM" target="_blank">
-                <img src={Twitter} className="ourTwitter" />
-              </a>
-
-              <a href="https://discord.gg/ykrzXB9ZsV" target="_blank">
-                <img src={Discord} className="ourDiscord" />
-              </a>
-              <a
-                href="https://www.instagram.com/secretgarden_fm/"
-                target="_blank"
-              >
-                <img src={Instagram} className="ourInsta" />
-              </a>
-            </div>
-          </div>
-        </Controller>
+                <Footer
+                  white={false}
+                  shareURL={`https://secretgarden.fm/?share=${shareablePadNumbers.join(
+                    ","
+                  )}`}
+                  showShare={true}
+                  loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+                />
+              </ReactFullpage.Wrapper>
+            );
+          }}
+        />
       );
-    } else {
-      return <Loading />;
     }
+
+    return <Loading />;
   }
 }
 
