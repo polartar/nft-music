@@ -84,6 +84,9 @@
     "webpack-cli": "^3.3.2",
     "webpack-dev-server": "^3.5.3"
   },
+  "engines": {
+    "node": "14.19.0"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
