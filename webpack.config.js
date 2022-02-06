@@ -124,11 +124,6 @@ module.exports = {
       template: "./public/index.html",
       favicon: "./public/favicon.ico",
     }),
-    new webpack.DefinePlugin({
-      "process.env": {
-        NODE_ENV: JSON.stringify("production"),
-      },
-    }),
     new CompressionPlugin(),
     new CaseSensitivePathsPlugin(),
     new WebpackObfuscator({

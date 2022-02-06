@@ -3,15 +3,32 @@ const config = require("../config.json");
 const { ethers, utils } = require("ethers");
 const { useRadioGroup } = require("@material-ui/core");
 
-// Create a new MongoClient
-const client = new MongoClient(config.mongoDBURL);
-let db;
+// connect to our mongodb database
+async function connectToDatabase() {
+  let params = {};
 
-client.connect(function(err) {
+  if (process.env.DATABASE_URL) {
+    params = {
+      useNewurlParser: true,
+      useUnifiedTopology: true,
+      tls: true,
+      tlsCAFile: "./ca-certificate.crt",
+    };
+  }
+  const client = await MongoClient.connect(
+    process.env.DATABASE_URL
+      ? process.env.DATABASE_URL
+      : "mongodb://localhost:27017",
+    params
+  );
+
+  db = client.db("secretgarden");
   console.log("UserController connected successfully to MongoDB");
+}
 
-  db = client.db(config.mongoDBName);
-});
+setTimeout(() => {
+  connectToDatabase();
+}, 100);
 
 async function getUser(address) {
   try {

@@ -26,7 +26,6 @@ import { Limiter, ToneAudioNode } from "tone";
 import axios from "axios";
 import { ethers, utils } from "ethers";
 import Countdown from "react-countdown";
-import config from "./config.json";
 import clone from "clone";
 import Loading from "./components/Loading";
 import Cookies from "universal-cookie";
@@ -302,8 +301,6 @@ class Sequencer extends Component {
       nft: nftResponse.data,
     });
 
-    const pathRoot = config.root;
-
     // Initial pads setup
     if (!Object.keys(this.players).length) {
       const pads = {};
@@ -318,7 +315,7 @@ class Sequencer extends Component {
         filePaths.forEach((filePath) => {
           this.players[group].push(
             new Tone.Player(
-              `${pathRoot}/public/${encodeURIComponent(filePath)}`
+              `/public/${encodeURIComponent(filePath)}`
             ).toDestination()
           );
 
@@ -823,6 +820,8 @@ class Sequencer extends Component {
       tutorialStep,
       volume,
     } = this.state;
+
+    console.log(process.env);
 
     const currentBidAmount =
       bids.length > 0
