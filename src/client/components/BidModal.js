@@ -17,7 +17,6 @@ import * as Web3 from "web3";
 import axios from "axios";
 import { OpenSeaPort, Network } from "opensea-js";
 import { WyvernSchemaName } from "opensea-js/lib/types";
-import config from "../config.json";
 
 import Typography from "@material-ui/core/Typography";
 
@@ -87,9 +86,7 @@ export default function SimpleDialog(props) {
     const signer = provider.getSigner(0);
     const address = await signer.getAddress();
 
-    const wethAddress = config.dev
-      ? "0xc778417e063141139fce010982780140aa0cd5ab"
-      : "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+    const wethAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
 
     const contract = new Contract(
       wethAddress,

@@ -4,7 +4,6 @@ import cx from "classnames";
 import React, { Component, createRef } from "react";
 import * as Tone from "tone";
 import Loading from "./components/Loading";
-import config from "./config.json";
 
 const sixBySixThreeGroups = [
   [
@@ -220,8 +219,6 @@ class Sequencer extends Component {
       nft: nftResponse.data,
     });
 
-    const pathRoot = config.root;
-
     // Initial pads setup
     if (!Object.keys(this.players).length) {
       const pads = {};
@@ -236,7 +233,7 @@ class Sequencer extends Component {
         filePaths.forEach((filePath) => {
           this.players[group].push(
             new Tone.Player(
-              `${pathRoot}/public/${encodeURIComponent(filePath)}`
+              `/public/${encodeURIComponent(filePath)}`
             ).toDestination()
           );
 

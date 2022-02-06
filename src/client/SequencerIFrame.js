@@ -4,7 +4,6 @@ import cx from "classnames";
 import React, { Component, createRef } from "react";
 import * as Tone from "tone";
 import Loading from "./components/Loading";
-import config from "./config.json";
 import WaterLoop from "./images/waterScaleLoop.mp4";
 
 const sixBySixThreeGroups = [

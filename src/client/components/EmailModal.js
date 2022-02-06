@@ -35,7 +35,6 @@ import * as Web3 from "web3";
 import axios from "axios";
 import { OpenSeaPort, Network } from "opensea-js";
 import { WyvernSchemaName } from "opensea-js/lib/types";
-import config from "../config.json";
 
 import Typography from "@material-ui/core/Typography";
 
