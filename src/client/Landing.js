@@ -855,7 +855,7 @@ class Sequencer extends Component {
       return (
         <ReactFullpage
           //fullpage options
-          licenseKey={"DFB914DB-F4FD44B2-AFF60DE3-B80ABA47"}
+          licenseKey={"E225A90B-BB824945-9CBDA8D4-C1409B9E"}
           scrollingSpeed={1000} /* Options here */
           scrollBar={false}
           fixedElements=".bottomNav"
