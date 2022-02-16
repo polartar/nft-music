@@ -881,8 +881,8 @@ class Sequencer extends Component {
                         <video
                           playsinline={true}
                           className="waterLoopVideo"
-                          autoplay="true"
-                          muted="true"
+                          autoplay
+                          muted
                           loop="true"
                           data-autoplay
                         >
