@@ -663,7 +663,7 @@ class Sequencer extends Component {
                 muted="true"
                 loop="true"
               >
-                <source src={nft.imageURL} type="video/mp4" />
+                <source src={nft.lowResImageURL} type="video/mp4" />
               </video>
             )}
             {mediaFileExtension !== "mp4" && (
