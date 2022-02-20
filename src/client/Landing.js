@@ -390,10 +390,10 @@ class Sequencer extends Component {
               ) {
                 this.players[group][soundIndex].start(
                   time,
-                  `${Math.floor(this.state.step / subSteps)}:0:0`
+                  `${Math.floor(this.state.step / 4)}:0:0`
                 );
-                updatedPads[group][soundIndex] = 1;
               }
+              updatedPads[group][soundIndex] = 1;
 
               if (group === "drums") {
                 didPlayDrums = true;
@@ -675,6 +675,10 @@ class Sequencer extends Component {
         const updatedQueue = { ...state.queue };
 
         let numPads = this.state.totalSoundsPlaying;
+
+        console.log(group);
+        console.log(pad);
+        console.log(padState);
 
         // If pad was previously off, we're turning it on
         if (padState == 0) {
