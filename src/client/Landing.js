@@ -328,6 +328,7 @@ class Sequencer extends Component {
         padFormatTileStyleMappings[nftResponse.data.padFormatName];
 
       const steps = nftResponse.data.steps;
+      const subSteps = nftResponse.data.subSteps;
 
       this.rhythmPads = new Array(steps).fill([0]);
 
@@ -355,7 +356,7 @@ class Sequencer extends Component {
 
       Tone.Transport.bpm.value = nftResponse.data.bpm;
       Tone.Transport.scheduleRepeat((time) => {
-        if (this.state.step === 0) {
+        if (this.state.step % subSteps === 0) {
           const updatedPads = {};
           const updatedQueue = {};
           let updatedTutorialStep = this.state.tutorialStep;
@@ -374,9 +375,25 @@ class Sequencer extends Component {
               -this.state.nft.activeSoundLimits[group]
             );
 
+            if (updatedQueue[group].length !== this.state.queue[group].length) {
+              for (let i = 0; i < this.players[group].length; i++) {
+                if (!updatedQueue[group].includes(i)) {
+                  this.players[group][i].stop();
+                }
+              }
+            }
+
             updatedQueue[group].forEach((soundIndex) => {
-              this.players[group][soundIndex].start(time);
-              updatedPads[group][soundIndex] = 1;
+              if (
+                this.players[group][soundIndex].state !== "started" ||
+                this.state.step === 0
+              ) {
+                this.players[group][soundIndex].start(
+                  time,
+                  `${Math.floor(this.state.step / subSteps)}:0:0`
+                );
+                updatedPads[group][soundIndex] = 1;
+              }
 
               if (group === "drums") {
                 didPlayDrums = true;
@@ -624,6 +641,8 @@ class Sequencer extends Component {
   play() {
     Tone.start();
     Tone.Transport.start();
+
+    Tone.context.lookAhead = 0.1;
     this.togglePlay();
 
     this.setState(() => ({
@@ -820,8 +839,6 @@ class Sequencer extends Component {
       tutorialStep,
       volume,
     } = this.state;
-
-    console.log(process.env);
 
     const currentBidAmount =
       bids.length > 0
