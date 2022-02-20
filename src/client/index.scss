@@ -175,7 +175,6 @@ input[type="number"] {
 
 .volumeContainer {
   width: 20%;
-  z-index: 1200;
 }
 
 .volumeWrapper {
@@ -347,11 +346,6 @@ canvas {
   box-shadow: 0 0 27px 4px rgba(255, 255, 255, 0.2);
   // transition: background 10ms ease;
 
-  &:hover {
-    background: white;
-    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
-  }
-
   &.active {
     // background: lighten($dark, 15%);
     background: white;
@@ -364,6 +358,14 @@ canvas {
     box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
   }
 }
+
+@media (hover: hover) {
+  .pad:hover {
+    background: white;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+}
+
 .circlePad,
 .circlePad.padWhiteVersion,
 .circlePad.pad {
@@ -485,6 +487,10 @@ canvas {
   display: block;
   /* display: none; */
   max-width: 370px;
+}
+
+.hidden {
+  display: none;
 }
 
 .details {

@@ -533,7 +533,7 @@ class Sequencer extends Component {
   };
 
   tick = () => {
-    if (this.state.totalSoundsPlaying > 0) {
+    if (this.state.totalSoundsPlaying > 0 && !this.state.showTutorial) {
       this.animationLooper(this.canvas.current);
       this.rafId = requestAnimationFrame(() => this.tick());
     } else {
@@ -594,7 +594,8 @@ class Sequencer extends Component {
         var b = 50;
 
         // ctx.fillStyle = 'rgb(' + 255 + ',' + 255 + ',' + 255 + ')'
-        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+        ctx.fillStyle = `rgba(255, 255, 255, 1)`;
+        // ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 1)`;
         ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
 
         x += barWidth + 1;
@@ -947,7 +948,10 @@ class Sequencer extends Component {
                           return column.map((remappedCoordinates, i) => {
                             const group = remappedCoordinates[0];
                             const soundIndex = remappedCoordinates[1];
-                            const additionalClasses = remappedCoordinates[2];
+                            const additionalClasses = remappedCoordinates[2]
+                              ? remappedCoordinates[2]
+                              : "";
+
                             const on =
                               this.players[group][soundIndex].state ===
                               "started";
@@ -979,6 +983,7 @@ class Sequencer extends Component {
                                 tutorialClass = "tutorialPad";
                               }
                             }
+
                             return (
                               <div
                                 key={`pad-group-${i}`}
