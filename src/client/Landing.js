@@ -901,11 +901,11 @@ class Sequencer extends Component {
                     {mediaFileExtension === "mp4" && (
                       <div className="video-container">
                         <video
-                          playsinline={true}
                           className="waterLoopVideo"
-                          autoplay="true"
-                          muted="true"
-                          loop="true"
+                          playsInline
+                          autoPlay
+                          loop
+                          muted
                           data-autoplay
                         >
                           <source src={nft.imageURL} type="video/mp4" />
