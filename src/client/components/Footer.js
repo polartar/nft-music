@@ -73,12 +73,17 @@ export default function Footer(props) {
           }
         >
           <div className="bottomItem mobileLink" style={{ fontWeight: "700" }}>
-            Connected Address
+            CONNECTED ADDRESS
           </div>
           <div className="bottomItem mobileLink" style={{ fontWeight: "700" }}>
-            Sale Begins in
+            SALE BEGINS IN
           </div>
-          <button onClick={() => handleMintMenu()}>MINT</button>
+          <div className="bottomItem mobileLink" style={{ fontWeight: "700" }}>
+            XX ETH
+          </div>
+          <button className="button" onClick={() => handleMintMenu()}>
+            MINT
+          </button>
         </div>
       ) : (
         <div
@@ -86,25 +91,25 @@ export default function Footer(props) {
             props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
           }
         >
-          {showShare && !isLoggedIntoMetamask && (
-            <div
-              className="bottomItem mobileLink"
-              onClick={() => setOpenShare(true)}
-              style={{ fontWeight: "700" }}
-            >
-              SHARE
-            </div>
-          )}
+          {/* {showShare && !isLoggedIntoMetamask && ( */}
+          <div
+            className="bottomItem mobileLink"
+            onClick={() => setOpenShare(true)}
+            style={{ fontWeight: "700" }}
+          >
+            SHARE
+          </div>
+          {/* )} */}
 
-          {showShare && isLoggedIntoMetamask && (
-            <div
-              className="bottomItem mobileLink"
-              onClick={() => setOpenShare(true)}
-              style={{ fontWeight: "700" }}
-            >
-              SHARE
-            </div>
-          )}
+          {/* {showShare && isLoggedIntoMetamask && (
+          <div
+            className="bottomItem mobileLink"
+            onClick={() => setOpenShare(true)}
+            style={{ fontWeight: "700" }}
+          >
+            SHARE
+          </div>
+          )} */}
 
           <a href="https://discord.gg/ykrzXB9ZsV">
             <div className="bottomItem mobileLink">DISCORD</div>
@@ -112,7 +117,9 @@ export default function Footer(props) {
           <a href="https://twitter.com/SecretGarden_FM">
             <div className="bottomItem mobileLink">TWITTER</div>
           </a>
-          <button onClick={() => handleMintMenu()}>MINT</button>
+          <button className="button" onClick={() => handleMintMenu()}>
+            TO MINT MENU
+          </button>
         </div>
       )}
     </React.Fragment>
