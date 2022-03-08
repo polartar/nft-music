@@ -233,6 +233,7 @@ class Sequencer extends Component {
 
     this.initWallet();
     this.myRef = React.createRef();
+    this.clearSelections = this.clearSelections.bind(this);
     this.activePlayers = {
       basses: [],
       drums: [],
