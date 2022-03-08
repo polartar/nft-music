@@ -1038,23 +1038,6 @@ class Sequencer extends Component {
                           )}
                         </React.Fragment>
                       )}
-                      {/* {!showTutorial && nft.ownerAddress === null && (
-                  <React.Fragment>
-                    <div className="currentBid tile25">Current Price</div>
-                    <div className="ethAmount">{`${currentBidAmount} ETH`}</div>
-                  </React.Fragment>
-                )}
-                {!showTutorial && nft.ownerAddress !== null && (
-                  <React.Fragment>
-                    <div className="currentBid tile25">
-                      <a
-                        href={`/collection/${nft.ownerAddress}`}
-                      >{`Owner: ${nft.ownerName}`}</a>
-                    </div>
-
-                    <div className="ethAmount">{`Sold for ${nft.saleAmount} ETH`}</div>
-                  </React.Fragment>
-                )} */}
                       {(tutorialStep === 3 || !showTutorial) && (
                         <React.Fragment>
                           <div className="learnMore">
