@@ -85,6 +85,57 @@ const sixBySixThreeGroups = [
   ],
 ];
 
+const sixDrumsSixBassesTwentyFourSounds = [
+  [
+    ["sounds", 0],
+    ["sounds", 1],
+    ["basses", 0],
+    ["basses", 1],
+    ["basses", 2],
+    ["basses", 3],
+  ],
+  [
+    ["sounds", 2],
+    ["sounds", 3],
+    ["sounds", 4],
+    ["basses", 4],
+    ["sounds", 5],
+    ["sounds", 6],
+  ],
+  [
+    ["drums", 0],
+    ["sounds", 7],
+    ["sounds", 8],
+    ["sounds", 9],
+    ["sounds", 10],
+    ["sounds", 11],
+  ],
+  [
+    ["drums", 1],
+    ["drums", 2],
+    ["sounds", 12],
+    ["sounds", 13],
+    ["sounds", 14],
+    ["sounds", 15],
+  ],
+  [
+    ["drums", 3],
+    ["drums", 4],
+    ["drums", 5],
+    ["sounds", 16],
+    ["sounds", 17],
+    ["sounds", 18],
+  ],
+  [
+    ["sounds", 19],
+    ["sounds", 20],
+    ["sounds", 21],
+    ["sounds", 22],
+    ["sounds", 23],
+    ["sounds", 24],
+  ],
+];
+
 const fiveByFiveThreeGroups = [
   [
     ["sounds", 0],
@@ -163,12 +214,14 @@ const fiveByFiveFlower = [
 
 const padFormatMappings = {
   sixBySixThreeGroups,
+  sixDrumsSixBassesTwentyFourSounds,
   fiveByFiveThreeGroups,
   fiveByFiveFlower,
 };
 
 const padFormatTileStyleMappings = {
   sixBySixThreeGroups: "tile36",
+  sixDrumsSixBassesTwentyFourSounds: "tile36",
   fiveByFiveThreeGroups: "tile25",
   fiveByFiveFlower: "tile25",
 };
@@ -312,6 +365,8 @@ class Sequencer extends Component {
           );
 
           pads[group].push(0);
+
+          console.log(this.players[group]);
         });
       });
 
@@ -928,6 +983,8 @@ class Sequencer extends Component {
                       ? remappedCoordinates[2]
                       : "";
 
+                    console.log(group);
+                    console.log(soundIndex);
                     const on =
                       this.players[group][soundIndex].state === "started";
 

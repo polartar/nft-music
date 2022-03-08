@@ -262,8 +262,8 @@ input[type="range"] {
   // left: 185px;
   position: absolute;
   left: 50vw;
-  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.73);
-  transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.73);
+  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(1.1);
+  transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(1.1);
   margin-top: 210px;
   z-index: 1200;
 }
@@ -685,11 +685,20 @@ footer {
   transform-origin: 50% 50%;
   position: relative;
   left: 135px;
-  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.88);
-  transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.88);
-  margin-top: 194px;
+  margin-top: 250px;
   z-index: 1200;
 }
+
+.gridOuter.tile36 {
+  font-size: 0;
+  -webkit-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+  position: relative;
+  left: 190px;
+  margin-top: 300px;
+  z-index: 1200;
+}
+
 .albumPic {
   height: 145px;
   width: 145px;
@@ -937,13 +946,7 @@ footer {
     font-size: 16px;
     line-height: 20px;
   }
-  .gridOuter.tile25,
-  .gridOuter {
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg)
-      scale(0.6);
-    transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.7);
-    margin-top: 150px;
-  }
+
   .currentBid.tile25 {
     font-size: 14px;
     margin-top: -120px;
