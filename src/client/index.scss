@@ -262,8 +262,8 @@ input[type="range"] {
   // left: 185px;
   position: absolute;
   left: 50vw;
-  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(1.1);
-  transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(1.1);
+  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.9);
+  transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.9);
   margin-top: 210px;
   z-index: 1200;
 }
