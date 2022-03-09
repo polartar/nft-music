@@ -13,6 +13,7 @@ export default function Footer(props) {
   const [openShare, setOpenShare] = useState(false);
   const [openEmail, setOpenEmail] = useState(false);
   const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
+  const [showMintMenu, setShowMintMenu] = useState(false);
 
   const refreshData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -34,6 +35,12 @@ export default function Footer(props) {
   const handleCloseEmail = () => {
     setOpenEmail(false);
   };
+
+  const handleMintMenu = () => {
+    console.log("clicked mint button");
+    setShowMintMenu(!showMintMenu);
+  };
+
   useEffect(() => {
     refreshData();
   }, [loaded, loggedIntoMetamaskOverride]);
@@ -42,15 +49,49 @@ export default function Footer(props) {
     <React.Fragment>
       <ShareModal shareURL={shareURL} onClose={handleClose} open={openShare} />
       <EmailModal onClose={handleCloseEmail} open={openEmail} />
-      <div
-        className={
-          props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
-        }
-      >
-        {/* <a href="/featured">
-          <div className="bottomItem mobileLink">FEATURED</div>
-        </a> */}
-        {showShare && !isLoggedIntoMetamask && (
+      {/* <a href="/directory">
+                <div className="bottomItem mobileLink">DIRECTORY</div>
+              </a> */}
+      {/* {isLoggedIntoMetamask && (
+                <a href={`/collection/${address}`} className="notMobileLink">
+                  <div className="bottomItem">MY COLLECTION</div>
+                </a>
+              )} */}
+      {/* 
+              <div onClick={handleClickOpenEmail} className="bottomItem mobileLink">
+                FUTURE DROPS
+              </div> */}
+      {/* {isLoggedIntoMetamask && (
+                <a href={`/profile`} className=" notMobileLink">
+                  <div className="bottomItem">PROFILE</div>
+                </a>
+              )} */}
+      {showMintMenu ? (
+        <div
+          className={
+            props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
+          }
+        >
+          <div className="bottomItem mobileLink" style={{ fontWeight: "700" }}>
+            CONNECTED ADDRESS
+          </div>
+          <div className="bottomItem mobileLink" style={{ fontWeight: "700" }}>
+            SALE BEGINS IN
+          </div>
+          <div className="bottomItem mobileLink" style={{ fontWeight: "700" }}>
+            XX ETH
+          </div>
+          <button className="button" onClick={() => handleMintMenu()}>
+            MINT
+          </button>
+        </div>
+      ) : (
+        <div
+          className={
+            props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
+          }
+        >
+          {/* {showShare && !isLoggedIntoMetamask && ( */}
           <div
             className="bottomItem mobileLink"
             onClick={() => setOpenShare(true)}
@@ -58,11 +99,9 @@ export default function Footer(props) {
           >
             SHARE
           </div>
-        )}
-        {/* <a href="/directory">
-          <div className="bottomItem mobileLink">DIRECTORY</div>
-        </a> */}
-        {showShare && isLoggedIntoMetamask && (
+          {/* )} */}
+
+          {/* {showShare && isLoggedIntoMetamask && (
           <div
             className="bottomItem mobileLink"
             onClick={() => setOpenShare(true)}
@@ -70,31 +109,19 @@ export default function Footer(props) {
           >
             SHARE
           </div>
-        )}
+          )} */}
 
-        <a href="https://discord.gg/ykrzXB9ZsV">
-          <div className="bottomItem mobileLink">DISCORD</div>
-        </a>
-        <a href="https://twitter.com/SecretGarden_FM">
-          <div className="bottomItem mobileLink">TWITTER</div>
-        </a>
-
-        {/* {isLoggedIntoMetamask && (
-          <a href={`/collection/${address}`} className="notMobileLink">
-            <div className="bottomItem">MY COLLECTION</div>
+          <a href="https://discord.gg/ykrzXB9ZsV">
+            <div className="bottomItem mobileLink">DISCORD</div>
           </a>
-        )} */}
-        {/* 
-        <div onClick={handleClickOpenEmail} className="bottomItem mobileLink">
-          FUTURE DROPS
-        </div> */}
-
-        {/* {isLoggedIntoMetamask && (
-          <a href={`/profile`} className=" notMobileLink">
-            <div className="bottomItem">PROFILE</div>
+          <a href="https://twitter.com/SecretGarden_FM">
+            <div className="bottomItem mobileLink">TWITTER</div>
           </a>
-        )} */}
-      </div>
+          <button className="button" onClick={() => handleMintMenu()}>
+            TO MINT MENU
+          </button>
+        </div>
+      )}
     </React.Fragment>
   );
 }
