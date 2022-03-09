@@ -117,9 +117,9 @@ export default function Footer(props) {
           <a href="https://twitter.com/SecretGarden_FM">
             <div className="bottomItem mobileLink">TWITTER</div>
           </a>
-          <button className="button" onClick={() => handleMintMenu()}>
+          {/* <button className="button" onClick={() => handleMintMenu()}>
             TO MINT MENU
-          </button>
+          </button> */}
         </div>
       )}
     </React.Fragment>

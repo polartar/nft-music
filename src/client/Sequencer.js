@@ -34,198 +34,6 @@ import clone from "clone";
 import Loading from "./components/Loading";
 import Cookies from "universal-cookie";
 
-const sixBySixThreeGroups = [
-  [
-    ["sounds", 0],
-    ["sounds", 1],
-    ["basses", 0],
-    ["basses", 1],
-    ["basses", 2],
-    ["basses", 3],
-  ],
-  [
-    ["sounds", 2],
-    ["sounds", 3],
-    ["sounds", 4],
-    ["basses", 4],
-    ["basses", 5],
-    ["basses", 6],
-  ],
-  [
-    ["drums", 0],
-    ["sounds", 5],
-    ["sounds", 6],
-    ["sounds", 7],
-    ["basses", 7],
-    ["basses", 8],
-  ],
-  [
-    ["drums", 1],
-    ["drums", 2],
-    ["sounds", 8],
-    ["sounds", 9],
-    ["sounds", 10],
-    ["basses", 9],
-  ],
-  [
-    ["drums", 3],
-    ["drums", 4],
-    ["drums", 5],
-    ["sounds", 11],
-    ["sounds", 12],
-    ["sounds", 13],
-  ],
-  [
-    ["drums", 6],
-    ["drums", 7],
-    ["drums", 8],
-    ["drums", 9],
-    ["sounds", 14],
-    ["sounds", 15],
-  ],
-];
-
-const sixDrumsSixBassesTwentyFourSounds = [
-  [
-    ["sounds", 0],
-    ["sounds", 1],
-    ["basses", 0],
-    ["basses", 1],
-    ["basses", 2],
-    ["basses", 3],
-  ],
-  [
-    ["sounds", 2],
-    ["sounds", 3],
-    ["sounds", 4],
-    ["basses", 4],
-    ["sounds", 5],
-    ["sounds", 6],
-  ],
-  [
-    ["drums", 0],
-    ["sounds", 7],
-    ["sounds", 8],
-    ["sounds", 9],
-    ["sounds", 10],
-    ["sounds", 11],
-  ],
-  [
-    ["drums", 1],
-    ["drums", 2],
-    ["sounds", 12],
-    ["sounds", 13],
-    ["sounds", 14],
-    ["sounds", 15],
-  ],
-  [
-    ["drums", 3],
-    ["drums", 4],
-    ["drums", 5],
-    ["sounds", 16],
-    ["sounds", 17],
-    ["sounds", 18],
-  ],
-  [
-    ["sounds", 19],
-    ["sounds", 20],
-    ["sounds", 21],
-    ["sounds", 22],
-    ["sounds", 23],
-    ["sounds", 24],
-  ],
-];
-
-const fiveByFiveThreeGroups = [
-  [
-    ["sounds", 0],
-    ["sounds", 1],
-    ["basses", 0],
-    ["basses", 1],
-    ["basses", 2],
-  ],
-  [
-    ["sounds", 2],
-    ["sounds", 3],
-    ["sounds", 4],
-    ["basses", 3],
-    ["basses", 4],
-  ],
-  [
-    ["drums", 0],
-    ["sounds", 5],
-    ["sounds", 6],
-    ["sounds", 7],
-    ["basses", 5],
-  ],
-  [
-    ["drums", 1],
-    ["drums", 2],
-    ["sounds", 8],
-    ["sounds", 9],
-    ["sounds", 10],
-  ],
-  [
-    ["drums", 3],
-    ["drums", 4],
-    ["drums", 5],
-    ["sounds", 11],
-    ["sounds", 12],
-  ],
-];
-
-const fiveByFiveFlower = [
-  [
-    ["sounds", 4],
-    ["sounds", 1],
-    ["sounds", 2],
-    ["basses", 0],
-    ["basses", 1],
-  ],
-  [
-    ["sounds", 3],
-    ["sounds", 0, "circlePad"],
-    ["sounds", 5],
-    ["basses", 2],
-    ["basses", 3],
-  ],
-  [
-    ["sounds", 6],
-    ["sounds", 7],
-    ["sounds", 8],
-    ["basses", 4],
-    ["sounds", 9],
-  ],
-  [
-    ["drums", 0],
-    ["drums", 1],
-    ["drums", 2],
-    ["sounds", 10],
-    ["basses", 5],
-  ],
-  [
-    ["drums", 3],
-    ["drums", 4],
-    ["sounds", 11],
-    ["drums", 5],
-    ["sounds", 12],
-  ],
-];
-
-const padFormatMappings = {
-  sixBySixThreeGroups,
-  sixDrumsSixBassesTwentyFourSounds,
-  fiveByFiveThreeGroups,
-  fiveByFiveFlower,
-};
-
-const padFormatTileStyleMappings = {
-  sixBySixThreeGroups: "tile36",
-  sixDrumsSixBassesTwentyFourSounds: "tile36",
-  fiveByFiveThreeGroups: "tile25",
-  fiveByFiveFlower: "tile25",
-};
-
 let ctx, x_end, y_end, bar_height;
 
 // constants
@@ -287,11 +95,7 @@ class Sequencer extends Component {
     this.initWallet();
     this.myRef = React.createRef();
     this.clearSelections = this.clearSelections.bind(this);
-    this.activePlayers = {
-      basses: [],
-      drums: [],
-      sounds: [],
-    };
+    this.activePlayers = {};
   }
 
   initWallet = async () => {
@@ -357,7 +161,10 @@ class Sequencer extends Component {
         pads[group] = [];
         queue[group] = [];
 
+        this.activePlayers[group] = [];
+
         filePaths.forEach((filePath) => {
+          console.log(filePath);
           this.players[group].push(
             new Tone.Player(
               `/public/${encodeURIComponent(filePath)}`
@@ -368,9 +175,8 @@ class Sequencer extends Component {
         });
       });
 
-      const padFormat = padFormatMappings[nftResponse.data.padFormatName];
-      const padFormatStyleClass =
-        padFormatTileStyleMappings[nftResponse.data.padFormatName];
+      const padFormat = nftResponse.data.padFormat;
+      const padFormatStyleClass = nftResponse.data.padStyle;
 
       const steps = nftResponse.data.steps;
       const subSteps = nftResponse.data.subSteps;
@@ -800,31 +606,32 @@ class Sequencer extends Component {
       this.setState({
         volume: volume,
       });
-      this.players["basses"].forEach((index) => {
-        index.volume.value = volume;
-      });
-      this.players["drums"].forEach((index) => {
-        index.volume.value = volume;
-      });
-      this.players["sounds"].forEach((index) => {
-        index.volume.value = volume;
+
+      Object.keys(this.players).forEach((group) => {
+        this.players[group].forEach((_, soundIndex) => {
+          this.players[group][soundIndex].volume.value = volume;
+        });
       });
     }
   }
 
   clearSelections() {
+    const updatedPads = {};
+    const updatedQueue = {};
+
+    Object.keys(this.players).forEach((group) => {
+      updatedPads[group] = [];
+      this.players[group].forEach((soundIndex) => {
+        updatedPads[group][soundIndex] = 0;
+        updatedQueue[group] = [];
+      });
+    });
+
+    // update queue and se
     this.setState({
-      pads: {
-        basses: [0, 0, 0, 0, 0, 0],
-        drums: [0, 0, 0, 0, 0, 0],
-        sounds: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      },
+      pads: updatedPads,
       playing: false,
-      queue: {
-        basses: [],
-        drums: [],
-        sounds: [],
-      },
+      queue: updatedQueue,
       shareablePadNumbers: [],
       steps: 16,
       totalSoundsPlaying: 0,
