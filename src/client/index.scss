@@ -359,8 +359,18 @@ canvas {
   }
 }
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .pad:hover {
+    background: white;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+
+  .padWhiteVersion:hover {
+    background: white;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+
+  .whitePad.padWhiteVersion:hover {
     background: white;
     box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
   }
@@ -391,11 +401,6 @@ canvas {
   box-shadow: 0 0 27px 4px rgba(255, 255, 255, 0.2);
   // transition: background 10ms ease;
 
-  &:hover {
-    background: white;
-    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
-  }
-
   &.active {
     // background: lighten($dark, 15%);
     background: white;
@@ -410,10 +415,6 @@ canvas {
 }
 .whitePad.padWhiteVersion {
   background: rgba(217, 217, 217, 0.38);
-  &:hover {
-    background: white;
-    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
-  }
 
   &.active {
     // background: lighten($dark, 15%);
@@ -833,6 +834,12 @@ footer {
   -ms-overflow-style: none;
   width: 60%;
 }
+
+.volumeMeter > canvas {
+  height: 50vw;
+  width: 100vw;
+}
+
 .scrollBar::-webkit-scrollbar {
   width: 0px;
   height: 0px;
@@ -859,12 +866,6 @@ footer {
 }
 .tutorialPad.on {
   opacity: 1;
-}
-
-@media only screen and (max-width: 1280px) {
-  .bodyWrapper {
-    padding-top: 70px;
-  }
 }
 
 @media only screen and (max-width: 700px) {

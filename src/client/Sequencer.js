@@ -365,8 +365,6 @@ class Sequencer extends Component {
           );
 
           pads[group].push(0);
-
-          console.log(this.players[group]);
         });
       });
 
@@ -983,8 +981,6 @@ class Sequencer extends Component {
                       ? remappedCoordinates[2]
                       : "";
 
-                    console.log(group);
-                    console.log(soundIndex);
                     const on =
                       this.players[group][soundIndex].state === "started";
 

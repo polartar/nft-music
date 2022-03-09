@@ -677,10 +677,6 @@ class Sequencer extends Component {
 
         let numPads = this.state.totalSoundsPlaying;
 
-        console.log(group);
-        console.log(pad);
-        console.log(padState);
-
         // If pad was previously off, we're turning it on
         if (padState == 0) {
           numPads += 1;
