@@ -204,7 +204,6 @@ class Sequencer extends Component {
     this.cablesCanvas = createRef();
     this.canvas = createRef();
 
-    this.initWallet();
     this.myRef = React.createRef();
     this.clearSelections = this.clearSelections.bind(this);
     this.activePlayers = {
@@ -214,52 +213,19 @@ class Sequencer extends Component {
     };
   }
 
-  initWallet = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-    const accounts = await provider.listAccounts();
-
-    window.ethereum.on("accountsChanged", function(accounts) {
-      location.reload();
-    });
-
-    window.ethereum.on("chainChanged", (chainId) => {
-      location.reload();
-    });
-
-    if (accounts.length > 0) {
-      const address = await provider.getSigner(0).getAddress();
-
-      this.setState({
-        isLoggedIntoMetamask: true,
-        provider,
-        address,
-        balance: await provider.getBalance(address),
-      });
-    }
-  };
-
-  connectWallet = async () => {
-    await window.ethereum.enable();
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const address = await provider.getSigner(0).getAddress();
-
-    this.setState({
-      isLoggedIntoMetamask: true,
-      provider,
-      address,
-    });
-  };
-
   fetchNFT = async () => {
     let nftResponse;
     if (this.props.match) {
       nftResponse = await axios.get("/api/getNFT", {
         params: this.props.match.params,
+        xsrfCookieName: null,
+        withCredentials: false,
       });
     } else {
-      nftResponse = await axios.get("/api/getFeaturedNFT");
+      nftResponse = await axios.get("/api/getFeaturedNFT", {
+        xsrfCookieName: null,
+        withCredentials: false,
+      });
     }
 
     this.setState({
