@@ -269,8 +269,8 @@ input[type="range"] {
   // left: 185px;
   position: absolute;
   left: 50vw;
-  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.73);
-  transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.73);
+  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.9);
+  transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.9);
   margin-top: 210px;
   z-index: 1200;
 }
@@ -366,8 +366,18 @@ canvas {
   }
 }
 
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .pad:hover {
+    background: white;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+
+  .padWhiteVersion:hover {
+    background: white;
+    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
+  }
+
+  .whitePad.padWhiteVersion:hover {
     background: white;
     box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
   }
@@ -398,11 +408,6 @@ canvas {
   box-shadow: 0 0 27px 4px rgba(255, 255, 255, 0.2);
   // transition: background 10ms ease;
 
-  &:hover {
-    background: white;
-    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
-  }
-
   &.active {
     // background: lighten($dark, 15%);
     background: white;
@@ -417,10 +422,6 @@ canvas {
 }
 .whitePad.padWhiteVersion {
   background: rgba(217, 217, 217, 0.38);
-  &:hover {
-    background: white;
-    box-shadow: 0 0 30px 4px rgba(255, 255, 255, 0.2);
-  }
 
   &.active {
     // background: lighten($dark, 15%);
@@ -837,11 +838,20 @@ footer {
   transform-origin: 50% 50%;
   position: relative;
   left: 135px;
-  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.88);
-  transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.88);
-  margin-top: 194px;
+  margin-top: 250px;
   z-index: 1200;
 }
+
+.gridOuter.tile36 {
+  font-size: 0;
+  -webkit-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+  position: relative;
+  left: 190px;
+  margin-top: 300px;
+  z-index: 1200;
+}
+
 .albumPic {
   height: 145px;
   width: 145px;
@@ -976,6 +986,12 @@ footer {
   -ms-overflow-style: none;
   width: 60%;
 }
+
+.volumeMeter > canvas {
+  height: 30vw;
+  width: 100vw;
+}
+
 .scrollBar::-webkit-scrollbar {
   width: 0px;
   height: 0px;
@@ -1002,12 +1018,6 @@ footer {
 }
 .tutorialPad.on {
   opacity: 1;
-}
-
-@media only screen and (max-width: 1280px) {
-  .bodyWrapper {
-    padding-top: 70px;
-  }
 }
 
 @media only screen and (max-width: 700px) {
@@ -1089,13 +1099,7 @@ footer {
     font-size: 16px;
     line-height: 20px;
   }
-  .gridOuter.tile25,
-  .gridOuter {
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg)
-      scale(0.6);
-    transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.7);
-    margin-top: 150px;
-  }
+
   .currentBid.tile25 {
     font-size: 14px;
     margin-top: -120px;
