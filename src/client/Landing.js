@@ -36,6 +36,13 @@ import { createTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import StopCircleIcon from "@mui/icons-material/StopCircle";
 import ReactFullpage from "@fullpage/react-fullpage";
+import anime from 'animejs/lib/anime.es.js';
+import Lily from "./components/Lily";
+import Chrysanthemum from "./components/Chrysanthemum";
+import Hyacinth from "./components/Hyacinth";
+import Carnation from "./components/Carnation";
+import QuakingGrass from "./components/QuakingGrass";
+import ScrollTrigger from 'react-scroll-trigger';
 
 const sixBySixThreeGroups = [
   [
@@ -287,6 +294,101 @@ class Sequencer extends Component {
     });
   };
 
+  handleAnimations = () => {
+      anime({
+        targets: '.lily path',
+        easing: 'easeInOutSine',
+        duration: 1200,
+        skewX: function() {
+          return anime.random(0.5, 1);
+        },
+        skewY: function() {
+          return anime.random(-0.25, -0.75);
+        },
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+      anime({
+        targets: '.quaking-grass path',
+        easing: 'easeInOutSine',
+        duration: 1200,
+        skewX: 0.8,
+        skewY: -0.75,
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+      anime({
+        targets: '.carnation path',
+        easing: 'easeInOutSine',
+        duration: 1300,
+        skewX: 0.7,
+        skewY: -0.6,
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+      anime({
+        targets: '#video-player-section .hyacinth path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: 0.6,
+        skewY: -0.5,
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+
+      anime({
+        targets: '.chrysanthemum path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: -1,
+        skewY: 1,
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+
+      // anime({
+      //   targets: ['.lily', '.quaking-grass', '.carnation', '.hyacinth', '.chrysanthemum'],
+      //   easing: 'easeInOutSine',
+      //   duration: 3000,
+      //   scale: 1,
+      //   delay: 0,
+      // });
+
+      anime({
+        targets: ['.lily', '.quaking-grass', '.carnation', '#video-player-section .hyacinth', '.chrysanthemum'],
+        easing: 'easeInOutSine',
+        duration: 500,
+        opacity:1,
+        delay: 0,
+      });
+
+      anime({
+        targets: ['.video-container', '.beatPackTitle', '.artistName', '.gridOuter'],
+        easing: 'easeInOutSine',
+        duration: 750,
+        opacity:1,
+        delay: 1000,
+      });
+
+      anime({
+        targets: ['.play-controls', '.learnMore'],
+        easing: 'easeInOutSine',
+        duration: 750,
+        opacity:1,
+        delay: 2000,
+      });
+  }
+
   fetchNFT = async () => {
     let nftResponse;
     if (this.props.match) {
@@ -449,7 +551,7 @@ class Sequencer extends Component {
       Tone.loaded().then(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const sharedPadNumbers = urlParams.get("share");
-
+        let _this = this;
         this.setState(
           () => ({
             loaded: true,
@@ -477,9 +579,13 @@ class Sequencer extends Component {
               const soundIndex = remappedCoordinates[1];
               this.togglePad(group, soundIndex);
             });
+
+            _this.handleAnimations()
           }
         );
       });
+
+
     }
   };
 
@@ -503,6 +609,7 @@ class Sequencer extends Component {
     script.async = true;
 
     document.body.appendChild(script);
+
   }
 
   handleClickOpen = async () => {
@@ -825,6 +932,54 @@ class Sequencer extends Component {
     );
   }
 
+  handleFPOnLeave(origin, destination, direction) {
+    if (origin.index == 0) {
+      anime.remove(['.lily path', '.quaking-grass path', '.carnation path', '#video-player-section .hyacinth path', '.chrysanthemum path'])
+    }
+
+    if (destination.index == 1) {
+      anime({
+        targets: '#hyacinth-2',
+        easing: 'easeInOutSine',
+        delay: 0,
+        duration: 750,
+        opacity: [0, 1],
+        translateX: 25,
+        rotate:[35, 35]
+      });
+
+      anime({
+        targets: '#hyacinth-3',
+        easing: 'easeInOutSine',
+        delay: 250,
+        duration: 750,
+        opacity: [0, 1],
+        translateX: -50,
+        rotate:[-30, -30]
+      });
+
+      anime({
+        targets: ['#main-flower', ".packTitle"],
+        easing: 'easeInOutSine',
+        delay: 500,
+        duration: 750,
+        opacity: [0, 1],
+      });
+
+      anime({
+        targets: [".details"],
+        easing: 'easeInOutSine',
+        delay: 625,
+        duration: 750,
+        opacity: [0, 1],
+      });
+    }
+  }
+
+  onEnterViewport() {
+
+}
+
   render() {
     const {
       pads,
@@ -875,6 +1030,7 @@ class Sequencer extends Component {
         .toLowerCase();
 
       return (
+
         <ReactFullpage
           //fullpage options
           licenseKey={"E225A90B-BB824945-9CBDA8D4-C1409B9E"}
@@ -882,13 +1038,15 @@ class Sequencer extends Component {
           scrollBar={false}
           fixedElements=".bottomNav"
           pluginWrapper={pluginWrapper}
-          fadingEffect={true}
+          fadingEffect={false}
+          onLeave={(origin, destination, direction) => this.handleFPOnLeave(origin, destination, direction)}
           fadingEffectKey={
             "c2VjcmV0Z2FyZGVuLmZtXzM2R1ptRmthVzVuUldabVpXTjAxMVc="
           }
           render={({ state, fullpageApi }) => {
             return (
               <ReactFullpage.Wrapper>
+
                 {/* <BidModal
             nft={nft}
             open={this.state.openBidModal}
@@ -896,8 +1054,15 @@ class Sequencer extends Component {
             didCompleteBid={this.fetchNFT}
             currentBidAmount={currentBidAmount}
           /> */}
-                <div className="section">
+                <div className="section" id="video-player-section">
                   <div className="container">
+                    <Lily/>
+                    <Carnation/>
+                    <Chrysanthemum/>
+                    <Hyacinth/>
+                    <QuakingGrass/>
+
+
                     {mediaFileExtension === "mp4" && (
                       <div className="video-container">
                         <video
@@ -1003,7 +1168,7 @@ class Sequencer extends Component {
                           {tutorialStep === 0 && (
                             <React.Fragment>
                               <div className="currentBid tile25 tutorialStep">
-                                Welcome to the Secret Garden.
+                                The Secret Garden.
                               </div>
                               <div className="tutorialInfo">
                                 To begin, press one of the highlighted squares
@@ -1057,7 +1222,7 @@ class Sequencer extends Component {
                 )} */}
                       {(tutorialStep === 3 || !showTutorial) && (
                         <React.Fragment>
-                          <div className="learnMore">
+                          <div className="learnMore" id="learnMore" style={{opacity:0}}>
                             <div className="ethAmount">Learn More</div>
                             <IconButton
                               className="expandOuter"
@@ -1070,6 +1235,7 @@ class Sequencer extends Component {
                       )}
 
                       <div
+                        className="play-controls"
                         style={{
                           display: "flex",
                           justifyContent: "space-around",
@@ -1094,12 +1260,24 @@ class Sequencer extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="section">
+
+                <div className="section" id="content-section-1">
                   <div className="container2" ref={this.myRef}>
-                    <div className="albumWrapper">
+
+                    <Hyacinth id="hyacinth-2"/>
+                    <Hyacinth id="hyacinth-3"/>
+
+
+
+                    <div style={{display:"flex", justifyContent: "center", alignItems:"center", maxWidth: "500px"}}>
+                    <Hyacinth id="main-flower"/>
+                    <div className="albumWrapper" style={{alignSelf: "center"}}>
                       <div>
+                      <div style={{fontFamily:"Bentham", fontSize:"17px", color:"gray", textAlign: "left", color:"#FCFCE8"}}>
+                      WELCOME TO
+                      </div>
                         <div className="packTitle">
-                          WELCOME TO THE SECRET GARDEN
+                          THE SECRET GARDEN
                         </div>
                         <div className="details">
                           We believe that Web3 can fundamentally unlock value
@@ -1115,8 +1293,13 @@ class Sequencer extends Component {
                         </IconButton>
                       </div>
                     </div>
+
+                    </div>
+
+
                   </div>
                 </div>
+
                 <div className="section">
                   <div className="container2" ref={this.myRef}>
                     <div className="albumWrapper">
@@ -1305,14 +1488,14 @@ class Sequencer extends Component {
                   showShare={true}
                   loggedIntoMetamaskOverride={isLoggedIntoMetamask}
                 />
-              </ReactFullpage.Wrapper>
-            );
-          }}
-        />
-      );
-    }
+                </ReactFullpage.Wrapper>
+       );
+     }}
+   />
+ );
+}
 
-    return <Loading />;
+return <Loading />;
   }
 }
 
