@@ -171,6 +171,7 @@ input[type="number"] {
 .stopBtnWrapper {
   position: absolute;
   bottom: 0px;
+  left: 20px;
 }
 
 .volumeContainer {
@@ -180,7 +181,7 @@ input[type="number"] {
 .volumeWrapper {
   position: absolute;
   bottom: 75px;
-  left: 12px;
+  left: 33px;
   // width: 20%;
   height: 250px;
 }
@@ -912,6 +913,7 @@ footer {
   .volumeWrapper {
     position: absolute;
     // width: 20%;
+    left: 13px;
   }
 
   .volumeMeter {

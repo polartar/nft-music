@@ -1052,18 +1052,25 @@ class Sequencer extends Component {
                       <div
                         style={{
                           display: "flex",
-                          flexDirection: "column",
+                          // flexDirection: "column",
                           justifyContent: "space-around",
                           position: "absolute",
                           bottom: "60px",
                           width: "100vw"
                         }}
                       >
-                        <div className="stopBtnContainer">
-                          {this.stopButton()}
-                        </div>
-                        <div className="volumeContainer">
-                          {this.volumeControl()}
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column"
+                          }}
+                        >
+                          <div className="stopBtnContainer">
+                            {this.stopButton()}
+                          </div>
+                          <div className="volumeContainer">
+                            {this.volumeControl()}
+                          </div>
                         </div>
                         <div className="volumeMeter">
                           <canvas
