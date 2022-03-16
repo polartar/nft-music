@@ -171,16 +171,19 @@ input[type="number"] {
 .stopBtnWrapper {
   position: absolute;
   bottom: 0px;
+  left: 20px;
 }
 
 .volumeContainer {
-  width: 20%;
+  // width: 20%;
 }
 
 .volumeWrapper {
   position: absolute;
-  bottom: 5px;
-  width: 20%;
+  bottom: 75px;
+  left: 33px;
+  // width: 20%;
+  height: 250px;
 }
 
 input[type="range"] {
@@ -892,7 +895,7 @@ footer {
     box-sizing: border-box;
   }
   .volumeWrapper {
-    bottom: -10px;
+    // bottom: -10px;
   }
 }
 
@@ -909,7 +912,8 @@ footer {
 
   .volumeWrapper {
     position: absolute;
-    width: 20%;
+    // width: 20%;
+    left: 13px;
   }
 
   .volumeMeter {

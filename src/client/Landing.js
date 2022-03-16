@@ -839,7 +839,7 @@ class Sequencer extends Component {
 
     Object.keys(this.players).forEach((group) => {
       updatedPads[group] = [];
-      this.players[group].forEach((soundIndex) => {
+      this.players[group].forEach((_, soundIndex) => {
         updatedPads[group][soundIndex] = 0;
         updatedQueue[group] = [];
       });
@@ -851,7 +851,6 @@ class Sequencer extends Component {
       playing: false,
       queue: updatedQueue,
       shareablePadNumbers: [],
-      steps: 16,
       totalSoundsPlaying: 0,
     });
     for (const group in this.activePlayers) {
@@ -879,6 +878,7 @@ class Sequencer extends Component {
       <div className="volumeWrapper">
         <ThemeProvider theme={this.muiTheme}>
           <Slider
+            orientation="vertical"
             min={-50}
             max={0}
             defaultValue={this.state.volume}
@@ -1121,6 +1121,7 @@ class Sequencer extends Component {
                       <div
                         style={{
                           display: "flex",
+                          // flexDirection: "column",
                           justifyContent: "space-around",
                           position: "absolute",
                           bottom: "60px",
