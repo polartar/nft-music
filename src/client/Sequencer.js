@@ -34,6 +34,7 @@ import Countdown from "react-countdown";
 import clone from "clone";
 import Loading from "./components/Loading";
 import Cookies from "universal-cookie";
+import { formatEther } from "@ethersproject/units";
 
 let ctx, x_end, y_end, bar_height;
 
@@ -141,6 +142,33 @@ class Sequencer extends Component {
       provider,
       address,
     });
+  };
+
+  exportRecording = async (blob) => {
+    try {
+      const form = new FormData();
+
+      form.append("video", blob);
+      form.append("artistName", this.props.match.params.artistName);
+      form.append("nftName", this.props.match.params.nftName);
+      form.append("edition", this.props.match.params.edition);
+
+      const response = await axios.post("/api/exportRecording", form);
+
+      console.log(response);
+
+      const url = URL.createObjectURL(
+        new Blob(response.data, { type: "video/mp4" })
+      );
+      const anchor = document.createElement("a");
+      anchor.download = "recording.mp4";
+      anchor.href = url;
+      anchor.click();
+
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   fetchNFT = async () => {
@@ -319,12 +347,7 @@ class Sequencer extends Component {
           if (this.state.shouldStopRecording) {
             // the recorded audio is returned as a blob
             const recording = await this.recorder.stop();
-            // download the recording by creating an anchor element and blob url
-            const url = URL.createObjectURL(recording);
-            const anchor = document.createElement("a");
-            anchor.download = "recording.webm";
-            anchor.href = url;
-            anchor.click();
+            this.exportRecording(recording);
 
             this.setState({
               shouldStopRecording: false,

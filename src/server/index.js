@@ -93,6 +93,16 @@ app.post("/api/upload", upload.single("video"), async (req, res) => {
   console.log(req.file);
 });
 
+app.post("/api/exportRecording", upload.single("video"), async (req, res) => {
+  await uploadController.exportRecording(
+    res,
+    req.file,
+    req.body.artistName,
+    req.body.nftName,
+    req.body.edition
+  );
+});
+
 app.get("/api/getAllNFTs", async (req, res) => {
   const { status, response } = await nftController.getAllNFTs();
 
