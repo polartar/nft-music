@@ -82,6 +82,8 @@ class Sequencer extends Component {
     volume: 0,
     padRecording: [],
     isRecording: false,
+    shouldStartRecording: false,
+    shouldStopRecording: false,
     timer: 0,
   };
 
@@ -218,7 +220,7 @@ class Sequencer extends Component {
       }
 
       Tone.Transport.bpm.value = nftResponse.data.bpm;
-      Tone.Transport.scheduleRepeat((time) => {
+      Tone.Transport.scheduleRepeat(async (time) => {
         if (this.state.step % subSteps === 0) {
           const updatedPads = {};
           const updatedQueue = {};
@@ -302,6 +304,33 @@ class Sequencer extends Component {
             showTutorial: updatedShowTutorial,
             tutorialStep: updatedTutorialStep,
           });
+        }
+
+        if (this.state.step === 0) {
+          if (this.state.shouldStartRecording) {
+            this.recorder.start();
+
+            this.setState({
+              shouldStartRecording: false,
+              isRecording: true,
+            });
+          }
+
+          if (this.state.shouldStopRecording) {
+            // the recorded audio is returned as a blob
+            const recording = await this.recorder.stop();
+            // download the recording by creating an anchor element and blob url
+            const url = URL.createObjectURL(recording);
+            const anchor = document.createElement("a");
+            anchor.download = "recording.webm";
+            anchor.href = url;
+            anchor.click();
+
+            this.setState({
+              shouldStopRecording: false,
+              isRecording: false,
+            });
+          }
         }
 
         this.setState((state) => ({
@@ -621,10 +650,10 @@ class Sequencer extends Component {
 
   // recording work
   startRecording() {
-    console.log("asdasdasd");
     this.setState({
-      isRecording: true,
+      shouldStartRecording: true,
     });
+
     let milliseconds = 0;
 
     const incrementMilliseconds = () => {
@@ -634,26 +663,14 @@ class Sequencer extends Component {
     };
 
     window.timer = setInterval(incrementMilliseconds, 10);
-
-    this.recorder.start();
   }
 
   async stopRecording() {
-    console.log("stopped recording");
     clearInterval(window.timer);
     this.setState({
-      isRecording: false,
+      shouldStopRecording: true,
       timer: 0,
     });
-
-    // the recorded audio is returned as a blob
-    const recording = await this.recorder.stop();
-    // download the recording by creating an anchor element and blob url
-    const url = URL.createObjectURL(recording);
-    const anchor = document.createElement("a");
-    anchor.download = "recording.webm";
-    anchor.href = url;
-    anchor.click();
   }
 
   muiTheme = createTheme({
