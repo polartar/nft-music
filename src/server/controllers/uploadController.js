@@ -78,30 +78,30 @@ async function exportRecording(response, recording, artistName, name, edition) {
 
     ffmpeg()
       .addInput(nft.imageURL)
+      .inputOption("-stream_loop -1")
       .addInput(stream)
       .outputOptions(
-        "-c",
-        "copy",
+        "-crf",
+        "28",
         "-map",
         "0:v:0",
         "-map",
         "1:a:0",
         "-shortest",
-        "-vcodec",
-        "libx265",
-        "-crf",
-        "28"
+        "-fflags",
+        "shortest",
+        "-max_interleave_delta",
+        "100M"
       )
-      .format("mp4")
       .saveToFile(`${uuid}.mp4`)
       .on("end", () => {
         response.download(`./${uuid}.mp4`, "my recording.mp4", function(err) {
           if (err) {
             console.log(err); // Check error if you want
           }
-          // fs.unlink(`./${uuid}.mp4`, function() {
-          //   console.log("File was deleted"); // Callback
-          // });
+          fs.unlink(`./${uuid}.mp4`, function() {
+            console.log("File was deleted"); // Callback
+          });
         });
       });
   } catch (error) {
