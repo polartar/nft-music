@@ -227,8 +227,11 @@ class Sequencer extends Component {
     tutorialStep: 0,
     volume: 0,
     padRecording: [],
+    shouldStartRecording: false,
+    shouldStopRecording: false,
     isRecording: false,
-    timer: 0
+    timer: 0,
+    recordingStatus: ""
   };
 
   constructor(props) {
@@ -514,6 +517,73 @@ class Sequencer extends Component {
     document.body.appendChild(script);
   }
 
+  setIsRecordingTrue = () => {
+    this.setState({
+      isRecording: true
+    });
+  };
+
+  componentDidUpdate(previousProps, previousState) {
+    if (
+      previousState.shouldStartRecording !== this.state.shouldStartRecording &&
+      this.state.shouldStartRecording
+    ) {
+      if (!this.state.playing) {
+        this.setState({
+          isRecording: true,
+          recordingStatus: "Recording..."
+        });
+      } else {
+        this.setState({
+          recordingStatus: "Waiting for next loop to start..."
+        });
+      }
+    }
+
+    if (
+      previousState.step !== this.state.step &&
+      this.state.step === 0 &&
+      this.state.shouldStartRecording
+    ) {
+      this.setState({
+        isRecording: true,
+        shouldStartRecording: false,
+        recordingStatus: "Recording..."
+      });
+    }
+
+    if (
+      previousState.shouldStopRecording !== this.state.shouldStopRecording &&
+      this.state.shouldStopRecording
+    ) {
+      this.setState({
+        recordingStatus: "Waiting for loop to stop..."
+      });
+    }
+
+    if (
+      previousState.step !== this.state.step &&
+      this.state.shouldStopRecording &&
+      this.state.step === 0
+    ) {
+      this.setState({
+        isRecording: false,
+        recordingStatus: "Exporting..."
+      });
+    }
+
+    if (
+      previousState.isRecording !== this.state.isRecording &&
+      !this.state.isRecording &&
+      !this.state.shouldStartRecording
+    ) {
+      this.setState({
+        shouldStopRecording: false
+        // recordingStatus: ""
+      });
+    }
+  }
+
   handleClickOpen = async () => {
     try {
       if (!this.state.isLoggedIntoMetamask) {
@@ -770,7 +840,8 @@ class Sequencer extends Component {
   startRecording() {
     console.log("asdasdasd");
     this.setState({
-      isRecording: true
+      shouldStartRecording: true
+      // isRecording: true
     });
     let milliseconds = 0;
 
@@ -788,10 +859,19 @@ class Sequencer extends Component {
   async stopRecording() {
     console.log("stopped recording");
     clearInterval(window.timer);
-    this.setState({
-      isRecording: false,
-      timer: 0
-    });
+
+    if (!this.state.shouldStopRecording && !this.state.playing) {
+      this.setState({
+        shouldStartRecording: false,
+        isRecording: false,
+        recordingStatus: ""
+      });
+    } else {
+      this.setState({
+        shouldStopRecording: true,
+        timer: 0
+      });
+    }
 
     // the recorded audio is returned as a blob
     const recording = await this.recorder.stop();
@@ -1122,27 +1202,55 @@ class Sequencer extends Component {
                         style={{
                           display: "flex",
                           // flexDirection: "column",
-                          justifyContent: "space-around",
+                          justifyContent: "space-between",
+                          marginLeft: "20px",
                           position: "absolute",
                           bottom: "60px",
                           width: "100vw"
                         }}
                       >
-                        <div className="stopBtnContainer">
-                          {this.stopButton()}
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between"
+                          }}
+                        >
+                          <div className="volumeContainer">
+                            {this.volumeControl()}
+                          </div>
+                          <div className="stopBtnContainer">
+                            {this.stopButton()}
+                          </div>
                         </div>
-                        <div className="volumeContainer">
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "flex-start",
+                            alignItems: "flex-end",
+                            marginLeft: "10px",
+                            marginRight: "10px",
+                            width: "100%"
+                          }}
+                        >
                           <button
+                            className={
+                              this.state.shouldStartRecording ||
+                              this.state.isRecording
+                                ? "button blink whitePad padWhiteVersion"
+                                : "button"
+                            }
                             style={{
-                              // position: "absolute",
-                              // bottom: "100px",
                               height: "40px",
                               width: "125px",
                               border: "none",
                               borderRadius: "5px",
-                              bottom: "-333px"
+                              margin: "5px"
+                              // position: "absolute",
+                              // bottom: "3px",
+                              // left: "100px"
                             }}
-                            class="button"
                             onClick={() => {
                               if (this.state.isRecording) {
                                 this.stopRecording();
@@ -1152,10 +1260,22 @@ class Sequencer extends Component {
                             }}
                           >
                             {this.state.isRecording
-                              ? "Stop Recording"
+                              ? this.state.shouldStopRecording
+                                ? "Stopping"
+                                : "Stop Recording"
                               : "Record"}
                           </button>
-                          {this.volumeControl()}
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              height: "40px",
+                              margin: "5px",
+                              color: "white"
+                            }}
+                          >
+                            {this.state.recordingStatus}
+                          </div>
                         </div>
                         <div className="volumeMeter">
                           <canvas
