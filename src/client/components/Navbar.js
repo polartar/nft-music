@@ -109,7 +109,7 @@ export default function Navbar(props) {
               />
               */}
               <p className="wordLogo">
-                SecretGarden
+                Secret Garden
               </p>
             </a>
             {/* <div className={white ? "timer white" : "timer"}>

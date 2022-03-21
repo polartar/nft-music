@@ -15,7 +15,7 @@
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@fullpage/react-fullpage": "^0.1.19",
+    "@fullpage/react-fullpage": "=0.1.19",
     "@material-ui/core": "^4.11.3",
     "@mui/icons-material": "^5.3.1",
     "@mui/material": "^5.3.1",
@@ -47,7 +47,6 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "2.1.1",
     "react-scroll-trigger": "^0.6.13",
-    "react-scrollmagic": "^2.3.0",
     "react-share": "^4.4.0",
     "react-snap-scroll": "0.0.5",
     "react-top-loading-bar": "^2.0.1",

@@ -1,7 +1,7 @@
 import * as React from "react"
 
 const SvgComponent = (props) => (
-  <div className="carnation">
+  <div className="carnation" {...props}>
 
   <div className="svg-container">
 
@@ -11,7 +11,7 @@ const SvgComponent = (props) => (
     viewBox="0 0 720 1167"
     xmlns="http://www.w3.org/2000/svg"
     preserveAspectRatio="xMidYMid meet"
-    {...props}
+
   >
   <path
     fill="#353535"
