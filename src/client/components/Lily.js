@@ -1,7 +1,7 @@
 import * as React from "react"
 
 const SvgComponent = (props) => (
-  <div className="lily" {...props}>
+  <div {...props}>
   <div className="svg-container">
   <svg
     viewBox="0 0 614 1084"

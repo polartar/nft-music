@@ -51,12 +51,15 @@ $easing: cubic-bezier(.694, 0, .335, 1);
     overflow: hidden;
     background-color: #1f1f1f;
 
-    .section {
+    .vslide {
         @extend %abs;
         overflow: visible;
         will-change: transform;
         background-color: #1f1f1f;
 
+        .section-intro-text, .details, .packTitle {
+          opacity: 0
+        }
         &:not(.prev):not(.next):not(.activeSlide) {
             z-index: -1;
             transform: translate3d(0, 200%, 0);
@@ -106,6 +109,7 @@ $easing: cubic-bezier(.694, 0, .335, 1);
 
             &.transition {
               z-index: 5;
+              opacity: 0;
             }
 
         }
@@ -128,7 +132,7 @@ $easing: cubic-bezier(.694, 0, .335, 1);
   align-items: center;
   position: relative;
   height: 40vh;
-  overflow: visible;
+
   &:after {
       content: '';
       background-color: rgba(0, 0, 0, .25);
@@ -137,8 +141,6 @@ $easing: cubic-bezier(.694, 0, .335, 1);
 
 /* #FAQs SLIDESHOW - START */
 #faq-slides {
-    overflow: hidden;
-
     .slide {
       max-width: 800px;
       background-color: rgba(43,43,43,0.75);
@@ -786,6 +788,8 @@ canvas {
  }
 
 #chrysanthemum-2 {
+  transform: rotate(-30deg);
+
   path {
     fill: #252525
   }
@@ -796,6 +800,7 @@ canvas {
   right: -5%;
   left: auto;
   bottom: -30%;
+  transform: rotate(-30deg);
   path {
     fill: #FFF
   }
@@ -807,6 +812,8 @@ canvas {
   right: -5%;
   left: auto;
   bottom: -10%;
+  transform: rotate(-30deg);
+
   path {
     fill: #262626
   }
@@ -828,6 +835,7 @@ canvas {
 }
 
 .tulip {
+  opacity: 0;
   position: absolute;
   width: 30%;
   left: -1%;
@@ -835,17 +843,21 @@ canvas {
 }
 
 #leaf-1 {
+  opacity: 0;
   bottom: 0%;
   right: 10%;
   width: 50%;
+  transform: rotate(-10deg);
+
   @media only screen and (min-width: 1024px) {
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%) rotate(-10deg);
     right: 10%;
     width: 25%;
   }
 }
 #leaf-2 {
+  opacity: 0;
   top: 30%;
   transform: rotate(-5deg);
   right: -30%;
@@ -864,6 +876,7 @@ canvas {
 }
 
 #leaf-3 {
+  opacity: 0;
   top: 50%;
   transform: translateY(-50%) rotate(90deg);
   left: -10%;
@@ -874,15 +887,14 @@ canvas {
 }
 
 
-#content-section-1 {
-  z-index: -1;
+
  #main-flower {
+   opacity: 0;
    position: absolute;
    bottom: -10%;
    width: 80%;
    left: 0%;
-   // opacity: 0;
-   // opacity: 0;
+
    path {
      fill: #FFF
    }
@@ -897,11 +909,13 @@ canvas {
    }
  }
     #hyacinth-2 {
+      opacity: 0;
       position: absolute;
       width: 50%;
       top: -5%;
       left: -10%;
       opacity: 0;
+      transform: rotate(45deg);
       // filter: blur(2px);
       path {
         fill: #2A2A2B
@@ -909,28 +923,29 @@ canvas {
     }
 
     #hyacinth-3 {
+      opacity: 0;
       position: absolute;
       width: 40%;
       top: 10%;
       right: -10%;
-      opacity: 0;
-      // filter: blur(6px);
+      transform: rotate(-30deg);
+
       path {
         fill: #262626
       }
     }
 
 
-}
+
 
 #hyacinth-4 {
+  opacity: 0;
   position: absolute;
   width: 45%;
   bottom: -70%;
   left: -20%;
-  opacity: 0;
   transform: rotate(200deg);
-  // filter: blur(6px);
+
   path {
     fill: #262626
   }
@@ -943,13 +958,13 @@ canvas {
   top: 20%;
   opacity: 0;
   transform: rotate(130deg);
-  // filter: blur(6px);
+
   path {
     fill: #2A2A2A
   }
 }
 
-.section[data-index="3"] {
+.section[data-slideindex="3"] {
   .content-container {
     display: flex;
     align-items: center;

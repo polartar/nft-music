@@ -1,7 +1,7 @@
 import * as React from "react"
 
 const SvgComponent = (props) => (
-  <div className="quaking-grass">
+  <div {...props} >
   <div className="svg-container">
 
   <svg
@@ -10,7 +10,7 @@ const SvgComponent = (props) => (
     viewBox="0 0 491 812"
     xmlns="http://www.w3.org/2000/svg"
     preserveAspectRatio="xMidYMid meet"
-    {...props}
+
   >
     <path
       d="M240.746 796.102c-.675-.192-1.968-.329-3.602-.329-2.8 0-7.4-.7-10.3-1.6-4.4-1.3-5.2-1.8-4.9-3.7.3-2 1.1-2.3 7.6-2.8 4-.4 7.9-.9 8.6-1.2 1.7-.7 2.6 1.3 2.6 5.6 0 1.39-.073 3.107.002 4.029ZM420.044 647.573c-.019-2.573-2.6-.9-6.9-1.2-20.1-1.5-29.1-4.1-28.7-8.1.1-1.1 1.2-5.6 2.4-10.1l2.1-8.1 5 1.9c2.8 1 9.1 2.1 14.3 2.5 7.3.5 9.5 1 10.1 2.2.3.9.8 5.4 1.1 10.1 0 0 .655 5.173.6 8.5v2.3Z"

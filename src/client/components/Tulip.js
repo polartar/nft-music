@@ -1,7 +1,7 @@
 import * as React from "react"
 
 const SvgComponent = (props) => (
-  <div className="tulip" {...props}>
+  <div {...props}>
   <div className="svg-container">
 
   <svg

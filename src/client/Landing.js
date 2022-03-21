@@ -36,8 +36,8 @@ import Slider from "@material-ui/core/Slider";
 import { createTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import StopCircleIcon from "@mui/icons-material/StopCircle";
-import ReactFullpage from "@fullpage/react-fullpage";
 import anime from 'animejs/lib/anime.es.js';
+
 import Lily from "./components/Lily";
 import Chrysanthemum from "./components/Chrysanthemum";
 import Hyacinth from "./components/Hyacinth";
@@ -45,8 +45,6 @@ import Carnation from "./components/Carnation";
 import QuakingGrass from "./components/QuakingGrass";
 import MonsteraLeaf from "./components/MonsteraLeaf";
 import Tulip from "./components/Tulip";
-
-import ScrollTrigger from 'react-scroll-trigger';
 
 const sixBySixThreeGroups = [
   [
@@ -207,11 +205,6 @@ nextYear.setFullYear(current.getFullYear() + 1);
 const didVisitSite = Boolean(cookies.get("didVisitSecretGarden"));
 cookies.set("didVisitSecretGarden", true, { path: "/", expires: nextYear });
 
-const pluginWrapper = () => {
-  require("./fullpage.fadingEffect.min");
-};
-
-
 class Sequencer extends Component {
   state = {
     type: "sine",
@@ -262,8 +255,10 @@ class Sequencer extends Component {
 
     this.mobileTouchStart = 0;
     this.idle = true;
-    this.activeIndex = 0;
+    this.activeFPIndex = 0;
     this.activeFAQSlideIndex = 0;
+
+    this.activeAnimations = {}
   }
 
   initWallet = async () => {
@@ -303,156 +298,6 @@ class Sequencer extends Component {
       address
     });
   };
-
-  touchStart = function (e) {
-    this.mobileTouchStart = parseInt(e.changedTouches[0].clientX)
-    window.scrollTop = 0;
-  }
-
-  touchMove = function (e) {
-    let idle = this.idle
-
-    let mobileTouchMove = parseInt(e.changedTouches[0].clientX);
-
-    console.log("TOUCH START IS " + this.mobileTouchStart + " TOUCH END IS " + mobileTouchMove)
-
-    const delta = mobileTouchMove - this.mobileTouchStart;
-    window.scrollTop = 0;
-    if (delta == 0) {
-      //user tapped, don't do anything
-      return
-    }
-    console.log("DELTA IS " + delta)
-    if (idle) {
-
-        const direction = delta > 0 ? 'next' : 'prev';
-        this.changeSlide(direction);
-    }
-  }
-
-
-  touchControl = () => {
-    let hero = document.querySelector('#main-wrapper')
-
-      hero.addEventListener('touchstart', this.touchStart.bind(this));
-      hero.addEventListener('touchend', this.touchMove.bind(this));
-  }
-
-  handleInitialAnimations = () => {
-    let el = document.querySelector("#main-wrapper")
-    el.addEventListener('wheel', e => {this.handleScroll(e)});
-    this.touchControl()
-      anime({
-        targets: ['.video-container', '.beatPackTitle', '.artistName', '.gridOuter'],
-        easing: 'easeInOutSine',
-        duration: 750,
-        opacity:1,
-        delay: 1000,
-      });
-
-      anime({
-        targets: ['.play-controls', '.learnMore'],
-        easing: 'easeInOutSine',
-        duration: 750,
-        opacity:1,
-        delay: 2000,
-      });
-
-      this.handleVideoPlayerBackgroundAnimations()
-  }
-
-  handleVideoPlayerBackgroundAnimations = () => {
-    anime({
-      targets: '#video-player-section .lily path',
-      easing: 'easeInOutSine',
-      duration: 1200,
-      skewX: function() {
-        return anime.random(0.5, 1);
-      },
-      skewY: function() {
-        return anime.random(-0.25, -0.75);
-      },
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-    anime({
-      targets: '.quaking-grass path',
-      easing: 'easeInOutSine',
-      duration: 1200,
-      skewX: 0.8,
-      skewY: -0.75,
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-    anime({
-      targets: '.carnation path',
-      easing: 'easeInOutSine',
-      duration: 1300,
-      skewX: 0.7,
-      skewY: -0.6,
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-    anime({
-      targets: '.hyacinth path',
-      easing: 'easeInOutSine',
-      duration: 1500,
-      skewX: 0.6,
-      skewY: -0.5,
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-
-    anime({
-      targets: '.chrysanthemum path',
-      easing: 'easeInOutSine',
-      duration: 1500,
-      skewX: -1,
-      skewY: 1,
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-    anime({
-      targets: '.tulip #petals',
-      easing: 'easeInOutSine',
-      duration: 1500,
-      skewX: -1,
-      skewY: 1,
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-    anime({
-      targets: '.monstera-leaf path',
-      easing: 'easeInOutSine',
-      duration: 1500,
-      skewX: -1,
-      skewY: 1,
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-    anime({
-      targets: ['#video-player-section .lily', '#video-player-section .quaking-grass', '#video-player-section .carnation', '#video-player-section .hyacinth', '#video-player-section .chrysanthemum'],
-      easing: 'easeInOutSine',
-      duration: 500,
-      opacity:1,
-      delay: 0,
-    });
-
-  }
 
   fetchNFT = async () => {
     let nftResponse;
@@ -646,6 +491,7 @@ class Sequencer extends Component {
             });
 
             _this.handleInitialAnimations()
+            _this.setupSwayingAnimations()
           }
         );
       });
@@ -994,45 +840,281 @@ class Sequencer extends Component {
     );
   }
 
-  // componentDidUpdate(prevProps, prevState, snapshot) {
-  //   if (prevState.activeIndex !== this.activeIndex) {
-  //     //handle FP Slide change
-  //     if (prevprevState.activeIndex == 1 && this.activeIndex == 0) {
-  //
-  //     }
-  //   }
-  // }
 
+    touchStart = function (e) {
+      this.mobileTouchStart = parseInt(e.changedTouches[0].clientX)
+      window.scrollTop = 0;
+    }
 
-  onEnterViewport() {
-    if (this.activeIndex == 0) {
-      // this.handleVideoPlayerBackgroundAnimations()
-    } else if (this.activeIndex == 1) {
-      let hero = document.querySelector('#main-wrapper')
-      if (hero.classList.contains("prev")) {
-        // scrolled into from slide 2, dont need to cancel slide 1 animatinos
-      } else {
-          // anime.remove('#video-player-section path')
+    touchMove = function (e) {
+      let idle = this.idle
+
+      let mobileTouchMove = parseInt(e.changedTouches[0].clientX);
+
+      const delta = mobileTouchMove - this.mobileTouchStart;
+      window.scrollTop = 0;
+      if (delta == 0) {
+        //user tapped, don't do anything
+        return
       }
 
+      if (idle) {
+          const direction = delta > 0 ? 'next' : 'prev';
+          this.handleScroll(direction);
+      }
+    }
+
+    handleInitialAnimations = () => {
+      let el = document.querySelector("#main-wrapper")
+      //scroll handling
+      el.addEventListener('wheel', e => {
+        e.preventDefault()
+        const direction = e.deltaY > 0 ? 'next' : 'prev';
+        this.handleScroll(direction)
+      });
+      //mobile touch controls
+      el.addEventListener('touchstart', this.touchStart.bind(this));
+      el.addEventListener('touchend', this.touchMove.bind(this));
+
+
+      anime({
+        targets: ['.video-container', '.beatPackTitle', '.artistName', '.gridOuter'],
+        easing: 'easeInOutSine',
+        duration: 750,
+        opacity:1,
+        delay: 1000,
+      });
+
+      anime({
+        targets: ['.play-controls', '.learnMore'],
+        easing: 'easeInOutSine',
+        duration: 750,
+        opacity:1,
+        delay: 2000,
+      });
+
+      anime({
+        targets: ['#video-player-section .lily', '#video-player-section .quaking-grass', '#video-player-section .carnation', '#video-player-section .hyacinth', '#video-player-section .chrysanthemum'],
+        easing: 'easeInOutSine',
+        duration: 500,
+        opacity:1,
+        delay: 0,
+      });
+
+    }
+
+    setupSwayingAnimations = () => {
+      this.activeAnimations.lily = anime({
+        targets: '[data-slideindex="0"] .lily path',
+        easing: 'easeInOutSine',
+        duration: 1200,
+        skewX: function() {
+          return anime.random(0.5, 1);
+        },
+        skewY: function() {
+          return anime.random(-0.25, -0.75);
+        },
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+      this.activeAnimations.quakingGrass = anime({
+        targets: '[data-slideindex="0"] .quaking-grass path',
+        easing: 'easeInOutSine',
+        duration: 1200,
+        skewX: 0.8,
+        skewY: -0.75,
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+      this.activeAnimations.firstCarnation = anime({
+        targets: '[data-slideindex="0"] .carnation path',
+        easing: 'easeInOutSine',
+        duration: 1300,
+        skewX: 0.7,
+        skewY: -0.6,
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+      this.activeAnimations.firstHyacinth = anime({
+        targets: '[data-slideindex="0"] .hyacinth path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: 0.6,
+        skewY: -0.5,
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+
+      this.activeAnimations.firstChrysantheum = anime({
+        targets: '[data-slideindex="0"] .chrysanthemum path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: -1,
+        skewY: 1,
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+      //second section
+      this.activeAnimations.secondSectionHyacinthes = anime({
+        targets: '[data-slideindex="1"] .hyacinth path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: 0.6,
+        skewY: -0.5,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+      //third section
+      this.activeAnimations.thirdSectionMonsteraLeaves = anime({
+        targets: '[data-slideindex="2"] .monstera-leaf path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: -1,
+        skewY: 1,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+      this.activeAnimations.thirdSectionHyacinthes = anime({
+        targets: '[data-slideindex="2"] .hyacinth path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: 0.6,
+        skewY: -0.5,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+      //fourth section
+      this.activeAnimations.firstTulip = anime({
+        targets: '.tulip #petals',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: -1,
+        skewY: 1,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+      this.activeAnimations.fourthSectionMonsteraLeaves = anime({
+        targets: '[data-slideindex="3"] .monstera-leaf path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: -1,
+        skewY: 1,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+      this.activeAnimations.fourthSectionCarnations = anime({
+        targets: '[data-slideindex="3"] .carnation path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: -1,
+        skewY: 1,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+      this.activeAnimations.fourthSectionChrysantheum = anime({
+        targets: '[data-slideindex="3"] .chrysanthemum path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: -1,
+        skewY: 1,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+    }
+
+  handleNewFPSlideAnimation() {
+    anime({
+      targets: ['.activeSlide .section-intro-text'],
+      easing: 'easeInOutSine',
+      delay: 0,
+      duration: 500,
+      opacity: 1,
+      translateY: [0, -10]
+    });
+
+    anime({
+      targets: ['.activeSlide .packTitle'],
+      easing: 'easeInOutSine',
+      delay: 100,
+      duration: 500,
+      opacity: 1,
+      translateY: [0, -10]
+    });
+
+    anime({
+      targets: [`.activeSlide .details`],
+      easing: 'easeInOutSine',
+      delay: 200,
+      duration: 500,
+      opacity: 1,
+      translateY: [0, -10]
+
+    });
+
+    if (this.activeFPIndex == 0) {
+      anime({
+        targets: ['#video-player-section .lily', '#video-player-section .quaking-grass', '#video-player-section .carnation', '#video-player-section .hyacinth'],
+        easing: 'easeInOutSine',
+        duration: 500,
+        opacity:1,
+        delay: 0,
+      });
+
+
+      this.activeAnimations.lily.play()
+      this.activeAnimations.quakingGrass.play()
+      this.activeAnimations.firstCarnation.play()
+      this.activeAnimations.firstHyacinth.play()
+      this.activeAnimations.firstChrysantheum.play()
+
+    } else if (this.activeFPIndex == 1) {
       anime({
         targets: '#hyacinth-2',
-        easing: 'easeInOutSine',
+        easing: 'easeOutQuad',
         delay: 0,
         duration: 500,
-        opacity: [0, 1],
-        translateX: 25,
+        opacity: 1,
         translateY: [0, -10],
         rotate:[45, 45]
       });
 
       anime({
         targets: '#hyacinth-3',
-        easing: 'easeInOutSine',
+        easing: 'easeOutQuad',
         delay: 50,
         duration: 500,
-        opacity: [0, 1],
-        translateX: -50,
+        opacity: 1,
         translateY: [0, -10],
         rotate:[-30, -30]
       });
@@ -1042,18 +1124,20 @@ class Sequencer extends Component {
         easing: 'easeOutQuad',
         delay: 100,
         duration: 500,
-        opacity: [0, 1],
+        opacity: 1,
         translateY: [0, -10]
       });
-    } else if (this.activeIndex == 2) {
+
+      this.activeAnimations.firstChrysantheum.play()
+      this.activeAnimations.secondSectionHyacinthes.play()
+    } else if (this.activeFPIndex == 2) {
 
         anime({
           targets: '#leaf-1',
           easing: 'easeInOutSine',
           delay: 100,
           duration: 500,
-          opacity: [0, 1],
-          // translateX: 25,
+          opacity: 1,
           translateY: ["-50%", "-51%"],
 
           rotate:[-10, -10]
@@ -1064,8 +1148,7 @@ class Sequencer extends Component {
           easing: 'easeInOutSine',
           delay: 50,
           duration: 500,
-          opacity: [0, 1],
-          // translateX: -50,
+          opacity: 1,
           rotate:[-5, -5],
           translateY: [0, -10]
         });
@@ -1074,8 +1157,7 @@ class Sequencer extends Component {
           easing: 'easeInOutSine',
           delay: 50,
           duration: 500,
-          opacity: [0, 1],
-          // translateX: -50,
+          opacity: 1,
           rotate:[200, 200],
           translateY: [0, -10]
         });
@@ -1085,28 +1167,21 @@ class Sequencer extends Component {
           easing: 'easeInOutSine',
           delay: 0,
           duration: 500,
-          opacity: [0, 1],
-          // translateX: -50,
+          opacity: 1,
           rotate:[-30, -30],
           translateY: [0, -10]
         });
 
-        anime({
-          targets: '#main-flower',
-          easing: 'easeInOutSine',
-          delay: 0,
-          duration: 500,
-          opacity: [1, 0],
-        });
+        this.activeAnimations.thirdSectionHyacinthes.play()
+        this.activeAnimations.thirdSectionMonsteraLeaves.play()
 
-      } else if (this.activeIndex == 3) {
+      } else if (this.activeFPIndex == 3) {
           anime({
             targets: '#leaf-3',
             easing: 'easeInOutSine',
             delay: 0,
             duration: 500,
-            opacity: [0, 1],
-            // translateX: 25,
+            opacity: 1,
             rotate:[200, 200],
             translateY: [0, -10]
 
@@ -1117,8 +1192,7 @@ class Sequencer extends Component {
             easing: 'easeInOutSine',
             delay: 50,
             duration: 500,
-            opacity: [0, 1],
-            // translateX: -50,
+            opacity: 1,
             rotate:[-30, -30],
             translateY: [0, -10]
 
@@ -1129,8 +1203,7 @@ class Sequencer extends Component {
             easing: 'easeInOutSine',
             delay: 100,
             duration: 500,
-            opacity: [0, 1],
-            // translateX: -50,
+            opacity: 1,
             rotate:[-30, -30],
             translateY: [0, -10]
 
@@ -1141,108 +1214,74 @@ class Sequencer extends Component {
             easing: 'easeInOutSine',
             delay: 100,
             duration: 500,
-            opacity: [0, 1],
-            // translateX: -50,
+            opacity: 1,
             translateY: [0, -10]
 
           });
 
-          anime({
-            targets: '#hyacinth-4',
-            easing: 'easeInOutSine',
-            delay: 0,
-            duration: 500,
-            opacity: [1, 0],
-          });
 
-        } else if (this.activeIndex == 4) {
+          this.activeAnimations.fourthSectionCarnations.play()
+          this.activeAnimations.fourthSectionChrysantheum.play()
+          this.activeAnimations.fourthSectionMonsteraLeaves.play()
+
+        } else if (this.activeFPIndex == 4) {
             anime({
               targets: '#hyacinth-5',
               easing: 'easeInOutSine',
               delay: 0,
               duration: 500,
-              opacity: [0, 1],
-              // translateX: 25,
+              opacity: 1,
               rotate:[130, 130],
               translateY: [0, -10]
             });
 
           }
 
-          anime({
-            targets: [".section-intro-text"],
-            easing: 'easeInOutSine',
-            delay: 0,
-            duration: 500,
-            opacity: [0, 1],
-            translateY: [0, -10]
-          });
-
-          anime({
-            targets: [".packTitle"],
-            easing: 'easeInOutSine',
-            delay: 100,
-            duration: 500,
-            opacity: [0, 1],
-            translateY: [0, -10]
-          });
-
-          anime({
-            targets: [".details"],
-            easing: 'easeInOutSine',
-            delay: 200,
-            duration: 500,
-            opacity: [0, 1],
-            translateY: [0, -10]
-
-          });
 }
 
-mobileCheck = function() {
-  let check = false;
-  (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
-  return check;
-};
-
-addClasses(nodeList, cssClasses) {
+  addClasses(nodeList, cssClasses) {
         for (let i = 0; i < nodeList.length; i++) {
             nodeList[i].classList.add(...cssClasses);
         }
     }
-removeClasses(nodeList, cssClasses) {
+
+  removeClasses(nodeList, cssClasses) {
         for (let i = 0; i < nodeList.length; i++) {
             nodeList[i].classList.remove(...cssClasses);
         }
     }
+
     waitForIdle() {
-      console.log("set to idle")
-      //set timeout to make sure extra scrolls doesn't fire
       let hero = document.querySelector('#main-wrapper')
       let items = hero.querySelectorAll('.vslide');
+
       this.removeClasses(items, ['transition']);
+      this.handleNewFPSlideAnimation()
 
+      //set timeout to make sure extra scrolls doesn't fire
       setTimeout(() => {this.idle = true}, 500);
-
-
    }
 
+   waitForFAQIdle() {
+     //set timeout to make sure extra scrolls doesn't fire
+     setTimeout(() => {this.idle = true}, 500);
+  }
+
     changeSlide(direction) {
+
         let hero = document.querySelector('#main-wrapper')
         let main = document.querySelector('#slides-main')
         let items = hero.querySelectorAll('.vslide');
         let total = items.length;
 
-        let activeIndex = this.activeIndex
+        let activeFPIndex = this.activeFPIndex
         let previousDirection = hero.classList.contains("prev") ? "prev" : "next"
         let didChangeDirection = previousDirection !== direction
-        console.log("did change direction? " + didChangeDirection)
 
-
-        console.log("current slide # " + activeIndex + " with " + total + " total slides")
-        if (activeIndex == total - 1 && direction == 'next') {
+        if (activeFPIndex == total - 1 && direction == 'next') {
           console.log("at the end")
           return
-        } else if (activeIndex == 0 && direction == 'prev') {
+        } else if (activeFPIndex == 0 && direction == 'prev') {
           console.log("at the start")
           return
         }
@@ -1250,11 +1289,11 @@ removeClasses(nodeList, cssClasses) {
         this.idle = false
         hero.classList.remove('prev', 'next');
         if (direction == 'next') {
-            activeIndex = (activeIndex + 1) % total
+            activeFPIndex = (activeFPIndex + 1) % total
             hero.classList.add('next');
         } else {
 
-            activeIndex = (activeIndex - 1 + total) % total
+            activeFPIndex = (activeFPIndex - 1 + total) % total
             hero.classList.add('prev');
         }
 
@@ -1266,14 +1305,12 @@ removeClasses(nodeList, cssClasses) {
             .filter(item => {
                 let prevIndex;
                 if (hero.classList.contains('prev')) {
-                    prevIndex = activeIndex == total - 1 ? 0 : activeIndex + 1;
+                    prevIndex = activeFPIndex == total - 1 ? 0 : activeFPIndex + 1;
                 } else {
-                    prevIndex = activeIndex == 0 ? total - 1 : activeIndex - 1;
+                    prevIndex = activeFPIndex == 0 ? total - 1 : activeFPIndex - 1;
                 }
-                console.log("prev index is " + prevIndex)
 
-
-                return item.dataset.index == prevIndex;
+                return item.dataset.slideindex == prevIndex;
             });
 
         //set next
@@ -1281,19 +1318,18 @@ removeClasses(nodeList, cssClasses) {
             .filter(item => {
                 let nextIndex;
                 if (hero.classList.contains('next')) {
-                    nextIndex = activeIndex == total + 1 ? 0 : activeIndex + 1;
+                    nextIndex = activeFPIndex == total + 1 ? 0 : activeFPIndex + 1;
                 } else {
-                    nextIndex = activeIndex == 0 ? total + 1 : activeIndex - 1;
+                    nextIndex = activeFPIndex == 0 ? total + 1 : activeFPIndex - 1;
                 }
 
-                console.log("next index is " + nextIndex)
-                return item.dataset.index == nextIndex;
+                return item.dataset.slideindex == nextIndex;
             });
 
         //set active
         const activeItems = [...items]
             .filter(item => {
-                return item.dataset.index == activeIndex;
+                return item.dataset.slideindex == activeFPIndex;
             });
 
             if (didChangeDirection) {
@@ -1309,86 +1345,70 @@ removeClasses(nodeList, cssClasses) {
 
         const activeImageItem = main.querySelector('.activeSlide');
 
-        this.activeIndex = activeIndex
-        console.log("activeIndex " + activeIndex)
+        this.activeFPIndex = activeFPIndex
 
         activeImageItem.addEventListener('transitionend', this.waitForIdle.bind(this), {
             once: true
         });
     }
 
-handleScroll(e) {
-  e.preventDefault()
-  const direction = e.deltaY > 0 ? 'next' : 'prev';
-  if (this.idle == true) {
-    this.changeSlide(direction);
-  }
+    handleScroll(direction) {
+      if (this.idle == true) {
+        this.prepareForFPSlideChange()
+        this.changeSlide(direction);
+      }
+    }
 
-  this.onEnterViewport()
-}
+    prepareForFPSlideChange() {
+      let hero = document.querySelector('#main-wrapper')
 
-onExitViewport() {
+      if (this.activeFPIndex == 0) {
+        this.activeAnimations.lily.pause()
+        this.activeAnimations.quakingGrass.pause()
+        this.activeAnimations.firstCarnation.pause()
+        this.activeAnimations.firstHyacinth.pause()
+        this.activeAnimations.firstChrysantheum.pause()
+      } else if (this.activeFPIndex == 1) {
+        this.activeAnimations.firstChrysantheum.pause()
+        this.activeAnimations.secondSectionHyacinthes.pause()
+      } else if (this.activeFPIndex == 2) {
+        this.activeAnimations.thirdSectionHyacinthes.pause()
+        this.activeAnimations.thirdSectionMonsteraLeaves.pause()
+      } else if (this.activeFPIndex == 3) {
+        this.activeAnimations.fourthSectionCarnations.pause()
+        this.activeAnimations.fourthSectionChrysantheum.pause()
+        this.activeAnimations.fourthSectionMonsteraLeaves.pause()
+      }
 
-}
+      anime({
+        targets: ['.activeSlide .animated-content'],
+        easing: 'easeInOutSine',
+        duration: 1000,
+        opacity:0,
+        delay: 0,
+      });
+    }
 
-handelFAQSlide () {
-
-  // let activeFAQSlideIndex = this.state.activeFAQSlideIndex
-  // let nextFAQSlideIndex = activeFAQSlideIndex + 1
-  // let hero = document.querySelector('#faq-wrapper')
-  // let items = hero.querySelectorAll('.slide');
-  // let total = items.length;
-  //
-  // console.log(nextFAQSlideIndex)
-  // var slide = document.querySelector('.slide');
-  //
-  // let translateX = 800
-  // // let translateX = anime.get(slide, 'width', 'px')
-  // // console.log("Slide will be moved " + translateX)
-  // if (activeFAQSlideIndex > 0 && activeFAQSlideIndex < total - 1) {
-  //   translateX = translateX * (activeFAQSlideIndex + 1)
-  // } else if (activeFAQSlideIndex == total - 1) {
-  //   //reset
-  //   translateX = 0
-  //   nextFAQSlideIndex = 0
-  // }
-  // anime({
-  //   targets: '.slide',
-  //   easing: 'easeOutQuad',
-  //   translateX: -translateX
-  // });
-  //
-  // this.setState({activeFAQSlideIndex: nextFAQSlideIndex})
+handleFAQSlide () {
 
   let wrapper = document.querySelector('#faq-wrapper')
   let main = document.querySelector('#faq-slides')
   let items = wrapper.querySelectorAll('.slide');
   let total = items.length;
-  console.log("faq slides total " + total)
-  let activeIndex = this.activeFAQSlideIndex
+
+  let activeFAQSlideIndex = this.activeFAQSlideIndex
   let direction = "next"
   let previousDirection = wrapper.classList.contains("prev") ? "prev" : "next"
   let didChangeDirection = previousDirection !== direction
-  console.log("did change direction? " + didChangeDirection)
-
-
-  console.log("current slide # " + activeIndex + " with " + total + " total slides")
-  // if (activeIndex == total - 1 && direction == 'next') {
-  //   console.log("at the end")
-  //   return
-  // } else if (activeIndex == 0 && direction == 'prev') {
-  //   console.log("at the start")
-  //   return
-  // }
 
   this.idle = false
   wrapper.classList.remove('prev', 'next');
   if (direction == 'next') {
-      activeIndex = (activeIndex + 1) % total
+      activeFAQSlideIndex = (activeFAQSlideIndex + 1) % total
       wrapper.classList.add('next');
   } else {
 
-      activeIndex = (activeIndex - 1 + total) % total
+      activeFAQSlideIndex = (activeFAQSlideIndex - 1 + total) % total
       wrapper.classList.add('prev');
   }
 
@@ -1400,14 +1420,12 @@ handelFAQSlide () {
       .filter(item => {
           let prevIndex;
           if (wrapper.classList.contains('prev')) {
-              prevIndex = activeIndex == total - 1 ? 0 : activeIndex + 1;
+              prevIndex = activeFAQSlideIndex == total - 1 ? 0 : activeFAQSlideIndex + 1;
           } else {
-              prevIndex = activeIndex == 0 ? total - 1 : activeIndex - 1;
+              prevIndex = activeFAQSlideIndex == 0 ? total - 1 : activeFAQSlideIndex - 1;
           }
-          console.log("prev faq index is " + prevIndex)
 
-
-          return item.dataset.index == prevIndex;
+          return item.dataset.faqindex == prevIndex;
       });
 
   //set next
@@ -1415,19 +1433,18 @@ handelFAQSlide () {
       .filter(item => {
           let nextIndex;
           if (wrapper.classList.contains('next')) {
-              nextIndex = activeIndex == total + 1 ? 0 : activeIndex + 1;
+              nextIndex = activeFAQSlideIndex == total + 1 ? 0 : activeFAQSlideIndex + 1;
           } else {
-              nextIndex = activeIndex == 0 ? total + 1 : activeIndex - 1;
+              nextIndex = activeFAQSlideIndex == 0 ? total + 1 : activeFAQSlideIndex - 1;
           }
 
-          console.log("next faq index is " + nextIndex)
-          return item.dataset.index == nextIndex;
+          return item.dataset.faqindex == nextIndex;
       });
 
   //set active
   const activeItems = [...items]
       .filter(item => {
-          return item.dataset.index == activeIndex;
+          return item.dataset.faqindex == activeFAQSlideIndex;
       });
 
       if (didChangeDirection) {
@@ -1443,11 +1460,9 @@ handelFAQSlide () {
 
   const activeImageItem = main.querySelector('.active');
 
-  this.activeFAQSlideIndex = activeIndex
-  console.log("activeFAQSlideIndex " + activeIndex)
-  console.log(activeItems)
+  this.activeFAQSlideIndex = activeFAQSlideIndex
 
-  activeImageItem.addEventListener('transitionend', this.waitForIdle.bind(this), {
+  activeImageItem.addEventListener('transitionend', this.waitForFAQIdle.bind(this), {
       once: true
   });
 }
@@ -1508,12 +1523,12 @@ handelFAQSlide () {
         <div id="slideshow">
         <div id="slides-main">
 
-                <div className="section vslide activeSlide" id="video-player-section" data-index="0">
-                <Lily/>
-                <Carnation/>
-                <Chrysanthemum/>
-                <Hyacinth/>
-                <QuakingGrass/>
+                <div className="section vslide activeSlide" id="video-player-section" data-slideindex="0">
+                <Lily className="lily animated-content"/>
+                <Carnation className="carnation animated-content"/>
+                <Chrysanthemum className="chrysanthemum"/>
+                <Hyacinth className="hyacinth animated-content"/>
+                <QuakingGrass className="quaking-grass animated-content"/>
 
                   <div className="container">
 
@@ -1707,24 +1722,24 @@ handelFAQSlide () {
                   </div>
                 </div>
 
-                <div className="section vslide next" id="content-section-1"  data-index="1">
+                <div className="section vslide next" data-slideindex="1">
 
-                    <Hyacinth id="hyacinth-2"/>
-                    <Hyacinth id="hyacinth-3"/>
+                    <Hyacinth id="hyacinth-2" className="hyacinth"/>
+                    <Hyacinth id="hyacinth-3" className="hyacinth animated-content"/>
 
                     <div className="content-container" ref={this.myRef}>
                     <div style={{display:"flex", justifyContent: "center", alignItems:"center", gap: "84px"}}>
-                    <Hyacinth id="main-flower"/>
+                    <Hyacinth id="main-flower" className="hyacinth animated-content"/>
 
                       <div>
                         <div>
-                      <div className="section-intro-text">
+                      <div className="section-intro-text animated-content">
                       WELCOME TO
                       </div>
-                        <div className="packTitle">
+                        <div className="packTitle animated-content">
                           The Secret Garden
                         </div>
-                        <div className="details">
+                        <div className="details animated-content">
                           We believe that Web3 can fundamentally unlock value
                           for all artists.
                         </div>
@@ -1745,28 +1760,28 @@ handelFAQSlide () {
 
                 </div>
 
-                <div className="section vslide"  data-index="2">
-                <Carnation id="carnation-3"/>
+                <div className="section vslide"  data-slideindex="2">
+                <Carnation id="carnation-3" className="carnation"/>
 
-                <MonsteraLeaf id="leaf-2"/>
+                <MonsteraLeaf id="leaf-2" className="monstera-leaf animated-content"/>
 
-                <MonsteraLeaf id="leaf-1"/>
+                <MonsteraLeaf id="leaf-1" className="monstera-leaf animated-content"/>
 
-                <Hyacinth id="hyacinth-4"/>
+                <Hyacinth id="hyacinth-4" className="hyacinth animated-content"/>
 
                   <div className="content-container" ref={this.myRef}>
 
                     <div>
                       <div>
-                      <div className="section-intro-text">
+                      <div className="section-intro-text animated-content">
                       BUT...
                       </div>
-                        <div className="packTitle">There's a Gap</div>
-                        <div className="details">
+                        <div className="packTitle animated-content">There's a Gap</div>
+                        <div className="details animated-content">
                           Digital art is breaking all time highs on a daily
                           basis while music is still underserved.
                         </div>
-                        <div className="details">
+                        <div className="details animated-content">
                           We are here to crack the code by pushing the
                           boundaries of art and NFTs.
                         </div>
@@ -1782,21 +1797,21 @@ handelFAQSlide () {
                     </div>
                   </div>
                 </div>
-                <div className="section vslide" data-index="3">
-                <MonsteraLeaf id="leaf-3"/>
-                <Tulip/>
-                <Chrysanthemum id="chrysanthemum-2"/>
-                <Carnation id="carnation-2"/>
+                <div className="section vslide" data-slideindex="3">
+                <MonsteraLeaf id="leaf-3" className="monstera-leaf animated-content"/>
+                <Tulip className="tulip animated-content"/>
+                <Chrysanthemum id="chrysanthemum-2" className="chrysanthemum animated-content"/>
+                <Carnation id="carnation-2" className="carnation"/>
 
                   <div className="content-container small" ref={this.myRef}>
 
-                      <div className="section-intro-text">INTRODUCING</div>
-                        <div className="packTitle">Bouquet</div>
-                        <div className="details" style={{textAlign:"center"}}>
+                      <div className="section-intro-text animated-content">INTRODUCING</div>
+                        <div className="packTitle animated-content">Bouquet</div>
+                        <div className="details animated-content" style={{textAlign:"center"}}>
                           Bouquet is a music NFT that forms an interactive music
                           player.
                         </div>
-                        <div className="details" style={{textAlign:"center"}}>
+                        <div className="details animated-content" style={{textAlign:"center"}}>
                           The Bouquet NFT is the first music NFT that allows
                           holders to generate their own mix using unique sounds
                           produced by our resident artists.
@@ -1821,12 +1836,12 @@ handelFAQSlide () {
                       </div>
 
                 </div>
-                <div className="section vslide" data-index="4">
-                <Hyacinth id="hyacinth-5"/>
+                <div className="section vslide" data-slideindex="4">
+                <Hyacinth id="hyacinth-5" className="hyacinth animated-content"/>
 
                 <div className="content-container">
                 <div>
-                <div className="section-intro-text">FAQS</div>
+                <div className="section-intro-text animated-content">FAQS</div>
 
                 <div id="faq-wrapper">
                 <div id="faq-slideshow">
@@ -1834,14 +1849,14 @@ handelFAQSlide () {
                 <div id="faq-slides">
 
 
-                  <div className="slide active" data-anchor="slide1" data-index="0" ref={this.FAQ}>
+                  <div className="slide active" data-anchor="slide1" data-faqindex="0" ref={this.FAQ}>
 
                       <div className="slide-wrapper">
                         <div>
-                          <div className="packTitle">
+                          <div className="packTitle animated-content">
                             What do I get by buying a Bouquet?
                           </div>
-                          <div className="details">
+                          <div className="details animated-content">
                             When you purchase a Bouquet, you get to own this
                             one-of-a-kind interactive, playable experience as an
                             NFT.
@@ -1861,14 +1876,14 @@ handelFAQSlide () {
 
 
                   </div>
-                  <div className="slide next" data-anchor="slide2" data-index="1" ref={this.FAQ}>
+                  <div className="slide next" data-anchor="slide2" data-faqindex="1" ref={this.FAQ}>
 
                       <div className="slide-wrapper">
                       <div>
-                        <div className="packTitle">
+                        <div className="packTitle animated-content">
                         Bonus Features:
                         </div>
-                        <div className="details">
+                        <div className="details animated-content">
                           <ul>
                             <li>
                             Set the default mix for the player.
@@ -1894,14 +1909,14 @@ handelFAQSlide () {
 
                     </div>
                   </div>
-                  <div className="slide" data-anchor="slide3" data-index="2" ref={this.FAQ}>
+                  <div className="slide" data-anchor="slide3" data-faqindex="2" ref={this.FAQ}>
 
                       <div className="slide-wrapper">
                         <div>
-                          <div className="packTitle">
+                          <div className="packTitle animated-content">
                             How do I purchase a Bouquet?
                           </div>
-                          <div className="details">
+                          <div className="details animated-content">
                             Join our{" "}
                             <a
                               target="_blank"
@@ -1932,7 +1947,7 @@ handelFAQSlide () {
                   <IconButton
                     style={{float:"right"}}
                     className="expandOuter"
-                    onClick={() => this.handelFAQSlide()}
+                    onClick={() => this.handleFAQSlide()}
                   >
                     <img src={ArrowRight} className="expand" />
                   </IconButton>
@@ -1942,12 +1957,12 @@ handelFAQSlide () {
 
                 </div>
 
-                <div className="section vslide" data-index="5" ref={this.FAQ}>
+                <div className="section vslide" data-slideindex="5" ref={this.FAQ}>
                   <div className="container2" ref={this.myRef}>
                     <div className="albumWrapper">
                       <div>
                         {/* <div className="privacyAndTos"> */}
-                        <div className="details">
+                        <div className="details animated-content">
                           <div>
                             <a href="/tos" target="_blank">
                               Terms of Service
@@ -1960,7 +1975,7 @@ handelFAQSlide () {
                           </div>
                         </div>
                         {/* <div className="ourSocials"> */}
-                        <div className="details">
+                        <div className="details animated-content">
                           <span>inquiries@secretgarden.fm</span>
                           <a
                             href="https://twitter.com/SecretGarden_FM"

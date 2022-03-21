@@ -1,7 +1,7 @@
 import * as React from "react"
 
 const SvgComponent = (props) => (
-  <div className="monstera-leaf" {...props}>
+  <div className="monstera-leaf animated-content" {...props}>
   <div className="svg-container">
 
   <svg
