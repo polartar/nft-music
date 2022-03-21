@@ -881,7 +881,11 @@ canvas {
    bottom: -10%;
    width: 80%;
    left: 0%;
-
+   // opacity: 0;
+   // opacity: 0;
+   path {
+     fill: #FFF
+   }
    @media only screen and (min-width: 768px) {
      position: relative;
      width: 25%;
@@ -916,13 +920,6 @@ canvas {
       }
     }
 
-
-  #main-flower {
-    opacity: 0;
-    path {
-      fill: #FFF
-    }
-  }
 
 }
 

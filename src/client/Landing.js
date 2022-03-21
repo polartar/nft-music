@@ -1039,10 +1039,11 @@ class Sequencer extends Component {
 
       anime({
         targets: '#main-flower',
-        easing: 'easeInOutSine',
-        delay: 0,
+        easing: 'easeOutQuad',
+        delay: 100,
         duration: 500,
         opacity: [0, 1],
+        translateY: [0, -10]
       });
     } else if (this.activeIndex == 2) {
 
