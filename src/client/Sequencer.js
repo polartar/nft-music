@@ -335,7 +335,6 @@ class Sequencer extends Component {
   };
 
   didRender = async (blob) => {
-    console.log(blob);
     try {
       const form = new FormData();
 
@@ -621,7 +620,7 @@ class Sequencer extends Component {
 
     Object.keys(this.players).forEach((group) => {
       updatedPads[group] = [];
-      this.players[group].forEach((soundIndex) => {
+      this.players[group].forEach((_, soundIndex) => {
         updatedPads[group][soundIndex] = 0;
         updatedQueue[group] = [];
       });
@@ -633,7 +632,6 @@ class Sequencer extends Component {
       playing: false,
       queue: updatedQueue,
       shareablePadNumbers: [],
-      steps: 16,
       totalSoundsPlaying: 0,
     });
     for (const group in this.activePlayers) {
