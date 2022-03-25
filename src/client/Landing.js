@@ -5,6 +5,7 @@ import Synth from "./Synth";
 // import Canvas from './Canvas';
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
+import cloneDeep from "lodash.clonedeep";
 
 import { makeStyles } from "@material-ui/core/styles";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -224,7 +225,13 @@ class Sequencer extends Component {
     shareablePadNumbers: [],
     showTutorial: !didVisitSite,
     tutorialStep: 0,
-    volume: 0
+    volume: 0,
+    padRecording: [],
+    shouldStartRecording: false,
+    shouldStopRecording: false,
+    isRecording: false,
+    timer: 0,
+    recordingStatus: ""
   };
 
   constructor(props) {
@@ -240,13 +247,9 @@ class Sequencer extends Component {
 
     this.initWallet();
     this.myRef = React.createRef();
-    this.FAQ = React.createRef();
     this.clearSelections = this.clearSelections.bind(this);
-    this.activePlayers = {
-      basses: [],
-      drums: [],
-      sounds: []
-    };
+    this.activePlayers = {};
+    this.recorder = new Tone.Recorder();
   }
 
   initWallet = async () => {
@@ -312,20 +315,29 @@ class Sequencer extends Component {
         pads[group] = [];
         queue[group] = [];
 
-        filePaths.forEach(filePath => {
-          this.players[group].push(
-            new Tone.Player(
-              `/public/${encodeURIComponent(filePath)}`
-            ).toDestination()
-          );
+        this.activePlayers[group] = [];
 
-          pads[group].push(0);
+        Object.keys(nftResponse.data.filePaths).map(group => {
+          const filePaths = nftResponse.data.filePaths[group];
+          this.players[group] = [];
+          pads[group] = [];
+          queue[group] = [];
+
+          filePaths.forEach(filePath => {
+            const player = new Tone.Player(
+              `/public/${encodeURIComponent(filePath)}`
+            );
+
+            player.connect(this.recorder);
+            this.players[group].push(player.toDestination());
+
+            pads[group].push(0);
+          });
         });
       });
 
-      const padFormat = padFormatMappings[nftResponse.data.padFormatName];
-      const padFormatStyleClass =
-        padFormatTileStyleMappings[nftResponse.data.padFormatName];
+      const padFormat = nftResponse.data.padFormat;
+      const padFormatStyleClass = nftResponse.data.padStyle;
 
       const steps = nftResponse.data.steps;
       const subSteps = nftResponse.data.subSteps;
@@ -505,6 +517,73 @@ class Sequencer extends Component {
     document.body.appendChild(script);
   }
 
+  setIsRecordingTrue = () => {
+    this.setState({
+      isRecording: true
+    });
+  };
+
+  componentDidUpdate(previousProps, previousState) {
+    if (
+      previousState.shouldStartRecording !== this.state.shouldStartRecording &&
+      this.state.shouldStartRecording
+    ) {
+      if (!this.state.playing) {
+        this.setState({
+          isRecording: true,
+          recordingStatus: "Recording..."
+        });
+      } else {
+        this.setState({
+          recordingStatus: "Waiting for next loop to start..."
+        });
+      }
+    }
+
+    if (
+      previousState.step !== this.state.step &&
+      this.state.step === 0 &&
+      this.state.shouldStartRecording
+    ) {
+      this.setState({
+        isRecording: true,
+        shouldStartRecording: false,
+        recordingStatus: "Recording..."
+      });
+    }
+
+    if (
+      previousState.shouldStopRecording !== this.state.shouldStopRecording &&
+      this.state.shouldStopRecording
+    ) {
+      this.setState({
+        recordingStatus: "Waiting for loop to stop..."
+      });
+    }
+
+    if (
+      previousState.step !== this.state.step &&
+      this.state.shouldStopRecording &&
+      this.state.step === 0
+    ) {
+      this.setState({
+        isRecording: false,
+        recordingStatus: "Exporting..."
+      });
+    }
+
+    if (
+      previousState.isRecording !== this.state.isRecording &&
+      !this.state.isRecording &&
+      !this.state.shouldStartRecording
+    ) {
+      this.setState({
+        shouldStopRecording: false
+        // recordingStatus: ""
+      });
+    }
+  }
+
   handleClickOpen = async () => {
     try {
       if (!this.state.isLoggedIntoMetamask) {
@@ -525,8 +604,6 @@ class Sequencer extends Component {
   };
 
   executeScroll = () => this.myRef.current.scrollIntoView();
-
-  executeScrollFAQ = () => this.FAQ.current.scrollIntoView();
 
   togglePlay = () => {
     this.rafId = requestAnimationFrame(() => this.tick());
@@ -669,6 +746,8 @@ class Sequencer extends Component {
       }
     }
 
+    const milliseconds = cloneDeep(this.state.timer);
+
     this.setState(
       state => {
         const clonedPads = { ...state.pads };
@@ -724,6 +803,27 @@ class Sequencer extends Component {
           ];
         }
 
+        const pressedPad = [group, pad];
+        this.state.padFormat.forEach((column, j) => {
+          column.forEach((mappedPad, i) => {
+            if (
+              mappedPad[0] === pressedPad[0] &&
+              mappedPad[1] === pressedPad[1]
+            ) {
+              this.setState({
+                padRecording: [
+                  ...this.state.padRecording,
+                  [j * this.state.padFormat.length + i, milliseconds]
+                ]
+              });
+            }
+          });
+        });
+        console.log(
+          "this.state.padFormat.length: ",
+          this.state.padFormat.length
+        );
+
         return {
           pads: clonedPads,
           totalSoundsPlaying: numPads,
@@ -734,6 +834,53 @@ class Sequencer extends Component {
         if (!this.state.playing) this.play();
       }
     );
+  }
+
+  // recording work
+  startRecording() {
+    console.log("asdasdasd");
+    this.setState({
+      shouldStartRecording: true
+      // isRecording: true
+    });
+    let milliseconds = 0;
+
+    const incrementMilliseconds = () => {
+      this.setState({
+        timer: (milliseconds += 10)
+      });
+    };
+
+    window.timer = setInterval(incrementMilliseconds, 10);
+
+    this.recorder.start();
+  }
+
+  async stopRecording() {
+    console.log("stopped recording");
+    clearInterval(window.timer);
+
+    if (!this.state.shouldStopRecording && !this.state.playing) {
+      this.setState({
+        shouldStartRecording: false,
+        isRecording: false,
+        recordingStatus: ""
+      });
+    } else {
+      this.setState({
+        shouldStopRecording: true,
+        timer: 0
+      });
+    }
+
+    // the recorded audio is returned as a blob
+    const recording = await this.recorder.stop();
+    // download the recording by creating an anchor element and blob url
+    const url = URL.createObjectURL(recording);
+    const anchor = document.createElement("a");
+    anchor.download = "recording.webm";
+    anchor.href = url;
+    anchor.click();
   }
 
   muiTheme = createTheme({
@@ -757,33 +904,33 @@ class Sequencer extends Component {
       this.setState({
         volume: volume
       });
-      this.players["basses"].forEach(index => {
-        index.volume.value = volume;
-      });
-      this.players["drums"].forEach(index => {
-        index.volume.value = volume;
-      });
-      this.players["sounds"].forEach(index => {
-        index.volume.value = volume;
+
+      Object.keys(this.players).forEach(group => {
+        this.players[group].forEach((_, soundIndex) => {
+          this.players[group][soundIndex].volume.value = volume;
+        });
       });
     }
   }
 
   clearSelections() {
+    const updatedPads = {};
+    const updatedQueue = {};
+
+    Object.keys(this.players).forEach(group => {
+      updatedPads[group] = [];
+      this.players[group].forEach((_, soundIndex) => {
+        updatedPads[group][soundIndex] = 0;
+        updatedQueue[group] = [];
+      });
+    });
+
+    // update queue and se
     this.setState({
-      pads: {
-        basses: [0, 0, 0, 0, 0, 0],
-        drums: [0, 0, 0, 0, 0, 0],
-        sounds: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-      },
+      pads: updatedPads,
       playing: false,
-      queue: {
-        basses: [],
-        drums: [],
-        sounds: []
-      },
+      queue: updatedQueue,
       shareablePadNumbers: [],
-      steps: 16,
       totalSoundsPlaying: 0
     });
     for (const group in this.activePlayers) {
@@ -836,8 +983,10 @@ class Sequencer extends Component {
       provider,
       padFormat,
       padFormatStyleClass,
+      padRecording,
       shareablePadNumbers,
       showTutorial,
+      timer,
       tutorialStep,
       volume
     } = this.state;
@@ -894,7 +1043,7 @@ class Sequencer extends Component {
             currentBidAmount={currentBidAmount}
           /> */}
                 <div className="section">
-                  <div className="container">
+                  <div className="container scrollbar">
                     {mediaFileExtension === "mp4" && (
                       <div className="video-container">
                         <video
@@ -1053,7 +1202,8 @@ class Sequencer extends Component {
                         style={{
                           display: "flex",
                           // flexDirection: "column",
-                          justifyContent: "space-around",
+                          justifyContent: "space-between",
+                          marginLeft: "20px",
                           position: "absolute",
                           bottom: "60px",
                           width: "100vw"
@@ -1062,14 +1212,69 @@ class Sequencer extends Component {
                         <div
                           style={{
                             display: "flex",
-                            flexDirection: "column"
+                            flexDirection: "column",
+                            justifyContent: "space-between"
                           }}
                         >
+                          <div className="volumeContainer">
+                            {this.volumeControl()}
+                          </div>
                           <div className="stopBtnContainer">
                             {this.stopButton()}
                           </div>
-                          <div className="volumeContainer">
-                            {this.volumeControl()}
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "flex-start",
+                            alignItems: "flex-end",
+                            marginLeft: "10px",
+                            marginRight: "10px",
+                            width: "100%"
+                          }}
+                        >
+                          <button
+                            className={
+                              this.state.shouldStartRecording ||
+                              this.state.isRecording
+                                ? "button blink whitePad padWhiteVersion"
+                                : "button"
+                            }
+                            style={{
+                              height: "40px",
+                              width: "125px",
+                              border: "none",
+                              borderRadius: "5px",
+                              margin: "5px"
+                              // position: "absolute",
+                              // bottom: "3px",
+                              // left: "100px"
+                            }}
+                            onClick={() => {
+                              if (this.state.isRecording) {
+                                this.stopRecording();
+                              } else {
+                                this.startRecording();
+                              }
+                            }}
+                          >
+                            {this.state.isRecording
+                              ? this.state.shouldStopRecording
+                                ? "Stopping"
+                                : "Stop Recording"
+                              : "Record"}
+                          </button>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              height: "40px",
+                              margin: "5px",
+                              color: "white"
+                            }}
+                          >
+                            {this.state.recordingStatus}
                           </div>
                         </div>
                         <div className="volumeMeter">
