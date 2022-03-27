@@ -11,5 +11,7 @@ RUN npm install
 
 COPY . .
 
+RUN mkdir -p /app/dist
+
 EXPOSE 8081
 CMD [ "npm", "run", "start" ]
