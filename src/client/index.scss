@@ -92,12 +92,15 @@ $footer-height: 58px;
             opacity: 1;
         }
 
+        @at-root #main-wrapper.next & {
+
         &.final.prev {
           z-index: 15;
           transform: translate3d(0, -188px, 0) !important;
           transition: 1s $easing;
           opacity: 1;
         }
+      }
 
 
         @at-root #main-wrapper.prev & {

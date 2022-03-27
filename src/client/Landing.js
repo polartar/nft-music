@@ -1655,7 +1655,7 @@ handleFAQSlide () {
                         <div className="learnMore" id="learnMore" style={{opacity:0}}>
                           <IconButton
                             className="expandOuter"
-                            onClick={() => this.changeSlide("next")}
+                            onClick={() => this.handleScroll("next")}
                           >
                             <img src={Expand} className="expand" />
                           </IconButton>
@@ -1703,7 +1703,7 @@ handleFAQSlide () {
                         <br />
                         <IconButton
                           className="expandOuter"
-                          onClick={() => this.changeSlide("next")}
+                          onClick={() => this.handleScroll("next")}
                         >
                           <img src={Expand} className="expand" />
                         </IconButton>
@@ -1745,7 +1745,7 @@ handleFAQSlide () {
                         <br />
                         <IconButton
                           className="expandOuter"
-                          onClick={() => this.changeSlide("next")}
+                          onClick={() => this.handleScroll("next")}
                         >
                           <img src={Expand} className="expand" />
                         </IconButton>
@@ -1785,7 +1785,7 @@ handleFAQSlide () {
                         <br />
                         <IconButton
                           className="expandOuter"
-                          onClick={() => this.changeSlide("next")}
+                          onClick={() => this.handleScroll("next")}
                         >
                           <img src={Expand} className="expand" />
                         </IconButton>
