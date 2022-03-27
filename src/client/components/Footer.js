@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
+import IconButton from "@material-ui/core/IconButton";
+import Slider from "@material-ui/core/Slider";
+
 import ShareModal from "./ShareModal";
 import EmailModal from "./EmailModal";
 import "../css/footer.css";
 import { ethers, utils } from "ethers";
+import { ThemeProvider } from "@material-ui/styles";
+import StopCircleIcon from "@mui/icons-material/StopCircle";
+import Discord from "../images/discord.svg";
+import Twitter from "../images/Twitter.svg";
+import Share from "../images/Share.svg";
 
 export default function Footer(props) {
-  const { loggedIntoMetamaskOverride, showShare, shareURL } = props;
+  const { loggedIntoMetamaskOverride, showShare, shareURL, setVolume, volume, muiTheme, clearSelections, canvas } = props;
   const [loaded, setLoaded] = useState(false);
   const [address, setAddress] = useState();
   const [openShare, setOpenShare] = useState(false);
@@ -45,6 +53,7 @@ export default function Footer(props) {
     refreshData();
   }, [loaded, loggedIntoMetamaskOverride]);
 
+
   return (
     <React.Fragment>
       <ShareModal shareURL={shareURL} onClose={handleClose} open={openShare} />
@@ -57,7 +66,7 @@ export default function Footer(props) {
                   <div className="bottomItem">MY COLLECTION</div>
                 </a>
               )} */}
-      {/* 
+      {/*
               <div onClick={handleClickOpenEmail} className="bottomItem mobileLink">
                 FUTURE DROPS
               </div> */}
@@ -86,19 +95,42 @@ export default function Footer(props) {
           </button>
         </div>
       ) : (
+
         <div
           className={
             props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
           }
         >
           {/* {showShare && !isLoggedIntoMetamask && ( */}
-          <div
-            className="bottomItem mobileLink"
-            onClick={() => setOpenShare(true)}
-            style={{ fontWeight: "700" }}
-          >
-            SHARE
-          </div>
+            <div
+              className="play-controls"
+            >
+            <div className="stopBtnContainer">
+            <div className="stopBtnWrapper">
+              <IconButton className="expandOuter">
+                <StopCircleIcon fontSize="large" onClick={clearSelections} />
+              </IconButton>
+            </div>
+            </div>
+              <div
+              >
+
+                <div className="volumeContainer">
+                <div className="volumeWrapper">
+                  <ThemeProvider theme={muiTheme}>
+                    <Slider
+                      min={-50}
+                      max={0}
+                      defaultValue={volume}
+                      onChange={(event, newValue) => setVolume(newValue)}
+                    />
+                  </ThemeProvider>
+                </div>
+                </div>
+              </div>
+
+            </div>
+
           {/* )} */}
 
           {/* {showShare && isLoggedIntoMetamask && (
@@ -110,13 +142,21 @@ export default function Footer(props) {
             SHARE
           </div>
           )} */}
-
+          <div style={{display:"flex",gap:"16px"}}>
           <a href="https://discord.gg/ykrzXB9ZsV">
-            <div className="bottomItem mobileLink">DISCORD</div>
+            <div className=""><img src={Discord}/></div>
           </a>
           <a href="https://twitter.com/SecretGarden_FM">
-            <div className="bottomItem mobileLink">TWITTER</div>
+            <div className=""><img src={Twitter}/></div>
           </a>
+          <div
+            className=""
+            onClick={() => setOpenShare(true)}
+            style={{ fontWeight: "700" }}
+          >
+            <img src={Share}/>
+          </div>
+          </div>
           {/* <button className="button" onClick={() => handleMintMenu()}>
             TO MINT MENU
           </button> */}

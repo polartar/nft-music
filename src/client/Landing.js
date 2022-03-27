@@ -32,10 +32,8 @@ import clone from "clone";
 import Loading from "./components/Loading";
 import Cookies from "universal-cookie";
 
-import Slider from "@material-ui/core/Slider";
 import { createTheme } from "@material-ui/core/styles";
-import { ThemeProvider } from "@material-ui/styles";
-import StopCircleIcon from "@mui/icons-material/StopCircle";
+
 import anime from 'animejs/lib/anime.es.js';
 
 import Lily from "./components/Lily";
@@ -814,31 +812,7 @@ class Sequencer extends Component {
     }
   }
 
-  stopButton() {
-    return (
-      <div className="stopBtnWrapper">
-        <IconButton className="expandOuter">
-          <StopCircleIcon fontSize="large" onClick={this.clearSelections} />
-        </IconButton>
-      </div>
-    );
-  }
 
-  volumeControl() {
-    return (
-      <div className="volumeWrapper">
-        <ThemeProvider theme={this.muiTheme}>
-          <Slider
-            orientation="vertical"
-            min={-50}
-            max={0}
-            defaultValue={this.state.volume}
-            onChange={(event, newValue) => this.setVolume(newValue)}
-          />
-        </ThemeProvider>
-      </div>
-    );
-  }
 
 
     touchStart = function (e) {
@@ -1336,6 +1310,7 @@ class Sequencer extends Component {
               this.addClasses(nextItems, ['transition']);
             }
 
+
         this.addClasses(prevItems, ['prev']);
 
         this.addClasses(nextItems, ['next']);
@@ -1379,14 +1354,16 @@ class Sequencer extends Component {
         this.activeAnimations.fourthSectionChrysantheum.pause()
         this.activeAnimations.fourthSectionMonsteraLeaves.pause()
       }
+      // if (this.activeFPIndex !== 4) {
+        anime({
+          targets: ['.activeSlide .animated-content'],
+          easing: 'easeInOutSine',
+          duration: 1000,
+          opacity:0,
+          delay: 0,
+        });
+      // }
 
-      anime({
-        targets: ['.activeSlide .animated-content'],
-        easing: 'easeInOutSine',
-        duration: 1000,
-        opacity:0,
-        delay: 0,
-      });
     }
 
 handleFAQSlide () {
@@ -1529,10 +1506,12 @@ handleFAQSlide () {
                 <Chrysanthemum className="chrysanthemum"/>
                 <Hyacinth className="hyacinth animated-content"/>
                 <QuakingGrass className="quaking-grass animated-content"/>
-
+                <Navbar
+                  white={false}
+                  didConnectWallet={this.initWallet}
+                  loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+                />
                   <div className="container">
-
-
                     {mediaFileExtension === "mp4" && (
                       <div className="video-container">
                         <video
@@ -1545,6 +1524,7 @@ handleFAQSlide () {
                         >
                           <source src={nft.imageURL} type="video/mp4" />
                         </video>
+
                       </div>
                     )}
                     {mediaFileExtension !== "mp4" && (
@@ -1568,71 +1548,64 @@ handleFAQSlide () {
                         </React.Fragment>
                       ))}
                     </div>
-                    <Navbar
-                      white={false}
-                      didConnectWallet={this.initWallet}
-                      loggedIntoMetamaskOverride={isLoggedIntoMetamask}
-                    />
-                    <div className="bodyWrapper scrollBar">
-                      <div className="beatPackTitle">{nft.name}</div>
-                      <div className="artistName">{`by ${nft.artistName} ${
-                        nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
-                      }`}</div>
-                      <div className={`gridOuter ${padFormatStyleClass}`}>
-                        {padFormat.map((column, j) => {
-                          return column.map((remappedCoordinates, i) => {
-                            const group = remappedCoordinates[0];
-                            const soundIndex = remappedCoordinates[1];
-                            const additionalClasses = remappedCoordinates[2]
-                              ? remappedCoordinates[2]
+                    <div className={`gridOuter ${padFormatStyleClass}`}>
+                      {padFormat.map((column, j) => {
+                        return column.map((remappedCoordinates, i) => {
+                          const group = remappedCoordinates[0];
+                          const soundIndex = remappedCoordinates[1];
+                          const additionalClasses = remappedCoordinates[2]
+                            ? remappedCoordinates[2]
+                            : "";
+
+                          const on =
+                            this.players[group][soundIndex].state ===
+                            "started";
+
+                          const blinkClass =
+                            pads[group][soundIndex] === 1 &&
+                            this.players[group][soundIndex].state !==
+                              "started"
+                              ? "blink"
                               : "";
+                          const whiteClass =
+                            group === "sounds" ? "whitePad" : "";
+                          let tutorialClass = "";
+                          const padClass =
+                            group == "sounds" ? "padWhiteVersion" : "pad";
 
-                            const on =
-                              this.players[group][soundIndex].state ===
-                              "started";
-
-                            const blinkClass =
-                              pads[group][soundIndex] === 1 &&
-                              this.players[group][soundIndex].state !==
-                                "started"
-                                ? "blink"
-                                : "";
-                            const whiteClass =
-                              group === "sounds" ? "whitePad" : "";
-                            let tutorialClass = "";
-                            const padClass =
-                              group == "sounds" ? "padWhiteVersion" : "pad";
-
-                            if (showTutorial) {
-                              if (tutorialStep === 0 && group !== "drums") {
-                                tutorialClass = "tutorialPad";
-                              } else if (
-                                tutorialStep === 1 &&
-                                group !== "basses"
-                              ) {
-                                tutorialClass = "tutorialPad";
-                              } else if (
-                                tutorialStep === 2 &&
-                                group !== "sounds"
-                              ) {
-                                tutorialClass = "tutorialPad";
-                              }
+                          if (showTutorial) {
+                            if (tutorialStep === 0 && group !== "drums") {
+                              tutorialClass = "tutorialPad";
+                            } else if (
+                              tutorialStep === 1 &&
+                              group !== "basses"
+                            ) {
+                              tutorialClass = "tutorialPad";
+                            } else if (
+                              tutorialStep === 2 &&
+                              group !== "sounds"
+                            ) {
+                              tutorialClass = "tutorialPad";
                             }
+                          }
 
-                            return (
-                              <div
-                                key={`pad-group-${i}`}
-                                className={`${cx(padClass, {
-                                  on
-                                })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                                onClick={() => {
-                                  this.togglePad(group, soundIndex);
-                                }}
-                              />
-                            );
-                          });
-                        })}
-                      </div>
+                          return (
+                            <div
+                              key={`pad-group-${i}`}
+                              className={`${cx(padClass, {
+                                on
+                              })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                              onClick={() => {
+                                this.togglePad(group, soundIndex);
+                              }}
+                            />
+                          );
+                        });
+                      })}
+                    </div>
+                    <div className="bodyWrapper scrollBar">
+
+
                       {showTutorial && (
                         <React.Fragment>
                           {tutorialStep === 0 && (
@@ -1673,51 +1646,34 @@ handleFAQSlide () {
                           )}
                         </React.Fragment>
                       )}
-                      {(tutorialStep === 3 || !showTutorial) && (
-                        <React.Fragment>
-                          <div className="learnMore" id="learnMore" style={{opacity:0}}>
-                            <div className="ethAmount">Learn More</div>
-                            <IconButton
-                              className="expandOuter"
-                              onClick={() => this.changeSlide("next")}
-                            >
-                              <img src={Expand} className="expand" />
-                            </IconButton>
-                          </div>
-                        </React.Fragment>
-                      )}
 
-                      <div
-                        className="play-controls"
-                        style={{
-                          display: "flex",
-                          // flexDirection: "column",
-                          justifyContent: "space-around",
-                          position: "absolute",
-                          bottom: "60px",
-                          width: "100vw"
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column"
-                          }}
-                        >
-                          <div className="stopBtnContainer">
-                            {this.stopButton()}
-                          </div>
-                          <div className="volumeContainer">
-                            {this.volumeControl()}
-                          </div>
+
+
+                    </div>
+                    {(tutorialStep === 3 || !showTutorial) && (
+                      <React.Fragment>
+                        <div className="learnMore" id="learnMore" style={{opacity:0}}>
+                          <IconButton
+                            className="expandOuter"
+                            onClick={() => this.changeSlide("next")}
+                          >
+                            <img src={Expand} className="expand" />
+                          </IconButton>
                         </div>
-                        <div className="volumeMeter">
-                          <canvas
-                            ref={this.canvas}
-                            style={{ minWidth: "75%", zIndex: "-10" }}
-                          />
-                        </div>
-                      </div>
+                      </React.Fragment>
+                    )}
+                    <div className="song-details">
+                    <div className="beatPackTitle">{nft.name}</div>
+                    <div className="artistName">{`by ${nft.artistName} ${
+                      nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
+                    }`}</div>
+                    </div>
+                    <div className="volumeMeter">
+
+                      <canvas
+                        ref={this.canvas}
+                        style={{ minWidth: "75%", zIndex: "-10" }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -1836,7 +1792,7 @@ handleFAQSlide () {
                       </div>
 
                 </div>
-                <div className="section vslide" data-slideindex="4">
+                <div className="section vslide final" data-slideindex="4">
                 <Hyacinth id="hyacinth-5" className="hyacinth animated-content"/>
 
                 <div className="content-container">
@@ -1958,49 +1914,32 @@ handleFAQSlide () {
                 </div>
 
                 <div className="section vslide" data-slideindex="5" ref={this.FAQ}>
-                  <div className="container2" ref={this.myRef}>
-                    <div className="albumWrapper">
+                  <div className="" ref={this.myRef}  style={{height:"188px", position: "absolute", bottom: 0, left: 0, width: "100%"}}>
+
                       <div>
                         {/* <div className="privacyAndTos"> */}
-                        <div className="details animated-content">
+                        <div className="details animated-content" style={{display:"flex", justifyContent:"space-between", borderTopWidth:"1px",borderTopColor:"gray",borderTopStyle:"solid", padding:"32px 64px"}}>
                           <div>
+                            <a href="mailto:inquiries@secretgarden.fm">inquiries@secretgarden.fm</a>
+                          </div>
+                          <div className="legal-links" style={{display:"flex"}}>
                             <a href="/tos" target="_blank">
                               Terms of Service
                             </a>
-                          </div>
-                          <div>
-                            <a href="/privacy" target="_blank">
+
+                            <a href="/privacy" target="_blank" style={{marginLeft:"24px"}}>
                               Privacy Policy
                             </a>
                           </div>
                         </div>
                         {/* <div className="ourSocials"> */}
                         <div className="details animated-content">
-                          <span>inquiries@secretgarden.fm</span>
-                          <a
-                            href="https://twitter.com/SecretGarden_FM"
-                            target="_blank"
-                          >
-                            <img src={Twitter} className="ourTwitter" />
-                          </a>
 
-                          <a
-                            href="https://discord.gg/ykrzXB9ZsV"
-                            target="_blank"
-                          >
-                            <img src={Discord} className="ourDiscord" />
-                          </a>
-                          <a
-                            href="https://www.instagram.com/secretgarden_fm/"
-                            target="_blank"
-                          >
-                            <img src={Instagram} className="ourInsta" />
-                          </a>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+
 
                 <Footer
                   white={false}
@@ -2009,6 +1948,11 @@ handleFAQSlide () {
                   )}`}
                   showShare={true}
                   loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+                  muiTheme={this.muiTheme}
+                  setVolume={this.setVolume.bind(this)}
+                  volume={this.state.volume}
+                  clearSelections={this.clearSelections}
+                  canvas={this.canvas}
                 />
                 </div>
                 </div>

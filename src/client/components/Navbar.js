@@ -88,7 +88,6 @@ export default function Navbar(props) {
       targets: ['.wordLogo'],
       easing: 'easeInOutSine',
       duration: 1000,
-      marginTop: 100,
       opacity:1,
       delay: 1500,
     });
@@ -102,15 +101,15 @@ export default function Navbar(props) {
           <div
             className={white ? "navBar scrollBar white" : "navBar scrollBar"}
           >
-            <a href="/">
+            <a href="/"  className="wordLogo">
               {/*<img
                 src={white ? SecretGardenBlack : SecretGardenLogo}
                 className="logo"
               />
               */}
-              <p className="wordLogo">
+
                 Secret Garden
-              </p>
+
             </a>
             {/* <div className={white ? "timer white" : "timer"}>
               <Countdown
