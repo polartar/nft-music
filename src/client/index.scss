@@ -16,14 +16,14 @@ $footer-height: 58px;
 
 #main-wrapper {
   position: relative;
-  height: 100vh;
+  height: 100%;
   background-color: #1f1f1f;
 
 }
 
 #slideshow {
   position: relative;
-  height: 100vh;
+  height: 100%;
   background-color: #1f1f1f;
 }
 
@@ -33,6 +33,9 @@ $footer-height: 58px;
     left: 0;
     height: 100%;
     width: 100%;
+    box-sizing: border-box;
+    padding-bottom: $footer-height;
+    bottom: env(safe-area-inset-bottom);
 }
 
 
@@ -504,9 +507,10 @@ input[type="range"] {
 }
 
 .container {
-  height: -webkit-calc(100% - #{$footer-height});
-  height:    -moz-calc(100% - #{$footer-height});
-  height:         calc(100% - #{$footer-height});
+  // height: -webkit-calc(100% - #{$footer-height});
+  // height:    -moz-calc(100% - #{$footer-height});
+  // height:         calc(100% - #{$footer-height});
+  height: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -770,24 +774,34 @@ canvas {
 
   .lily {
     position: absolute;
-    width: 312px;
+    width: 40%;
     top: -33%;
     left: -10%;
     z-index: -1;
     path {
       fill: #303031;
     }
+    @media only screen and (max-width: 736px) {
+      width: 90%;
+      left: -50%;
+      top: -10%;
+    }
   }
 
 
   .hyacinth {
     position: absolute;
-    width: 360px;
-    top: -425px;
+    width: 25%;
+    top: -36%;
     right: 0;
     z-index: -2;
     path {
       fill: #2A2A2A;
+    }
+    @media only screen and (max-width: 736px) {
+      width: 90%;
+      right: -50%;
+      top: -50%;
     }
   }
 
@@ -803,9 +817,14 @@ canvas {
   }
 
   .chrysanthemum {
-    z-index: -3;
+    z-index: -1;
     path {
       fill: #303031;
+    }
+    @media only screen and (max-width: 736px) {
+      width: 100%;
+      right: -33%;
+      bottom: -20%;
     }
   }
 
@@ -1061,11 +1080,16 @@ canvas {
   position: absolute;
   height: 100%;
   width: 100%;
+
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
   @media only screen and (max-width: 700px) {
     height: 60%;
+    top: 40%;
+    transform: translate(-50%, -40%);
+
   }
 
 }
@@ -1369,6 +1393,10 @@ footer {
   // margin-top: 250px;
   margin-top: 0;
   z-index: 1200;
+  @media only screen and (max-width: 700px) {
+    top: 40%;
+    transform: translate(-50%, -40%) rotate(45deg) scale(0.9);
+  }
 }
 
 .gridOuter.tile36 {
