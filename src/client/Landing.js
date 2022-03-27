@@ -5,6 +5,7 @@ import Synth from "./Synth";
 // import Canvas from './Canvas';
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
+import cloneDeep from "lodash.clonedeep";
 
 import { makeStyles } from "@material-ui/core/styles";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -36,7 +37,6 @@ import Slider from "@material-ui/core/Slider";
 import { createTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import StopCircleIcon from "@mui/icons-material/StopCircle";
-import ReactFullpage from "@fullpage/react-fullpage";
 import anime from 'animejs/lib/anime.es.js';
 import Lily from "./components/Lily";
 import Chrysanthemum from "./components/Chrysanthemum";
@@ -46,7 +46,6 @@ import QuakingGrass from "./components/QuakingGrass";
 import MonsteraLeaf from "./components/MonsteraLeaf";
 import Tulip from "./components/Tulip";
 
-import ScrollTrigger from 'react-scroll-trigger';
 
 const sixBySixThreeGroups = [
   [
@@ -55,7 +54,7 @@ const sixBySixThreeGroups = [
     ["basses", 0],
     ["basses", 1],
     ["basses", 2],
-    ["basses", 3]
+    ["basses", 3],
   ],
   [
     ["sounds", 2],
@@ -63,7 +62,7 @@ const sixBySixThreeGroups = [
     ["sounds", 4],
     ["basses", 4],
     ["basses", 5],
-    ["basses", 6]
+    ["basses", 6],
   ],
   [
     ["drums", 0],
@@ -71,7 +70,7 @@ const sixBySixThreeGroups = [
     ["sounds", 6],
     ["sounds", 7],
     ["basses", 7],
-    ["basses", 8]
+    ["basses", 8],
   ],
   [
     ["drums", 1],
@@ -79,7 +78,7 @@ const sixBySixThreeGroups = [
     ["sounds", 8],
     ["sounds", 9],
     ["sounds", 10],
-    ["basses", 9]
+    ["basses", 9],
   ],
   [
     ["drums", 3],
@@ -87,7 +86,7 @@ const sixBySixThreeGroups = [
     ["drums", 5],
     ["sounds", 11],
     ["sounds", 12],
-    ["sounds", 13]
+    ["sounds", 13],
   ],
   [
     ["drums", 6],
@@ -95,8 +94,8 @@ const sixBySixThreeGroups = [
     ["drums", 8],
     ["drums", 9],
     ["sounds", 14],
-    ["sounds", 15]
-  ]
+    ["sounds", 15],
+  ],
 ];
 
 const fiveByFiveThreeGroups = [
@@ -105,36 +104,36 @@ const fiveByFiveThreeGroups = [
     ["sounds", 1],
     ["basses", 0],
     ["basses", 1],
-    ["basses", 2]
+    ["basses", 2],
   ],
   [
     ["sounds", 2],
     ["sounds", 3],
     ["sounds", 4],
     ["basses", 3],
-    ["basses", 4]
+    ["basses", 4],
   ],
   [
     ["drums", 0],
     ["sounds", 5],
     ["sounds", 6],
     ["sounds", 7],
-    ["basses", 5]
+    ["basses", 5],
   ],
   [
     ["drums", 1],
     ["drums", 2],
     ["sounds", 8],
     ["sounds", 9],
-    ["sounds", 10]
+    ["sounds", 10],
   ],
   [
     ["drums", 3],
     ["drums", 4],
     ["drums", 5],
     ["sounds", 11],
-    ["sounds", 12]
-  ]
+    ["sounds", 12],
+  ],
 ];
 
 const fiveByFiveFlower = [
@@ -143,48 +142,48 @@ const fiveByFiveFlower = [
     ["sounds", 1],
     ["sounds", 2],
     ["basses", 0],
-    ["basses", 1]
+    ["basses", 1],
   ],
   [
     ["sounds", 3],
     ["sounds", 0, "circlePad"],
     ["sounds", 5],
     ["basses", 2],
-    ["basses", 3]
+    ["basses", 3],
   ],
   [
     ["sounds", 6],
     ["sounds", 7],
     ["sounds", 8],
     ["basses", 4],
-    ["sounds", 9]
+    ["sounds", 9],
   ],
   [
     ["drums", 0],
     ["drums", 1],
     ["drums", 2],
     ["sounds", 10],
-    ["basses", 5]
+    ["basses", 5],
   ],
   [
     ["drums", 3],
     ["drums", 4],
     ["sounds", 11],
     ["drums", 5],
-    ["sounds", 12]
-  ]
+    ["sounds", 12],
+  ],
 ];
 
 const padFormatMappings = {
   sixBySixThreeGroups,
   fiveByFiveThreeGroups,
-  fiveByFiveFlower
+  fiveByFiveFlower,
 };
 
 const padFormatTileStyleMappings = {
   sixBySixThreeGroups: "tile36",
   fiveByFiveThreeGroups: "tile25",
-  fiveByFiveFlower: "tile25"
+  fiveByFiveFlower: "tile25",
 };
 
 let ctx, x_end, y_end, bar_height;
@@ -236,7 +235,13 @@ class Sequencer extends Component {
     shareablePadNumbers: [],
     showTutorial: !didVisitSite,
     tutorialStep: 0,
-    volume: 0
+    volume: 0,
+    padRecording: [],
+    shouldStartRecording: false,
+    shouldStopRecording: false,
+    isRecording: false,
+    timer: 0,
+    recordingStatus: "",
   };
 
   constructor(props) {
@@ -252,13 +257,9 @@ class Sequencer extends Component {
 
     this.initWallet();
     this.myRef = React.createRef();
-    this.FAQ = React.createRef();
     this.clearSelections = this.clearSelections.bind(this);
-    this.activePlayers = {
-      basses: [],
-      drums: [],
-      sounds: []
-    };
+    this.activePlayers = {};
+    this.recorder = new Tone.Recorder();
 
     this.mobileTouchStart = 0;
     this.idle = true;
@@ -275,7 +276,7 @@ class Sequencer extends Component {
       location.reload();
     });
 
-    window.ethereum.on("chainChanged", chainId => {
+    window.ethereum.on("chainChanged", (chainId) => {
       location.reload();
     });
 
@@ -286,7 +287,7 @@ class Sequencer extends Component {
         isLoggedIntoMetamask: true,
         provider,
         address,
-        balance: await provider.getBalance(address)
+        balance: await provider.getBalance(address),
       });
     }
   };
@@ -300,10 +301,9 @@ class Sequencer extends Component {
     this.setState({
       isLoggedIntoMetamask: true,
       provider,
-      address
+      address,
     });
   };
-
   touchStart = function (e) {
     this.mobileTouchStart = parseInt(e.changedTouches[0].clientX)
     window.scrollTop = 0;
@@ -454,18 +454,47 @@ class Sequencer extends Component {
 
   }
 
+  exportRecording = async (blob) => {
+    try {
+      const form = new FormData();
+
+      form.append("video", blob);
+      form.append("artistName", this.state.nft.artistName);
+      form.append("nftName", this.state.nft.name);
+      form.append("edition", this.state.nft.edition);
+
+      const response = await axios.post("/api/exportRecording", form, {
+        responseType: "blob",
+      });
+
+      const url = URL.createObjectURL(
+        new Blob([response.data], { type: "video/mp4" })
+      );
+      const anchor = document.createElement("a");
+      anchor.download = `My Mix of ${this.state.nft.name}.mp4`;
+      anchor.href = url;
+      anchor.click();
+
+      this.setState({
+        recordingStatus: "",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   fetchNFT = async () => {
     let nftResponse;
     if (this.props.match) {
       nftResponse = await axios.get("/api/getNFT", {
-        params: this.props.match.params
+        params: this.props.match.params,
       });
     } else {
       nftResponse = await axios.get("/api/getFeaturedNFT");
     }
 
     this.setState({
-      nft: nftResponse.data
+      nft: nftResponse.data,
     });
 
     // Initial pads setup
@@ -473,26 +502,35 @@ class Sequencer extends Component {
       const pads = {};
       const queue = {};
 
-      Object.keys(nftResponse.data.filePaths).map(group => {
+      Object.keys(nftResponse.data.filePaths).map((group) => {
         const filePaths = nftResponse.data.filePaths[group];
         this.players[group] = [];
         pads[group] = [];
         queue[group] = [];
 
-        filePaths.forEach(filePath => {
-          this.players[group].push(
-            new Tone.Player(
-              `/public/${encodeURIComponent(filePath)}`
-            ).toDestination()
-          );
+        this.activePlayers[group] = [];
 
-          pads[group].push(0);
+        Object.keys(nftResponse.data.filePaths).map((group) => {
+          const filePaths = nftResponse.data.filePaths[group];
+          this.players[group] = [];
+          pads[group] = [];
+          queue[group] = [];
+
+          filePaths.forEach((filePath) => {
+            const player = new Tone.Player(
+              `/public/${encodeURIComponent(filePath)}`
+            );
+
+            player.connect(this.recorder);
+            this.players[group].push(player.toDestination());
+
+            pads[group].push(0);
+          });
         });
       });
 
-      const padFormat = padFormatMappings[nftResponse.data.padFormatName];
-      const padFormatStyleClass =
-        padFormatTileStyleMappings[nftResponse.data.padFormatName];
+      const padFormat = nftResponse.data.padFormat;
+      const padFormatStyleClass = nftResponse.data.padStyle;
 
       const steps = nftResponse.data.steps;
       const subSteps = nftResponse.data.subSteps;
@@ -512,7 +550,7 @@ class Sequencer extends Component {
 
           analyser.set({
             size: 256,
-            smoothing: 0.9
+            smoothing: 0.9,
           });
 
           analyser.normalRange = true;
@@ -522,7 +560,7 @@ class Sequencer extends Component {
       }
 
       Tone.Transport.bpm.value = nftResponse.data.bpm;
-      Tone.Transport.scheduleRepeat(time => {
+      Tone.Transport.scheduleRepeat(async (time) => {
         if (this.state.step % subSteps === 0) {
           const updatedPads = {};
           const updatedQueue = {};
@@ -532,7 +570,7 @@ class Sequencer extends Component {
           let didPlayBasses = false;
           let didPlaySounds = false;
 
-          Object.keys(this.state.queue).forEach(group => {
+          Object.keys(this.state.queue).forEach((group) => {
             updatedPads[group] = Array.from(
               { length: this.state.pads[group].length },
               () => 0
@@ -550,7 +588,7 @@ class Sequencer extends Component {
               }
             }
 
-            updatedQueue[group].forEach(soundIndex => {
+            updatedQueue[group].forEach((soundIndex) => {
               if (
                 this.players[group][soundIndex].state !== "started" ||
                 this.state.step === 0
@@ -604,12 +642,38 @@ class Sequencer extends Component {
             queue: updatedQueue,
             shareablePadNumbers: updatedShareablePadNumbers,
             showTutorial: updatedShowTutorial,
-            tutorialStep: updatedTutorialStep
+            tutorialStep: updatedTutorialStep,
           });
         }
 
-        this.setState(state => ({
-          step: (state.step + 1) % state.steps
+        if (this.state.step === 0) {
+          if (this.state.shouldStartRecording) {
+            this.recorder.start();
+
+            console.log("starting!");
+
+            this.setState({
+              shouldStartRecording: false,
+              isRecording: true,
+              recordingStatus: "Recording...",
+            });
+          }
+
+          if (this.state.shouldStopRecording) {
+            // the recorded audio is returned as a blob
+            const recording = await this.recorder.stop();
+            this.exportRecording(recording);
+
+            this.setState({
+              shouldStopRecording: false,
+              isRecording: false,
+              recordingStatus: "Exporting...",
+            });
+          }
+        }
+
+        this.setState((state) => ({
+          step: (state.step + 1) % state.steps,
         }));
       }, "4n");
 
@@ -623,7 +687,7 @@ class Sequencer extends Component {
             showTutorial:
               this.state.showTutorial && sharedPadNumbers !== null
                 ? false
-                : this.state.showTutorial
+                : this.state.showTutorial,
           }),
           () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -635,7 +699,7 @@ class Sequencer extends Component {
               this.setState({ showTutorial: false });
             }
 
-            sharedPadNumbers.forEach(padNumber => {
+            sharedPadNumbers.forEach((padNumber) => {
               const col = parseInt(padNumber / this.state.padFormat.length);
               const row = parseInt(padNumber % this.state.padFormat.length);
 
@@ -654,8 +718,7 @@ class Sequencer extends Component {
     }
   };
 
-  didRender = async blob => {
-    console.log(blob);
+  didRender = async (blob) => {
     try {
       const form = new FormData();
 
@@ -683,22 +746,20 @@ class Sequencer extends Component {
         await this.connectWallet();
       }
       this.setState({
-        openBidModal: true
+        openBidModal: true,
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  handleClose = value => {
+  handleClose = (value) => {
     this.setState({
-      openBidModal: false
+      openBidModal: false,
     });
   };
 
   executeScroll = () => this.myRef.current.scrollIntoView();
-
-  executeScrollFAQ = () => this.FAQ.current.scrollIntoView();
 
   togglePlay = () => {
     this.rafId = requestAnimationFrame(() => this.tick());
@@ -733,9 +794,9 @@ class Sequencer extends Component {
       }
     }
 
-    let frequency_array = new Uint8Array(analyser.map(x => x * 7000));
+    let frequency_array = new Uint8Array(analyser.map((x) => x * 7000));
 
-    const isAllZero = frequency_array.every(item => item === 0);
+    const isAllZero = frequency_array.every((item) => item === 0);
 
     if (!isAllZero) {
       canvas.width = window.innerWidth;
@@ -819,14 +880,14 @@ class Sequencer extends Component {
     this.togglePlay();
 
     this.setState(() => ({
-      playing: true
+      playing: true,
     }));
   }
 
   pause() {
     this.setState(() => ({
       playing: false,
-      step: 0
+      step: 0,
     }));
 
     clearInterval(this.interval);
@@ -841,8 +902,10 @@ class Sequencer extends Component {
       }
     }
 
+    const milliseconds = cloneDeep(this.state.timer);
+
     this.setState(
-      state => {
+      (state) => {
         const clonedPads = { ...state.pads };
         const padState = clonedPads[group][pad];
         const updatedQueue = { ...state.queue };
@@ -862,21 +925,21 @@ class Sequencer extends Component {
 
           // update active pads
           this.activePlayers[group] = this.activePlayers[group].filter(
-            activePad => activePad !== pad
+            (activePad) => activePad !== pad
           );
           updatedQueue[group] = updatedQueue[group].filter(
-            soundIndex => soundIndex !== pad
+            (soundIndex) => soundIndex !== pad
           );
         }
 
         clonedPads[group][pad] = padState === 1 ? 0 : 1;
 
         const unstartedQueueGroup = updatedQueue[group].filter(
-          soundIndex => this.players[group][soundIndex].state !== "started"
+          (soundIndex) => this.players[group][soundIndex].state !== "started"
         );
 
         const startedQueueGroup = updatedQueue[group].filter(
-          soundIndex => this.players[group][soundIndex].state === "started"
+          (soundIndex) => this.players[group][soundIndex].state === "started"
         );
 
         // We shaved something off, let's make it stop blinking
@@ -886,20 +949,41 @@ class Sequencer extends Component {
             -state.nft.activeSoundLimits[group]
           );
 
-          toRemove.forEach(soundIndex => {
+          toRemove.forEach((soundIndex) => {
             clonedPads[group][soundIndex] = 0;
           });
 
           updatedQueue[group] = [
             ...startedQueueGroup,
-            ...unstartedQueueGroup.slice(-state.nft.activeSoundLimits[group])
+            ...unstartedQueueGroup.slice(-state.nft.activeSoundLimits[group]),
           ];
         }
+
+        const pressedPad = [group, pad];
+        this.state.padFormat.forEach((column, j) => {
+          column.forEach((mappedPad, i) => {
+            if (
+              mappedPad[0] === pressedPad[0] &&
+              mappedPad[1] === pressedPad[1]
+            ) {
+              this.setState({
+                padRecording: [
+                  ...this.state.padRecording,
+                  [j * this.state.padFormat.length + i, milliseconds],
+                ],
+              });
+            }
+          });
+        });
+        console.log(
+          "this.state.padFormat.length: ",
+          this.state.padFormat.length
+        );
 
         return {
           pads: clonedPads,
           totalSoundsPlaying: numPads,
-          queue: updatedQueue
+          queue: updatedQueue,
         };
       },
       () => {
@@ -908,55 +992,84 @@ class Sequencer extends Component {
     );
   }
 
+  // recording work
+  startRecording() {
+    this.setState({
+      shouldStartRecording: true,
+      recordingStatus: "Waiting for next loop to start...",
+    });
+    let milliseconds = 0;
+
+    const incrementMilliseconds = () => {
+      this.setState({
+        timer: (milliseconds += 10),
+      });
+    };
+
+    window.timer = setInterval(incrementMilliseconds, 10);
+  }
+
+  async stopRecording() {
+    console.log("stopped recording");
+    clearInterval(window.timer);
+
+    this.setState({
+      shouldStopRecording: true,
+      recordingStatus: "Waiting for loop to end...",
+      timer: 0,
+    });
+  }
+  w1;
+
   muiTheme = createTheme({
     overrides: {
       MuiSlider: {
         thumb: {
-          color: "white"
+          color: "white",
         },
         track: {
-          color: "white"
+          color: "white",
         },
         rail: {
-          color: "white"
-        }
-      }
-    }
+          color: "white",
+        },
+      },
+    },
   });
 
   setVolume(volume) {
     if (volume != null) {
       this.setState({
-        volume: volume
+        volume: volume,
       });
-      this.players["basses"].forEach(index => {
-        index.volume.value = volume;
-      });
-      this.players["drums"].forEach(index => {
-        index.volume.value = volume;
-      });
-      this.players["sounds"].forEach(index => {
-        index.volume.value = volume;
+
+      Object.keys(this.players).forEach((group) => {
+        this.players[group].forEach((_, soundIndex) => {
+          this.players[group][soundIndex].volume.value = volume;
+        });
       });
     }
   }
 
   clearSelections() {
+    const updatedPads = {};
+    const updatedQueue = {};
+
+    Object.keys(this.players).forEach((group) => {
+      updatedPads[group] = [];
+      this.players[group].forEach((_, soundIndex) => {
+        updatedPads[group][soundIndex] = 0;
+        updatedQueue[group] = [];
+      });
+    });
+
+    // update queue and se
     this.setState({
-      pads: {
-        basses: [0, 0, 0, 0, 0, 0],
-        drums: [0, 0, 0, 0, 0, 0],
-        sounds: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-      },
+      pads: updatedPads,
       playing: false,
-      queue: {
-        basses: [],
-        drums: [],
-        sounds: []
-      },
+      queue: updatedQueue,
       shareablePadNumbers: [],
-      steps: 16,
-      totalSoundsPlaying: 0
+      totalSoundsPlaying: 0,
     });
     for (const group in this.activePlayers) {
       if (this.activePlayers[group].length > 0) {
@@ -1467,10 +1580,12 @@ handelFAQSlide () {
       provider,
       padFormat,
       padFormatStyleClass,
+      padRecording,
       shareablePadNumbers,
       showTutorial,
+      timer,
       tutorialStep,
-      volume
+      volume,
     } = this.state;
 
     const currentBidAmount =
@@ -1489,7 +1604,7 @@ handelFAQSlide () {
         prefixAssetPath: "/public/artists/oksami/garden/visualizer/",
         onError: function(e) {
           console.error("err", e);
-        }
+        },
       });
 
       this.patch.config.didRender = this.didRender;
@@ -1546,7 +1661,7 @@ handelFAQSlide () {
                                 active:
                                   groupIndex ===
                                   (((step - 1) % steps) + steps) % steps,
-                                on: pad === 1
+                                on: pad === 1,
                               })}
                             />
                           ))}
@@ -1608,7 +1723,7 @@ handelFAQSlide () {
                               <div
                                 key={`pad-group-${i}`}
                                 className={`${cx(padClass, {
-                                  on
+                                  on,
                                 })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
                                 onClick={() => {
                                   this.togglePad(group, soundIndex);
@@ -1677,23 +1792,79 @@ handelFAQSlide () {
                         style={{
                           display: "flex",
                           // flexDirection: "column",
-                          justifyContent: "space-around",
+                          justifyContent: "space-between",
+                          marginLeft: "20px",
                           position: "absolute",
                           bottom: "60px",
-                          width: "100vw"
+                          width: "100vw",
                         }}
                       >
                         <div
                           style={{
                             display: "flex",
-                            flexDirection: "column"
+                            flexDirection: "column",
+                            justifyContent: "space-between",
                           }}
                         >
+                          <div className="volumeContainer">
+                            {this.volumeControl()}
+                          </div>
                           <div className="stopBtnContainer">
                             {this.stopButton()}
                           </div>
-                          <div className="volumeContainer">
-                            {this.volumeControl()}
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "flex-start",
+                            alignItems: "flex-end",
+                            marginLeft: "10px",
+                            marginRight: "10px",
+                            width: "100%",
+                          }}
+                        >
+                          <button
+                            className={
+                              this.state.shouldStartRecording ||
+                              this.state.isRecording
+                                ? "button blink whitePad padWhiteVersion"
+                                : "button"
+                            }
+                            style={{
+                              height: "40px",
+                              width: "125px",
+                              border: "none",
+                              borderRadius: "5px",
+                              margin: "5px",
+                              // position: "absolute",
+                              // bottom: "3px",
+                              // left: "100px"
+                            }}
+                            onClick={() => {
+                              if (this.state.isRecording) {
+                                this.stopRecording();
+                              } else {
+                                this.startRecording();
+                              }
+                            }}
+                          >
+                            {this.state.isRecording
+                              ? this.state.shouldStopRecording
+                                ? "Stopping"
+                                : "Stop Recording"
+                              : "Record"}
+                          </button>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              height: "40px",
+                              margin: "5px",
+                              color: "white",
+                            }}
+                          >
+                            {this.state.recordingStatus}
                           </div>
                         </div>
                         <div className="volumeMeter">

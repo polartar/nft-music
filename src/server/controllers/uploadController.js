@@ -4,11 +4,41 @@ const Bottleneck = require("bottleneck/es5");
 const config = require("../config.json");
 const fs = require("fs");
 const ffmpeg = require("fluent-ffmpeg");
+const { MongoClient, ObjectId } = require("mongodb");
+const { Readable, PassThrough } = require("stream");
+const { response } = require("express");
 
 const AWS_ENDPOINT = "sfo2.digitaloceanspaces.com";
 const limiter = new Bottleneck({
   minTime: 10,
 });
+
+// connect to our mongodb database
+async function connectToDatabase() {
+  let params = {};
+
+  if (process.env.DATABASE_URL) {
+    params = {
+      useNewurlParser: true,
+      useUnifiedTopology: true,
+      tls: true,
+      tlsCAFile: "./ca-certificate.crt",
+    };
+  }
+  const client = await MongoClient.connect(
+    process.env.DATABASE_URL
+      ? process.env.DATABASE_URL
+      : "mongodb://localhost:27017",
+    params
+  );
+
+  db = client.db("secretgarden");
+  console.log("UploadController connected successfully to MongoDB");
+}
+
+setTimeout(() => {
+  connectToDatabase();
+}, 100);
 
 // Takes a video blob, merges in audio, then uploads it and reassigns our smart contract link
 async function commitVideo(video, soundPaths) {
@@ -30,6 +60,54 @@ async function commitVideo(video, soundPaths) {
         .addInput(`${video.originalname}.webm`)
         .save("output.mp4");
     });
+}
+
+async function exportRecording(response, recording, artistName, name, edition) {
+  try {
+    let nft = await db.collection("NFTs").findOne({
+      artistName,
+      name,
+      edition: parseFloat(edition),
+    });
+
+    console.log(recording);
+
+    const stream = Readable.from(recording.buffer);
+
+    const uuid = md5(recording.buffer);
+
+    ffmpeg()
+      .addInput(nft.imageURL)
+      .inputOption("-stream_loop -1")
+      .addInput(stream)
+      .outputOptions(
+        "-crf",
+        "28",
+        "-map",
+        "0:v:0",
+        "-map",
+        "1:a:0",
+        "-shortest",
+        "-fflags",
+        "shortest",
+        "-max_interleave_delta",
+        "100M"
+      )
+      .saveToFile(`${uuid}.mp4`)
+      .on("end", () => {
+        response.download(`./${uuid}.mp4`, "my recording.mp4", function(err) {
+          if (err) {
+            console.log(err); // Check error if you want
+          }
+          fs.unlink(`./${uuid}.mp4`, function() {
+            console.log("File was deleted"); // Callback
+          });
+        });
+      });
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
 }
 
 async function uploadFile(file, folder, extension) {
@@ -87,4 +165,5 @@ module.exports = {
   commitVideo,
   uploadFile,
   deleteFileWithURL,
+  exportRecording,
 };
