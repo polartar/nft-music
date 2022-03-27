@@ -3,10 +3,14 @@ FROM node:14-alpine
 RUN apk add --update git
 RUN apk add --no-cache ffmpeg
 
+WORKDIR /app
+
 COPY package*.json ./
 
-RUN npm install && npm run build
+RUN npm install
 
+COPY . .
+RUN npm run build
 COPY . .
 
 EXPOSE 8081
