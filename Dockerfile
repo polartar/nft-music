@@ -11,7 +11,7 @@ RUN npm install
 
 COPY . .
 RUN npm run build
-COPY . .
+COPY ./dist ./
 
 EXPOSE 8081
 CMD [ "npm", "run", "server" ]
