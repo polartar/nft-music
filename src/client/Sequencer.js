@@ -5,6 +5,7 @@ import Synth from "./Synth";
 // import Canvas from './Canvas';
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
+import cloneDeep from "lodash.clonedeep";
 
 import { makeStyles } from "@material-ui/core/styles";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -33,6 +34,7 @@ import Countdown from "react-countdown";
 import clone from "clone";
 import Loading from "./components/Loading";
 import Cookies from "universal-cookie";
+import { formatEther } from "@ethersproject/units";
 
 let ctx, x_end, y_end, bar_height;
 
@@ -79,6 +81,12 @@ class Sequencer extends Component {
     showTutorial: !didVisitSite,
     tutorialStep: 0,
     volume: 0,
+    padRecording: [],
+    isRecording: false,
+    shouldStartRecording: false,
+    shouldStopRecording: false,
+    timer: 0,
+    recordingStatus: "",
   };
 
   constructor(props) {
@@ -96,6 +104,7 @@ class Sequencer extends Component {
     this.myRef = React.createRef();
     this.clearSelections = this.clearSelections.bind(this);
     this.activePlayers = {};
+    this.recorder = new Tone.Recorder();
   }
 
   initWallet = async () => {
@@ -136,6 +145,35 @@ class Sequencer extends Component {
     });
   };
 
+  exportRecording = async (blob) => {
+    try {
+      const form = new FormData();
+
+      form.append("video", blob);
+      form.append("artistName", this.state.nft.artistName);
+      form.append("nftName", this.state.nft.name);
+      form.append("edition", this.state.nft.edition);
+
+      const response = await axios.post("/api/exportRecording", form, {
+        responseType: "blob",
+      });
+
+      const url = URL.createObjectURL(
+        new Blob([response.data], { type: "video/mp4" })
+      );
+      const anchor = document.createElement("a");
+      anchor.download = `My Mix of ${this.state.nft.name}.mp4`;
+      anchor.href = url;
+      anchor.click();
+
+      this.setState({
+        recordingStatus: "",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   fetchNFT = async () => {
     let nftResponse;
     if (this.props.match) {
@@ -163,15 +201,22 @@ class Sequencer extends Component {
 
         this.activePlayers[group] = [];
 
-        filePaths.forEach((filePath) => {
-          console.log(filePath);
-          this.players[group].push(
-            new Tone.Player(
-              `/public/${encodeURIComponent(filePath)}`
-            ).toDestination()
-          );
+        Object.keys(nftResponse.data.filePaths).map((group) => {
+          const filePaths = nftResponse.data.filePaths[group];
+          this.players[group] = [];
+          pads[group] = [];
+          queue[group] = [];
 
-          pads[group].push(0);
+          filePaths.forEach((filePath) => {
+            const player = new Tone.Player(
+              `/public/${encodeURIComponent(filePath)}`
+            );
+
+            player.connect(this.recorder);
+            this.players[group].push(player.toDestination());
+
+            pads[group].push(0);
+          });
         });
       });
 
@@ -206,7 +251,7 @@ class Sequencer extends Component {
       }
 
       Tone.Transport.bpm.value = nftResponse.data.bpm;
-      Tone.Transport.scheduleRepeat((time) => {
+      Tone.Transport.scheduleRepeat(async (time) => {
         if (this.state.step % subSteps === 0) {
           const updatedPads = {};
           const updatedQueue = {};
@@ -290,6 +335,32 @@ class Sequencer extends Component {
             showTutorial: updatedShowTutorial,
             tutorialStep: updatedTutorialStep,
           });
+        }
+
+        if (this.state.step === 0) {
+          if (this.state.shouldStartRecording) {
+            this.recorder.start();
+
+            console.log("starting!");
+
+            this.setState({
+              shouldStartRecording: false,
+              isRecording: true,
+              recordingStatus: "Recording...",
+            });
+          }
+
+          if (this.state.shouldStopRecording) {
+            // the recorded audio is returned as a blob
+            const recording = await this.recorder.stop();
+            this.exportRecording(recording);
+
+            this.setState({
+              shouldStopRecording: false,
+              isRecording: false,
+              recordingStatus: "Exporting...",
+            });
+          }
         }
 
         this.setState((state) => ({
@@ -517,6 +588,8 @@ class Sequencer extends Component {
       }
     }
 
+    const milliseconds = cloneDeep(this.state.timer);
+
     this.setState(
       (state) => {
         const clonedPads = { ...state.pads };
@@ -572,6 +645,27 @@ class Sequencer extends Component {
           ];
         }
 
+        const pressedPad = [group, pad];
+        this.state.padFormat.forEach((column, j) => {
+          column.forEach((mappedPad, i) => {
+            if (
+              mappedPad[0] === pressedPad[0] &&
+              mappedPad[1] === pressedPad[1]
+            ) {
+              this.setState({
+                padRecording: [
+                  ...this.state.padRecording,
+                  [j * this.state.padFormat.length + i, milliseconds],
+                ],
+              });
+            }
+          });
+        });
+        console.log(
+          "this.state.padFormat.length: ",
+          this.state.padFormat.length
+        );
+
         return {
           pads: clonedPads,
           totalSoundsPlaying: numPads,
@@ -583,6 +677,35 @@ class Sequencer extends Component {
       }
     );
   }
+
+  // recording work
+  startRecording() {
+    this.setState({
+      shouldStartRecording: true,
+      recordingStatus: "Waiting for next loop to start...",
+    });
+    let milliseconds = 0;
+
+    const incrementMilliseconds = () => {
+      this.setState({
+        timer: (milliseconds += 10),
+      });
+    };
+
+    window.timer = setInterval(incrementMilliseconds, 10);
+  }
+
+  async stopRecording() {
+    console.log("stopped recording");
+    clearInterval(window.timer);
+
+    this.setState({
+      shouldStopRecording: true,
+      recordingStatus: "Waiting for loop to end...",
+      timer: 0,
+    });
+  }
+  w1;
 
   muiTheme = createTheme({
     overrides: {
@@ -659,6 +782,7 @@ class Sequencer extends Component {
       <div className="volumeWrapper">
         <ThemeProvider theme={this.muiTheme}>
           <Slider
+            orientation="vertical"
             min={-50}
             max={0}
             defaultValue={this.state.volume}
@@ -686,6 +810,8 @@ class Sequencer extends Component {
       shareablePadNumbers,
       showTutorial,
       tutorialStep,
+      padRecording,
+      timer,
     } = this.state;
 
     const currentBidAmount =
@@ -880,14 +1006,77 @@ class Sequencer extends Component {
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "space-around",
+                  // flexDirection: "column",
+                  justifyContent: "space-between",
+                  marginLeft: "20px",
                   position: "absolute",
                   bottom: "60px",
                   width: "100vw",
                 }}
               >
-                <div className="stopBtnContainer">{this.stopButton()}</div>
-                <div className="volumeContainer">{this.volumeControl()}</div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div className="volumeContainer">{this.volumeControl()}</div>
+                  <div className="stopBtnContainer">{this.stopButton()}</div>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    alignItems: "flex-end",
+                    marginLeft: "10px",
+                    marginRight: "10px",
+                    width: "100%",
+                  }}
+                >
+                  <button
+                    className={
+                      this.state.shouldStartRecording || this.state.isRecording
+                        ? "button blink whitePad padWhiteVersion"
+                        : "button"
+                    }
+                    style={{
+                      height: "40px",
+                      width: "125px",
+                      border: "none",
+                      borderRadius: "5px",
+                      margin: "5px",
+                      // position: "absolute",
+                      // bottom: "3px",
+                      // left: "100px"
+                    }}
+                    onClick={() => {
+                      if (this.state.isRecording) {
+                        this.stopRecording();
+                      } else {
+                        this.startRecording();
+                      }
+                    }}
+                  >
+                    {this.state.isRecording
+                      ? this.state.shouldStopRecording
+                        ? "Stopping"
+                        : "Stop Recording"
+                      : "Record"}
+                  </button>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      height: "40px",
+                      margin: "5px",
+                      color: "white",
+                    }}
+                  >
+                    {this.state.recordingStatus}
+                  </div>
+                </div>
                 <div className="volumeMeter">
                   <canvas
                     ref={this.canvas}
