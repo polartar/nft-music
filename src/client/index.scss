@@ -129,6 +129,35 @@ $footer-height: 58px;
     }
 }
 
+.slideshow-footer-container {
+    height: 188px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+.slide-footer {
+   display: flex;
+   justify-content: space-between;
+   border-top-width: 1px;
+   border-top-color: gray;
+   border-top-style: solid;
+   padding: 32px 64px;
+   @media only screen and (max-width: 728px) {
+     display: block;
+
+   }
+}
+
+.legal-links {
+  display: flex;
+  gap: 24px;
+  @media only screen and (max-width: 728px) {
+    display: block;
+  }
+}
+
 /* #SLIDESHOW - END */
 
 #faq-wrapper {

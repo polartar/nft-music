@@ -1932,7 +1932,7 @@ handleFAQSlide () {
                             justifyContent: "space-between",
                           }}
                         >
-                
+
                         </div>
                         <div
                           style={{
@@ -2243,23 +2243,26 @@ handleFAQSlide () {
                 </div>
 
                 <div className="section vslide" data-slideindex="5" ref={this.FAQ}>
-                  <div className="" ref={this.myRef}  style={{height:"188px", position: "absolute", bottom: 0, left: 0, width: "100%"}}>
+                  <div className="slideshow-footer-container" ref={this.myRef}>
 
                       <div>
                         {/* <div className="privacyAndTos"> */}
-                        <div className="details animated-content" style={{display:"flex", justifyContent:"space-between", borderTopWidth:"1px",borderTopColor:"gray",borderTopStyle:"solid", padding:"32px 64px"}}>
+                        <div className="details animated-content slide-footer">
                           <div>
                             <a href="mailto:inquiries@secretgarden.fm">inquiries@secretgarden.fm</a>
                           </div>
-                          <div className="legal-links" style={{display:"flex"}}>
+                          <div className="legal-links">
+                            <p>
                             <a href="/tos" target="_blank">
                               Terms of Service
                             </a>
-
-                            <a href="/privacy" target="_blank" style={{marginLeft:"24px"}}>
+                          </p>
+                            <p>
+                            <a href="/privacy" target="_blank">
                               Privacy Policy
                             </a>
-                          </div>
+                          </p>
+                        </div>
                         </div>
                         {/* <div className="ourSocials"> */}
                         <div className="details animated-content">
