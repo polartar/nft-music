@@ -1138,7 +1138,7 @@ class Sequencer extends Component {
                         } else {
                           // Render a countdown
                           return (
-                            <div className="bidInfo">{`${days} days, 
+                            <div className="bidInfo">{`${days} days,
                               ${hours} hrs, ${minutes} mins, ${seconds} secs`}</div>
                           );
                         }

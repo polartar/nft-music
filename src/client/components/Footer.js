@@ -105,15 +105,13 @@ export default function Footer(props) {
             <div
               className="play-controls"
             >
-            <div className="stopBtnContainer">
-            <div className="stopBtnWrapper">
-              <IconButton className="expandOuter">
-                <StopCircleIcon fontSize="large" onClick={clearSelections} />
-              </IconButton>
-            </div>
-            </div>
-              <div
-              >
+              <div className="stopBtnContainer">
+                <div className="stopBtnWrapper">
+                  <IconButton className="expandOuter">
+                    <StopCircleIcon fontSize="large" onClick={clearSelections} />
+                  </IconButton>
+                </div>
+              </div>
 
                 <div className="volumeContainer">
                 <div className="volumeWrapper">
@@ -129,7 +127,6 @@ export default function Footer(props) {
                 </div>
               </div>
 
-            </div>
 
           {/* )} */}
 
@@ -142,21 +139,24 @@ export default function Footer(props) {
             SHARE
           </div>
           )} */}
-          <div style={{display:"flex",gap:"16px"}}>
-          <a href="https://discord.gg/ykrzXB9ZsV">
-            <div className=""><img src={Discord}/></div>
-          </a>
-          <a href="https://twitter.com/SecretGarden_FM">
-            <div className=""><img src={Twitter}/></div>
-          </a>
-          <div
-            className=""
-            onClick={() => setOpenShare(true)}
-            style={{ fontWeight: "700" }}
-          >
-            <img src={Share}/>
-          </div>
-          </div>
+          { showShare &&
+            <div style={{display:"flex",gap:"16px"}}>
+              <a href="https://discord.gg/ykrzXB9ZsV">
+                <div className=""><img src={Discord}/></div>
+              </a>
+              <a href="https://twitter.com/SecretGarden_FM">
+                <div className=""><img src={Twitter}/></div>
+              </a>
+              <div
+                className=""
+                onClick={() => setOpenShare(true)}
+                style={{ fontWeight: "700" }}
+              >
+                <img src={Share}/>
+              </div>
+            </div>
+          }
+
           {/* <button className="button" onClick={() => handleMintMenu()}>
             TO MINT MENU
           </button> */}
