@@ -13,6 +13,40 @@ $controller_size: 600px;
 $radius: 4px;
 $easing: cubic-bezier(.694, 0, .335, 1);
 $footer-height: 58px;
+$yellow: #E4F0A8;
+/* #UTILS - START */
+
+.display-medium {
+  font-size: 38px;
+  line-height: 44px;
+  font-family: "Bentham", serif;
+  text-transform: uppercase;
+}
+
+.body-large {
+  font-size: 18px;
+  line-height: 28px;
+}
+
+.white-text {
+  color: #fff;
+}
+.light-yellow-text {
+  color: $light-yellow;
+}
+
+.yellow-text {
+  color: $yellow;
+}
+.text-center {
+  text-align: center;
+}
+
+.float-right {
+  float: right;
+}
+
+/* #UTILS - END */
 
 #main-wrapper {
   position: relative;
@@ -153,8 +187,9 @@ $footer-height: 58px;
 .legal-links {
   display: flex;
   gap: 24px;
+  a { color: #8F8F8A; }
   @media only screen and (max-width: 728px) {
-    display: block;
+
   }
 }
 
@@ -173,7 +208,7 @@ $footer-height: 58px;
   gap: 12px;
   align-items: center;
   position: relative;
-  height: 40vh;
+  height: 60vh;
 
   &:after {
       content: '';
@@ -189,23 +224,23 @@ $footer-height: 58px;
       backdrop-filter: blur(104px);
       flex: 0 0 auto;
       position: absolute;
-    height: 100%;
+      height: 100%;
     .slide-wrapper {
       padding: 24px;
     }
-    .packTitle {
-      font-size: 1.5rem;
+    .display-medium {
+      font-size: 28px;
+      line-height: 36px;
     }
-    .details {
-      font-size: 1rem;
+    .body-large {
+      font-size: 16px;
+      line-height: 24px;
     }
     @media only screen and (min-width: 1024px) {
       .slide-wrapper {
         padding: 64px;
       }
-      .packTitle {
-        font-size: 2rem;
-      }
+
 
     }
 
@@ -278,14 +313,13 @@ $footer-height: 58px;
 }
 
 body {
-  // background: #1f1f1f;
   font-family: "Manrope", sans-serif;
   display: flex;
   flex-direction: column;
-  text-align: center;
   margin: 0px;
   overflow: hidden;
 }
+
 html {
   scroll-behavior: smooth;
 }
@@ -472,12 +506,24 @@ input[type="number"] {
   // height: 250px;
 }
 
-.song-details {
+.song-info-container {
   position: absolute;
   right: 20px;
   left: 20px;
   bottom: 32px;
   z-index: 1000000;
+  display: block;
+  justify-content: space-between;
+  align-items: baseline;
+  @media only screen and (min-width: 768px) {
+    display: flex;
+    left: 64px;
+    right: 64px;
+  }
+}
+
+.song-details {
+
   .beatPackTitle {
     font-size: 28px;
     line-height: 32px;
@@ -488,17 +534,26 @@ input[type="number"] {
     text-align: center;
   };
   @media only screen and (min-width: 768px) {
-    left: 64px;
-    right: auto;
     .beatPackTitle {
       font-size: 38px;
       line-height: 44px;
-
     };
     .artistName {
       text-align: left;
     }
   }
+}
+
+
+.record-container {
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    @media only screen and (max-width: 768px) {
+      margin-top: 16px;
+    }
 }
 
 .wordLogo {
@@ -512,6 +567,7 @@ input[type="number"] {
   margin-top:0px;
   margin-left: 0px;
   width: 100%;
+  text-align: center;
   @media only screen and (min-width: 768px) {
     margin-left: -64px;
     margin-top: 100px;
@@ -888,6 +944,21 @@ canvas {
       width: 30%;
     }
   }
+
+  .expandOuter {
+
+      position:absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      opacity: 1;
+      @media only screen and (max-width: 764px) {
+        left: auto;
+        right: 20px;
+        margin: none;
+      }
+  }
 }
 
 .carnation {
@@ -933,16 +1004,6 @@ canvas {
   path {
     fill: #262626
   }
-}
- @media only screen and (min-width: 1366px) {
-   .chrysanthemum {
-     width: 951px;
-   }
-
-   .carnation {
-     top: -550px;
-     width: 720px;
-   }
 }
 
 .monstera-leaf {
@@ -1089,6 +1150,10 @@ canvas {
   }
 }
 
+.animated-content {
+  opacity: 0;
+}
+
 
 .svg-container {
 	display: inline-block;
@@ -1096,6 +1161,7 @@ canvas {
 	padding-bottom: 100%;
 	vertical-align: middle;
 	overflow: hidden;
+  pointer-events: none;
 }
 
 .svg {
@@ -1112,15 +1178,15 @@ canvas {
   position: absolute;
   height: 100%;
   width: 100%;
-
+  text-align: center;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 
   @media only screen and (max-width: 700px) {
     height: 60%;
-    top: 40%;
-    transform: translate(-50%, -40%);
+    top: 30%;
+    transform: translate(-50%, -30%);
 
   }
 
@@ -1229,10 +1295,7 @@ canvas {
 }
 
 .details {
-  font-size: 20px;
-  color: $light-yellow;
-  text-align: left;
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 .question {
@@ -1426,8 +1489,8 @@ footer {
   margin-top: 0;
   z-index: 1200;
   @media only screen and (max-width: 700px) {
-    top: 40%;
-    transform: translate(-50%, -40%) rotate(45deg) scale(0.9);
+    top: 30%;
+    transform: translate(-50%, -30%) rotate(45deg) scale(0.9);
   }
 }
 
@@ -1468,12 +1531,7 @@ footer {
   font-size: 14px;
 }
 .packTitle {
-  font-size: 3rem;
-  text-align: left;
-  color: lightgoldenrodyellow;
-  font-family: "Bentham", serif;
-  margin-top: 10px;
-  text-transform: uppercase;
+  margin-top: 16px;
 }
 .section-intro-text {
   font-family: "Bentham", serif;

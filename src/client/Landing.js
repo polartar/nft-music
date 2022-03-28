@@ -335,29 +335,6 @@ class Sequencer extends Component {
       hero.addEventListener('touchend', this.touchMove.bind(this));
   }
 
-  handleInitialAnimations = () => {
-    let el = document.querySelector("#main-wrapper")
-    el.addEventListener('wheel', e => {this.handleScroll(e)});
-    this.touchControl()
-      anime({
-        targets: ['.video-container', '.beatPackTitle', '.artistName', '.gridOuter'],
-        easing: 'easeInOutSine',
-        duration: 750,
-        opacity:1,
-        delay: 1000,
-      });
-
-      anime({
-        targets: ['.play-controls', '.learnMore'],
-        easing: 'easeInOutSine',
-        duration: 750,
-        opacity:1,
-        delay: 2000,
-      });
-
-      this.handleVideoPlayerBackgroundAnimations()
-  }
-
   handleVideoPlayerBackgroundAnimations = () => {
     anime({
       targets: '#video-player-section .lily path',
@@ -1323,6 +1300,17 @@ class Sequencer extends Component {
 
     });
 
+    anime({
+      targets: [`.activeSlide .expandOuter`],
+      easing: 'easeInOutSine',
+      delay: 300,
+      duration: 500,
+      opacity: 1,
+      translateY: [0, -10]
+
+    });
+
+
     if (this.activeFPIndex == 0) {
       anime({
         targets: ['#video-player-section .lily', '#video-player-section .quaking-grass', '#video-player-section .carnation', '#video-player-section .hyacinth'],
@@ -1871,7 +1859,12 @@ handleFAQSlide () {
                         });
                       })}
                     </div>
-
+                    <IconButton
+                      className="expandOuter animated-content"
+                      onClick={() => this.handleScroll("next")}
+                    >
+                      <img src={Expand} className="expand" />
+                    </IconButton>
                       {showTutorial && (
                         <React.Fragment>
                           {tutorialStep === 0 && (
@@ -1913,38 +1906,14 @@ handleFAQSlide () {
                         </React.Fragment>
                       )}
 
-                      <div
-                        className="play-controls"
-                        style={{
-                          display: "flex",
-                          // flexDirection: "column",
-                          justifyContent: "space-between",
-                          marginLeft: "20px",
-                          position: "absolute",
-                          bottom: "60px",
-                          width: "100vw",
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                          }}
-                        >
-
+                      <div className="song-info-container">
+                        <div className="song-details">
+                          <div className="beatPackTitle display-medium">{nft.name}</div>
+                          <div className="artistName">{`by ${nft.artistName} ${
+                            nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
+                          }`}</div>
                         </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "flex-start",
-                            alignItems: "flex-end",
-                            marginLeft: "10px",
-                            marginRight: "10px",
-                            width: "100%",
-                          }}
-                        >
+                        <div className="record-container">
                           <button
                             className={
                               this.state.shouldStartRecording ||
@@ -1988,14 +1957,8 @@ handleFAQSlide () {
                             {this.state.recordingStatus}
                           </div>
                         </div>
-                      </div>
+                        </div>
 
-                      <div className="song-details">
-                        <div className="beatPackTitle">{nft.name}</div>
-                        <div className="artistName">{`by ${nft.artistName} ${
-                          nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
-                        }`}</div>
-                      </div>
                       <div className="volumeMeter">
 
                         <canvas
@@ -2021,17 +1984,17 @@ handleFAQSlide () {
                       <div className="section-intro-text animated-content">
                       WELCOME TO
                       </div>
-                        <div className="packTitle animated-content">
+                        <div className="packTitle animated-content display-medium yellow-text">
                           The Secret Garden
                         </div>
-                        <div className="details animated-content">
+                        <div className="details animated-content body-large light-yellow-text">
                           We believe that Web3 can fundamentally unlock value
                           for all artists.
                         </div>
                         <br />
                         <br />
                         <IconButton
-                          className="expandOuter"
+                          className="expandOuter animated-content"
                           onClick={() => this.handleScroll("next")}
                         >
                           <img src={Expand} className="expand" />
@@ -2061,19 +2024,19 @@ handleFAQSlide () {
                       <div className="section-intro-text animated-content">
                       BUT...
                       </div>
-                        <div className="packTitle animated-content">There's a Gap</div>
-                        <div className="details animated-content">
+                        <div className="packTitle animated-content display-medium yellow-text">There's a Gap</div>
+                        <div className="details animated-content body-large light-yellow-text">
                           Digital art is breaking all time highs on a daily
                           basis while music is still underserved.
                         </div>
-                        <div className="details animated-content">
+                        <div className="details animated-content body-large light-yellow-text">
                           We are here to crack the code by pushing the
                           boundaries of art and NFTs.
                         </div>
                         <br />
                         <br />
                         <IconButton
-                          className="expandOuter"
+                          className="expandOuter animated-content"
                           onClick={() => this.handleScroll("next")}
                         >
                           <img src={Expand} className="expand" />
@@ -2091,12 +2054,12 @@ handleFAQSlide () {
                   <div className="content-container small" ref={this.myRef}>
 
                       <div className="section-intro-text animated-content">INTRODUCING</div>
-                        <div className="packTitle animated-content">Bouquet</div>
-                        <div className="details animated-content" style={{textAlign:"center"}}>
+                        <div className="packTitle animated-content display-medium yellow-text">Bouquet</div>
+                        <div className="details animated-content body-large light-yellow-text text-center">
                           Bouquet is a music NFT that forms an interactive music
                           player.
                         </div>
-                        <div className="details animated-content" style={{textAlign:"center"}}>
+                        <div className="details animated-content body-large light-yellow-text text-center">
                           The Bouquet NFT is the first music NFT that allows
                           holders to generate their own mix using unique sounds
                           produced by our resident artists.
@@ -2113,7 +2076,7 @@ handleFAQSlide () {
                         <br />
                         <br />
                         <IconButton
-                          className="expandOuter"
+                          className="expandOuter animated-content"
                           onClick={() => this.handleScroll("next")}
                         >
                           <img src={Expand} className="expand" />
@@ -2138,10 +2101,10 @@ handleFAQSlide () {
 
                       <div className="slide-wrapper">
                         <div>
-                          <div className="packTitle animated-content">
+                          <div className="packTitle animated-content display-medium yellow-text">
                             What do I get by buying a Bouquet?
                           </div>
-                          <div className="details animated-content">
+                          <div className="details animated-content body-large light-yellow-text">
                             When you purchase a Bouquet, you get to own this
                             one-of-a-kind interactive, playable experience as an
                             NFT.
@@ -2165,10 +2128,10 @@ handleFAQSlide () {
 
                       <div className="slide-wrapper">
                       <div>
-                        <div className="packTitle animated-content">
+                        <div className="packTitle animated-content display-medium yellow-text">
                         Bonus Features:
                         </div>
-                        <div className="details animated-content">
+                        <div className="details animated-content body-large light-yellow-text">
                           <ul>
                             <li>
                             Set the default mix for the player.
@@ -2198,10 +2161,10 @@ handleFAQSlide () {
 
                       <div className="slide-wrapper">
                         <div>
-                          <div className="packTitle animated-content">
+                          <div className="packTitle animated-content display-medium yellow-text">
                             How do I purchase a Bouquet?
                           </div>
-                          <div className="details animated-content">
+                          <div className="details animated-content body-large light-yellow-text">
                             Join our{" "}
                             <a
                               target="_blank"
@@ -2230,8 +2193,7 @@ handleFAQSlide () {
 
                   </div>
                   <IconButton
-                    style={{float:"right"}}
-                    className="expandOuter"
+                    className="expandOuter animated-content float-right"
                     onClick={() => this.handleFAQSlide()}
                   >
                     <img src={ArrowRight} className="expand" />
@@ -2249,19 +2211,19 @@ handleFAQSlide () {
                         {/* <div className="privacyAndTos"> */}
                         <div className="details animated-content slide-footer">
                           <div>
-                            <a href="mailto:inquiries@secretgarden.fm">inquiries@secretgarden.fm</a>
+                            <a className="body-large light-yellow-text" href="mailto:inquiries@secretgarden.fm">inquiries@secretgarden.fm</a>
                           </div>
                           <div className="legal-links">
-                            <p>
-                            <a href="/tos" target="_blank">
+
+                            <a className="body-large" href="/tos" target="_blank">
                               Terms of Service
                             </a>
-                          </p>
-                            <p>
-                            <a href="/privacy" target="_blank">
+
+
+                            <a className="body-large" href="/privacy" target="_blank">
                               Privacy Policy
                             </a>
-                          </p>
+
                         </div>
                         </div>
                         {/* <div className="ourSocials"> */}
