@@ -37,7 +37,6 @@ services:
     instance_count: 2
     instance_size_slug: professional-xs
     name: secretgarden
-    dockerfile_path: Dockerfile
     routes:
       - path: /
     run_command: npm run server
