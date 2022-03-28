@@ -15,6 +15,8 @@ import InstaPic from "./images/instaPic.png";
 import WaterLoop from "./images/waterScaleLoop.mp4";
 import Wallet from "./images/wallet.png";
 import Expand from "./images/expand.png";
+import ArrowRight from "./images/arrowright.svg";
+
 import BidModal from "./components/BidModal";
 
 import Navbar from "./components/Navbar";
@@ -30,13 +32,20 @@ import Countdown from "react-countdown";
 import clone from "clone";
 import Loading from "./components/Loading";
 import Cookies from "universal-cookie";
-import { Controller, Scene } from "react-scrollmagic";
 
-import Slider from "@material-ui/core/Slider";
 import { createTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import StopCircleIcon from "@mui/icons-material/StopCircle";
-import ReactFullpage from "@fullpage/react-fullpage";
+import anime from 'animejs/lib/anime.es.js';
+
+import Lily from "./components/Lily";
+import Chrysanthemum from "./components/Chrysanthemum";
+import Hyacinth from "./components/Hyacinth";
+import Carnation from "./components/Carnation";
+import QuakingGrass from "./components/QuakingGrass";
+import MonsteraLeaf from "./components/MonsteraLeaf";
+import Tulip from "./components/Tulip";
+
 
 const sixBySixThreeGroups = [
   [
@@ -197,10 +206,6 @@ nextYear.setFullYear(current.getFullYear() + 1);
 const didVisitSite = Boolean(cookies.get("didVisitSecretGarden"));
 cookies.set("didVisitSecretGarden", true, { path: "/", expires: nextYear });
 
-const pluginWrapper = () => {
-  require("./fullpage.fadingEffect.min");
-};
-
 class Sequencer extends Component {
   state = {
     type: "sine",
@@ -250,6 +255,13 @@ class Sequencer extends Component {
     this.clearSelections = this.clearSelections.bind(this);
     this.activePlayers = {};
     this.recorder = new Tone.Recorder();
+
+    this.mobileTouchStart = 0;
+    this.idle = true;
+    this.activeFPIndex = 0;
+    this.activeFAQSlideIndex = 0;
+
+    this.activeAnimations = {}
   }
 
   initWallet = async () => {
@@ -289,6 +301,132 @@ class Sequencer extends Component {
       address,
     });
   };
+  touchStart = function (e) {
+    this.mobileTouchStart = parseInt(e.changedTouches[0].clientX)
+    window.scrollTop = 0;
+  }
+
+  touchMove = function (e) {
+    let idle = this.idle
+
+    let mobileTouchMove = parseInt(e.changedTouches[0].clientX);
+
+    console.log("TOUCH START IS " + this.mobileTouchStart + " TOUCH END IS " + mobileTouchMove)
+
+    const delta = mobileTouchMove - this.mobileTouchStart;
+    window.scrollTop = 0;
+    if (delta == 0) {
+      //user tapped, don't do anything
+      return
+    }
+    console.log("DELTA IS " + delta)
+    if (idle) {
+
+        const direction = delta > 0 ? 'next' : 'prev';
+        this.changeSlide(direction);
+    }
+  }
+
+
+  touchControl = () => {
+    let hero = document.querySelector('#main-wrapper')
+
+      hero.addEventListener('touchstart', this.touchStart.bind(this));
+      hero.addEventListener('touchend', this.touchMove.bind(this));
+  }
+
+  handleVideoPlayerBackgroundAnimations = () => {
+    anime({
+      targets: '#video-player-section .lily path',
+      easing: 'easeInOutSine',
+      duration: 1200,
+      skewX: function() {
+        return anime.random(0.5, 1);
+      },
+      skewY: function() {
+        return anime.random(-0.25, -0.75);
+      },
+      delay: 250,
+      direction: 'alternate',
+      loop: true
+    });
+
+    anime({
+      targets: '.quaking-grass path',
+      easing: 'easeInOutSine',
+      duration: 1200,
+      skewX: 0.8,
+      skewY: -0.75,
+      delay: 250,
+      direction: 'alternate',
+      loop: true
+    });
+
+    anime({
+      targets: '.carnation path',
+      easing: 'easeInOutSine',
+      duration: 1300,
+      skewX: 0.7,
+      skewY: -0.6,
+      delay: 250,
+      direction: 'alternate',
+      loop: true
+    });
+
+    anime({
+      targets: '.hyacinth path',
+      easing: 'easeInOutSine',
+      duration: 1500,
+      skewX: 0.6,
+      skewY: -0.5,
+      delay: 250,
+      direction: 'alternate',
+      loop: true
+    });
+
+
+    anime({
+      targets: '.chrysanthemum path',
+      easing: 'easeInOutSine',
+      duration: 1500,
+      skewX: -1,
+      skewY: 1,
+      delay: 250,
+      direction: 'alternate',
+      loop: true
+    });
+
+    anime({
+      targets: '.tulip #petals',
+      easing: 'easeInOutSine',
+      duration: 1500,
+      skewX: -1,
+      skewY: 1,
+      delay: 250,
+      direction: 'alternate',
+      loop: true
+    });
+
+    anime({
+      targets: '.monstera-leaf path',
+      easing: 'easeInOutSine',
+      duration: 1500,
+      skewX: -1,
+      skewY: 1,
+      delay: 250,
+      direction: 'alternate',
+      loop: true
+    });
+
+    anime({
+      targets: ['#video-player-section .lily', '#video-player-section .quaking-grass', '#video-player-section .carnation', '#video-player-section .hyacinth', '#video-player-section .chrysanthemum'],
+      easing: 'easeInOutSine',
+      duration: 500,
+      opacity:1,
+      delay: 0,
+    });
+
+  }
 
   exportRecording = async (blob) => {
     try {
@@ -516,7 +654,7 @@ class Sequencer extends Component {
       Tone.loaded().then(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const sharedPadNumbers = urlParams.get("share");
-
+        let _this = this;
         this.setState(
           () => ({
             loaded: true,
@@ -544,9 +682,14 @@ class Sequencer extends Component {
               const soundIndex = remappedCoordinates[1];
               this.togglePad(group, soundIndex);
             });
+
+            _this.handleInitialAnimations()
+            _this.setupSwayingAnimations()
           }
         );
       });
+
+
     }
   };
 
@@ -569,6 +712,7 @@ class Sequencer extends Component {
     script.async = true;
 
     document.body.appendChild(script);
+
   }
 
   handleClickOpen = async () => {
@@ -912,31 +1056,649 @@ class Sequencer extends Component {
     }
   }
 
-  stopButton() {
-    return (
-      <div className="stopBtnWrapper">
-        <IconButton className="expandOuter">
-          <StopCircleIcon fontSize="large" onClick={this.clearSelections} />
-        </IconButton>
-      </div>
-    );
+
+
+
+    touchStart = function (e) {
+      this.mobileTouchStart = parseInt(e.changedTouches[0].clientX)
+      window.scrollTop = 0;
+    }
+
+    touchMove = function (e) {
+      let idle = this.idle
+
+      let mobileTouchMove = parseInt(e.changedTouches[0].clientX);
+
+      const delta = mobileTouchMove - this.mobileTouchStart;
+      window.scrollTop = 0;
+      if (delta == 0) {
+        //user tapped, don't do anything
+        return
+      }
+
+      if (idle) {
+          const direction = delta > 0 ? 'next' : 'prev';
+          this.handleScroll(direction);
+      }
+    }
+
+    handleInitialAnimations = () => {
+      let el = document.querySelector("#main-wrapper")
+      //scroll handling
+      el.addEventListener('wheel', e => {
+        e.preventDefault()
+        const direction = e.deltaY > 0 ? 'next' : 'prev';
+        this.handleScroll(direction)
+      });
+      //mobile touch controls
+      el.addEventListener('touchstart', this.touchStart.bind(this));
+      el.addEventListener('touchend', this.touchMove.bind(this));
+
+
+      anime({
+        targets: ['.video-container', '.beatPackTitle', '.artistName', '.gridOuter'],
+        easing: 'easeInOutSine',
+        duration: 750,
+        opacity:1,
+        delay: 1000,
+      });
+
+      anime({
+        targets: ['.play-controls', '.learnMore'],
+        easing: 'easeInOutSine',
+        duration: 750,
+        opacity:1,
+        delay: 2000,
+      });
+
+      anime({
+        targets: ['#video-player-section .lily', '#video-player-section .quaking-grass', '#video-player-section .carnation', '#video-player-section .hyacinth', '#video-player-section .chrysanthemum'],
+        easing: 'easeInOutSine',
+        duration: 500,
+        opacity:1,
+        delay: 0,
+      });
+
+    }
+
+    setupSwayingAnimations = () => {
+      this.activeAnimations.lily = anime({
+        targets: '[data-slideindex="0"] .lily path',
+        easing: 'easeInOutSine',
+        duration: 1200,
+        skewX: function() {
+          return anime.random(0.5, 1);
+        },
+        skewY: function() {
+          return anime.random(-0.25, -0.75);
+        },
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+      this.activeAnimations.quakingGrass = anime({
+        targets: '[data-slideindex="0"] .quaking-grass path',
+        easing: 'easeInOutSine',
+        duration: 1200,
+        skewX: 0.8,
+        skewY: -0.75,
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+      this.activeAnimations.firstCarnation = anime({
+        targets: '[data-slideindex="0"] .carnation path',
+        easing: 'easeInOutSine',
+        duration: 1300,
+        skewX: 0.7,
+        skewY: -0.6,
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+      this.activeAnimations.firstHyacinth = anime({
+        targets: '[data-slideindex="0"] .hyacinth path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: 0.6,
+        skewY: -0.5,
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+
+      this.activeAnimations.firstChrysantheum = anime({
+        targets: '[data-slideindex="0"] .chrysanthemum path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: -1,
+        skewY: 1,
+        delay: 250,
+        direction: 'alternate',
+        loop: true
+      });
+
+      //second section
+      this.activeAnimations.secondSectionHyacinthes = anime({
+        targets: '[data-slideindex="1"] .hyacinth path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: 0.6,
+        skewY: -0.5,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+      //third section
+      this.activeAnimations.thirdSectionMonsteraLeaves = anime({
+        targets: '[data-slideindex="2"] .monstera-leaf path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: -1,
+        skewY: 1,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+      this.activeAnimations.thirdSectionHyacinthes = anime({
+        targets: '[data-slideindex="2"] .hyacinth path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: 0.6,
+        skewY: -0.5,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+      //fourth section
+      this.activeAnimations.firstTulip = anime({
+        targets: '.tulip #petals',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: -1,
+        skewY: 1,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+      this.activeAnimations.fourthSectionMonsteraLeaves = anime({
+        targets: '[data-slideindex="3"] .monstera-leaf path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: -1,
+        skewY: 1,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+      this.activeAnimations.fourthSectionCarnations = anime({
+        targets: '[data-slideindex="3"] .carnation path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: -1,
+        skewY: 1,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+      this.activeAnimations.fourthSectionChrysantheum = anime({
+        targets: '[data-slideindex="3"] .chrysanthemum path',
+        easing: 'easeInOutSine',
+        duration: 1500,
+        skewX: -1,
+        skewY: 1,
+        delay: 250,
+        direction: 'alternate',
+        loop: true,
+        autoPlay: false
+      });
+
+    }
+
+  handleNewFPSlideAnimation() {
+    anime({
+      targets: ['.activeSlide .section-intro-text'],
+      easing: 'easeInOutSine',
+      delay: 0,
+      duration: 500,
+      opacity: 1,
+      translateY: [0, -10]
+    });
+
+    anime({
+      targets: ['.activeSlide .packTitle'],
+      easing: 'easeInOutSine',
+      delay: 100,
+      duration: 500,
+      opacity: 1,
+      translateY: [0, -10]
+    });
+
+    anime({
+      targets: [`.activeSlide .details`],
+      easing: 'easeInOutSine',
+      delay: 200,
+      duration: 500,
+      opacity: 1,
+      translateY: [0, -10]
+
+    });
+
+    anime({
+      targets: [`.activeSlide .expandOuter`],
+      easing: 'easeInOutSine',
+      delay: 300,
+      duration: 500,
+      opacity: 1,
+      translateY: [0, -10]
+
+    });
+
+
+    if (this.activeFPIndex == 0) {
+      anime({
+        targets: ['#video-player-section .lily', '#video-player-section .quaking-grass', '#video-player-section .carnation', '#video-player-section .hyacinth'],
+        easing: 'easeInOutSine',
+        duration: 500,
+        opacity:1,
+        delay: 0,
+      });
+
+
+      this.activeAnimations.lily.play()
+      this.activeAnimations.quakingGrass.play()
+      this.activeAnimations.firstCarnation.play()
+      this.activeAnimations.firstHyacinth.play()
+      this.activeAnimations.firstChrysantheum.play()
+
+    } else if (this.activeFPIndex == 1) {
+      anime({
+        targets: '#hyacinth-2',
+        easing: 'easeOutQuad',
+        delay: 0,
+        duration: 500,
+        opacity: 1,
+        translateY: [0, -10],
+        rotate:[45, 45]
+      });
+
+      anime({
+        targets: '#hyacinth-3',
+        easing: 'easeOutQuad',
+        delay: 50,
+        duration: 500,
+        opacity: 1,
+        translateY: [0, -10],
+        rotate:[-30, -30]
+      });
+
+      anime({
+        targets: '#main-flower',
+        easing: 'easeOutQuad',
+        delay: 100,
+        duration: 500,
+        opacity: 1,
+        translateY: [0, -10]
+      });
+
+      this.activeAnimations.firstChrysantheum.play()
+      this.activeAnimations.secondSectionHyacinthes.play()
+    } else if (this.activeFPIndex == 2) {
+
+        anime({
+          targets: '#leaf-1',
+          easing: 'easeInOutSine',
+          delay: 100,
+          duration: 500,
+          opacity: 1,
+          translateY: ["-50%", "-51%"],
+
+          rotate:[-10, -10]
+        });
+
+        anime({
+          targets: '#leaf-2',
+          easing: 'easeInOutSine',
+          delay: 50,
+          duration: 500,
+          opacity: 1,
+          rotate:[-5, -5],
+          translateY: [0, -10]
+        });
+        anime({
+          targets: '#hyacinth-4',
+          easing: 'easeInOutSine',
+          delay: 50,
+          duration: 500,
+          opacity: 1,
+          rotate:[200, 200],
+          translateY: [0, -10]
+        });
+
+        anime({
+          targets: '#carnation-3',
+          easing: 'easeInOutSine',
+          delay: 0,
+          duration: 500,
+          opacity: 1,
+          rotate:[-30, -30],
+          translateY: [0, -10]
+        });
+
+        this.activeAnimations.thirdSectionHyacinthes.play()
+        this.activeAnimations.thirdSectionMonsteraLeaves.play()
+
+      } else if (this.activeFPIndex == 3) {
+          anime({
+            targets: '#leaf-3',
+            easing: 'easeInOutSine',
+            delay: 0,
+            duration: 500,
+            opacity: 1,
+            rotate:[200, 200],
+            translateY: [0, -10]
+
+          });
+
+          anime({
+            targets: '#chrysanthemum-2',
+            easing: 'easeInOutSine',
+            delay: 50,
+            duration: 500,
+            opacity: 1,
+            rotate:[-30, -30],
+            translateY: [0, -10]
+
+          });
+
+          anime({
+            targets: '#carnation-2',
+            easing: 'easeInOutSine',
+            delay: 100,
+            duration: 500,
+            opacity: 1,
+            rotate:[-30, -30],
+            translateY: [0, -10]
+
+          });
+
+          anime({
+            targets: '.tulip',
+            easing: 'easeInOutSine',
+            delay: 100,
+            duration: 500,
+            opacity: 1,
+            translateY: [0, -10]
+
+          });
+
+
+          this.activeAnimations.fourthSectionCarnations.play()
+          this.activeAnimations.fourthSectionChrysantheum.play()
+          this.activeAnimations.fourthSectionMonsteraLeaves.play()
+
+        } else if (this.activeFPIndex == 4) {
+            anime({
+              targets: '#hyacinth-5',
+              easing: 'easeInOutSine',
+              delay: 0,
+              duration: 500,
+              opacity: 1,
+              rotate:[130, 130],
+              translateY: [0, -10]
+            });
+
+          }
+
+}
+
+  addClasses(nodeList, cssClasses) {
+        for (let i = 0; i < nodeList.length; i++) {
+            nodeList[i].classList.add(...cssClasses);
+        }
+    }
+
+  removeClasses(nodeList, cssClasses) {
+        for (let i = 0; i < nodeList.length; i++) {
+            nodeList[i].classList.remove(...cssClasses);
+        }
+    }
+
+    waitForIdle() {
+      let hero = document.querySelector('#main-wrapper')
+      let items = hero.querySelectorAll('.vslide');
+
+      this.removeClasses(items, ['transition']);
+      this.handleNewFPSlideAnimation()
+
+      //set timeout to make sure extra scrolls doesn't fire
+      setTimeout(() => {this.idle = true}, 500);
+   }
+
+   waitForFAQIdle() {
+     //set timeout to make sure extra scrolls doesn't fire
+     setTimeout(() => {this.idle = true}, 500);
   }
 
-  volumeControl() {
-    return (
-      <div className="volumeWrapper">
-        <ThemeProvider theme={this.muiTheme}>
-          <Slider
-            orientation="vertical"
-            min={-50}
-            max={0}
-            defaultValue={this.state.volume}
-            onChange={(event, newValue) => this.setVolume(newValue)}
-          />
-        </ThemeProvider>
-      </div>
-    );
+    changeSlide(direction) {
+
+        let hero = document.querySelector('#main-wrapper')
+        let main = document.querySelector('#slides-main')
+        let items = hero.querySelectorAll('.vslide');
+        let total = items.length;
+
+        let activeFPIndex = this.activeFPIndex
+        let previousDirection = hero.classList.contains("prev") ? "prev" : "next"
+        let didChangeDirection = previousDirection !== direction
+
+        if (activeFPIndex == total - 1 && direction == 'next') {
+          console.log("at the end")
+          return
+        } else if (activeFPIndex == 0 && direction == 'prev') {
+          console.log("at the start")
+          return
+        }
+
+        this.idle = false
+        hero.classList.remove('prev', 'next');
+        if (direction == 'next') {
+            activeFPIndex = (activeFPIndex + 1) % total
+            hero.classList.add('next');
+        } else {
+
+            activeFPIndex = (activeFPIndex - 1 + total) % total
+            hero.classList.add('prev');
+        }
+
+        //reset classes
+        this.removeClasses(items, ['prev', 'activeSlide', 'next']);
+
+        //set prev
+        const prevItems = [...items]
+            .filter(item => {
+                let prevIndex;
+                if (hero.classList.contains('prev')) {
+                    prevIndex = activeFPIndex == total - 1 ? 0 : activeFPIndex + 1;
+                } else {
+                    prevIndex = activeFPIndex == 0 ? total - 1 : activeFPIndex - 1;
+                }
+
+                return item.dataset.slideindex == prevIndex;
+            });
+
+        //set next
+        const nextItems = [...items]
+            .filter(item => {
+                let nextIndex;
+                if (hero.classList.contains('next')) {
+                    nextIndex = activeFPIndex == total + 1 ? 0 : activeFPIndex + 1;
+                } else {
+                    nextIndex = activeFPIndex == 0 ? total + 1 : activeFPIndex - 1;
+                }
+
+                return item.dataset.slideindex == nextIndex;
+            });
+
+        //set active
+        const activeItems = [...items]
+            .filter(item => {
+                return item.dataset.slideindex == activeFPIndex;
+            });
+
+            if (didChangeDirection) {
+              this.addClasses(nextItems, ['transition']);
+            }
+
+
+        this.addClasses(prevItems, ['prev']);
+
+        this.addClasses(nextItems, ['next']);
+
+        this.addClasses(activeItems, ['activeSlide']);
+
+
+        const activeImageItem = main.querySelector('.activeSlide');
+
+        this.activeFPIndex = activeFPIndex
+
+        activeImageItem.addEventListener('transitionend', this.waitForIdle.bind(this), {
+            once: true
+        });
+    }
+
+    handleScroll(direction) {
+      if (this.idle == true) {
+        this.prepareForFPSlideChange()
+        this.changeSlide(direction);
+      }
+    }
+
+    prepareForFPSlideChange() {
+      let hero = document.querySelector('#main-wrapper')
+
+      if (this.activeFPIndex == 0) {
+        this.activeAnimations.lily.pause()
+        this.activeAnimations.quakingGrass.pause()
+        this.activeAnimations.firstCarnation.pause()
+        this.activeAnimations.firstHyacinth.pause()
+        this.activeAnimations.firstChrysantheum.pause()
+      } else if (this.activeFPIndex == 1) {
+        this.activeAnimations.firstChrysantheum.pause()
+        this.activeAnimations.secondSectionHyacinthes.pause()
+      } else if (this.activeFPIndex == 2) {
+        this.activeAnimations.thirdSectionHyacinthes.pause()
+        this.activeAnimations.thirdSectionMonsteraLeaves.pause()
+      } else if (this.activeFPIndex == 3) {
+        this.activeAnimations.fourthSectionCarnations.pause()
+        this.activeAnimations.fourthSectionChrysantheum.pause()
+        this.activeAnimations.fourthSectionMonsteraLeaves.pause()
+      }
+      // if (this.activeFPIndex !== 4) {
+        anime({
+          targets: ['.activeSlide .animated-content'],
+          easing: 'easeInOutSine',
+          duration: 1000,
+          opacity:0,
+          delay: 0,
+        });
+      // }
+
+    }
+
+handleFAQSlide () {
+
+  let wrapper = document.querySelector('#faq-wrapper')
+  let main = document.querySelector('#faq-slides')
+  let items = wrapper.querySelectorAll('.slide');
+  let total = items.length;
+
+  let activeFAQSlideIndex = this.activeFAQSlideIndex
+  let direction = "next"
+  let previousDirection = wrapper.classList.contains("prev") ? "prev" : "next"
+  let didChangeDirection = previousDirection !== direction
+
+  this.idle = false
+  wrapper.classList.remove('prev', 'next');
+  if (direction == 'next') {
+      activeFAQSlideIndex = (activeFAQSlideIndex + 1) % total
+      wrapper.classList.add('next');
+  } else {
+
+      activeFAQSlideIndex = (activeFAQSlideIndex - 1 + total) % total
+      wrapper.classList.add('prev');
   }
+
+  //reset classes
+  this.removeClasses(items, ['prev', 'active', 'next']);
+
+  //set prev
+  const prevItems = [...items]
+      .filter(item => {
+          let prevIndex;
+          if (wrapper.classList.contains('prev')) {
+              prevIndex = activeFAQSlideIndex == total - 1 ? 0 : activeFAQSlideIndex + 1;
+          } else {
+              prevIndex = activeFAQSlideIndex == 0 ? total - 1 : activeFAQSlideIndex - 1;
+          }
+
+          return item.dataset.faqindex == prevIndex;
+      });
+
+  //set next
+  const nextItems = [...items]
+      .filter(item => {
+          let nextIndex;
+          if (wrapper.classList.contains('next')) {
+              nextIndex = activeFAQSlideIndex == total + 1 ? 0 : activeFAQSlideIndex + 1;
+          } else {
+              nextIndex = activeFAQSlideIndex == 0 ? total + 1 : activeFAQSlideIndex - 1;
+          }
+
+          return item.dataset.faqindex == nextIndex;
+      });
+
+  //set active
+  const activeItems = [...items]
+      .filter(item => {
+          return item.dataset.faqindex == activeFAQSlideIndex;
+      });
+
+      if (didChangeDirection) {
+        this.addClasses(nextItems, ['transition']);
+      }
+
+  this.addClasses(prevItems, ['prev']);
+
+  this.addClasses(nextItems, ['next']);
+
+  this.addClasses(activeItems, ['active']);
+
+
+  const activeImageItem = main.querySelector('.active');
+
+  this.activeFAQSlideIndex = activeFAQSlideIndex
+
+  activeImageItem.addEventListener('transitionend', this.waitForFAQIdle.bind(this), {
+      once: true
+  });
+}
+
 
   render() {
     const {
@@ -990,29 +1752,22 @@ class Sequencer extends Component {
         .toLowerCase();
 
       return (
-        <ReactFullpage
-          //fullpage options
-          licenseKey={"E225A90B-BB824945-9CBDA8D4-C1409B9E"}
-          scrollingSpeed={1000} /* Options here */
-          scrollBar={false}
-          fixedElements=".bottomNav"
-          pluginWrapper={pluginWrapper}
-          fadingEffect={true}
-          fadingEffectKey={
-            "c2VjcmV0Z2FyZGVuLmZtXzM2R1ptRmthVzVuUldabVpXTjAxMVc="
-          }
-          render={({ state, fullpageApi }) => {
-            return (
-              <ReactFullpage.Wrapper>
-                {/* <BidModal
-            nft={nft}
-            open={this.state.openBidModal}
-            onClose={this.handleClose}
-            didCompleteBid={this.fetchNFT}
-            currentBidAmount={currentBidAmount}
-          /> */}
-                <div className="section">
-                  <div className="container scrollbar">
+
+      <div id="main-wrapper">
+        <div id="slideshow">
+          <div id="slides-main">
+              <div className="section vslide activeSlide" id="video-player-section" data-slideindex="0">
+                <Lily className="lily animated-content"/>
+                <Carnation className="carnation animated-content"/>
+                <Chrysanthemum className="chrysanthemum"/>
+                <Hyacinth className="hyacinth animated-content"/>
+                <QuakingGrass className="quaking-grass animated-content"/>
+                <Navbar
+                  white={false}
+                  didConnectWallet={this.initWallet}
+                  loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+                />
+                  <div className="container">
                     {mediaFileExtension === "mp4" && (
                       <div className="video-container">
                         <video
@@ -1025,11 +1780,13 @@ class Sequencer extends Component {
                         >
                           <source src={nft.imageURL} type="video/mp4" />
                         </video>
+
                       </div>
                     )}
                     {mediaFileExtension !== "mp4" && (
                       <img className="waterLoopVideo" src={nft.imageURL} />
                     )}
+
                     <div className="gridTop">
                       {this.rhythmPads.map((group, groupIndex) => (
                         <React.Fragment>
@@ -1047,78 +1804,73 @@ class Sequencer extends Component {
                         </React.Fragment>
                       ))}
                     </div>
+                    <div className={`gridOuter ${padFormatStyleClass}`}>
+                      {padFormat.map((column, j) => {
+                        return column.map((remappedCoordinates, i) => {
+                          const group = remappedCoordinates[0];
+                          const soundIndex = remappedCoordinates[1];
+                          const additionalClasses = remappedCoordinates[2]
+                            ? remappedCoordinates[2]
+                            : "";
 
-                    <Navbar
-                      white={false}
-                      didConnectWallet={this.initWallet}
-                      loggedIntoMetamaskOverride={isLoggedIntoMetamask}
-                    />
-                    <div className="bodyWrapper scrollBar">
-                      <div className="beatPackTitle">{nft.name}</div>
-                      <div className="artistName">{`by ${nft.artistName} ${
-                        nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
-                      }`}</div>
-                      <div className={`gridOuter ${padFormatStyleClass}`}>
-                        {padFormat.map((column, j) => {
-                          return column.map((remappedCoordinates, i) => {
-                            const group = remappedCoordinates[0];
-                            const soundIndex = remappedCoordinates[1];
-                            const additionalClasses = remappedCoordinates[2]
-                              ? remappedCoordinates[2]
+                          const on =
+                            this.players[group][soundIndex].state ===
+                            "started";
+
+                          const blinkClass =
+                            pads[group][soundIndex] === 1 &&
+                            this.players[group][soundIndex].state !==
+                              "started"
+                              ? "blink"
                               : "";
+                          const whiteClass =
+                            group === "sounds" ? "whitePad" : "";
+                          let tutorialClass = "";
+                          const padClass =
+                            group == "sounds" ? "padWhiteVersion" : "pad";
 
-                            const on =
-                              this.players[group][soundIndex].state ===
-                              "started";
-
-                            const blinkClass =
-                              pads[group][soundIndex] === 1 &&
-                              this.players[group][soundIndex].state !==
-                                "started"
-                                ? "blink"
-                                : "";
-                            const whiteClass =
-                              group === "sounds" ? "whitePad" : "";
-                            let tutorialClass = "";
-                            const padClass =
-                              group == "sounds" ? "padWhiteVersion" : "pad";
-
-                            if (showTutorial) {
-                              if (tutorialStep === 0 && group !== "drums") {
-                                tutorialClass = "tutorialPad";
-                              } else if (
-                                tutorialStep === 1 &&
-                                group !== "basses"
-                              ) {
-                                tutorialClass = "tutorialPad";
-                              } else if (
-                                tutorialStep === 2 &&
-                                group !== "sounds"
-                              ) {
-                                tutorialClass = "tutorialPad";
-                              }
+                          if (showTutorial) {
+                            if (tutorialStep === 0 && group !== "drums") {
+                              tutorialClass = "tutorialPad";
+                            } else if (
+                              tutorialStep === 1 &&
+                              group !== "basses"
+                            ) {
+                              tutorialClass = "tutorialPad";
+                            } else if (
+                              tutorialStep === 2 &&
+                              group !== "sounds"
+                            ) {
+                              tutorialClass = "tutorialPad";
                             }
+                          }
 
-                            return (
-                              <div
-                                key={`pad-group-${i}`}
-                                className={`${cx(padClass, {
-                                  on,
-                                })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                                onClick={() => {
-                                  this.togglePad(group, soundIndex);
-                                }}
-                              />
-                            );
-                          });
-                        })}
-                      </div>
+                          return (
+                            <div
+                              key={`pad-group-${i}`}
+                              className={`${cx(padClass, {
+                                on
+                              })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                              onClick={() => {
+                                this.togglePad(group, soundIndex);
+                              }}
+                            />
+                          );
+                        });
+                      })}
+                    </div>
+                    <IconButton
+                      className="expandOuter animated-content"
+                      onClick={() => this.handleScroll("next")}
+                    >
+                      <img src={Expand} className="expand" />
+                    </IconButton>
                       {showTutorial && (
                         <React.Fragment>
                           {tutorialStep === 0 && (
                             <React.Fragment>
                               <div className="currentBid tile25 tutorialStep">
-                                Welcome to the Secret Garden.
+                                The Secret Garden.
                               </div>
                               <div className="tutorialInfo">
                                 To begin, press one of the highlighted squares
@@ -1153,56 +1905,15 @@ class Sequencer extends Component {
                           )}
                         </React.Fragment>
                       )}
-                      {(tutorialStep === 3 || !showTutorial) && (
-                        <React.Fragment>
-                          <div className="learnMore">
-                            <div className="ethAmount">Learn More</div>
-                            <IconButton
-                              className="expandOuter"
-                              onClick={() => fullpageApi.moveSectionDown()}
-                            >
-                              <img src={Expand} className="expand" />
-                            </IconButton>
-                          </div>
-                        </React.Fragment>
-                      )}
 
-                      <div
-                        style={{
-                          display: "flex",
-                          // flexDirection: "column",
-                          justifyContent: "space-between",
-                          marginLeft: "20px",
-                          position: "absolute",
-                          bottom: "60px",
-                          width: "100vw",
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <div className="volumeContainer">
-                            {this.volumeControl()}
-                          </div>
-                          <div className="stopBtnContainer">
-                            {this.stopButton()}
-                          </div>
+                      <div className="song-info-container">
+                        <div className="song-details">
+                          <div className="beatPackTitle display-medium">{nft.name}</div>
+                          <div className="artistName">{`by ${nft.artistName} ${
+                            nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
+                          }`}</div>
                         </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "flex-start",
-                            alignItems: "flex-end",
-                            marginLeft: "10px",
-                            marginRight: "10px",
-                            width: "100%",
-                          }}
-                        >
+                        <div className="record-container">
                           <button
                             className={
                               this.state.shouldStartRecording ||
@@ -1246,57 +1957,87 @@ class Sequencer extends Component {
                             {this.state.recordingStatus}
                           </div>
                         </div>
-                        <div className="volumeMeter">
-                          <canvas
-                            ref={this.canvas}
-                            style={{ minWidth: "75%", zIndex: "-10" }}
-                          />
                         </div>
+
+                      <div className="volumeMeter">
+
+                        <canvas
+                          ref={this.canvas}
+                          style={{ minWidth: "75%", zIndex: "-10" }}
+                        />
                       </div>
-                    </div>
                   </div>
                 </div>
-                <div className="section">
-                  <div className="container2" ref={this.myRef}>
-                    <div className="albumWrapper">
+
+
+                <div className="section vslide next" data-slideindex="1">
+
+                    <Hyacinth id="hyacinth-2" className="hyacinth"/>
+                    <Hyacinth id="hyacinth-3" className="hyacinth animated-content"/>
+
+                    <div className="content-container" ref={this.myRef}>
+                    <div style={{display:"flex", justifyContent: "center", alignItems:"center", gap: "84px"}}>
+                    <Hyacinth id="main-flower" className="hyacinth animated-content"/>
+
                       <div>
-                        <div className="packTitle">
-                          WELCOME TO THE SECRET GARDEN
+                        <div>
+                      <div className="section-intro-text animated-content">
+                      WELCOME TO
+                      </div>
+                        <div className="packTitle animated-content display-medium yellow-text">
+                          The Secret Garden
                         </div>
-                        <div className="details">
+                        <div className="details animated-content body-large light-yellow-text">
                           We believe that Web3 can fundamentally unlock value
                           for all artists.
                         </div>
                         <br />
                         <br />
                         <IconButton
-                          className="expandOuter"
-                          onClick={() => fullpageApi.moveSectionDown()}
+                          className="expandOuter animated-content"
+                          onClick={() => this.handleScroll("next")}
                         >
                           <img src={Expand} className="expand" />
                         </IconButton>
                       </div>
                     </div>
-                  </div>
+                    </div>
+
+                    </div>
+
+
                 </div>
-                <div className="section">
-                  <div className="container2" ref={this.myRef}>
-                    <div className="albumWrapper">
+
+                <div className="section vslide"  data-slideindex="2">
+                <Carnation id="carnation-3" className="carnation"/>
+
+                <MonsteraLeaf id="leaf-2" className="monstera-leaf animated-content"/>
+
+                <MonsteraLeaf id="leaf-1" className="monstera-leaf animated-content"/>
+
+                <Hyacinth id="hyacinth-4" className="hyacinth animated-content"/>
+
+                  <div className="content-container" ref={this.myRef}>
+
+                    <div>
                       <div>
-                        <div className="packTitle">BUT THERE'S A GAP</div>
-                        <div className="details">
+                      <div className="section-intro-text animated-content">
+                      BUT...
+                      </div>
+                        <div className="packTitle animated-content display-medium yellow-text">There's a Gap</div>
+                        <div className="details animated-content body-large light-yellow-text">
                           Digital art is breaking all time highs on a daily
                           basis while music is still underserved.
                         </div>
-                        <div className="details">
+                        <div className="details animated-content body-large light-yellow-text">
                           We are here to crack the code by pushing the
                           boundaries of art and NFTs.
                         </div>
                         <br />
                         <br />
                         <IconButton
-                          className="expandOuter"
-                          onClick={() => fullpageApi.moveSectionDown()}
+                          className="expandOuter animated-content"
+                          onClick={() => this.handleScroll("next")}
                         >
                           <img src={Expand} className="expand" />
                         </IconButton>
@@ -1304,16 +2045,21 @@ class Sequencer extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="section">
-                  <div className="container2" ref={this.myRef}>
-                    <div className="albumWrapper">
-                      <div>
-                        <div className="packTitle">INTRODUCING BOUQUET</div>
-                        <div className="details">
+                <div className="section vslide" data-slideindex="3">
+                <MonsteraLeaf id="leaf-3" className="monstera-leaf animated-content"/>
+                <Tulip className="tulip animated-content"/>
+                <Chrysanthemum id="chrysanthemum-2" className="chrysanthemum animated-content"/>
+                <Carnation id="carnation-2" className="carnation"/>
+
+                  <div className="content-container small" ref={this.myRef}>
+
+                      <div className="section-intro-text animated-content">INTRODUCING</div>
+                        <div className="packTitle animated-content display-medium yellow-text">Bouquet</div>
+                        <div className="details animated-content body-large light-yellow-text text-center">
                           Bouquet is a music NFT that forms an interactive music
                           player.
                         </div>
-                        <div className="details">
+                        <div className="details animated-content body-large light-yellow-text text-center">
                           The Bouquet NFT is the first music NFT that allows
                           holders to generate their own mix using unique sounds
                           produced by our resident artists.
@@ -1321,6 +2067,7 @@ class Sequencer extends Component {
                           <br />
                           <a
                             target="_blank"
+                            className="cta-link"
                             href="https://testnets.opensea.io/assets/0x52b1dd5c27705aa4dfd3889db223b5c4c84f6b54/1"
                           >
                             View on OpenSea
@@ -1329,31 +2076,43 @@ class Sequencer extends Component {
                         <br />
                         <br />
                         <IconButton
-                          className="expandOuter"
-                          onClick={() => fullpageApi.moveSectionDown()}
+                          className="expandOuter animated-content"
+                          onClick={() => this.handleScroll("next")}
                         >
                           <img src={Expand} className="expand" />
                         </IconButton>
                       </div>
-                    </div>
-                  </div>
+
                 </div>
-                <div className="section">
-                  <div className="slide" data-anchor="slide1">
-                    <div className="container2" ref={this.FAQ}>
-                      <div className="albumWrapper">
+                <div className="section vslide final" data-slideindex="4">
+                <Hyacinth id="hyacinth-5" className="hyacinth animated-content"/>
+
+                <div className="content-container">
+                <div>
+                <div className="section-intro-text animated-content">FAQS</div>
+
+                <div id="faq-wrapper">
+                <div id="faq-slideshow">
+
+                <div id="faq-slides">
+
+
+                  <div className="slide active" data-anchor="slide1" data-faqindex="0" ref={this.FAQ}>
+
+                      <div className="slide-wrapper">
                         <div>
-                          <div className="packTitle">FAQ</div>
-                          <div className="question">
+                          <div className="packTitle animated-content display-medium yellow-text">
                             What do I get by buying a Bouquet?
                           </div>
-                          <div className="details">
+                          <div className="details animated-content body-large light-yellow-text">
                             When you purchase a Bouquet, you get to own this
                             one-of-a-kind interactive, playable experience as an
                             NFT.
                             <br /> <br />
                             The experience is fully functional, even on OpenSea:{" "}
+                            <br /><br />
                             <a
+                              className="cta-link"
                               target="_blank"
                               href="https://testnets.opensea.io/assets/0x52b1dd5c27705aa4dfd3889db223b5c4c84f6b54/1"
                             >
@@ -1362,37 +2121,50 @@ class Sequencer extends Component {
                           </div>
                         </div>
                       </div>
-                    </div>
+
+
                   </div>
-                  <div className="slide" data-anchor="slide2">
-                    <div className="container2" ref={this.FAQ}>
-                      <div className="albumWrapper">
-                        <div className="details">
-                          Bonus Features:
-                          <br />
-                          <br />
-                          - Set the default mix for the player.
-                          <br />
-                          - Receive a non-exclusive license to every sound file
-                          on the player for personal or commercial use.
-                          <br />
-                          - Access an exclusive holders channel on our Secret
-                          Garden Discord.
-                          <br />- Access to additional utility such as concert
-                          tickets, meet and greets, merch, and more (will vary
-                          per artist).
+                  <div className="slide next" data-anchor="slide2" data-faqindex="1" ref={this.FAQ}>
+
+                      <div className="slide-wrapper">
+                      <div>
+                        <div className="packTitle animated-content display-medium yellow-text">
+                        Bonus Features:
                         </div>
-                      </div>
+                        <div className="details animated-content body-large light-yellow-text">
+                          <ul>
+                            <li>
+                            Set the default mix for the player.
+                            </li>
+                            <li>
+                            Receive a non-exclusive license to every sound file
+                            on the player for personal or commercial use.
+                            </li>
+                            <li>
+                            Access an exclusive holders channel on our Secret
+                            Garden Discord.
+                            </li>
+                            <li>
+                            Access to additional utility such as concert
+                            tickets, meet and greets, merch, and more (will vary
+                            per artist).
+                            </li>
+                          </ul>
+
+                        </div>
+                        </div>
+
+
                     </div>
                   </div>
-                  <div className="slide" data-anchor="slide3">
-                    <div className="container2" ref={this.FAQ}>
-                      <div className="albumWrapper">
+                  <div className="slide" data-anchor="slide3" data-faqindex="2" ref={this.FAQ}>
+
+                      <div className="slide-wrapper">
                         <div>
-                          <div className="question">
+                          <div className="packTitle animated-content display-medium yellow-text">
                             How do I purchase a Bouquet?
                           </div>
-                          <div className="details">
+                          <div className="details animated-content body-large light-yellow-text">
                             Join our{" "}
                             <a
                               target="_blank"
@@ -1412,53 +2184,57 @@ class Sequencer extends Component {
                           </div>
                         </div>
                       </div>
-                    </div>
+
                   </div>
+                  </div>
+
+
+                  </div>
+
+                  </div>
+                  <IconButton
+                    className="expandOuter animated-content float-right"
+                    onClick={() => this.handleFAQSlide()}
+                  >
+                    <img src={ArrowRight} className="expand" />
+                  </IconButton>
                 </div>
-                <div className="section">
-                  <div className="container2" ref={this.myRef}>
-                    <div className="albumWrapper">
+
+                </div>
+
+                </div>
+
+                <div className="section vslide" data-slideindex="5" ref={this.FAQ}>
+                  <div className="slideshow-footer-container" ref={this.myRef}>
+
                       <div>
                         {/* <div className="privacyAndTos"> */}
-                        <div className="details">
+                        <div className="details animated-content slide-footer">
                           <div>
-                            <a href="/tos" target="_blank">
+                            <a className="body-large light-yellow-text" href="mailto:inquiries@secretgarden.fm">inquiries@secretgarden.fm</a>
+                          </div>
+                          <div className="legal-links">
+
+                            <a className="body-large" href="/tos" target="_blank">
                               Terms of Service
                             </a>
-                          </div>
-                          <div>
-                            <a href="/privacy" target="_blank">
+
+
+                            <a className="body-large" href="/privacy" target="_blank">
                               Privacy Policy
                             </a>
-                          </div>
+
+                        </div>
                         </div>
                         {/* <div className="ourSocials"> */}
-                        <div className="details">
-                          <span>inquiries@secretgarden.fm</span>
-                          <a
-                            href="https://twitter.com/SecretGarden_FM"
-                            target="_blank"
-                          >
-                            <img src={Twitter} className="ourTwitter" />
-                          </a>
+                        <div className="details animated-content">
 
-                          <a
-                            href="https://discord.gg/ykrzXB9ZsV"
-                            target="_blank"
-                          >
-                            <img src={Discord} className="ourDiscord" />
-                          </a>
-                          <a
-                            href="https://www.instagram.com/secretgarden_fm/"
-                            target="_blank"
-                          >
-                            <img src={Instagram} className="ourInsta" />
-                          </a>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+
+
                 <Footer
                   white={false}
                   shareURL={`https://secretgarden.fm/?share=${shareablePadNumbers.join(
@@ -1466,15 +2242,20 @@ class Sequencer extends Component {
                   )}`}
                   showShare={true}
                   loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+                  muiTheme={this.muiTheme}
+                  setVolume={this.setVolume.bind(this)}
+                  volume={this.state.volume}
+                  clearSelections={this.clearSelections}
+                  canvas={this.canvas}
                 />
-              </ReactFullpage.Wrapper>
-            );
-          }}
-        />
-      );
-    }
+                </div>
+                </div>
 
-    return <Loading />;
+                </div>
+ );
+}
+
+return <Loading />;
   }
 }
 

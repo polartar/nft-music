@@ -1,3 +1,5 @@
+
+
 .navBar {
   width: 100%;
   display: flex;
@@ -26,6 +28,8 @@
   width: 140px;
   height: auto;
 }
+
+
 .signedInWrapper {
   display: flex;
   flex-direction: row;

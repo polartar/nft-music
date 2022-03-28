@@ -11,6 +11,7 @@ import SecretGardenBlack from "../images/SecretGardenBlack.png";
 import "../css/navBar.css";
 import IconButton from "@material-ui/core/IconButton";
 import axios from "axios";
+import anime from 'animejs/lib/anime.es.js';
 
 import Countdown, { zeroPad } from "react-countdown";
 
@@ -82,7 +83,16 @@ export default function Navbar(props) {
 
   useEffect(() => {
     refreshData();
+
+    anime({
+      targets: ['.wordLogo'],
+      easing: 'easeInOutSine',
+      duration: 1000,
+      opacity:1,
+      delay: 1500,
+    });
   }, [loaded]);
+
 
   return (
     <React.Fragment>
@@ -91,11 +101,15 @@ export default function Navbar(props) {
           <div
             className={white ? "navBar scrollBar white" : "navBar scrollBar"}
           >
-            <a href="/">
-              <img
+            <a href="/"  className="wordLogo">
+              {/*<img
                 src={white ? SecretGardenBlack : SecretGardenLogo}
                 className="logo"
               />
+              */}
+
+                Secret Garden
+
             </a>
             {/* <div className={white ? "timer white" : "timer"}>
               <Countdown
