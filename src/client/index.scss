@@ -486,21 +486,25 @@ input[type="number"] {
 
 .volumeContainer {
   // width: 20%;
+  width: 100%;
+
 }
 
 .play-controls {
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
+  width: 100%;
 }
+
 .volumeWrapper {
   // position: absolute;
   // bottom: 75px;
   // left: 33px;
   // width: 20%;
-  width: 158px;
+  width: 100%;
   @media only screen and (min-width: 768px) {
-    width: 440px;
+    max-width: 440px;
 
   }
   // height: 250px;
@@ -1187,7 +1191,10 @@ canvas {
     height: 60%;
     top: 30%;
     transform: translate(-50%, -30%);
-
+    &.opensea {
+      height: 100%;
+      background-color: #1f1f1f;
+    }
   }
 
 }

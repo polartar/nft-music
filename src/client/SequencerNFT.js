@@ -10,6 +10,7 @@ import { ThemeProvider } from "@material-ui/styles";
 import StopCircleIcon from "@mui/icons-material/StopCircle";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
+import Footer from "./components/Footer";
 
 const sixBySixThreeGroups = [
   [
@@ -786,7 +787,7 @@ class Sequencer extends Component {
           ></canvas> */}
           <div className="container scrollbar">
             {mediaFileExtension === "mp4" && (
-              <div className="video-container">
+              <div className="video-container opensea">
                 <video
                   className="waterLoopVideo"
                   playsInline
@@ -819,7 +820,7 @@ class Sequencer extends Component {
               ))}
             </div>
 
-            <div className="bodyWrapper scrollBar">
+
               {/* <div className="beatPackTitle">{nft.name}</div>
               <div className="artistName">{`by ${nft.artistName} ${
                 nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
@@ -871,26 +872,18 @@ class Sequencer extends Component {
                 })}
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-around",
-                  position: "absolute",
-                  bottom: "60px",
-                  width: "100vw",
-                }}
-              >
-                <div className="stopBtnContainer">{this.stopButton()}</div>
-                <div className="volumeContainer">{this.volumeControl()}</div>
-                <div className="volumeMeter">
-                  <canvas
-                    ref={this.canvas}
-                    style={{ minWidth: "75%", zIndex: "-10" }}
-                  />
-                </div>
-              </div>
-            </div>
+
           </div>
+          <Footer
+            white={false}
+            showShare={false}
+            loggedIntoMetamaskOverride={false}
+            muiTheme={this.muiTheme}
+            setVolume={this.setVolume.bind(this)}
+            volume={this.state.volume}
+            clearSelections={this.clearSelections}
+            canvas={this.canvas}
+          />
         </React.StrictMode>
       );
     } else {
