@@ -1941,7 +1941,6 @@ handleFAQSlide () {
                           </a>
                         </div>
                         <br />
-                        <br />
                         <IconButton
                           className="expandOuter animated-content"
                           onClick={() => this.handleScroll("next")}
