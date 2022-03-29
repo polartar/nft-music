@@ -987,6 +987,17 @@ class Sequencer extends Component {
         delay: 2000,
       });
 
+      if (!this.state.showTutorial) {
+        anime({
+          targets: ['.record-container'],
+          easing: 'easeInOutSine',
+          duration: 750,
+          opacity:1,
+          delay: 2000,
+        });
+
+      }
+
       anime({
         targets: ['#video-player-section .lily', '#video-player-section .quaking-grass', '#video-player-section .carnation', '#video-player-section .hyacinth', '#video-player-section .chrysanthemum'],
         easing: 'easeInOutSine',
@@ -1799,6 +1810,7 @@ handleFAQSlide () {
                               }
                             }}
                           >
+                          <div className="circle"></div>
                             {this.state.isRecording
                               ? this.state.shouldStopRecording
                                 ? "Stopping"

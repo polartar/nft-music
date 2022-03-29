@@ -12,6 +12,8 @@ import { ThemeProvider } from "@material-ui/styles";
 import StopCircleIcon from "@mui/icons-material/StopCircle";
 import Discord from "../images/discord.svg";
 import Twitter from "../images/Twitter.svg";
+import Instagram from "../images/Instagram.svg";
+
 import Share from "../images/Share.svg";
 
 export default function Footer(props) {
@@ -146,6 +148,9 @@ export default function Footer(props) {
               </a>
               <a href="https://twitter.com/SecretGarden_FM">
                 <div className=""><img src={Twitter}/></div>
+              </a>
+              <a href="https://instagram.com/SecretGarden_FM">
+                <div className=""><img src={Instagram}/></div>
               </a>
               <div
                 className=""
