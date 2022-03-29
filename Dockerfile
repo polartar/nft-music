@@ -2,6 +2,7 @@ FROM node:14-alpine
 
 RUN apk add --update git
 RUN apk add --no-cache ffmpeg
+RUN apk upgrade --update && apk add freetype-dev
 
 WORKDIR /app
 
