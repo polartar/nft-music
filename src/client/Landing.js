@@ -301,132 +301,6 @@ class Sequencer extends Component {
       address,
     });
   };
-  touchStart = function (e) {
-    this.mobileTouchStart = parseInt(e.changedTouches[0].clientX)
-    window.scrollTop = 0;
-  }
-
-  touchMove = function (e) {
-    let idle = this.idle
-
-    let mobileTouchMove = parseInt(e.changedTouches[0].clientX);
-
-    console.log("TOUCH START IS " + this.mobileTouchStart + " TOUCH END IS " + mobileTouchMove)
-
-    const delta = mobileTouchMove - this.mobileTouchStart;
-    window.scrollTop = 0;
-    if (delta == 0) {
-      //user tapped, don't do anything
-      return
-    }
-    console.log("DELTA IS " + delta)
-    if (idle) {
-
-        const direction = delta > 0 ? 'next' : 'prev';
-        this.changeSlide(direction);
-    }
-  }
-
-
-  touchControl = () => {
-    let hero = document.querySelector('#main-wrapper')
-
-      hero.addEventListener('touchstart', this.touchStart.bind(this));
-      hero.addEventListener('touchend', this.touchMove.bind(this));
-  }
-
-  handleVideoPlayerBackgroundAnimations = () => {
-    anime({
-      targets: '#video-player-section .lily path',
-      easing: 'easeInOutSine',
-      duration: 1200,
-      skewX: function() {
-        return anime.random(0.5, 1);
-      },
-      skewY: function() {
-        return anime.random(-0.25, -0.75);
-      },
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-    anime({
-      targets: '.quaking-grass path',
-      easing: 'easeInOutSine',
-      duration: 1200,
-      skewX: 0.8,
-      skewY: -0.75,
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-    anime({
-      targets: '.carnation path',
-      easing: 'easeInOutSine',
-      duration: 1300,
-      skewX: 0.7,
-      skewY: -0.6,
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-    anime({
-      targets: '.hyacinth path',
-      easing: 'easeInOutSine',
-      duration: 1500,
-      skewX: 0.6,
-      skewY: -0.5,
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-
-    anime({
-      targets: '.chrysanthemum path',
-      easing: 'easeInOutSine',
-      duration: 1500,
-      skewX: -1,
-      skewY: 1,
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-    anime({
-      targets: '.tulip #petals',
-      easing: 'easeInOutSine',
-      duration: 1500,
-      skewX: -1,
-      skewY: 1,
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-    anime({
-      targets: '.monstera-leaf path',
-      easing: 'easeInOutSine',
-      duration: 1500,
-      skewX: -1,
-      skewY: 1,
-      delay: 250,
-      direction: 'alternate',
-      loop: true
-    });
-
-    anime({
-      targets: ['#video-player-section .lily', '#video-player-section .quaking-grass', '#video-player-section .carnation', '#video-player-section .hyacinth', '#video-player-section .chrysanthemum'],
-      easing: 'easeInOutSine',
-      duration: 500,
-      opacity:1,
-      delay: 0,
-    });
-
-  }
 
   exportRecording = async (blob) => {
     try {
@@ -1060,16 +934,16 @@ class Sequencer extends Component {
 
 
     touchStart = function (e) {
-      this.mobileTouchStart = parseInt(e.changedTouches[0].clientX)
+      this.mobileTouchStart = parseInt(e.changedTouches[0].clientY)
       window.scrollTop = 0;
     }
 
     touchMove = function (e) {
       let idle = this.idle
 
-      let mobileTouchMove = parseInt(e.changedTouches[0].clientX);
+      let mobileTouchEnd = parseInt(e.changedTouches[0].clientY);
 
-      const delta = mobileTouchMove - this.mobileTouchStart;
+      const delta = this.mobileTouchStart - mobileTouchEnd;
       window.scrollTop = 0;
       if (delta == 0) {
         //user tapped, don't do anything
@@ -1082,6 +956,7 @@ class Sequencer extends Component {
       }
     }
 
+
     handleInitialAnimations = () => {
       let el = document.querySelector("#main-wrapper")
       //scroll handling
@@ -1093,6 +968,7 @@ class Sequencer extends Component {
       //mobile touch controls
       el.addEventListener('touchstart', this.touchStart.bind(this));
       el.addEventListener('touchend', this.touchMove.bind(this));
+      el.addEventListener('touchcancel', console.log("CANCELDED"));
 
 
       anime({
@@ -1865,72 +1741,56 @@ handleFAQSlide () {
                     >
                       <img src={Expand} className="expand" />
                     </IconButton>
-                      {showTutorial && (
-                        <React.Fragment>
-                          {tutorialStep === 0 && (
-                            <React.Fragment>
-                              <div className="currentBid tile25 tutorialStep">
-                                The Secret Garden.
-                              </div>
-                              <div className="tutorialInfo">
-                                To begin, press one of the highlighted squares
-                                on the left. These are the drum loops. <br />
-                                Only one will play at a time.
-                              </div>
-                            </React.Fragment>
-                          )}
-                          {tutorialStep === 1 && (
-                            <div className="tutorialInfo tutorialFormatting">
-                              Now, press one of the highlighted squares on the
-                              right. These are the bass loops. <br />
-                              When the pad is flashing, the sound will wait to
-                              play until the next bar.
-                              <br /> Only one will play at a time.
-                            </div>
-                          )}
-                          {tutorialStep === 2 && (
-                            <div className="tutorialInfo tutorialFormatting">
-                              {`Lastly, press one of grey squares in the middle. These are
-                        chords and melodies. Up to ${nft.activeSoundLimits["sounds"]} can play at at time.`}
-                            </div>
-                          )}
-                          {tutorialStep === 3 && (
-                            <div className="tutorialInfo tutorialFormatting">
-                              You're ready to make some music! <br />
-                              Try out different combinations and share them with
-                              friends below. <br />
-                              If you'd like to learn more about Secret Garden,
-                              scroll down.
-                            </div>
-                          )}
-                        </React.Fragment>
-                      )}
 
-                      <div className="song-info-container">
-                        <div className="song-details">
-                          <div className="beatPackTitle display-medium">{nft.name}</div>
-                          <div className="artistName">{`by ${nft.artistName} ${
-                            nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
-                          }`}</div>
-                        </div>
+
+                      <div className="song-info-wrapper">
+                        {showTutorial && (
+                          <React.Fragment>
+                            {tutorialStep === 0 && (
+                              <React.Fragment>
+                                <div className="tutorialInfo">
+                                  To begin, press one of the highlighted squares
+                                  on the left. These are the drum loops. <br />
+                                  Only one will play at a time.
+                                </div>
+                              </React.Fragment>
+                            )}
+                            {tutorialStep === 1 && (
+                              <div className="tutorialInfo tutorialFormatting">
+                                Now, press one of the highlighted squares on the
+                                right. These are the bass loops. <br />
+                                When the pad is flashing, the sound will wait to
+                                play until the next bar.
+                                <br /> Only one will play at a time.
+                              </div>
+                            )}
+                            {tutorialStep === 2 && (
+                              <div className="tutorialInfo tutorialFormatting">
+                                {`Lastly, press one of grey squares in the middle. These are
+                          chords and melodies. Up to ${nft.activeSoundLimits["sounds"]} can play at at time.`}
+                              </div>
+                            )}
+                            {tutorialStep === 3 && (
+                              <div className="tutorialInfo tutorialFormatting">
+                                You're ready to make some music! <br />
+                                Try out different combinations and share them with
+                                friends below. <br />
+                                If you'd like to learn more about Secret Garden,
+                                scroll down.
+                              </div>
+                            )}
+                          </React.Fragment>
+                        )}
+                        <div className="song-info-container">
+                          {!showTutorial &&
                         <div className="record-container">
                           <button
                             className={
                               this.state.shouldStartRecording ||
                               this.state.isRecording
-                                ? "button blink whitePad padWhiteVersion"
-                                : "button"
+                                ? "button record blink whitePad padWhiteVersion"
+                                : "button record"
                             }
-                            style={{
-                              height: "40px",
-                              width: "125px",
-                              border: "none",
-                              borderRadius: "5px",
-                              margin: "5px",
-                              // position: "absolute",
-                              // bottom: "3px",
-                              // left: "100px"
-                            }}
                             onClick={() => {
                               if (this.state.isRecording) {
                                 this.stopRecording();
@@ -1957,8 +1817,15 @@ handleFAQSlide () {
                             {this.state.recordingStatus}
                           </div>
                         </div>
+                      }
+                        <div className="song-details">
+                          <div className="beatPackTitle display-medium">{nft.name}</div>
+                          <div className="artistName">{`by ${nft.artistName} ${
+                            nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
+                          }`}</div>
                         </div>
-
+                        </div>
+                        </div>
                       <div className="volumeMeter">
 
                         <canvas
@@ -2017,7 +1884,7 @@ handleFAQSlide () {
 
                 <Hyacinth id="hyacinth-4" className="hyacinth animated-content"/>
 
-                  <div className="content-container" ref={this.myRef}>
+                  <div className="content-container mobile-justify-top" ref={this.myRef}>
 
                     <div>
                       <div>
@@ -2051,7 +1918,7 @@ handleFAQSlide () {
                 <Chrysanthemum id="chrysanthemum-2" className="chrysanthemum animated-content"/>
                 <Carnation id="carnation-2" className="carnation"/>
 
-                  <div className="content-container small" ref={this.myRef}>
+                  <div className="content-container small mobile-justify-bottom" ref={this.myRef}>
 
                       <div className="section-intro-text animated-content">INTRODUCING</div>
                         <div className="packTitle animated-content display-medium yellow-text">Bouquet</div>

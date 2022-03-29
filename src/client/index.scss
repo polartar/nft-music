@@ -510,23 +510,30 @@ input[type="number"] {
   // height: 250px;
 }
 
-.song-info-container {
+.song-info-wrapper {
   position: absolute;
   right: 20px;
   left: 20px;
   bottom: 32px;
   z-index: 1000000;
-  display: block;
-  justify-content: space-between;
-  align-items: baseline;
   @media only screen and (min-width: 768px) {
-    display: flex;
     left: 64px;
     right: 64px;
   }
 }
 
+.song-info-container {
+  margin-top: 16px;
+  display: block;
+  justify-content: space-between;
+  @media only screen and (min-width: 768px) {
+    display: flex;
+  }
+}
+
 .song-details {
+  order: 1;
+  margin-top: 16px;
 
   .beatPackTitle {
     font-size: 28px;
@@ -538,6 +545,7 @@ input[type="number"] {
     text-align: center;
   };
   @media only screen and (min-width: 768px) {
+
     .beatPackTitle {
       font-size: 38px;
       line-height: 44px;
@@ -545,19 +553,19 @@ input[type="number"] {
     .artistName {
       text-align: left;
     }
+
+
+
   }
 }
 
 
 .record-container {
-
+  order: 2;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: flex-end;
-    @media only screen and (max-width: 768px) {
-      margin-top: 16px;
-    }
 }
 
 .wordLogo {
@@ -618,6 +626,7 @@ input[type="range"] {
 
 
 .content-container {
+  box-sizing: border-box;
   padding: 32px;
   height: 100%;
   max-width: 1280px;
@@ -628,8 +637,19 @@ input[type="range"] {
   justify-content: center;
   &.small {
     max-width: 680px;
+  };
+  &.mobile-justify-top {
+    @media only screen and (max-width: 768px) {
+      justify-content: start;
+    }
+  };
+  &.mobile-justify-bottom {
+    @media only screen and (max-width: 768px) {
+      justify-content: flex-end;
+    }
   }
 }
+
 .container2 {
   background: #1f1f1f;
   z-index: 1;
@@ -706,6 +726,7 @@ canvas {
   color: white;
   z-index: 1200;
   line-height: 20px;
+
 }
 .currentBid {
   font-size: 20px;
@@ -995,6 +1016,11 @@ canvas {
   path {
     fill: #FFF
   }
+  @media only screen and (max-width: 768px) {
+    width: 90%;
+    right: -60%;
+    bottom: -20%;
+  }
 }
 
 
@@ -1007,6 +1033,10 @@ canvas {
 
   path {
     fill: #262626
+  }
+  @media only screen and (max-width: 768px) {
+    width: 80%;
+
   }
 }
 
@@ -1021,6 +1051,10 @@ canvas {
   width: 30%;
   left: -1%;
   top: 0;
+  @media only screen and (max-width: 768px) {
+    width: 40%;
+    top: -5%;
+  }
 }
 
 #leaf-1 {
@@ -1064,6 +1098,11 @@ canvas {
   width: 35%;
   .leaf-fill {
     fill: #353535
+  }
+  @media only screen and (max-width: 768px) {
+    width: 60%;
+    top: 20%;
+    left: -20%;
   }
 }
 
@@ -1147,10 +1186,7 @@ canvas {
 
 .section[data-slideindex="3"] {
   .content-container {
-    display: flex;
     align-items: center;
-    justify-content: center;
-    text-align: center;
   }
 }
 
@@ -1711,6 +1747,22 @@ footer {
   top:0;
   opacity: 1;
   transition: 0s;
+}
+
+.button.record {
+  background: rgba(255, 255, 255, 0.25);
+  /* Background Blur S */
+  backdrop-filter: blur(2px);
+  /* Note: backdrop-filter has minimal browser support */
+  border-radius: 99px;
+  color: white;
+  text-transform: uppercase;
+
+
+padding: 8px 14px 8px 12px;
+width: auto;
+height: auto;
+    border: none;
 }
 
 @media only screen and (max-width: 700px) {

@@ -111,6 +111,12 @@ export default function Navbar(props) {
                 Secret Garden
 
             </a>
+            {/*
+            <div>
+            <p className="body-large light-yellow-text">Minting April 2022</p>
+            </div>
+            */}
+
             {/* <div className={white ? "timer white" : "timer"}>
               <Countdown
                 date={nft.bidEndDate}
