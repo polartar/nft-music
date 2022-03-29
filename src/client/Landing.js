@@ -949,18 +949,17 @@ class Sequencer extends Component {
     }
   };
 
-  handleInitialAnimations = () => {
-    let el = document.querySelector("#main-wrapper");
-    //scroll handling
-    el.addEventListener("wheel", (e) => {
-      e.preventDefault();
-      const direction = e.deltaY > 0 ? "next" : "prev";
-      this.handleScroll(direction);
-    });
-    //mobile touch controls
-    el.addEventListener("touchstart", this.touchStart.bind(this));
-    el.addEventListener("touchend", this.touchMove.bind(this));
-    el.addEventListener("touchcancel", console.log("CANCELDED"));
+    handleInitialAnimations = () => {
+      let el = document.querySelector("#main-wrapper")
+      //scroll handling
+      el.addEventListener('wheel', e => {
+        e.preventDefault()
+        const direction = e.deltaY > 0 ? 'next' : 'prev';
+        this.handleScroll(direction)
+      });
+      //mobile touch controls
+      el.addEventListener('touchstart', this.touchStart.bind(this));
+      el.addEventListener('touchend', this.touchMove.bind(this));
 
     anime({
       targets: [
@@ -982,6 +981,18 @@ class Sequencer extends Component {
       opacity: 1,
       delay: 2000,
     });
+
+
+    if (!this.state.showTutorial) {
+      anime({
+        targets: ['.record-container'],
+        easing: 'easeInOutSine',
+        duration: 750,
+        opacity:1,
+        delay: 2000,
+      });
+
+    }
 
     anime({
       targets: [
@@ -1235,49 +1246,50 @@ class Sequencer extends Component {
       this.activeAnimations.firstChrysantheum.play();
       this.activeAnimations.secondSectionHyacinthes.play();
     } else if (this.activeFPIndex == 2) {
-      anime({
-        targets: "#leaf-1",
-        easing: "easeInOutSine",
-        delay: 100,
-        duration: 500,
-        opacity: 1,
-        translateY: ["-50%", "-51%"],
-
-        rotate: [-10, -10],
-      });
-
-      anime({
-        targets: "#leaf-2",
-        easing: "easeInOutSine",
-        delay: 50,
-        duration: 500,
-        opacity: 1,
-        rotate: [-5, -5],
-        translateY: [0, -10],
-      });
-      anime({
-        targets: "#hyacinth-4",
-        easing: "easeInOutSine",
-        delay: 50,
-        duration: 500,
-        opacity: 1,
-        rotate: [200, 200],
-        translateY: [0, -10],
-      });
-
-      anime({
-        targets: "#carnation-3",
-        easing: "easeInOutSine",
-        delay: 0,
-        duration: 500,
-        opacity: 1,
-        rotate: [-30, -30],
-        translateY: [0, -10],
-      });
-
-      this.activeAnimations.thirdSectionHyacinthes.play();
-      this.activeAnimations.thirdSectionMonsteraLeaves.play();
-    } else if (this.activeFPIndex == 3) {
+      // Removed slide 2
+    //   anime({
+    //     targets: "#leaf-1",
+    //     easing: "easeInOutSine",
+    //     delay: 100,
+    //     duration: 500,
+    //     opacity: 1,
+    //     translateY: ["-50%", "-51%"],
+    //
+    //     rotate: [-10, -10],
+    //   });
+    //
+    //   anime({
+    //     targets: "#leaf-2",
+    //     easing: "easeInOutSine",
+    //     delay: 50,
+    //     duration: 500,
+    //     opacity: 1,
+    //     rotate: [-5, -5],
+    //     translateY: [0, -10],
+    //   });
+    //   anime({
+    //     targets: "#hyacinth-4",
+    //     easing: "easeInOutSine",
+    //     delay: 50,
+    //     duration: 500,
+    //     opacity: 1,
+    //     rotate: [200, 200],
+    //     translateY: [0, -10],
+    //   });
+    //
+    //   anime({
+    //     targets: "#carnation-3",
+    //     easing: "easeInOutSine",
+    //     delay: 0,
+    //     duration: 500,
+    //     opacity: 1,
+    //     rotate: [-30, -30],
+    //     translateY: [0, -10],
+    //   });
+    //
+    //   this.activeAnimations.thirdSectionHyacinthes.play();
+    //   this.activeAnimations.thirdSectionMonsteraLeaves.play();
+    // } else if (this.activeFPIndex == 3) {
       anime({
         targets: "#leaf-3",
         easing: "easeInOutSine",
@@ -1468,9 +1480,9 @@ class Sequencer extends Component {
       this.activeAnimations.firstChrysantheum.pause();
       this.activeAnimations.secondSectionHyacinthes.pause();
     } else if (this.activeFPIndex == 2) {
-      this.activeAnimations.thirdSectionHyacinthes.pause();
-      this.activeAnimations.thirdSectionMonsteraLeaves.pause();
-    } else if (this.activeFPIndex == 3) {
+    //   this.activeAnimations.thirdSectionHyacinthes.pause();
+    //   this.activeAnimations.thirdSectionMonsteraLeaves.pause();
+    // } else if (this.activeFPIndex == 3) {
       this.activeAnimations.fourthSectionCarnations.pause();
       this.activeAnimations.fourthSectionChrysantheum.pause();
       this.activeAnimations.fourthSectionMonsteraLeaves.pause();
@@ -1783,6 +1795,7 @@ class Sequencer extends Component {
                               }
                             }}
                           >
+                          <div className="circle"></div>
                             {this.state.isRecording
                               ? this.state.shouldStopRecording
                                 ? "Stopping"
@@ -2101,18 +2114,18 @@ class Sequencer extends Component {
                         </a>
                       </div>
                       <div className="legal-links">
-                        <a className="body-large" target="_blank">
+                        <a className="body-medium" target="_blank">
                           Kyber Corp.
                         </a>
-                        <a className="body-large" target="_blank">
+                        <a className="body-medium" target="_blank">
                           Yokai House Inc.
                         </a>
-                        <a className="body-large" href="/tos" target="_blank">
+                        <a className="body-medium" href="/tos" target="_blank">
                           Terms of Service
                         </a>
 
                         <a
-                          className="body-large"
+                          className="body-medium"
                           href="/privacy"
                           target="_blank"
                         >

@@ -91,6 +91,14 @@ export default function Navbar(props) {
       opacity:1,
       delay: 1500,
     });
+
+    anime({
+      targets: ['#mint-date'],
+      easing: 'easeInOutSine',
+      duration: 1000,
+      opacity: 0.7,
+      delay: 2000,
+    });
   }, [loaded]);
 
 
@@ -111,11 +119,9 @@ export default function Navbar(props) {
                 Secret Garden
 
             </a>
-            {/*
-            <div>
-            <p className="body-large light-yellow-text">Minting April 2022</p>
-            </div>
-            */}
+
+            <div className="body-medium yellow-text" id="mint-date">MINTING APRIL 2022</div>
+
 
             {/* <div className={white ? "timer white" : "timer"}>
               <Countdown
