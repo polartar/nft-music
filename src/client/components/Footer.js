@@ -17,7 +17,16 @@ import Instagram from "../images/Instagram.svg";
 import Share from "../images/Share.svg";
 
 export default function Footer(props) {
-  const { loggedIntoMetamaskOverride, showShare, shareURL, setVolume, volume, muiTheme, clearSelections, canvas } = props;
+  const {
+    loggedIntoMetamaskOverride,
+    showShare,
+    shareURL,
+    setVolume,
+    volume,
+    muiTheme,
+    clearSelections,
+    canvas,
+  } = props;
   const [loaded, setLoaded] = useState(false);
   const [address, setAddress] = useState();
   const [openShare, setOpenShare] = useState(false);
@@ -54,7 +63,6 @@ export default function Footer(props) {
   useEffect(() => {
     refreshData();
   }, [loaded, loggedIntoMetamaskOverride]);
-
 
   return (
     <React.Fragment>
@@ -97,38 +105,34 @@ export default function Footer(props) {
           </button>
         </div>
       ) : (
-
         <div
           className={
             props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
           }
         >
           {/* {showShare && !isLoggedIntoMetamask && ( */}
-            <div
-              className="play-controls"
-            >
-              <div className="stopBtnContainer">
-                <div className="stopBtnWrapper">
-                  <IconButton className="expandOuter">
-                    <StopCircleIcon fontSize="large" onClick={clearSelections} />
-                  </IconButton>
-                </div>
+          <div className="play-controls">
+            <div className="stopBtnContainer">
+              <div className="stopBtnWrapper">
+                <IconButton className="expandOuter">
+                  <StopCircleIcon fontSize="large" onClick={clearSelections} />
+                </IconButton>
               </div>
+            </div>
 
-                <div className="volumeContainer">
-                <div className="volumeWrapper">
-                  <ThemeProvider theme={muiTheme}>
-                    <Slider
-                      min={-50}
-                      max={0}
-                      defaultValue={volume}
-                      onChange={(event, newValue) => setVolume(newValue)}
-                    />
-                  </ThemeProvider>
-                </div>
-                </div>
+            <div className="volumeContainer">
+              <div className="volumeWrapper">
+                <ThemeProvider theme={muiTheme}>
+                  <Slider
+                    min={-50}
+                    max={0}
+                    defaultValue={volume}
+                    onChange={(event, newValue) => setVolume(newValue)}
+                  />
+                </ThemeProvider>
               </div>
-
+            </div>
+          </div>
 
           {/* )} */}
 
@@ -141,13 +145,12 @@ export default function Footer(props) {
             SHARE
           </div>
           )} */}
-          { showShare &&
-            <div style={{display:"flex",gap:"16px"}}>
-              <a href="https://discord.gg/ykrzXB9ZsV">
-                <div className=""><img src={Discord}/></div>
-              </a>
+          {showShare && (
+            <div style={{ display: "flex", gap: "16px" }}>
               <a href="https://twitter.com/SecretGarden_FM">
-                <div className=""><img src={Twitter}/></div>
+                <div className="">
+                  <img src={Twitter} />
+                </div>
               </a>
               <a href="https://instagram.com/SecretGarden_FM">
                 <div className=""><img src={Instagram}/></div>
@@ -157,10 +160,10 @@ export default function Footer(props) {
                 onClick={() => setOpenShare(true)}
                 style={{ fontWeight: "700" }}
               >
-                <img src={Share}/>
+                <img src={Share} />
               </div>
             </div>
-          }
+          )}
 
           {/* <button className="button" onClick={() => handleMintMenu()}>
             TO MINT MENU
