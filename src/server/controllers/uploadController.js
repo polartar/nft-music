@@ -93,6 +93,43 @@ async function exportRecording(response, recording, artistName, name, edition) {
         "-max_interleave_delta",
         "100M"
       )
+      .videoFilters([
+        {
+          filter: "drawtext",
+          options: {
+            fontfile: "Bentham-Regular.ttf",
+            text: name,
+            fontsize: 48,
+            fontcolor: "white",
+            x: "10",
+            y: "h-th-40",
+          },
+        },
+        {
+          filter: "drawtext",
+          options: {
+            fontfile: "Manrope-SemiBold.ttf",
+            text: `by ${nft.artistName} ${
+              nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
+            }`,
+            fontsize: 28,
+            fontcolor: "white",
+            x: "10",
+            y: "h-th-10",
+          },
+        },
+        {
+          filter: "drawtext",
+          options: {
+            fontfile: "Bentham-Regular.ttf",
+            text: "SECRET GARDEN",
+            fontsize: 36,
+            fontcolor: "white",
+            x: "w-tw-10",
+            y: "h-th-10",
+          },
+        },
+      ])
       .saveToFile(`${uuid}.mp4`)
       .on("end", () => {
         response.download(`./${uuid}.mp4`, "my recording.mp4", function(err) {
