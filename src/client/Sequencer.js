@@ -35,6 +35,10 @@ import clone from "clone";
 import Loading from "./components/Loading";
 import Cookies from "universal-cookie";
 import { formatEther } from "@ethersproject/units";
+import FlowerArrangement from "./components/FlowerArrangement";
+import Stopwatch from "./components/Stopwatch";
+
+import anime from "animejs/lib/anime.es.js";
 
 let ctx, x_end, y_end, bar_height;
 
@@ -371,6 +375,7 @@ class Sequencer extends Component {
       Tone.loaded().then(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const sharedPadNumbers = urlParams.get("share");
+        let _this = this;
 
         this.setState(
           () => ({
@@ -399,6 +404,8 @@ class Sequencer extends Component {
               const soundIndex = remappedCoordinates[1];
               this.togglePad(group, soundIndex);
             });
+
+            _this.handleInitialAnimations()
           }
         );
       });
@@ -412,10 +419,120 @@ class Sequencer extends Component {
       form.append("video", blob[0]);
 
       const response = await axios.post("/api/upload", form);
+
     } catch (error) {
       console.log(error);
     }
   };
+
+  handleInitialAnimations = () => {
+
+  anime({
+    targets: [
+      ".video-container",
+      ".beatPackTitle",
+      ".artistName",
+      ".gridOuter",
+    ],
+    easing: "easeInOutSine",
+    duration: 750,
+    opacity: 1,
+    delay: 1000,
+  });
+
+  anime({
+    targets: [".play-controls", ".learnMore"],
+    easing: "easeInOutSine",
+    duration: 750,
+    opacity: 1,
+    delay: 2000,
+  });
+
+
+  if (!this.state.showTutorial) {
+    anime({
+      targets: ['.record-container'],
+      easing: 'easeInOutSine',
+      duration: 750,
+      opacity:1,
+      delay: 2000,
+    });
+
+  }
+
+  anime({
+    targets: [
+      "#video-player-section .lily",
+      "#video-player-section .quaking-grass",
+      "#video-player-section .carnation",
+      "#video-player-section .hyacinth",
+      "#video-player-section .chrysanthemum",
+    ],
+    easing: "easeInOutSine",
+    duration: 500,
+    opacity: 1,
+    delay: 0,
+  });
+
+  anime({
+    targets: '[data-slideindex="0"] .lily path',
+    easing: "easeInOutSine",
+    duration: 1200,
+    skewX: function() {
+      return anime.random(0.5, 1);
+    },
+    skewY: function() {
+      return anime.random(-0.25, -0.75);
+    },
+    delay: 250,
+    direction: "alternate",
+    loop: true,
+  });
+
+  anime({
+    targets: '[data-slideindex="0"] .quaking-grass path',
+    easing: "easeInOutSine",
+    duration: 1200,
+    skewX: 0.8,
+    skewY: -0.75,
+    delay: 250,
+    direction: "alternate",
+    loop: true,
+  });
+
+  anime({
+    targets: '[data-slideindex="0"] .carnation path',
+    easing: "easeInOutSine",
+    duration: 1300,
+    skewX: 0.7,
+    skewY: -0.6,
+    delay: 250,
+    direction: "alternate",
+    loop: true,
+  });
+
+  anime({
+    targets: '[data-slideindex="0"] .hyacinth path',
+    easing: "easeInOutSine",
+    duration: 1500,
+    skewX: 0.6,
+    skewY: -0.5,
+    delay: 250,
+    direction: "alternate",
+    loop: true,
+  });
+
+  anime({
+    targets: '[data-slideindex="0"] .chrysanthemum path',
+    easing: "easeInOutSine",
+    duration: 1500,
+    skewX: -1,
+    skewY: 1,
+    delay: 250,
+    direction: "alternate",
+    loop: true,
+  });
+};
 
   componentDidMount() {
     const script = document.createElement("script");
@@ -425,6 +542,22 @@ class Sequencer extends Component {
 
     document.body.appendChild(script);
   }
+
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+      if (prevState.showTutorial !== this.state.showTutorial) {
+        //tutorial is over we can show the record button
+
+        anime({
+          targets: ['.record-container'],
+          easing: 'easeInOutSine',
+          duration: 750,
+          opacity:1,
+          delay: 0,
+        });
+
+      }
+    }
 
   handleClickOpen = async () => {
     try {
@@ -858,6 +991,15 @@ class Sequencer extends Component {
             width="500"
             height="500"
           ></canvas> */}
+          <div id="main-wrapper">
+            <div id="slideshow">
+              <div id="slides-main">
+                <div
+                  className="section vslide activeSlide"
+                  id="video-player-section"
+                  data-slideindex="0"
+                >
+              <FlowerArrangement/>
           <div className="container scrollbar">
             {mediaFileExtension === "mp4" && (
               <div className="video-container">
@@ -898,11 +1040,8 @@ class Sequencer extends Component {
               didConnectWallet={this.initWallet}
               loggedIntoMetamaskOverride={isLoggedIntoMetamask}
             />
-            <div className="bodyWrapper scrollBar">
-              <div className="beatPackTitle">{nft.name}</div>
-              <div className="artistName">{`by ${nft.artistName} ${
-                nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
-              }`}</div>
+
+
               <div className={`gridOuter ${padFormatStyleClass}`}>
                 {padFormat.map((column, j) => {
                   return column.map((remappedCoordinates, i) => {
@@ -949,6 +1088,8 @@ class Sequencer extends Component {
                   });
                 })}
               </div>
+              <div className="song-info-wrapper">
+
               {showTutorial && (
                 <React.Fragment>
                   {tutorialStep === 0 && (
@@ -989,103 +1130,62 @@ class Sequencer extends Component {
                   )}
                 </React.Fragment>
               )}
-              {(tutorialStep === 3 || !showTutorial) && (
-                <React.Fragment>
-                  <div className="learnMore">
-                    <div className="ethAmount">Learn More</div>
-                    <IconButton
-                      className="expandOuter"
-                      onClick={() => fullpageApi.moveSectionDown()}
-                    >
-                      <img src={Expand} className="expand" />
-                    </IconButton>
-                  </div>
-                </React.Fragment>
-              )}
 
-              <div
-                style={{
-                  display: "flex",
-                  // flexDirection: "column",
-                  justifyContent: "space-between",
-                  marginLeft: "20px",
-                  position: "absolute",
-                  bottom: "60px",
-                  width: "100vw",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <div className="volumeContainer">{this.volumeControl()}</div>
-                  <div className="stopBtnContainer">{this.stopButton()}</div>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
-                    alignItems: "flex-end",
-                    marginLeft: "10px",
-                    marginRight: "10px",
-                    width: "100%",
-                  }}
-                >
-                  <button
-                    className={
-                      this.state.shouldStartRecording || this.state.isRecording
-                        ? "button blink whitePad padWhiteVersion"
-                        : "button"
-                    }
-                    style={{
-                      height: "40px",
-                      width: "125px",
-                      border: "none",
-                      borderRadius: "5px",
-                      margin: "5px",
-                      // position: "absolute",
-                      // bottom: "3px",
-                      // left: "100px"
-                    }}
-                    onClick={() => {
-                      if (this.state.isRecording) {
-                        this.stopRecording();
-                      } else {
-                        this.startRecording();
+                <div className="song-info-container">
+                  {!showTutorial && (
+                  <div className="record-container">
+                    <button
+                      className={
+                        this.state.shouldStartRecording || this.state.isRecording
+                          ? "button record blink whitePad padWhiteVersion"
+                          : "button record"
                       }
-                    }}
-                  >
-                    {this.state.isRecording
-                      ? this.state.shouldStopRecording
-                        ? "Stopping"
-                        : "Stop Recording"
-                      : "Record"}
-                  </button>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      height: "40px",
-                      margin: "5px",
-                      color: "white",
-                    }}
-                  >
-                    {this.state.recordingStatus}
+                      onClick={() => {
+                        if (this.state.isRecording) {
+                          this.stopRecording();
+                        } else {
+                          this.startRecording();
+                        }
+                      }}
+                    >
+                      <div className="circle"/>
+                      {this.state.isRecording
+                        ? this.state.shouldStopRecording
+                          ? "Stopping"
+                          : "Stop Recording"
+                        : "Record"}
+                    </button>
+                    <p className="body-medium yellow-text"
+                    >
+
+                      {this.state.recordingStatus}
+                      {this.state.isRecording && <Stopwatch/>}
+                    </p>
                   </div>
-                </div>
+                )}
+                <div className="song-details">
+
+                  <div className="beatPackTitle">{nft.name}</div>
+                  <div className="artistName">{`by ${nft.artistName} ${
+                    nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
+                  }`}</div>
+              </div>
+            </div>
+          </div>
+
                 <div className="volumeMeter">
                   <canvas
                     ref={this.canvas}
                     style={{ minWidth: "75%", zIndex: "-10" }}
                   />
                 </div>
-              </div>
+
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
           <div className="container2 scrollBar">
             <div className="albumWrapper">
               <div className="albumPicWrapper">
@@ -1242,7 +1342,21 @@ class Sequencer extends Component {
                 <img src={Instagram} className="ourInsta" />
               </a>
             </div>
+
           </div>
+          <Footer
+            white={false}
+            shareURL={`https://secretgarden.fm/?share=${shareablePadNumbers.join(
+              ","
+            )}`}
+            showShare={true}
+            loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+            muiTheme={this.muiTheme}
+            setVolume={this.setVolume.bind(this)}
+            volume={this.state.volume}
+            clearSelections={this.clearSelections}
+            canvas={this.canvas}
+          />
         </React.StrictMode>
       );
     } else {

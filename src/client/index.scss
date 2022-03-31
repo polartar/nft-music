@@ -546,10 +546,10 @@ input[type="number"] {
 .record-container {
   opacity: 0;
     order: 2;
+    gap: 8px;
     display: flex;
-    flex-direction: row;
     justify-content: center;
-    align-items: flex-end;
+    align-items: center;
 }
 
 .wordLogo {
@@ -967,7 +967,7 @@ canvas {
     right: 0;
     bottom: 0;
     margin: auto;
-    opacity: 1;
+    opacity: 0;
     @media only screen and (max-width: 764px) {
       left: auto;
       right: 20px;
