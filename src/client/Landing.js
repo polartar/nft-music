@@ -45,6 +45,8 @@ import Carnation from "./components/Carnation";
 import QuakingGrass from "./components/QuakingGrass";
 import MonsteraLeaf from "./components/MonsteraLeaf";
 import Tulip from "./components/Tulip";
+import FlowerArrangement from "./components/FlowerArrangement";
+import Stopwatch from "./components/Stopwatch";
 
 const sixBySixThreeGroups = [
   [
@@ -585,6 +587,22 @@ class Sequencer extends Component {
     document.body.appendChild(script);
   }
 
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+      if (prevState.showTutorial !== this.state.showTutorial) {
+        //tutorial is over we can show the record button
+
+        anime({
+          targets: ['.record-container'],
+          easing: 'easeInOutSine',
+          duration: 750,
+          opacity:1,
+          delay: 0,
+        });
+
+      }
+    }
+
   handleClickOpen = async () => {
     try {
       if (!this.state.isLoggedIntoMetamask) {
@@ -975,7 +993,7 @@ class Sequencer extends Component {
     });
 
     anime({
-      targets: [".play-controls", ".learnMore"],
+      targets: [".play-controls", ".expandOuter"],
       easing: "easeInOutSine",
       duration: 750,
       opacity: 1,
@@ -1332,7 +1350,7 @@ class Sequencer extends Component {
       this.activeAnimations.fourthSectionCarnations.play();
       this.activeAnimations.fourthSectionChrysantheum.play();
       this.activeAnimations.fourthSectionMonsteraLeaves.play();
-    } else if (this.activeFPIndex == 4) {
+    } else if (this.activeFPIndex == 3) {
       anime({
         targets: "#hyacinth-5",
         easing: "easeInOutSine",
@@ -1640,11 +1658,9 @@ class Sequencer extends Component {
                 id="video-player-section"
                 data-slideindex="0"
               >
-                <Lily className="lily animated-content" />
-                <Carnation className="carnation animated-content" />
-                <Chrysanthemum className="chrysanthemum" />
-                <Hyacinth className="hyacinth animated-content" />
-                <QuakingGrass className="quaking-grass animated-content" />
+
+                <FlowerArrangement />
+
                 <Navbar
                   white={false}
                   didConnectWallet={this.initWallet}
@@ -1802,17 +1818,10 @@ class Sequencer extends Component {
                                 : "Stop Recording"
                               : "Record"}
                           </button>
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              height: "40px",
-                              margin: "5px",
-                              color: "white",
-                            }}
-                          >
+                          <p className="body-medium yellow-text">
                             {this.state.recordingStatus}
-                          </div>
+                            {this.state.isRecording && <Stopwatch/>}
+                          </p>
                         </div>
                       )}
                       <div className="song-details">
