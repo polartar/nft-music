@@ -2014,7 +2014,7 @@ class Sequencer extends Component {
                                   playable experience as an NFT.
                                   <br /> <br />
                                   You receive a non-exclusive license to sample
-                                  and commercialize every Bouquet sound and art.
+                                  and commercialize every Bouquet sound.
                                   <br /> <br />
                                   You get access to an exclusive artist/holder
                                   channel on The Secret Garden Discord.
