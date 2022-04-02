@@ -544,6 +544,8 @@ input[type="number"] {
 }
 
 .record-container {
+  display: flex;
+  flex-direction: column;
   opacity: 0;
     order: 2;
     gap: 8px;

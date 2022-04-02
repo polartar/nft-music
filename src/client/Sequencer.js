@@ -90,7 +90,7 @@ class Sequencer extends Component {
     shouldStartRecording: false,
     shouldStopRecording: false,
     timer: 0,
-    recordingStatus: "",
+    recordingStatus: ""
   };
 
   constructor(props) {
@@ -120,7 +120,7 @@ class Sequencer extends Component {
       location.reload();
     });
 
-    window.ethereum.on("chainChanged", (chainId) => {
+    window.ethereum.on("chainChanged", chainId => {
       location.reload();
     });
 
@@ -131,7 +131,7 @@ class Sequencer extends Component {
         isLoggedIntoMetamask: true,
         provider,
         address,
-        balance: await provider.getBalance(address),
+        balance: await provider.getBalance(address)
       });
     }
   };
@@ -145,11 +145,11 @@ class Sequencer extends Component {
     this.setState({
       isLoggedIntoMetamask: true,
       provider,
-      address,
+      address
     });
   };
 
-  exportRecording = async (blob) => {
+  exportRecording = async blob => {
     try {
       const form = new FormData();
 
@@ -159,7 +159,7 @@ class Sequencer extends Component {
       form.append("edition", this.state.nft.edition);
 
       const response = await axios.post("/api/exportRecording", form, {
-        responseType: "blob",
+        responseType: "blob"
       });
 
       const url = URL.createObjectURL(
@@ -171,7 +171,7 @@ class Sequencer extends Component {
       anchor.click();
 
       this.setState({
-        recordingStatus: "",
+        recordingStatus: ""
       });
     } catch (error) {
       console.log(error);
@@ -182,14 +182,14 @@ class Sequencer extends Component {
     let nftResponse;
     if (this.props.match) {
       nftResponse = await axios.get("/api/getNFT", {
-        params: this.props.match.params,
+        params: this.props.match.params
       });
     } else {
       nftResponse = await axios.get("/api/getFeaturedNFT");
     }
 
     this.setState({
-      nft: nftResponse.data,
+      nft: nftResponse.data
     });
 
     // Initial pads setup
@@ -197,7 +197,7 @@ class Sequencer extends Component {
       const pads = {};
       const queue = {};
 
-      Object.keys(nftResponse.data.filePaths).map((group) => {
+      Object.keys(nftResponse.data.filePaths).map(group => {
         const filePaths = nftResponse.data.filePaths[group];
         this.players[group] = [];
         pads[group] = [];
@@ -205,13 +205,13 @@ class Sequencer extends Component {
 
         this.activePlayers[group] = [];
 
-        Object.keys(nftResponse.data.filePaths).map((group) => {
+        Object.keys(nftResponse.data.filePaths).map(group => {
           const filePaths = nftResponse.data.filePaths[group];
           this.players[group] = [];
           pads[group] = [];
           queue[group] = [];
 
-          filePaths.forEach((filePath) => {
+          filePaths.forEach(filePath => {
             const player = new Tone.Player(
               `/public/${encodeURIComponent(filePath)}`
             );
@@ -245,7 +245,7 @@ class Sequencer extends Component {
 
           analyser.set({
             size: 256,
-            smoothing: 0.9,
+            smoothing: 0.9
           });
 
           analyser.normalRange = true;
@@ -255,7 +255,7 @@ class Sequencer extends Component {
       }
 
       Tone.Transport.bpm.value = nftResponse.data.bpm;
-      Tone.Transport.scheduleRepeat(async (time) => {
+      Tone.Transport.scheduleRepeat(async time => {
         if (this.state.step % subSteps === 0) {
           const updatedPads = {};
           const updatedQueue = {};
@@ -265,7 +265,7 @@ class Sequencer extends Component {
           let didPlayBasses = false;
           let didPlaySounds = false;
 
-          Object.keys(this.state.queue).forEach((group) => {
+          Object.keys(this.state.queue).forEach(group => {
             updatedPads[group] = Array.from(
               { length: this.state.pads[group].length },
               () => 0
@@ -283,7 +283,7 @@ class Sequencer extends Component {
               }
             }
 
-            updatedQueue[group].forEach((soundIndex) => {
+            updatedQueue[group].forEach(soundIndex => {
               if (
                 this.players[group][soundIndex].state !== "started" ||
                 this.state.step === 0
@@ -337,7 +337,7 @@ class Sequencer extends Component {
             queue: updatedQueue,
             shareablePadNumbers: updatedShareablePadNumbers,
             showTutorial: updatedShowTutorial,
-            tutorialStep: updatedTutorialStep,
+            tutorialStep: updatedTutorialStep
           });
         }
 
@@ -350,25 +350,25 @@ class Sequencer extends Component {
             this.setState({
               shouldStartRecording: false,
               isRecording: true,
-              recordingStatus: "Recording...",
+              recordingStatus: "Recording..."
             });
           }
 
           if (this.state.shouldStopRecording) {
             // the recorded audio is returned as a blob
             const recording = await this.recorder.stop();
-            this.exportRecording(recording);
+            // this.exportRecording(recording);
 
             this.setState({
               shouldStopRecording: false,
               isRecording: false,
-              recordingStatus: "Exporting...",
+              recordingStatus: "Exporting..."
             });
           }
         }
 
-        this.setState((state) => ({
-          step: (state.step + 1) % state.steps,
+        this.setState(state => ({
+          step: (state.step + 1) % state.steps
         }));
       }, "4n");
 
@@ -383,7 +383,7 @@ class Sequencer extends Component {
             showTutorial:
               this.state.showTutorial && sharedPadNumbers !== null
                 ? false
-                : this.state.showTutorial,
+                : this.state.showTutorial
           }),
           () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -395,7 +395,7 @@ class Sequencer extends Component {
               this.setState({ showTutorial: false });
             }
 
-            sharedPadNumbers.forEach((padNumber) => {
+            sharedPadNumbers.forEach(padNumber => {
               const col = parseInt(padNumber / this.state.padFormat.length);
               const row = parseInt(padNumber % this.state.padFormat.length);
 
@@ -405,134 +405,130 @@ class Sequencer extends Component {
               this.togglePad(group, soundIndex);
             });
 
-            _this.handleInitialAnimations()
+            _this.handleInitialAnimations();
           }
         );
       });
     }
   };
 
-  didRender = async (blob) => {
+  didRender = async blob => {
     try {
       const form = new FormData();
 
       form.append("video", blob[0]);
 
       const response = await axios.post("/api/upload", form);
-
     } catch (error) {
       console.log(error);
     }
   };
 
   handleInitialAnimations = () => {
-
-  anime({
-    targets: [
-      ".video-container",
-      ".beatPackTitle",
-      ".artistName",
-      ".gridOuter",
-    ],
-    easing: "easeInOutSine",
-    duration: 750,
-    opacity: 1,
-    delay: 1000,
-  });
-
-  anime({
-    targets: [".play-controls", ".learnMore"],
-    easing: "easeInOutSine",
-    duration: 750,
-    opacity: 1,
-    delay: 2000,
-  });
-
-
-  if (!this.state.showTutorial) {
     anime({
-      targets: ['.record-container'],
-      easing: 'easeInOutSine',
+      targets: [
+        ".video-container",
+        ".beatPackTitle",
+        ".artistName",
+        ".gridOuter"
+      ],
+      easing: "easeInOutSine",
       duration: 750,
-      opacity:1,
-      delay: 2000,
+      opacity: 1,
+      delay: 1000
     });
 
-  }
+    anime({
+      targets: [".play-controls", ".learnMore"],
+      easing: "easeInOutSine",
+      duration: 750,
+      opacity: 1,
+      delay: 2000
+    });
 
-  anime({
-    targets: [
-      "#video-player-section .lily",
-      "#video-player-section .quaking-grass",
-      "#video-player-section .carnation",
-      "#video-player-section .hyacinth",
-      "#video-player-section .chrysanthemum",
-    ],
-    easing: "easeInOutSine",
-    duration: 500,
-    opacity: 1,
-    delay: 0,
-  });
+    if (!this.state.showTutorial) {
+      anime({
+        targets: [".record-container"],
+        easing: "easeInOutSine",
+        duration: 750,
+        opacity: 1,
+        delay: 2000
+      });
+    }
 
-  anime({
-    targets: '[data-slideindex="0"] .lily path',
-    easing: "easeInOutSine",
-    duration: 1200,
-    skewX: function() {
-      return anime.random(0.5, 1);
-    },
-    skewY: function() {
-      return anime.random(-0.25, -0.75);
-    },
-    delay: 250,
-    direction: "alternate",
-    loop: true,
-  });
+    anime({
+      targets: [
+        "#video-player-section .lily",
+        "#video-player-section .quaking-grass",
+        "#video-player-section .carnation",
+        "#video-player-section .hyacinth",
+        "#video-player-section .chrysanthemum"
+      ],
+      easing: "easeInOutSine",
+      duration: 500,
+      opacity: 1,
+      delay: 0
+    });
 
-  anime({
-    targets: '[data-slideindex="0"] .quaking-grass path',
-    easing: "easeInOutSine",
-    duration: 1200,
-    skewX: 0.8,
-    skewY: -0.75,
-    delay: 250,
-    direction: "alternate",
-    loop: true,
-  });
+    anime({
+      targets: '[data-slideindex="0"] .lily path',
+      easing: "easeInOutSine",
+      duration: 1200,
+      skewX: function() {
+        return anime.random(0.5, 1);
+      },
+      skewY: function() {
+        return anime.random(-0.25, -0.75);
+      },
+      delay: 250,
+      direction: "alternate",
+      loop: true
+    });
 
-  anime({
-    targets: '[data-slideindex="0"] .carnation path',
-    easing: "easeInOutSine",
-    duration: 1300,
-    skewX: 0.7,
-    skewY: -0.6,
-    delay: 250,
-    direction: "alternate",
-    loop: true,
-  });
+    anime({
+      targets: '[data-slideindex="0"] .quaking-grass path',
+      easing: "easeInOutSine",
+      duration: 1200,
+      skewX: 0.8,
+      skewY: -0.75,
+      delay: 250,
+      direction: "alternate",
+      loop: true
+    });
 
-  anime({
-    targets: '[data-slideindex="0"] .hyacinth path',
-    easing: "easeInOutSine",
-    duration: 1500,
-    skewX: 0.6,
-    skewY: -0.5,
-    delay: 250,
-    direction: "alternate",
-    loop: true,
-  });
+    anime({
+      targets: '[data-slideindex="0"] .carnation path',
+      easing: "easeInOutSine",
+      duration: 1300,
+      skewX: 0.7,
+      skewY: -0.6,
+      delay: 250,
+      direction: "alternate",
+      loop: true
+    });
 
-  anime({
-    targets: '[data-slideindex="0"] .chrysanthemum path',
-    easing: "easeInOutSine",
-    duration: 1500,
-    skewX: -1,
-    skewY: 1,
-    delay: 250,
-    direction: "alternate",
-    loop: true,
-  });
-};
+    anime({
+      targets: '[data-slideindex="0"] .hyacinth path',
+      easing: "easeInOutSine",
+      duration: 1500,
+      skewX: 0.6,
+      skewY: -0.5,
+      delay: 250,
+      direction: "alternate",
+      loop: true
+    });
+
+    anime({
+      targets: '[data-slideindex="0"] .chrysanthemum path',
+      easing: "easeInOutSine",
+      duration: 1500,
+      skewX: -1,
+      skewY: 1,
+      delay: 250,
+      direction: "alternate",
+      loop: true
+    });
+  };
 
   componentDidMount() {
     const script = document.createElement("script");
@@ -543,21 +539,19 @@ class Sequencer extends Component {
     document.body.appendChild(script);
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevState.showTutorial !== this.state.showTutorial) {
+      //tutorial is over we can show the record button
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-      if (prevState.showTutorial !== this.state.showTutorial) {
-        //tutorial is over we can show the record button
-
-        anime({
-          targets: ['.record-container'],
-          easing: 'easeInOutSine',
-          duration: 750,
-          opacity:1,
-          delay: 0,
-        });
-
-      }
+      anime({
+        targets: [".record-container"],
+        easing: "easeInOutSine",
+        duration: 750,
+        opacity: 1,
+        delay: 0
+      });
     }
+  }
 
   handleClickOpen = async () => {
     try {
@@ -565,16 +559,16 @@ class Sequencer extends Component {
         await this.connectWallet();
       }
       this.setState({
-        openBidModal: true,
+        openBidModal: true
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  handleClose = (value) => {
+  handleClose = value => {
     this.setState({
-      openBidModal: false,
+      openBidModal: false
     });
   };
 
@@ -613,9 +607,9 @@ class Sequencer extends Component {
       }
     }
 
-    let frequency_array = new Uint8Array(analyser.map((x) => x * 7000));
+    let frequency_array = new Uint8Array(analyser.map(x => x * 7000));
 
-    const isAllZero = frequency_array.every((item) => item === 0);
+    const isAllZero = frequency_array.every(item => item === 0);
 
     if (!isAllZero) {
       canvas.width = window.innerWidth;
@@ -699,14 +693,14 @@ class Sequencer extends Component {
     this.togglePlay();
 
     this.setState(() => ({
-      playing: true,
+      playing: true
     }));
   }
 
   pause() {
     this.setState(() => ({
       playing: false,
-      step: 0,
+      step: 0
     }));
 
     clearInterval(this.interval);
@@ -724,7 +718,7 @@ class Sequencer extends Component {
     const milliseconds = cloneDeep(this.state.timer);
 
     this.setState(
-      (state) => {
+      state => {
         const clonedPads = { ...state.pads };
         const padState = clonedPads[group][pad];
         const updatedQueue = { ...state.queue };
@@ -744,21 +738,21 @@ class Sequencer extends Component {
 
           // update active pads
           this.activePlayers[group] = this.activePlayers[group].filter(
-            (activePad) => activePad !== pad
+            activePad => activePad !== pad
           );
           updatedQueue[group] = updatedQueue[group].filter(
-            (soundIndex) => soundIndex !== pad
+            soundIndex => soundIndex !== pad
           );
         }
 
         clonedPads[group][pad] = padState === 1 ? 0 : 1;
 
         const unstartedQueueGroup = updatedQueue[group].filter(
-          (soundIndex) => this.players[group][soundIndex].state !== "started"
+          soundIndex => this.players[group][soundIndex].state !== "started"
         );
 
         const startedQueueGroup = updatedQueue[group].filter(
-          (soundIndex) => this.players[group][soundIndex].state === "started"
+          soundIndex => this.players[group][soundIndex].state === "started"
         );
 
         // We shaved something off, let's make it stop blinking
@@ -768,41 +762,42 @@ class Sequencer extends Component {
             -state.nft.activeSoundLimits[group]
           );
 
-          toRemove.forEach((soundIndex) => {
+          toRemove.forEach(soundIndex => {
             clonedPads[group][soundIndex] = 0;
           });
 
           updatedQueue[group] = [
             ...startedQueueGroup,
-            ...unstartedQueueGroup.slice(-state.nft.activeSoundLimits[group]),
+            ...unstartedQueueGroup.slice(-state.nft.activeSoundLimits[group])
           ];
         }
 
-        const pressedPad = [group, pad];
-        this.state.padFormat.forEach((column, j) => {
-          column.forEach((mappedPad, i) => {
-            if (
-              mappedPad[0] === pressedPad[0] &&
-              mappedPad[1] === pressedPad[1]
-            ) {
-              this.setState({
-                padRecording: [
-                  ...this.state.padRecording,
-                  [j * this.state.padFormat.length + i, milliseconds],
-                ],
-              });
-            }
+        if (this.state.shouldStartRecording || this.state.isRecording) {
+          const pressedPad = [group, pad];
+          this.state.padFormat.forEach((column, j) => {
+            column.forEach((mappedPad, i) => {
+              if (
+                mappedPad[0] === pressedPad[0] &&
+                mappedPad[1] === pressedPad[1]
+              ) {
+                this.setState({
+                  padRecording: [
+                    ...this.state.padRecording,
+                    // [j * this.state.padFormat.length + i, milliseconds]
+                    [group, pad, milliseconds]
+                  ]
+                });
+              }
+            });
           });
-        });
-        console.log(
-          "this.state.padFormat.length: ",
-          this.state.padFormat.length
-        );
+        }
+
+        console.log("this.state.padRecording: ", this.state.padRecording);
 
         return {
           pads: clonedPads,
           totalSoundsPlaying: numPads,
-          queue: updatedQueue,
+          queue: updatedQueue
         };
       },
       () => {
@@ -815,13 +810,13 @@ class Sequencer extends Component {
   startRecording() {
     this.setState({
       shouldStartRecording: true,
-      recordingStatus: "Waiting for next loop to start...",
+      recordingStatus: "Waiting for next loop to start..."
     });
     let milliseconds = 0;
 
     const incrementMilliseconds = () => {
       this.setState({
-        timer: (milliseconds += 10),
+        timer: (milliseconds += 10)
       });
     };
 
@@ -835,7 +830,7 @@ class Sequencer extends Component {
     this.setState({
       shouldStopRecording: true,
       recordingStatus: "Waiting for loop to end...",
-      timer: 0,
+      timer: 0
     });
   }
   w1;
@@ -844,25 +839,25 @@ class Sequencer extends Component {
     overrides: {
       MuiSlider: {
         thumb: {
-          color: "white",
+          color: "white"
         },
         track: {
-          color: "white",
+          color: "white"
         },
         rail: {
-          color: "white",
-        },
-      },
-    },
+          color: "white"
+        }
+      }
+    }
   });
 
   setVolume(volume) {
     if (volume != null) {
       this.setState({
-        volume: volume,
+        volume: volume
       });
 
-      Object.keys(this.players).forEach((group) => {
+      Object.keys(this.players).forEach(group => {
         this.players[group].forEach((_, soundIndex) => {
           this.players[group][soundIndex].volume.value = volume;
         });
@@ -871,10 +866,20 @@ class Sequencer extends Component {
   }
 
   clearSelections() {
+    // clear all setTimeouts for togglePad()'s
+    let highestId = window.setTimeout(() => {
+      for (let i = highestId; i >= 0; i--) {
+        window.clearInterval(i);
+      }
+    }, 0);
+
+    // stop Transport step count
+    Tone.Transport.stop();
+
     const updatedPads = {};
     const updatedQueue = {};
 
-    Object.keys(this.players).forEach((group) => {
+    Object.keys(this.players).forEach(group => {
       updatedPads[group] = [];
       this.players[group].forEach((_, soundIndex) => {
         updatedPads[group][soundIndex] = 0;
@@ -889,6 +894,7 @@ class Sequencer extends Component {
       queue: updatedQueue,
       shareablePadNumbers: [],
       totalSoundsPlaying: 0,
+      step: 0 // reset step count to 0
     });
     for (const group in this.activePlayers) {
       if (this.activePlayers[group].length > 0) {
@@ -926,6 +932,18 @@ class Sequencer extends Component {
     );
   }
 
+  arrayPlusDelay(array, delegate, delay) {
+    // initialize all calls right away
+    array.forEach(function(el, i) {
+      setTimeout(function() {
+        // each loop, call passed in function
+        delegate(el);
+
+        // stagger the timeout for each loop by the index
+      }, i * el[2]);
+    });
+  }
+
   render() {
     const {
       pads,
@@ -944,7 +962,7 @@ class Sequencer extends Component {
       showTutorial,
       tutorialStep,
       padRecording,
-      timer,
+      timer
     } = this.state;
 
     const currentBidAmount =
@@ -963,7 +981,7 @@ class Sequencer extends Component {
         prefixAssetPath: "/public/artists/oksami/garden/visualizer/",
         onError: function(e) {
           console.error("err", e);
-        },
+        }
       });
 
       this.patch.config.didRender = this.didRender;
@@ -999,192 +1017,245 @@ class Sequencer extends Component {
                   id="video-player-section"
                   data-slideindex="0"
                 >
-              <FlowerArrangement/>
-          <div className="container scrollbar">
-            {mediaFileExtension === "mp4" && (
-              <div className="video-container">
-                <video
-                  className="waterLoopVideo"
-                  playsInline
-                  autoPlay
-                  loop
-                  muted
-                  data-autoplay
-                >
-                  <source src={nft.imageURL} type="video/mp4" />
-                </video>
-              </div>
-            )}
-            {mediaFileExtension !== "mp4" && (
-              <img className="waterLoopVideo" src={nft.imageURL} />
-            )}
-            <div className="gridTop">
-              {this.rhythmPads.map((group, groupIndex) => (
-                <React.Fragment>
-                  {group.map((pad, i) => (
-                    <div
-                      key={`pad-group-${i}`}
-                      className={cx("modifiedPad", {
-                        active:
-                          groupIndex === (((step - 1) % steps) + steps) % steps,
-                        on: pad === 1,
-                      })}
+                  <FlowerArrangement />
+                  <div className="container scrollbar">
+                    {mediaFileExtension === "mp4" && (
+                      <div className="video-container">
+                        <video
+                          className="waterLoopVideo"
+                          playsInline
+                          autoPlay
+                          loop
+                          muted
+                          data-autoplay
+                        >
+                          <source src={nft.imageURL} type="video/mp4" />
+                        </video>
+                      </div>
+                    )}
+                    {mediaFileExtension !== "mp4" && (
+                      <img className="waterLoopVideo" src={nft.imageURL} />
+                    )}
+                    <div className="gridTop">
+                      {this.rhythmPads.map((group, groupIndex) => (
+                        <React.Fragment>
+                          {group.map((pad, i) => (
+                            <div
+                              key={`pad-group-${i}`}
+                              className={cx("modifiedPad", {
+                                active:
+                                  groupIndex ===
+                                  (((step - 1) % steps) + steps) % steps,
+                                on: pad === 1
+                              })}
+                            />
+                          ))}
+                        </React.Fragment>
+                      ))}
+                    </div>
+
+                    <Navbar
+                      white={false}
+                      didConnectWallet={this.initWallet}
+                      loggedIntoMetamaskOverride={isLoggedIntoMetamask}
                     />
-                  ))}
-                </React.Fragment>
-              ))}
-            </div>
 
-            <Navbar
-              white={false}
-              didConnectWallet={this.initWallet}
-              loggedIntoMetamaskOverride={isLoggedIntoMetamask}
-            />
+                    <div className={`gridOuter ${padFormatStyleClass}`}>
+                      {padFormat.map((column, j) => {
+                        return column.map((remappedCoordinates, i) => {
+                          const group = remappedCoordinates[0];
+                          const soundIndex = remappedCoordinates[1];
+                          const additionalClasses = remappedCoordinates[2]
+                            ? remappedCoordinates[2]
+                            : "";
 
+                          const on =
+                            this.players[group][soundIndex].state === "started";
 
-              <div className={`gridOuter ${padFormatStyleClass}`}>
-                {padFormat.map((column, j) => {
-                  return column.map((remappedCoordinates, i) => {
-                    const group = remappedCoordinates[0];
-                    const soundIndex = remappedCoordinates[1];
-                    const additionalClasses = remappedCoordinates[2]
-                      ? remappedCoordinates[2]
-                      : "";
+                          const blinkClass =
+                            pads[group][soundIndex] === 1 &&
+                            this.players[group][soundIndex].state !== "started"
+                              ? "blink"
+                              : "";
+                          const whiteClass =
+                            group === "sounds" ? "whitePad" : "";
+                          let tutorialClass = "";
+                          const padClass =
+                            group == "sounds" ? "padWhiteVersion" : "pad";
 
-                    const on =
-                      this.players[group][soundIndex].state === "started";
+                          if (showTutorial) {
+                            if (tutorialStep === 0 && group !== "drums") {
+                              tutorialClass = "tutorialPad";
+                            } else if (
+                              tutorialStep === 1 &&
+                              group !== "basses"
+                            ) {
+                              tutorialClass = "tutorialPad";
+                            } else if (
+                              tutorialStep === 2 &&
+                              group !== "sounds"
+                            ) {
+                              tutorialClass = "tutorialPad";
+                            }
+                          }
 
-                    const blinkClass =
-                      pads[group][soundIndex] === 1 &&
-                      this.players[group][soundIndex].state !== "started"
-                        ? "blink"
-                        : "";
-                    const whiteClass = group === "sounds" ? "whitePad" : "";
-                    let tutorialClass = "";
-                    const padClass =
-                      group == "sounds" ? "padWhiteVersion" : "pad";
-
-                    if (showTutorial) {
-                      if (tutorialStep === 0 && group !== "drums") {
-                        tutorialClass = "tutorialPad";
-                      } else if (tutorialStep === 1 && group !== "basses") {
-                        tutorialClass = "tutorialPad";
-                      } else if (tutorialStep === 2 && group !== "sounds") {
-                        tutorialClass = "tutorialPad";
-                      }
-                    }
-
-                    return (
-                      <div
-                        key={`pad-group-${i}`}
-                        className={`${cx(padClass, {
-                          on,
-                        })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                        onClick={() => {
-                          this.togglePad(group, soundIndex);
-                        }}
-                      />
-                    );
-                  });
-                })}
-              </div>
-              <div className="song-info-wrapper">
-
-              {showTutorial && (
-                <React.Fragment>
-                  {tutorialStep === 0 && (
-                    <React.Fragment>
-                      <div className="currentBid tile25 tutorialStep">
-                        Welcome to the Secret Garden.
-                      </div>
-                      <div className="tutorialInfo">
-                        To begin, press one of the highlighted squares on the
-                        left. These are the drum loops. <br />
-                        Only one will play at a time.
-                      </div>
-                    </React.Fragment>
-                  )}
-                  {tutorialStep === 1 && (
-                    <div className="tutorialInfo tutorialFormatting">
-                      Now, press one of the highlighted squares on the right.
-                      These are the bass loops. <br />
-                      When the pad is flashing, the sound will wait to play
-                      until the next bar.
-                      <br /> Only one will play at a time.
+                          return (
+                            <div
+                              key={`pad-group-${i}`}
+                              className={`${cx(padClass, {
+                                on
+                              })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                              onClick={() => {
+                                this.togglePad(group, soundIndex);
+                              }}
+                            />
+                          );
+                        });
+                      })}
                     </div>
-                  )}
-                  {tutorialStep === 2 && (
-                    <div className="tutorialInfo tutorialFormatting">
-                      {`Lastly, press one of grey squares in the middle. These are
+                    <div className="song-info-wrapper">
+                      {showTutorial && (
+                        <React.Fragment>
+                          {tutorialStep === 0 && (
+                            <React.Fragment>
+                              <div className="currentBid tile25 tutorialStep">
+                                Welcome to the Secret Garden.
+                              </div>
+                              <div className="tutorialInfo">
+                                To begin, press one of the highlighted squares
+                                on the left. These are the drum loops. <br />
+                                Only one will play at a time.
+                              </div>
+                            </React.Fragment>
+                          )}
+                          {tutorialStep === 1 && (
+                            <div className="tutorialInfo tutorialFormatting">
+                              Now, press one of the highlighted squares on the
+                              right. These are the bass loops. <br />
+                              When the pad is flashing, the sound will wait to
+                              play until the next bar.
+                              <br /> Only one will play at a time.
+                            </div>
+                          )}
+                          {tutorialStep === 2 && (
+                            <div className="tutorialInfo tutorialFormatting">
+                              {`Lastly, press one of grey squares in the middle. These are
                         chords and melodies. Up to ${nft.activeSoundLimits["sounds"]} can play at at time.`}
-                    </div>
-                  )}
-                  {tutorialStep === 3 && (
-                    <div className="tutorialInfo tutorialFormatting">
-                      You're ready to make some music! <br />
-                      Try out different combinations and share them with friends
-                      below. <br />
-                      If you'd like to learn more about Secret Garden, scroll
-                      down.
-                    </div>
-                  )}
-                </React.Fragment>
-              )}
+                            </div>
+                          )}
+                          {tutorialStep === 3 && (
+                            <div className="tutorialInfo tutorialFormatting">
+                              You're ready to make some music! <br />
+                              Try out different combinations and share them with
+                              friends below. <br />
+                              If you'd like to learn more about Secret Garden,
+                              scroll down.
+                            </div>
+                          )}
+                        </React.Fragment>
+                      )}
 
-                <div className="song-info-container">
-                  {!showTutorial && (
-                  <div className="record-container">
-                    <button
-                      className={
-                        this.state.shouldStartRecording || this.state.isRecording
-                          ? "button record blink whitePad padWhiteVersion"
-                          : "button record"
-                      }
-                      onClick={() => {
-                        if (this.state.isRecording) {
-                          this.stopRecording();
-                        } else {
-                          this.startRecording();
-                        }
-                      }}
-                    >
-                      <div className="circle"/>
-                      {this.state.isRecording
-                        ? this.state.shouldStopRecording
-                          ? "Stopping"
-                          : "Stop Recording"
-                        : "Record"}
-                    </button>
-                    <p className="body-medium yellow-text"
-                    >
+                      <div className="song-info-container">
+                        {!showTutorial && (
+                          <div className="record-container">
+                            <div>
+                              <button
+                                className={
+                                  this.state.shouldStartRecording ||
+                                  this.state.isRecording
+                                    ? "button record blink whitePad padWhiteVersion"
+                                    : "button record"
+                                }
+                                onClick={() => {
+                                  if (this.state.isRecording) {
+                                    this.stopRecording();
+                                  } else {
+                                    this.startRecording();
+                                  }
+                                }}
+                              >
+                                <div className="circle" />
+                                {this.state.isRecording
+                                  ? this.state.shouldStopRecording
+                                    ? "Stopping"
+                                    : "Stop Recording"
+                                  : "Record"}
+                              </button>
+                              <p className="body-medium yellow-text">
+                                {this.state.recordingStatus}
+                                {this.state.isRecording && <Stopwatch />}
+                              </p>
+                            </div>
+                            {this.state.padRecording.length > 0 &&
+                              !this.state.isRecording && (
+                                <div>
+                                  <button
+                                    onClick={() => {
+                                      this.arrayPlusDelay(
+                                        this.state.padRecording,
+                                        obj => {
+                                          console.log("obj: ", obj);
+                                          this.togglePad(obj[0], obj[1]);
+                                        },
+                                        1000
+                                      );
+                                    }}
+                                  >
+                                    Playback
+                                  </button>
+                                </div>
+                              )}
+                          </div>
+                        )}
+                        <div className="song-details">
+                          <div
+                            className="beatPackTitle"
+                            onClick={() =>
+                              // console.log(
+                              //   "this.state.padRecording: ",
+                              //   this.state.padRecording
+                              // )
+                              // this.triggerActions(this.state.padRecording)
+                              this.arrayPlusDelay(
+                                this.state.padRecording,
+                                obj => {
+                                  console.log("obj: ", obj);
+                                  this.togglePad(obj[0], obj[1]);
+                                },
+                                1000
+                              )
+                            }
+                          >
+                            {nft.name}
+                          </div>
+                          <div
+                            className="artistName"
+                            onClick={() =>
+                              console.log(
+                                "this.state.padRecording: ",
+                                this.state.padRecording
+                              )
+                            }
+                          >{`by ${nft.artistName} ${
+                            nft.visualArtistName
+                              ? `& ${nft.visualArtistName}`
+                              : ""
+                          }`}</div>
+                        </div>
+                      </div>
+                    </div>
 
-                      {this.state.recordingStatus}
-                      {this.state.isRecording && <Stopwatch/>}
-                    </p>
+                    <div className="volumeMeter">
+                      <canvas
+                        ref={this.canvas}
+                        style={{ minWidth: "75%", zIndex: "-10" }}
+                      />
+                    </div>
                   </div>
-                )}
-                <div className="song-details">
-
-                  <div className="beatPackTitle">{nft.name}</div>
-                  <div className="artistName">{`by ${nft.artistName} ${
-                    nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
-                  }`}</div>
+                </div>
               </div>
             </div>
           </div>
-
-                <div className="volumeMeter">
-                  <canvas
-                    ref={this.canvas}
-                    style={{ minWidth: "75%", zIndex: "-10" }}
-                  />
-                </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
           <div className="container2 scrollBar">
             <div className="albumWrapper">
@@ -1228,7 +1299,7 @@ class Sequencer extends Component {
                         hours,
                         minutes,
                         seconds,
-                        completed,
+                        completed
                       }) => {
                         if (completed) {
                           // Render a completed state
@@ -1342,7 +1413,6 @@ class Sequencer extends Component {
                 <img src={Instagram} className="ourInsta" />
               </a>
             </div>
-
           </div>
           <Footer
             white={false}
