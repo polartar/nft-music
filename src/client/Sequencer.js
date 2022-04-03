@@ -932,15 +932,20 @@ class Sequencer extends Component {
     );
   }
 
-  arrayPlusDelay(array, delegate, delay) {
-    // initialize all calls right away
-    array.forEach(function(el, i) {
-      setTimeout(function() {
-        // each loop, call passed in function
-        delegate(el);
+  playbackRecording(padRecording, callback) {
+    // stop Transport step count
+    // Tone.Transport.stop();
+    // reset step so that playback isn't dependent on waiting for "next loop"
+    this.setState({
+      step: 0
+    });
 
-        // stagger the timeout for each loop by the index
-      }, i * el[2]);
+    padRecording.forEach((pad, i) => {
+      setTimeout(() => {
+        // each loop, call passed in callback function
+        callback(pad);
+        // stagger the pad's timeout by their milliseconds
+      }, i * pad[2]);
     });
   }
 
@@ -1158,7 +1163,20 @@ class Sequencer extends Component {
                       <div className="song-info-container">
                         {!showTutorial && (
                           <div className="record-container">
-                            <div>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center"
+                              }}
+                            >
+                              <div
+                                style={{ marginRight: "10px" }}
+                                className="body-medium yellow-text"
+                              >
+                                {this.state.recordingStatus}
+                                {this.state.isRecording && <Stopwatch />}
+                              </div>
                               <button
                                 className={
                                   this.state.shouldStartRecording ||
@@ -1181,30 +1199,32 @@ class Sequencer extends Component {
                                     : "Stop Recording"
                                   : "Record"}
                               </button>
-                              <p className="body-medium yellow-text">
-                                {this.state.recordingStatus}
-                                {this.state.isRecording && <Stopwatch />}
-                              </p>
                             </div>
-                            {this.state.padRecording.length > 0 &&
-                              !this.state.isRecording && (
-                                <div>
-                                  <button
-                                    onClick={() => {
-                                      this.arrayPlusDelay(
-                                        this.state.padRecording,
-                                        obj => {
-                                          console.log("obj: ", obj);
-                                          this.togglePad(obj[0], obj[1]);
-                                        },
-                                        1000
-                                      );
-                                    }}
-                                  >
-                                    Playback
-                                  </button>
-                                </div>
-                              )}
+                            <div>
+                              <button
+                                className={
+                                  this.state.padRecording.length <= 0 ||
+                                  this.state.isRecording
+                                    ? "button disabled"
+                                    : "button record"
+                                }
+                                onClick={() => {
+                                  this.playbackRecording(
+                                    this.state.padRecording,
+                                    pad => {
+                                      this.togglePad(pad[0], pad[1]);
+                                    }
+                                  );
+                                }}
+                                disabled={
+                                  this.state.padRecording.length <= 0 ||
+                                  this.state.isRecording
+                                }
+                              >
+                                Playback
+                              </button>
+                            </div>
+                            {/* )} */}
                           </div>
                         )}
                         <div className="song-details">
@@ -1216,7 +1236,7 @@ class Sequencer extends Component {
                               //   this.state.padRecording
                               // )
                               // this.triggerActions(this.state.padRecording)
-                              this.arrayPlusDelay(
+                              this.playbackRecording(
                                 this.state.padRecording,
                                 obj => {
                                   console.log("obj: ", obj);
