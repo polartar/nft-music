@@ -134,6 +134,7 @@ async function exportRecording(response, recording, artistName, name, edition) {
           },
         },
       ])
+      .on("error", (error) => console.log(`Encoding Error: ${error.message}`))
       .saveToFile(`${uuid}.mp4`)
       .on("end", () => {
         response.download(`./${uuid}.mp4`, "my recording.mp4", function(err) {
