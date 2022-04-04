@@ -90,7 +90,8 @@ class Sequencer extends Component {
     shouldStartRecording: false,
     shouldStopRecording: false,
     timer: 0,
-    recordingStatus: ""
+    recordingStatus: "",
+    startRecordingTime: ""
   };
 
   constructor(props) {
@@ -717,6 +718,12 @@ class Sequencer extends Component {
 
     const milliseconds = cloneDeep(this.state.timer);
 
+    if (this.state.padRecording.length <= 0) {
+      this.setState({
+        startRecordingTime: Date.now()
+      });
+    }
+
     this.setState(
       state => {
         const clonedPads = { ...state.pads };
@@ -774,6 +781,7 @@ class Sequencer extends Component {
 
         if (this.state.shouldStartRecording || this.state.isRecording) {
           const pressedPad = [group, pad];
+          const currentTime = Date.now();
           this.state.padFormat.forEach((column, j) => {
             column.forEach((mappedPad, i) => {
               if (
@@ -784,7 +792,14 @@ class Sequencer extends Component {
                   padRecording: [
                     ...this.state.padRecording,
                     // [j * this.state.padFormat.length + i, milliseconds]
-                    [group, pad, milliseconds]
+                    // [group, pad, milliseconds]
+                    [
+                      group,
+                      pad,
+                      this.state.padRecording.length > 0
+                        ? Number(currentTime - this.state.startRecordingTime)
+                        : 0
+                    ]
                   ]
                 });
               }
@@ -792,7 +807,7 @@ class Sequencer extends Component {
           });
         }
 
-        console.log("this.state.padRecording: ", this.state.padRecording);
+        // console.log("this.state.padRecording: ", this.state.padRecording);
 
         return {
           pads: clonedPads,
@@ -810,22 +825,30 @@ class Sequencer extends Component {
   startRecording() {
     this.setState({
       shouldStartRecording: true,
-      recordingStatus: "Waiting for next loop to start..."
+      recordingStatus: "Waiting for next loop to start...",
+      padRecording: []
     });
     let milliseconds = 0;
 
     const incrementMilliseconds = () => {
       this.setState({
-        timer: (milliseconds += 10)
+        timer: (milliseconds += 1000)
       });
     };
 
     window.timer = setInterval(incrementMilliseconds, 10);
+    // window.timer = window.setInterval(incrementMilliseconds, 10);
+    // intervals.push(setInterval(incrementMilliseconds, 10));
   }
 
   async stopRecording() {
     console.log("stopped recording");
-    clearInterval(window.timer);
+    // clear interval
+    window.clearInterval(window.timer);
+    // let id = window.setInterval(function() {}, 0);
+    // while (id--) {
+    //   window.clearInterval(id);
+    // }
 
     this.setState({
       shouldStopRecording: true,
@@ -894,8 +917,13 @@ class Sequencer extends Component {
       queue: updatedQueue,
       shareablePadNumbers: [],
       totalSoundsPlaying: 0,
-      step: 0 // reset step count to 0
+      step: 0, // reset step count to 0
+      recordingStatus: "",
+      isRecording: false,
+      shouldStartRecording: false,
+      shouldStopRecording: false
     });
+
     for (const group in this.activePlayers) {
       if (this.activePlayers[group].length > 0) {
         // loop to stop active pads instead of entire player list
@@ -940,13 +968,24 @@ class Sequencer extends Component {
       step: 0
     });
 
-    padRecording.forEach((pad, i) => {
+    for (let i = 0; i <= padRecording.length - 1; i++) {
+      console.log("padRecording ms: ", padRecording[i][2]);
       setTimeout(() => {
         // each loop, call passed in callback function
-        callback(pad);
+        callback(padRecording[i]);
         // stagger the pad's timeout by their milliseconds
-      }, i * pad[2]);
-    });
+        // }, i * pad[2]);
+        // }, padRecording[i][2] + (padRecording[i - 1] ? padRecording[i - 1][2] : padRecording[0][2]));
+      }, padRecording[i][2]);
+    }
+    // padRecording.forEach((pad, i) => {
+    //   setTimeout(() => {
+    //     // each loop, call passed in callback function
+    //     callback(pad);
+    //     // stagger the pad's timeout by their milliseconds
+    //     // }, i * pad[2]);
+    //   }, pad[2]);
+    // });
   }
 
   render() {
@@ -1228,34 +1267,16 @@ class Sequencer extends Component {
                           </div>
                         )}
                         <div className="song-details">
-                          <div
-                            className="beatPackTitle"
-                            onClick={() =>
-                              // console.log(
-                              //   "this.state.padRecording: ",
-                              //   this.state.padRecording
-                              // )
-                              // this.triggerActions(this.state.padRecording)
-                              this.playbackRecording(
-                                this.state.padRecording,
-                                obj => {
-                                  console.log("obj: ", obj);
-                                  this.togglePad(obj[0], obj[1]);
-                                },
-                                1000
-                              )
-                            }
-                          >
-                            {nft.name}
-                          </div>
+                          <div className="beatPackTitle">{nft.name}</div>
                           <div
                             className="artistName"
-                            onClick={() =>
+                            onClick={() => {
                               console.log(
                                 "this.state.padRecording: ",
                                 this.state.padRecording
-                              )
-                            }
+                              );
+                              console.log("window.timer: ", window.timer);
+                            }}
                           >{`by ${nft.artistName} ${
                             nft.visualArtistName
                               ? `& ${nft.visualArtistName}`
