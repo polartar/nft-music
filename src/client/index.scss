@@ -1669,11 +1669,20 @@ footer {
 
 .gridOuter.tile36 {
   font-size: 0;
-  -webkit-transform-origin: 50% 50%;
-  transform-origin: 50% 50%;
+  width: 324px;
+  // -webkit-transform-origin: 50% 50%;
+  // transform-origin: 50% 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
   position: relative;
-  left: 190px;
-  margin-top: 300px;
+  // left: 190px;
+  // margin-top: 300px;
+  @media only screen and (max-width: 700px) {
+    top: 30%;
+    transform: translate(-50%, -30%) rotate(45deg) scale(0.9);
+  }
+  margin-top: 0px;
+  left: 50%;
+  top: 50%;
   z-index: 1200;
 }
 

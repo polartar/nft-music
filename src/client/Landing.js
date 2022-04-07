@@ -914,6 +914,10 @@ class Sequencer extends Component {
     }
   }
 
+  handleShuffle() {
+    //shuffle function here
+  };
+
   clearSelections() {
     const updatedPads = {};
     const updatedQueue = {};
@@ -2159,7 +2163,10 @@ class Sequencer extends Component {
                 setVolume={this.setVolume.bind(this)}
                 volume={this.state.volume}
                 clearSelections={this.clearSelections}
+                handleShuffle={this.handleShuffle}
+
                 canvas={this.canvas}
+                playing={this.state.playing}
               />
             </div>
           </div>
