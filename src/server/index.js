@@ -53,7 +53,7 @@ app.get("/api/metadata/:id", async (req, res) => {
     external_url: "https://openseacreatures.io/3",
     image:
       "https://storage.googleapis.com/opensea-prod.appspot.com/puffs/3.png",
-    name: "Dave Starbelly",
+    name: "Dave Starbelly"
   });
 });
 
@@ -101,6 +101,11 @@ app.post("/api/exportRecording", upload.single("video"), async (req, res) => {
     req.body.nftName,
     req.body.edition
   );
+});
+
+app.post("/api/saveMix", async (req, res) => {
+  const { status, response } = await uploadController.saveMix(req.body);
+  res.status(status).send(response);
 });
 
 app.get("/api/getAllNFTs", async (req, res) => {

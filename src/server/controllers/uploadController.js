@@ -10,7 +10,7 @@ const { response } = require("express");
 
 const AWS_ENDPOINT = "sfo2.digitaloceanspaces.com";
 const limiter = new Bottleneck({
-  minTime: 10,
+  minTime: 10
 });
 
 // connect to our mongodb database
@@ -22,7 +22,7 @@ async function connectToDatabase() {
       useNewurlParser: true,
       useUnifiedTopology: true,
       tls: true,
-      tlsCAFile: "./ca-certificate.crt",
+      tlsCAFile: "./ca-certificate.crt"
     };
   }
   const client = await MongoClient.connect(
@@ -67,7 +67,7 @@ async function exportRecording(response, recording, artistName, name, edition) {
     let nft = await db.collection("NFTs").findOne({
       artistName,
       name,
-      edition: parseFloat(edition),
+      edition: parseFloat(edition)
     });
 
     console.log(recording);
@@ -102,8 +102,8 @@ async function exportRecording(response, recording, artistName, name, edition) {
             fontsize: 48,
             fontcolor: "white",
             x: "10",
-            y: "h-th-40",
-          },
+            y: "h-th-40"
+          }
         },
         {
           filter: "drawtext",
@@ -115,8 +115,8 @@ async function exportRecording(response, recording, artistName, name, edition) {
             fontsize: 28,
             fontcolor: "white",
             x: "10",
-            y: "h-th-10",
-          },
+            y: "h-th-10"
+          }
         },
         {
           filter: "drawtext",
@@ -126,9 +126,9 @@ async function exportRecording(response, recording, artistName, name, edition) {
             fontsize: 36,
             fontcolor: "white",
             x: "w-tw-10",
-            y: "h-th-10",
-          },
-        },
+            y: "h-th-10"
+          }
+        }
       ])
       .saveToFile(`${uuid}.mp4`)
       .on("end", () => {
@@ -152,14 +152,14 @@ async function uploadFile(file, folder, extension) {
   const s3 = new AWS.S3({
     endpoint: spacesEndpoint,
     accessKeyId: config.spacesAccessKeyId,
-    secretAccessKey: config.spacesSecretKey,
+    secretAccessKey: config.spacesSecretKey
   });
   const uuid = md5(file.buffer);
   const params = {
     Body: file.buffer,
     Bucket: "properties",
     Key: `${uuid}.${extension}`,
-    ACL: "public-read",
+    ACL: "public-read"
   };
 
   try {
@@ -182,12 +182,12 @@ async function deleteFileWithURL(url) {
   const s3 = new AWS.S3({
     endpoint: spacesEndpoint,
     accessKeyId: config.spacesAccessKeyId,
-    secretAccessKey: config.spacesSecretKey,
+    secretAccessKey: config.spacesSecretKey
   });
 
   const params = {
     Bucket: "properties",
-    Key: fileName,
+    Key: fileName
   };
 
   try {
@@ -198,9 +198,25 @@ async function deleteFileWithURL(url) {
   }
 }
 
+async function saveMix(body) {
+  const { tokenId, padRecording } = body;
+
+  // TODO: remove "exampleTokenId" from query once tokenId implemented
+  await db.collection("mixes").insertOne({
+    tokenId: tokenId || "exampleTokenId",
+    padRecording: padRecording
+  });
+
+  return {
+    status: 200,
+    response: "Successfully saved mix!"
+  };
+}
+
 module.exports = {
   commitVideo,
   uploadFile,
   deleteFileWithURL,
   exportRecording,
+  saveMix
 };

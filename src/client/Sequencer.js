@@ -91,7 +91,9 @@ class Sequencer extends Component {
     shouldStopRecording: false,
     timer: 0,
     recordingStatus: "",
-    startRecordingTime: ""
+    startRecordingTime: "",
+    recording: null,
+    isPlayingBack: false
   };
 
   constructor(props) {
@@ -358,12 +360,13 @@ class Sequencer extends Component {
           if (this.state.shouldStopRecording) {
             // the recorded audio is returned as a blob
             const recording = await this.recorder.stop();
-            // this.exportRecording(recording);
+            // this.exportRecording(recording); // disabled auto-export
 
             this.setState({
               shouldStopRecording: false,
               isRecording: false,
-              recordingStatus: "Exporting..."
+              recordingStatus: "Preparing export...",
+              recording
             });
           }
         }
@@ -716,7 +719,8 @@ class Sequencer extends Component {
       }
     }
 
-    const milliseconds = cloneDeep(this.state.timer);
+    // preserved for millisecond work
+    // const milliseconds = cloneDeep(this.state.timer);
 
     if (this.state.padRecording.length <= 0) {
       this.setState({
@@ -791,6 +795,7 @@ class Sequencer extends Component {
                 this.setState({
                   padRecording: [
                     ...this.state.padRecording,
+                    // preserved for blockchain storage shape
                     // [j * this.state.padFormat.length + i, milliseconds]
                     // [group, pad, milliseconds]
                     [
@@ -806,8 +811,6 @@ class Sequencer extends Component {
             });
           });
         }
-
-        // console.log("this.state.padRecording: ", this.state.padRecording);
 
         return {
           pads: clonedPads,
@@ -842,17 +845,14 @@ class Sequencer extends Component {
   }
 
   async stopRecording() {
-    console.log("stopped recording");
+    console.log("stopped recording...");
+
     // clear interval
     window.clearInterval(window.timer);
-    // let id = window.setInterval(function() {}, 0);
-    // while (id--) {
-    //   window.clearInterval(id);
-    // }
 
     this.setState({
       shouldStopRecording: true,
-      recordingStatus: "Waiting for loop to end...",
+      recordingStatus: "Preparing export...",
       timer: 0
     });
   }
@@ -961,8 +961,10 @@ class Sequencer extends Component {
   }
 
   playbackRecording(padRecording, callback) {
-    // stop Transport step count
-    // Tone.Transport.stop();
+    this.setState({
+      isPlayingBack: true
+    });
+
     // reset step so that playback isn't dependent on waiting for "next loop"
     this.setState({
       step: 0
@@ -978,15 +980,24 @@ class Sequencer extends Component {
         // }, padRecording[i][2] + (padRecording[i - 1] ? padRecording[i - 1][2] : padRecording[0][2]));
       }, padRecording[i][2]);
     }
-    // padRecording.forEach((pad, i) => {
-    //   setTimeout(() => {
-    //     // each loop, call passed in callback function
-    //     callback(pad);
-    //     // stagger the pad's timeout by their milliseconds
-    //     // }, i * pad[2]);
-    //   }, pad[2]);
-    // });
   }
+
+  saveMix = async (tokenId, padRecording) => {
+    const response = await axios.post("/api/saveMix", {
+      tokenId,
+      padRecording
+    });
+
+    console.log("response from api fetch: ", response);
+  };
+
+  shouldRenderPostRecording = () => {
+    return (
+      this.state.padRecording.length > 0 &&
+      !this.state.isRecording &&
+      !this.state.shouldStopRecording
+    );
+  };
 
   render() {
     const {
@@ -1209,13 +1220,25 @@ class Sequencer extends Component {
                                 alignItems: "center"
                               }}
                             >
-                              <div
-                                style={{ marginRight: "10px" }}
-                                className="body-medium yellow-text"
-                              >
-                                {this.state.recordingStatus}
-                                {this.state.isRecording && <Stopwatch />}
-                              </div>
+                              {this.shouldRenderPostRecording() ? (
+                                <button
+                                  className="button record"
+                                  style={{ marginRight: "10px" }}
+                                  onClick={() =>
+                                    this.exportRecording(this.state.recording)
+                                  }
+                                >
+                                  Export
+                                </button>
+                              ) : (
+                                <div
+                                  style={{ marginRight: "10px" }}
+                                  className="body-medium yellow-text"
+                                >
+                                  {this.state.recordingStatus}
+                                  {this.state.isRecording && <Stopwatch />}
+                                </div>
+                              )}
                               <button
                                 className={
                                   this.state.shouldStartRecording ||
@@ -1239,8 +1262,36 @@ class Sequencer extends Component {
                                   : "Record"}
                               </button>
                             </div>
-                            <div>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                width: "100%"
+                              }}
+                            >
+                              {this.shouldRenderPostRecording() && (
+                                <button
+                                  style={{
+                                    marginRight: "10px"
+                                  }}
+                                  className="button record"
+                                  onClick={() =>
+                                    this.saveMix(
+                                      this.state.nft.tokenId,
+                                      this.state.padRecording
+                                    )
+                                  }
+                                >
+                                  Save Mix
+                                </button>
+                              )}
                               <button
+                                style={{
+                                  visibility: this.shouldRenderPostRecording()
+                                    ? "visible"
+                                    : "hidden"
+                                }}
                                 className={
                                   this.state.padRecording.length <= 0 ||
                                   this.state.isRecording
@@ -1248,22 +1299,30 @@ class Sequencer extends Component {
                                     : "button record"
                                 }
                                 onClick={() => {
-                                  this.playbackRecording(
-                                    this.state.padRecording,
-                                    pad => {
-                                      this.togglePad(pad[0], pad[1]);
-                                    }
-                                  );
+                                  if (!this.state.isPlayingBack) {
+                                    this.playbackRecording(
+                                      this.state.padRecording,
+                                      pad => {
+                                        this.togglePad(pad[0], pad[1]);
+                                      }
+                                    );
+                                  } else {
+                                    this.setState({
+                                      isPlayingBack: false
+                                    });
+                                    this.clearSelections();
+                                  }
                                 }}
                                 disabled={
                                   this.state.padRecording.length <= 0 ||
                                   this.state.isRecording
                                 }
                               >
-                                Playback
+                                {!this.state.isPlayingBack
+                                  ? "Playback"
+                                  : "Stop Playback"}
                               </button>
                             </div>
-                            {/* )} */}
                           </div>
                         )}
                         <div className="song-details">
