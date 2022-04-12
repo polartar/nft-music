@@ -12,6 +12,7 @@ import "../css/navBar.css";
 import IconButton from "@material-ui/core/IconButton";
 import axios from "axios";
 import anime from 'animejs/lib/anime.es.js';
+import MintModal from "./MintModal";
 
 import Countdown, { zeroPad } from "react-countdown";
 
@@ -27,6 +28,8 @@ export default function Navbar(props) {
   const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [nft, setNFT] = useState();
+  const [showMintMenu, setShowMintMenu] = useState(false);
+  const [openMint, setOpenMint] = useState(false);
 
   const refreshData = async () => {
     const nftResponse = await axios.get("/api/getFeaturedNFT");
@@ -81,6 +84,12 @@ export default function Navbar(props) {
     initWallet();
   }, [loggedIntoMetamaskOverride]);
 
+
+    const handleCloseMint = () => {
+      setOpenMint(false);
+    };
+
+
   useEffect(() => {
     refreshData();
 
@@ -119,9 +128,18 @@ export default function Navbar(props) {
                 Secret Garden
 
             </a>
+            <div style={{display:"Flex", gap:"12px", justifyContent:"center", alignItems:"center"}}>
+              <div className="body-medium yellow-text" id="mint-date">MINTING APRIL 2022</div>
+                <div
+                  className="metamask-button"
+                  onClick={() => setOpenMint(true)}
+                  style={{ fontWeight: "700" }}
+                >
+                  ACCESS PRE-SALE
+                </div>
+            </div>
 
-            <div className="body-medium yellow-text" id="mint-date">MINTING APRIL 2022</div>
-
+              <MintModal onClose={handleCloseMint} open={openMint} />
 
             {/* <div className={white ? "timer white" : "timer"}>
               <Countdown

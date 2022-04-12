@@ -21,6 +21,7 @@ import Instagram from "../images/Instagram.svg";
 
 import Share from "../images/Share.svg";
 
+
 export default function Footer(props) {
   const {
     loggedIntoMetamaskOverride,
@@ -37,9 +38,11 @@ export default function Footer(props) {
   const [loaded, setLoaded] = useState(false);
   const [address, setAddress] = useState();
   const [openShare, setOpenShare] = useState(false);
+
   const [openEmail, setOpenEmail] = useState(false);
   const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
   const [showMintMenu, setShowMintMenu] = useState(false);
+
 
   const refreshData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -62,11 +65,6 @@ export default function Footer(props) {
     setOpenEmail(false);
   };
 
-  const handleMintMenu = () => {
-    console.log("clicked mint button");
-    setShowMintMenu(!showMintMenu);
-  };
-
   useEffect(() => {
     refreshData();
   }, [loaded, loggedIntoMetamaskOverride]);
@@ -74,6 +72,7 @@ export default function Footer(props) {
   return (
     <React.Fragment>
       <ShareModal shareURL={shareURL} onClose={handleClose} open={openShare} />
+
       <EmailModal onClose={handleCloseEmail} open={openEmail} />
       {/* <a href="/directory">
                 <div className="bottomItem mobileLink">DIRECTORY</div>
@@ -187,6 +186,7 @@ export default function Footer(props) {
               >
                 <img src={Share} />
               </div>
+
             </div>
           )}
 

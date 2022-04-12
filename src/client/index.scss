@@ -14,7 +14,15 @@ $radius: 4px;
 $easing: cubic-bezier(0.694, 0, 0.335, 1);
 $footer-height: 58px;
 $yellow: #e4f0a8;
+$error: #F0A8A8;
 /* #UTILS - START */
+
+.display-large {
+  font-size: 48px;
+  line-height: 56px;
+  font-family: "Bentham", serif;
+  text-transform: uppercase;
+}
 
 .display-medium {
   font-size: 38px;
@@ -23,8 +31,12 @@ $yellow: #e4f0a8;
   text-transform: uppercase;
 }
 
+.text-uppercase {
+  text-transform: uppercase;
+}
+
 .body-large {
-  font-size: 18px;
+  font-size: 24px;
   line-height: 28px;
 }
 
@@ -1720,6 +1732,46 @@ footer {
   font-size: 17px;
   color: #aaaaa1;
   text-align: left;
+}
+
+.metamask-button {
+  background: transparent;
+  color: $yellow;
+  border-color: $yellow;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 50px;
+  text-transform: uppercase;
+  padding: 20px 28px;
+  display: inline-flex;
+  gap: 12px;
+  font-size: 16px;
+  line-height: 16px;
+  &.disconnect {
+   border-width: 0px;
+   color: $error !important;
+ }
+}
+
+.cta-button {
+  background-color: $yellow;
+  color: black;
+  border-color: $yellow;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 50px;
+  text-transform: uppercase;
+  padding: 20px 28px;
+  font-size: 16px;
+  line-height: 16px;
+}
+
+.cta-button:disabled, .cta-button[disabled] {
+  opacity: 0.25;
+}
+
+.modal-header {
+
 }
 .bidInfoWrapper {
   display: flex;
