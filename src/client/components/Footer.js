@@ -9,12 +9,18 @@ import EmailModal from "./EmailModal";
 import "../css/footer.css";
 import { ethers, utils } from "ethers";
 import { ThemeProvider } from "@material-ui/styles";
-import StopCircleIcon from "@mui/icons-material/StopCircle";
+
+
+import PlayCircleIcon from '../images/PlayCircleIcon.svg';
+import ShuffleCircleIcon from '../images/ShuffleCircleIcon.svg';
+import StopCircleIcon from '../images/StopCircleIcon.svg';
+
 import Discord from "../images/discord.svg";
 import Twitter from "../images/Twitter.svg";
 import Instagram from "../images/Instagram.svg";
 
 import Share from "../images/Share.svg";
+
 
 export default function Footer(props) {
   const {
@@ -26,13 +32,17 @@ export default function Footer(props) {
     muiTheme,
     clearSelections,
     canvas,
+    playing,
+    handleShuffle
   } = props;
   const [loaded, setLoaded] = useState(false);
   const [address, setAddress] = useState();
   const [openShare, setOpenShare] = useState(false);
+
   const [openEmail, setOpenEmail] = useState(false);
   const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
   const [showMintMenu, setShowMintMenu] = useState(false);
+
 
   const refreshData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -55,11 +65,6 @@ export default function Footer(props) {
     setOpenEmail(false);
   };
 
-  const handleMintMenu = () => {
-    console.log("clicked mint button");
-    setShowMintMenu(!showMintMenu);
-  };
-
   useEffect(() => {
     refreshData();
   }, [loaded, loggedIntoMetamaskOverride]);
@@ -67,6 +72,7 @@ export default function Footer(props) {
   return (
     <React.Fragment>
       <ShareModal shareURL={shareURL} onClose={handleClose} open={openShare} />
+
       <EmailModal onClose={handleCloseEmail} open={openEmail} />
       {/* <a href="/directory">
                 <div className="bottomItem mobileLink">DIRECTORY</div>
@@ -114,9 +120,24 @@ export default function Footer(props) {
           <div className="play-controls">
             <div className="stopBtnContainer">
               <div className="stopBtnWrapper">
-                <IconButton className="expandOuter">
-                  <StopCircleIcon fontSize="large" onClick={clearSelections} />
-                </IconButton>
+              {
+                playing ?
+                <span style={{display:"flex", gap:"8px", marginRight: "8px"}}>
+                  <a href="#" onClick={clearSelections}>
+                    <img src={StopCircleIcon} style={{height:"35px"}}/>
+                  </a>
+                  <a href="#" onClick={handleShuffle}>
+                    <img src={ShuffleCircleIcon} style={{height:"35px"}}/>
+                  </a>
+                </span>
+                :
+                <a href="#" onClick={handleShuffle}>
+                  <img src={PlayCircleIcon} style={{height:"35px", marginRight:"8px"}}/>
+                </a>
+
+              }
+
+
               </div>
             </div>
 
@@ -165,6 +186,7 @@ export default function Footer(props) {
               >
                 <img src={Share} />
               </div>
+
             </div>
           )}
 

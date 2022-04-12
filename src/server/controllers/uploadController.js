@@ -77,10 +77,14 @@ async function exportRecording(response, recording, artistName, name, edition) {
     const uuid = md5(recording.buffer);
 
     ffmpeg()
-      .addInput(nft.imageURL)
+      .addInput("./desktop-square.mp4")
       .inputOption("-stream_loop -1")
       .addInput(stream)
       .outputOptions(
+        "-preset",
+        "ultrafast",
+        "-tune",
+        "zerolatency",
         "-crf",
         "28",
         "-map",
@@ -130,10 +134,12 @@ async function exportRecording(response, recording, artistName, name, edition) {
           }
         }
       ])
+      .on("error", (error) => console.log(`Encoding Error: ${error.message}`))
       .saveToFile(`${uuid}.mp4`)
       .on("end", () => {
         response.download(`./${uuid}.mp4`, "my recording.mp4", function(err) {
           if (err) {
+            console.log("below is the error");
             console.log(err); // Check error if you want
           }
           fs.unlink(`./${uuid}.mp4`, function() {
