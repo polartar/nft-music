@@ -14,6 +14,7 @@ $radius: 4px;
 $easing: cubic-bezier(0.694, 0, 0.335, 1);
 $footer-height: 58px;
 $yellow: #e4f0a8;
+$yellowish-gray: #8F8F8A;
 $error: #F0A8A8;
 /* #UTILS - START */
 
@@ -41,17 +42,20 @@ $error: #F0A8A8;
 }
 
 .body-medium {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
 }
 
 .white-text {
   color: #fff;
 }
+
 .light-yellow-text {
   color: $light-yellow;
 }
-
+.yellowish-gray-text {
+  color: $yellowish-gray;
+}
 .yellow-text {
   color: $yellow;
 }
@@ -1039,6 +1043,29 @@ canvas {
   }
 }
 
+#loading-flower {
+  width: 234px;
+  height: 211px;
+  // position: static !important;
+  position: absolute;
+  transform: translate(-50%, -50%) scale(1.25);
+  top: 50%;  /* position the top  edge of the element at the middle of the parent */
+  left: 50%;
+}
+
+#loading-spinner {
+  position: relative;
+  // border-width: 1px;
+  // border-color: gray;
+  // border-style:solid;
+  // border-radius: 50%;
+  height: 330px;
+  width: 330px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .monstera-leaf {
   position: absolute;
 }
@@ -1744,10 +1771,12 @@ footer {
   text-transform: uppercase;
   padding: 20px 28px;
   display: inline-flex;
+  align-items: center;
   gap: 12px;
   font-size: 16px;
   line-height: 16px;
   &.disconnect {
+    padding: 0px;
    border-width: 0px;
    color: $error !important;
  }
