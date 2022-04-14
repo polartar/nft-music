@@ -569,7 +569,7 @@ input[type="number"] {
 }
 
 .wordLogo {
-  font-size: 24px;
+  font-size: 20px;
   color: #8f8f8a;
   text-transform: uppercase;
   font-family: "Bentham", serif;
@@ -578,9 +578,10 @@ input[type="number"] {
   transform: none;
   margin-top: 0px;
   margin-left: 0px;
-  width: 100%;
+  // width: 100%;
   text-align: center;
   @media only screen and (min-width: 768px) {
+    font-size: 24px;
     margin-left: -64px;
     margin-top: 100px;
     transform: rotate(-90deg);
@@ -1529,8 +1530,8 @@ footer {
 .navBar {
   width: 100%;
   display: flex;
-  flex-direction: row;
-  align-items: start;
+  // flex-direction: row;
+  align-items: center;
   justify-content: space-between;
   padding: 30px 80px;
   box-sizing: border-box;
@@ -1662,13 +1663,14 @@ footer {
   }
   .navBar {
     padding: 20px 40px;
-    display: block;
-    text-align: center;
   }
 }
 @media only screen and (max-width: 400px) {
   .navBar {
-    padding: 20px 20px;
+    padding: 12px 20px;
+    .metamask-button {
+      padding: 16px 20px;
+    }
   }
   .logo {
     width: 100px;
@@ -1779,6 +1781,12 @@ footer {
     padding: 0px;
    border-width: 0px;
    color: $error !important;
+ }
+ &.no-border-mobile {
+   @media only screen and (max-width: 700px) {
+     padding: 0px;
+     border: none;
+   }
  }
 }
 

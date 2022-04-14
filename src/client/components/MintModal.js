@@ -47,10 +47,11 @@ const useStyles = makeStyles({
   dialog: {
     width: "680px",
     maxWidth: "100%",
-    transform: "scale(.8)",
+    // transform: "scale(.8)",
     background: "#1f1f1f",
     // border: "1px solid #FFFFFF",
     borderRadius: "24px",
+    margin: "20px",
     // boxShadow: "0 0 40px 20px rgba(255,255,255,0.12)",
   },
   backButton: {
@@ -148,7 +149,7 @@ export default function SimpleDialog(props) {
           {isMinting ?
             <div className="display-medium white-text">Minting...</div>
             :
-            <div className="display-large white-text">{didMint ? "Congrats!" : "Access Pre-Sale"}</div>
+            <div className="display-medium white-text">{didMint ? "Congrats!" : "Access Pre-Sale"}</div>
           }
             {
               isMinting ?

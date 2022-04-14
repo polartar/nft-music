@@ -118,6 +118,7 @@ export default function Navbar(props) {
           <div
             className={white ? "navBar scrollBar white" : "navBar scrollBar"}
           >
+
             <a href="/"  className="wordLogo">
               {/*<img
                 src={white ? SecretGardenBlack : SecretGardenLogo}
@@ -128,16 +129,14 @@ export default function Navbar(props) {
                 Secret Garden
 
             </a>
-            <div style={{display:"Flex", gap:"12px", justifyContent:"center", alignItems:"center"}}>
-              <div className="body-medium yellow-text" id="mint-date">MINTING APRIL 2022</div>
-                <div
+              {/*<div className="body-medium yellow-text" id="mint-date">MINTING APRIL 2022</div>*/}
+                <button
                   className="metamask-button"
                   onClick={() => setOpenMint(true)}
-                  style={{ fontWeight: "700" }}
                 >
-                  ACCESS PRE-SALE
-                </div>
-            </div>
+                  PRE-SALE
+                </button>
+
 
               <MintModal onClose={handleCloseMint} open={openMint} />
 

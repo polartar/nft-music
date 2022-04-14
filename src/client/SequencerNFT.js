@@ -883,6 +883,7 @@ class Sequencer extends Component {
             volume={this.state.volume}
             clearSelections={this.clearSelections}
             canvas={this.canvas}
+            playing={this.state.playing}
           />
         </React.StrictMode>
       );
