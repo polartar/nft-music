@@ -104,7 +104,12 @@ app.post("/api/exportRecording", upload.single("video"), async (req, res) => {
 });
 
 app.post("/api/saveMix", async (req, res) => {
-  const { status, response } = await uploadController.saveMix(req.body);
+  const { status, response } = await uploadController.saveMix(
+    req.body.address,
+    req.body.signature,
+    req.body.tokenId,
+    req.body.padRecording
+  );
   res.status(status).send(response);
 });
 

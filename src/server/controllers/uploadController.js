@@ -7,6 +7,9 @@ const ffmpeg = require("fluent-ffmpeg");
 const { MongoClient, ObjectId } = require("mongodb");
 const { Readable, PassThrough } = require("stream");
 const { response } = require("express");
+const { ethers, utils } = require("ethers");
+
+const { fetchTokenOwners } = require("../utility/moralisApi");
 
 const AWS_ENDPOINT = "sfo2.digitaloceanspaces.com";
 const limiter = new Bottleneck({
@@ -134,7 +137,7 @@ async function exportRecording(response, recording, artistName, name, edition) {
           }
         }
       ])
-      .on("error", (error) => console.log(`Encoding Error: ${error.message}`))
+      .on("error", error => console.log(`Encoding Error: ${error.message}`))
       .saveToFile(`${uuid}.mp4`)
       .on("end", () => {
         response.download(`./${uuid}.mp4`, "my recording.mp4", function(err) {
@@ -204,19 +207,63 @@ async function deleteFileWithURL(url) {
   }
 }
 
-async function saveMix(body) {
-  const { tokenId, padRecording } = body;
+async function saveMix(address, signature, tokenId, padRecording) {
+  const tokenOwners = await fetchTokenOwners();
+  const ownedTokens = tokenOwners.filter(
+    token => token.owner_of === address.toLowerCase()
+  );
 
-  // TODO: remove "exampleTokenId" from query once tokenId implemented
-  await db.collection("mixes").insertOne({
-    tokenId: tokenId || "exampleTokenId",
-    padRecording: padRecording
-  });
+  if (ownedTokens.length > 0) {
+    try {
+      // const { tokenId, padRecording, address } = body;
+      const verifiedAddress = utils.verifyMessage(address, signature);
 
-  return {
-    status: 200,
-    response: "Successfully saved mix!"
-  };
+      if (verifiedAddress && verifiedAddress === address) {
+        // TODO: remove "exampleTokenId" from query once tokenId implemented
+        await db.collection("mixes").insertOne({
+          address: address.toLowerCase(),
+          tokenId: tokenId || "exampleTokenId",
+          padRecording: padRecording
+        });
+
+        return {
+          status: 200,
+          response: "Successfully saved mix!"
+        };
+      }
+    } catch (error) {
+      console.log(error);
+      return { status: 400, response: error.toString() };
+    }
+  }
+
+  return { status: 400, response: "User does not own this token." };
+}
+
+async function getMix(address, tokenId) {
+  const tokenOwners = await fetchTokenOwners();
+  const ownedTokens = tokenOwners.filter(
+    token => token.owner_of === address.toLowerCase()
+  );
+
+  if (ownedTokens.length > 0) {
+    try {
+      const userMix = await db.collection("mixes").findOne({
+        address: address.toLowerCase(),
+        tokenId
+      });
+
+      return {
+        status: 200,
+        response: userMix
+      };
+    } catch (error) {
+      console.log(error);
+      return { status: 400, response: error.toString() };
+    }
+  }
+
+  return { status: 400, response: "User does not own this token." };
 }
 
 module.exports = {
@@ -224,5 +271,6 @@ module.exports = {
   uploadFile,
   deleteFileWithURL,
   exportRecording,
-  saveMix
+  saveMix,
+  getMix
 };

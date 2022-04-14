@@ -93,7 +93,8 @@ class Sequencer extends Component {
     recordingStatus: "",
     startRecordingTime: "",
     recording: null,
-    isPlayingBack: false
+    isPlayingBack: false,
+    signer: null
   };
 
   constructor(props) {
@@ -128,12 +129,14 @@ class Sequencer extends Component {
     });
 
     if (accounts.length > 0) {
+      const signer = await provider.getSigner(0);
       const address = await provider.getSigner(0).getAddress();
 
       this.setState({
         isLoggedIntoMetamask: true,
         provider,
         address,
+        signer,
         balance: await provider.getBalance(address)
       });
     }
@@ -143,12 +146,14 @@ class Sequencer extends Component {
     await window.ethereum.enable();
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = await provider.getSigner(0);
     const address = await provider.getSigner(0).getAddress();
 
     this.setState({
       isLoggedIntoMetamask: true,
       provider,
-      address
+      address,
+      signer
     });
   };
 
@@ -982,8 +987,12 @@ class Sequencer extends Component {
     }
   }
 
-  saveMix = async (tokenId, padRecording) => {
+  saveMix = async (tokenId, padRecording, address) => {
+    const signature = await this.state.signer.signMessage(address);
+
     const response = await axios.post("/api/saveMix", {
+      address,
+      signature,
       tokenId,
       padRecording
     });
@@ -1279,7 +1288,8 @@ class Sequencer extends Component {
                                   onClick={() =>
                                     this.saveMix(
                                       this.state.nft.tokenId,
-                                      this.state.padRecording
+                                      this.state.padRecording,
+                                      this.state.address
                                     )
                                   }
                                 >
