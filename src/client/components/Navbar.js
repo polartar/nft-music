@@ -108,6 +108,14 @@ export default function Navbar(props) {
       opacity: 0.7,
       delay: 2000,
     });
+
+    anime({
+      targets: ['#mint-button'],
+      easing: 'easeInOutSine',
+      duration: 1000,
+      opacity: 0.7,
+      delay: 2000,
+    });
   }, [loaded]);
 
 
@@ -131,6 +139,7 @@ export default function Navbar(props) {
             </a>
               {/*<div className="body-medium yellow-text" id="mint-date">MINTING APRIL 2022</div>*/}
                 <button
+                  id="mint-button"
                   className="metamask-button"
                   onClick={() => setOpenMint(true)}
                 >

@@ -138,23 +138,24 @@ export default function SimpleDialog(props) {
       aria-labelledby="simple-dialog-title"
       open={open}
     >
+    <div className="mint-modal-container">
       <div className="modalHeader2" style={{borderBottomWidth:"0px"}}>
         <div></div>
         <IconButton>
-          <CloseIcon style={{color:"#FFF"}} fontSize="large"  onClick={onClose}/>
+          <CloseIcon style={{color:"#8F8F8A"}} fontSize="large"  onClick={onClose}/>
         </IconButton>
       </div>
       <div className="modalBody2" style={{paddingTop:"0px", paddingBottom:"80px"}}>
         <div style={{textAlign:"center"}}>
           {isMinting ?
-            <div className="display-medium white-text">Minting...</div>
+            <div className="display-small sm:display-medium white-text">Minting...</div>
             :
-            <div className="display-medium white-text">{didMint ? "Congrats!" : "Access Pre-Sale"}</div>
+            <div className="display-small sm:display-medium white-text">{didMint ? "Congrats!" : "Access Pre-Sale"}</div>
           }
             {
               isMinting ?
               <div>
-                <p className="body-medium white-text" style={{margin:"16px auto", maxWidth:"480px"}}>Follow the on-screen dialogs for the wallet provider selected. Approve or reject a transaction to finalize sale</p>
+                <p className="body-medium white-text" style={{margin:"16px auto", maxWidth:"360px"}}>Follow the on-screen dialogs for the wallet provider selected. Approve or reject a transaction to finalize sale</p>
                 <div id="loading-spinner" style={{marginTop:"44px"}}> <LoadingFlower id="loading-flower"/></div>
               </div>
 
@@ -162,13 +163,13 @@ export default function SimpleDialog(props) {
               <div style={{paddingTop:"44px"}}>
                 {
                   didMint ?
-                  <p className="body-large white-text" style={{margin:"16px auto", maxWidth:"480px"}}>You succesfully purchased <b>{currentNFT}</b></p>
+                  <p className="body-medium sm:body-large white-text" style={{margin:"16px auto", maxWidth:"360px"}}>You succesfully purchased <b>{currentNFT}</b></p>
                   :
                   <React.Fragment>
                     {
                       metamaskAddress ?
                       <div>
-                        <p className="body-large white-text text-uppercase">{metamaskAddress}</p>
+                        <p className="body-medium sm:body-large white-text text-uppercase">{metamaskAddress}</p>
                         <button className="metamask-button disconnect" onClick={removeMetamask}><img src={ErrorLink} />Disconnect Metamask</button>
                       </div>
                       :
@@ -182,7 +183,7 @@ export default function SimpleDialog(props) {
                     didMint ?
                     <React.Fragment>
                       <p className="body-medium yellowish-gray-text text-uppercase">Transaction Hash</p>
-                      <p className="body-large yellow-text text-uppercase">{transactionHash}</p>
+                      <p className="body-medium sm:body-large yellow-text text-uppercase">{transactionHash}</p>
                     </React.Fragment>
                   :
                   <React.Fragment>
@@ -198,6 +199,7 @@ export default function SimpleDialog(props) {
           }
         </div>
 
+        </div>
         </div>
     </Dialog>
   );
