@@ -20,6 +20,7 @@ import {
 import X from "../images/x.png";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
+import CloseIcon from '@mui/icons-material/Close';
 import AlbumArt from "../images/albumArt.png";
 import InstaPic from "../images/instaPic.png";
 
@@ -29,6 +30,8 @@ import Messenger from "../images/messenger.png";
 import CopyLink from "../images/link.png";
 import Link from "../images/link.svg";
 import ErrorLink from "../images/error-link.svg";
+
+import LoadingFlower from "./LoadingFlower";
 
 import "../css/bidModal.css";
 import IconButton from "@material-ui/core/IconButton";
@@ -44,10 +47,11 @@ const useStyles = makeStyles({
   dialog: {
     width: "680px",
     maxWidth: "100%",
-    transform: "scale(.8)",
+    // transform: "scale(.8)",
     background: "#1f1f1f",
     // border: "1px solid #FFFFFF",
     borderRadius: "24px",
+    margin: "20px",
     // boxShadow: "0 0 40px 20px rgba(255,255,255,0.12)",
   },
   backButton: {
@@ -87,16 +91,32 @@ export default function SimpleDialog(props) {
   const { onClose, open, shareURL } = props;
   const [text, setText] = React.useState("Copy Link");
   const [metamaskAddress, setMetamaskAddress] = React.useState(null);
+  const [transactionHash, setTransactionHash] = React.useState("OX1892AKSD3981120030039");
+
   const [isMinting, setIsMinting] = React.useState(false);
+  const [didMint, setDidMint] = React.useState(false);
+
+  const mintPrice = 0.5;
+  const editionsMinted = 0.5;
+  const nextPriceDropDate = "4/12";
+  const priceDropAmount = 0.1;
+  const currentNFT = "Sunday Journal";
 
   useEffect(() => {
     if (open) {
       setText("Copy Link");
     }
+
+
   }, [open]);
 
   const handleMint = () => {
-    setIsMinting(!isMinting)
+    setIsMinting(true)
+    setTimeout(() => {
+      setIsMinting(false)
+      setDidMint(true)
+    }, 5000);
+
   }
 
   const handleMetamask = () => {
@@ -106,6 +126,11 @@ export default function SimpleDialog(props) {
   const removeMetamask = () => {
     setMetamaskAddress(null)
   }
+
+  // var path = anime.path('#loading-flower path');
+  //
+
+
   return (
     <Dialog
       onClose={onClose}
@@ -113,34 +138,69 @@ export default function SimpleDialog(props) {
       aria-labelledby="simple-dialog-title"
       open={open}
     >
+    <div className="mint-modal-container">
       <div className="modalHeader2" style={{borderBottomWidth:"0px"}}>
         <div></div>
         <IconButton>
-          <img src={X} className="x" onClick={onClose} />
+          <CloseIcon style={{color:"#8F8F8A"}} fontSize="large"  onClick={onClose}/>
         </IconButton>
       </div>
-      <div className="modalBody2">
+      <div className="modalBody2" style={{paddingTop:"0px", paddingBottom:"80px"}}>
         <div style={{textAlign:"center"}}>
-          <div className="display-large white-text">Access Pre-Sale</div>
-            <div style={{height:"54px"}}/>
-        {
+          {isMinting ?
+            <div className="display-small sm:display-medium white-text">Minting...</div>
+            :
+            <div className="display-small sm:display-medium white-text">{didMint ? "Congrats!" : "Access Pre-Sale"}</div>
+          }
+            {
+              isMinting ?
+              <div>
+                <p className="body-medium white-text" style={{margin:"16px auto", maxWidth:"360px"}}>Follow the on-screen dialogs for the wallet provider selected. Approve or reject a transaction to finalize sale</p>
+                <div id="loading-spinner" style={{marginTop:"44px"}}> <LoadingFlower id="loading-flower"/></div>
+              </div>
 
-        }
-        <React.Fragment>
-        {
-          metamaskAddress ?
-          <div>
-            <p className="body-large white-text text-uppercase">{metamaskAddress}</p>
-            <button className="metamask-button disconnect" onClick={removeMetamask}><img src={ErrorLink} />Disconnect Metamask</button>
-          </div>
-          :
-          <button className="metamask-button body-large" onClick={handleMetamask}><img src={Link} />Connect Metamask</button>
-        }
-        </React.Fragment>
-        <div style={{height:"44px"}}/>
-          <button className="cta-button" onClick={handleMint} disabled={(metamaskAddress && !isMinting) ? false : true}>{isMinting ? "MINTING" : "MINT NOW"}</button>
+              :
+              <div style={{paddingTop:"44px"}}>
+                {
+                  didMint ?
+                  <p className="body-medium sm:body-large white-text" style={{margin:"16px auto", maxWidth:"360px"}}>You succesfully purchased <b>{currentNFT}</b></p>
+                  :
+                  <React.Fragment>
+                    {
+                      metamaskAddress ?
+                      <div>
+                        <p className="body-medium sm:body-large white-text text-uppercase">{metamaskAddress}</p>
+                        <button className="metamask-button disconnect" onClick={removeMetamask}><img src={ErrorLink} />Disconnect Metamask</button>
+                      </div>
+                      :
+                      <button className="metamask-button body-large" onClick={handleMetamask}><img src={Link} />Connect Metamask</button>
+                    }
+                  </React.Fragment>
+                }
+                <div style={{height:"44px"}}/>
+
+                {
+                    didMint ?
+                    <React.Fragment>
+                      <p className="body-medium yellowish-gray-text text-uppercase">Transaction Hash</p>
+                      <p className="body-medium sm:body-large yellow-text text-uppercase">{transactionHash}</p>
+                    </React.Fragment>
+                  :
+                  <React.Fragment>
+                    <button className="cta-button" onClick={handleMint} disabled={(metamaskAddress && !isMinting) ? false : true}>BUY NOW - {mintPrice}ETH</button>
+                    <div style={{height:"44px"}}/>
+                    <p className="body-medium yellowish-gray-text text-uppercase">Total Editions Minted: <b>{editionsMinted}</b></p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">Next Price Drop: <b>{nextPriceDropDate}</b> </p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">Price Drop Aount: <b>{priceDropAmount}</b> </p>
+                  </React.Fragment>
+                }
+
+              </div>
+          }
         </div>
-      </div>
+
+        </div>
+        </div>
     </Dialog>
   );
 }

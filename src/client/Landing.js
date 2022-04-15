@@ -1878,7 +1878,7 @@ class Sequencer extends Component {
                         <div className="packTitle animated-content display-medium yellow-text">
                           The Secret Garden
                         </div>
-                        <div className="details animated-content body-large light-yellow-text">
+                        <div className="details animated-content body-medium light-yellow-text">
                           The Secret Garden seeds new species of immersive
                           audiovisual experiences.
                           <br />
@@ -1928,11 +1928,11 @@ class Sequencer extends Component {
                       <div className="packTitle animated-content display-medium yellow-text">
                         There's a Gap
                       </div>
-                      <div className="details animated-content body-large light-yellow-text">
+                      <div className="details animated-content body-medium light-yellow-text">
                         Digital art is breaking all time highs on a daily basis
                         while music is still underserved.
                       </div>
-                      <div className="details animated-content body-large light-yellow-text">
+                      <div className="details animated-content body-medium light-yellow-text">
                         We are here to crack the code by pushing the boundaries
                         of art and NFTs.
                       </div>
@@ -1970,10 +1970,10 @@ class Sequencer extends Component {
                   <div className="packTitle animated-content display-medium yellow-text">
                     Bouquet
                   </div>
-                  <div className="details animated-content body-large light-yellow-text text-center">
+                  <div className="details animated-content body-medium light-yellow-text text-center">
                     Bouquet is an interactive music player.
                   </div>
-                  <div className="details animated-content body-large light-yellow-text text-center">
+                  <div className="details animated-content body-medium light-yellow-text text-center">
                     The Bouquet NFT is the first music NFT that allows holders
                     to generate their own mix using unique sounds produced by
                     our resident artists.
@@ -2022,7 +2022,7 @@ class Sequencer extends Component {
                                 <div className="packTitle animated-content display-medium yellow-text">
                                   What do I get by buying a Bouquet?
                                 </div>
-                                <div className="details animated-content body-large light-yellow-text">
+                                <div className="details animated-content body-medium light-yellow-text">
                                   You own this one-of-a-kind interactive,
                                   playable experience as an NFT.
                                   <br /> <br />
@@ -2047,7 +2047,7 @@ class Sequencer extends Component {
                                 <div className="packTitle animated-content display-medium yellow-text">
                                   HOW CAN I SHARE MY BOUQUET?
                                 </div>
-                                <div className="details animated-content body-large light-yellow-text">
+                                <div className="details animated-content body-medium light-yellow-text">
                                   The Bouquet is your own mix to create and play
                                   with! Anyone can download an .mp4 of their mix
                                   via the "Record" button, please be patient as
@@ -2080,7 +2080,7 @@ class Sequencer extends Component {
                                 <div className="packTitle animated-content display-medium yellow-text">
                                   How do I purchase a Bouquet?
                                 </div>
-                                <div className="details animated-content body-large light-yellow-text">
+                                <div className="details animated-content body-medium light-yellow-text">
                                   Drops will occur on this site on mint days,
                                   which will be announced on Discord and
                                   Twitter. Follow us on{" "}
@@ -2120,7 +2120,7 @@ class Sequencer extends Component {
                     <div className="details animated-content slide-footer">
                       <div>
                         <a
-                          className="body-large light-yellow-text"
+                          className="body-medium light-yellow-text"
                           href="mailto:inquiries@secretgarden.fm"
                         >
                           inquiries@secretgarden.fm
