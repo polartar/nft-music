@@ -186,7 +186,7 @@ export default function Navbar(props) {
       console.log("nextPage: ", nextPage);
       const subsequentResponse = await axios
         .get(
-          // `https://deep-index.moralis.io/api/v2/nft/${nft.tokenAddress}/${nft.tokenId}/owners?chain=eth&format=decimal&cursor=${nextPage}`
+          // `https://deep-index.moralis.io/api/v2/nft/${nft.tokenAddress}/${nft.tokenId}/owners?chain=eth&format=decimal&cursor=${nextPage}`,
           `https://deep-index.moralis.io/api/v2/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a/1/owners?chain=eth&format=decimal&cursor=${nextPage}`,
           {
             headers: {
@@ -203,17 +203,27 @@ export default function Navbar(props) {
           qty -= 500;
         })
         .then(await wait(1000));
-      // nfts.push.apply(nfts, subsequentResponse.data.result);
-      // nextPage = subsequentResponse.data.cursor;
-      // qty -= 500;
     }
-    console.log(
-      "nfts: ",
-      // nfts
-      nfts.filter(
-        token => token.owner_of === "0x0aa0925f7ded722eb35c789a4e0101926414d23b"
-      )
-    );
+    // console.log(
+    //   "nfts: ",
+    //   // nfts
+    //   nfts.filter(
+    //     token => token.owner_of === "0x0aa0925f7ded722eb35c789a4e0101926414d23b"
+    //   )
+    // );
+    return nfts;
+  };
+
+  const getMix = async (address, tokenId) => {
+    // const signature = await this.state.signer.signMessage(address);
+
+    const response = await axios.get("/api/getMix", {
+      address,
+      tokenId
+      // signature,
+    });
+
+    console.log("response from api fetch: ", response);
   };
 
   return (
@@ -242,7 +252,7 @@ export default function Navbar(props) {
               <div
                 className="body-medium yellow-text"
                 id="mint-date"
-                onClick={() => fetchNftOwners()}
+                onClick={() => getMix()}
               >
                 MINTING APRIL 2022
               </div>

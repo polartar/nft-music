@@ -113,6 +113,16 @@ app.post("/api/saveMix", async (req, res) => {
   res.status(status).send(response);
 });
 
+app.get("/api/getMix", async (req, res) => {
+  const { status, response } = await uploadController.getMix(
+    req.body.address,
+    req.body.tokenId
+    // req.body.signature
+  );
+  console.log("getting mix...");
+  res.status(status).send(response);
+});
+
 app.get("/api/getAllNFTs", async (req, res) => {
   const { status, response } = await nftController.getAllNFTs();
 

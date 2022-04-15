@@ -9,8 +9,8 @@ const wait = ms => {
 const fetchTokenOwners = async () => {
   let tokenList = [];
   const nftResponse = await axios.get(
-    // `https://deep-index.moralis.io/api/v2/nft/${nft.tokenAddress}/${nft.tokenId}/owners?chain=eth&format=decimal`,
-    "https://deep-index.moralis.io/api/v2/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a/1/owners?chain=eth&format=decimal",
+    `https://deep-index.moralis.io/api/v2/nft/${nft.tokenAddress}/${nft.tokenId}/owners?chain=eth&format=decimal`,
+    // "https://deep-index.moralis.io/api/v2/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a/1/owners?chain=eth&format=decimal",
     {
       headers: {
         accept: "application/json",
@@ -27,14 +27,14 @@ const fetchTokenOwners = async () => {
     console.log("nextPage: ", nextPage);
     const subsequentResponse = await axios
       .get(
-        // `https://deep-index.moralis.io/api/v2/nft/${nft.tokenAddress}/${nft.tokenId}/owners?chain=eth&format=decimal&cursor=${nextPage}`,
-        `https://deep-index.moralis.io/api/v2/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a/1/owners?chain=eth&format=decimal&cursor=${nextPage}`,
+        `https://deep-index.moralis.io/api/v2/nft/${nft.tokenAddress}/${nft.tokenId}/owners?chain=eth&format=decimal&cursor=${nextPage}`,
+        // `https://deep-index.moralis.io/api/v2/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a/1/owners?chain=eth&format=decimal&cursor=${nextPage}`,
         {
           headers: {
             accept: "application/json",
             "X-API-Key":
-              // "QL0Tp07l7YwtzRIsFOMqhQmjVCmcS3skO8Rsbo0y7OZYTaBBTaEr6fNRBcVtXMfn",
               "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y"
+            // "QL0Tp07l7YwtzRIsFOMqhQmjVCmcS3skO8Rsbo0y7OZYTaBBTaEr6fNRBcVtXMfn",
           }
         }
       )
@@ -45,13 +45,6 @@ const fetchTokenOwners = async () => {
       })
       .then(await wait(1000));
   }
-  // console.log(
-  //   "tokenList: ",
-  //   // tokenList
-  //   tokenList.filter(
-  //     token => token.owner_of === "0x0aa0925f7ded722eb35c789a4e0101926414d23b"
-  //   )
-  // );
   return tokenList;
 };
 
