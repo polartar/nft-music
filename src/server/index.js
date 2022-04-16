@@ -114,12 +114,14 @@ app.post("/api/saveMix", async (req, res) => {
 });
 
 app.get("/api/getMix", async (req, res) => {
+  console.log("getting mix: ", req);
   const { status, response } = await uploadController.getMix(
-    req.body.address,
-    req.body.tokenId
+    req.query.address,
+    // req.body.ownerAddress,
+    req.query.tokenAddress,
+    req.query.tokenId
     // req.body.signature
   );
-  console.log("getting mix...");
   res.status(status).send(response);
 });
 

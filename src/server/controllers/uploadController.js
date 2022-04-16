@@ -241,13 +241,22 @@ async function saveMix(address, signature, tokenId, padRecording) {
 }
 
 async function getMix(
-  address,
+  // address,
+  ownerAddress,
+  tokenAddress,
   tokenId
   // address = "0x518e354ca7419b5c9b4d13090321fc9a03e036d5",
   // tokenId = "1"
 ) {
-  const tokenOwners = await fetchTokenOwners();
+  console.log({ ownerAddress, tokenId });
+  if (!ownerAddress) {
+    return { status: 400, response: "User has not connected a wallet" };
+  }
+  const tokenOwners = await fetchTokenOwners(tokenAddress, tokenId);
+
+  const address = "0x518e354ca7419b5c9b4d13090321fc9a03e036d5";
   const ownedTokens = tokenOwners.filter(
+    // token => token.owner_of === ownerAddress.toLowerCase()
     token => token.owner_of === address.toLowerCase()
   );
   console.log("getting mix in controller: ", ownedTokens);
@@ -255,11 +264,11 @@ async function getMix(
   if (ownedTokens.length > 0) {
     try {
       const userMix = await db.collection("mixes").findOne({
-        address: address.toLowerCase(),
-        // address: "0x38417b6096511c81ca3f5afdfb47167664ab301e",
-        tokenId
-        // tokenId:
-        //   "38073025139353667032454064671333707862066974273359587084832734458301906944001"
+        // address: address.toLowerCase(),
+        address: "0x38417b6096511c81ca3f5afdfb47167664ab301e",
+        // tokenId
+        tokenId:
+          "38073025139353667032454064671333707862066974273359587084832734458301906944001"
       });
       console.log("userMix: ", userMix);
 

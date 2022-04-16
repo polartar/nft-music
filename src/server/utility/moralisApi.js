@@ -6,11 +6,11 @@ const wait = ms => {
   });
 };
 
-const fetchTokenOwners = async () => {
+const fetchTokenOwners = async (tokenAddress, tokenId) => {
   let tokenList = [];
   const nftResponse = await axios.get(
-    `https://deep-index.moralis.io/api/v2/nft/${nft.tokenAddress}/${nft.tokenId}/owners?chain=eth&format=decimal`,
-    // "https://deep-index.moralis.io/api/v2/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a/1/owners?chain=eth&format=decimal",
+    // `https://deep-index.moralis.io/api/v2/nft/${tokenAddress}/${tokenId}/owners?chain=eth&format=decimal`,
+    "https://deep-index.moralis.io/api/v2/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a/1/owners?chain=eth&format=decimal",
     {
       headers: {
         accept: "application/json",
@@ -27,8 +27,8 @@ const fetchTokenOwners = async () => {
     console.log("nextPage: ", nextPage);
     const subsequentResponse = await axios
       .get(
-        `https://deep-index.moralis.io/api/v2/nft/${nft.tokenAddress}/${nft.tokenId}/owners?chain=eth&format=decimal&cursor=${nextPage}`,
-        // `https://deep-index.moralis.io/api/v2/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a/1/owners?chain=eth&format=decimal&cursor=${nextPage}`,
+        // `https://deep-index.moralis.io/api/v2/nft/${nft.tokenAddress}/${nft.tokenId}/owners?chain=eth&format=decimal&cursor=${nextPage}`,
+        `https://deep-index.moralis.io/api/v2/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a/1/owners?chain=eth&format=decimal&cursor=${nextPage}`,
         {
           headers: {
             accept: "application/json",

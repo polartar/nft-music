@@ -546,6 +546,16 @@ class Sequencer extends Component {
     script.async = true;
 
     document.body.appendChild(script);
+
+    console.log("this.state.address: ", this.state.address);
+    if (this.state.address) {
+      console.log("user is logged in");
+      this.getMix(
+        this.state.address,
+        this.state.nft.tokenAddress,
+        this.state.nft.tokenId
+      );
+    }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -559,6 +569,11 @@ class Sequencer extends Component {
         opacity: 1,
         delay: 0
       });
+    }
+
+    if (prevState.address !== this.state.address) {
+      console.log("refreshed with address!: ", this.state.address);
+      this.getMix(this.state.address, this.state.tokenId);
     }
   }
 
@@ -1000,6 +1015,22 @@ class Sequencer extends Component {
     console.log("response from api fetch: ", response);
   };
 
+  getMix = async (address, tokenAddress, tokenId) => {
+    // const signature = await this.state.signer.signMessage(address);
+    console.log("address in getMix: ", { address, tokenId });
+    const response = await axios.get("/api/getMix", {
+      params: {
+        // address: "0x518e354ca7419b5c9b4d13090321fc9a03e036d5",
+        // tokenId: "1"
+        address,
+        tokenAddress,
+        tokenId
+      }
+    });
+
+    console.log("response from api fetch: ", response);
+  };
+
   shouldRenderPostRecording = () => {
     return (
       this.state.padRecording.length > 0 &&
@@ -1336,7 +1367,18 @@ class Sequencer extends Component {
                           </div>
                         )}
                         <div className="song-details">
-                          <div className="beatPackTitle">{nft.name}</div>
+                          <div
+                            className="beatPackTitle"
+                            onClick={() =>
+                              this.getMix(
+                                this.state.address,
+                                this.state.tokenAddress,
+                                this.state.nft.tokenId
+                              )
+                            }
+                          >
+                            {nft.name}
+                          </div>
                           <div
                             className="artistName"
                             onClick={() => {
@@ -1537,7 +1579,6 @@ class Sequencer extends Component {
             clearSelections={this.clearSelections}
             canvas={this.canvas}
             playing={this.state.playing}
-
           />
         </React.StrictMode>
       );

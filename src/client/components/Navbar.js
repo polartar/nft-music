@@ -169,17 +169,17 @@ export default function Navbar(props) {
   //   return nfts;
   // };
 
-  const getMix = async (address, tokenId) => {
-    // const signature = await this.state.signer.signMessage(address);
+  // const getMix = async (address, tokenId) => {
+  //   // const signature = await this.state.signer.signMessage(address);
 
-    const response = await axios.get("/api/getMix", {
-      address,
-      tokenId
-      // signature,
-    });
+  //   const response = await axios.get("/api/getMix", {
+  //     address,
+  //     tokenId
+  //     // signature,
+  //   });
 
-    console.log("response from api fetch: ", response);
-  };
+  //   console.log("response from api fetch: ", response);
+  // };
 
   return (
     <React.Fragment>
@@ -229,11 +229,11 @@ export default function Navbar(props) {
               />
             </div> */}
 
-            {/* {!isLoggedIntoMetamask && (
+            {!isLoggedIntoMetamask && (
               <div onClick={connectWallet} className="walletText">
                 CONNECT WALLET
               </div>
-            )} */}
+            )}
 
             {isLoggedIntoMetamask && (
               <div className="signedInWrapper">
