@@ -94,7 +94,9 @@ class Sequencer extends Component {
     startRecordingTime: "",
     recording: null,
     isPlayingBack: false,
-    signer: null
+    signer: null,
+    repeat: false,
+    endOfPlayback: false
   };
 
   constructor(props) {
@@ -376,6 +378,17 @@ class Sequencer extends Component {
           }
         }
 
+        if (this.state.step === this.state.steps - 1) {
+          if (this.state.repeat && this.state.endOfPlayback) {
+            this.setState({
+              endOfPlayback: false
+            });
+            this.playbackRecording(this.state.padRecording, pad =>
+              this.togglePad(pad[0], pad[1])
+            );
+          }
+        }
+
         this.setState(state => ({
           step: (state.step + 1) % state.steps
         }));
@@ -546,16 +559,6 @@ class Sequencer extends Component {
     script.async = true;
 
     document.body.appendChild(script);
-
-    console.log("this.state.address: ", this.state.address);
-    if (this.state.address) {
-      console.log("user is logged in");
-      this.getMix(
-        this.state.address,
-        this.state.nft.tokenAddress,
-        this.state.nft.tokenId
-      );
-    }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -570,10 +573,25 @@ class Sequencer extends Component {
         delay: 0
       });
     }
-
     if (prevState.address !== this.state.address) {
-      console.log("refreshed with address!: ", this.state.address);
-      this.getMix(this.state.address, this.state.tokenId);
+      if (this.state.nft) {
+        this.getMix(
+          this.state.address,
+          this.state.nft.tokenAddress,
+          this.state.nft.tokenId
+        );
+      }
+    }
+
+    if (
+      prevState.padRecording.length <= 0 &&
+      this.state.padRecording.length > 0 &&
+      !this.state.isRecording &&
+      !this.state.shouldStartRecording
+    ) {
+      this.playbackRecording(this.state.padRecording, pad =>
+        this.togglePad(pad[0], pad[1])
+      );
     }
   }
 
@@ -941,7 +959,10 @@ class Sequencer extends Component {
       recordingStatus: "",
       isRecording: false,
       shouldStartRecording: false,
-      shouldStopRecording: false
+      shouldStopRecording: false,
+      repeat: false,
+      isPlayingBack: false,
+      endOfPlayback: false
     });
 
     for (const group in this.activePlayers) {
@@ -985,50 +1006,62 @@ class Sequencer extends Component {
       isPlayingBack: true
     });
 
-    // reset step so that playback isn't dependent on waiting for "next loop"
-    this.setState({
-      step: 0
-    });
+    if (!this.state.repeat) {
+      // reset step so that playback isn't dependent on waiting for "next loop"
+      this.setState({
+        step: 0
+      });
+    }
 
     for (let i = 0; i <= padRecording.length - 1; i++) {
-      console.log("padRecording ms: ", padRecording[i][2]);
       setTimeout(() => {
         // each loop, call passed in callback function
         callback(padRecording[i]);
         // stagger the pad's timeout by their milliseconds
         // }, i * pad[2]);
         // }, padRecording[i][2] + (padRecording[i - 1] ? padRecording[i - 1][2] : padRecording[0][2]));
+        if (i === padRecording.length - 1) {
+          this.setState({
+            isPlayingBack: false,
+            endOfPlayback: true
+          });
+        }
       }, padRecording[i][2]);
     }
   }
 
-  saveMix = async (tokenId, padRecording, address) => {
+  saveMix = async (address, tokenAddress, tokenId, padRecording) => {
     const signature = await this.state.signer.signMessage(address);
-
-    const response = await axios.post("/api/saveMix", {
+    await axios.post("/api/saveMix", {
       address,
       signature,
+      tokenAddress,
       tokenId,
       padRecording
     });
-
-    console.log("response from api fetch: ", response);
   };
 
   getMix = async (address, tokenAddress, tokenId) => {
     // const signature = await this.state.signer.signMessage(address);
-    console.log("address in getMix: ", { address, tokenId });
-    const response = await axios.get("/api/getMix", {
-      params: {
-        // address: "0x518e354ca7419b5c9b4d13090321fc9a03e036d5",
-        // tokenId: "1"
-        address,
-        tokenAddress,
-        tokenId
-      }
-    });
-
-    console.log("response from api fetch: ", response);
+    await axios
+      .get("/api/getMix", {
+        params: {
+          address,
+          tokenAddress,
+          tokenId
+        }
+      })
+      .then(response => {
+        if (response.data.padRecording) {
+          this.setState({
+            padRecording: response.data.padRecording,
+            repeat: true
+          });
+          return response.data.padRecording;
+        } else {
+          console.log("User has no previously saved mix.");
+        }
+      });
   };
 
   shouldRenderPostRecording = () => {
@@ -1284,6 +1317,9 @@ class Sequencer extends Component {
                                   this.state.shouldStartRecording ||
                                   this.state.isRecording
                                     ? "button record blink whitePad padWhiteVersion"
+                                    : this.state.isPlayingBack ||
+                                      this.state.repeat
+                                    ? "button disabled"
                                     : "button record"
                                 }
                                 onClick={() => {
@@ -1293,6 +1329,9 @@ class Sequencer extends Component {
                                     this.startRecording();
                                   }
                                 }}
+                                disabled={
+                                  this.state.isPlayingBack || this.state.repeat
+                                }
                               >
                                 <div className="circle" />
                                 {this.state.isRecording
@@ -1318,9 +1357,10 @@ class Sequencer extends Component {
                                   className="button record"
                                   onClick={() =>
                                     this.saveMix(
+                                      this.state.address,
+                                      this.state.nft.tokenAddress,
                                       this.state.nft.tokenId,
-                                      this.state.padRecording,
-                                      this.state.address
+                                      this.state.padRecording
                                     )
                                   }
                                 >
@@ -1367,28 +1407,8 @@ class Sequencer extends Component {
                           </div>
                         )}
                         <div className="song-details">
-                          <div
-                            className="beatPackTitle"
-                            onClick={() =>
-                              this.getMix(
-                                this.state.address,
-                                this.state.tokenAddress,
-                                this.state.nft.tokenId
-                              )
-                            }
-                          >
-                            {nft.name}
-                          </div>
-                          <div
-                            className="artistName"
-                            onClick={() => {
-                              console.log(
-                                "this.state.padRecording: ",
-                                this.state.padRecording
-                              );
-                              console.log("window.timer: ", window.timer);
-                            }}
-                          >{`by ${nft.artistName} ${
+                          <div className="beatPackTitle">{nft.name}</div>
+                          <div className="artistName">{`by ${nft.artistName} ${
                             nft.visualArtistName
                               ? `& ${nft.visualArtistName}`
                               : ""

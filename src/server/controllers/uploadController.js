@@ -207,29 +207,68 @@ async function deleteFileWithURL(url) {
   }
 }
 
-async function saveMix(address, signature, tokenId, padRecording) {
+async function saveMix(
+  ownerAddress,
+  signature,
+  tokenAddress,
+  tokenId,
+  padRecording
+) {
+  console.log("inside uploadController, saving mix...");
   const tokenOwners = await fetchTokenOwners();
+
+  const address = "0x518e354ca7419b5c9b4d13090321fc9a03e036d5";
+
   const ownedTokens = tokenOwners.filter(
+    // token => token.owner_of === ownerAddress.toLowerCase()
     token => token.owner_of === address.toLowerCase()
   );
 
   if (ownedTokens.length > 0) {
     try {
-      // const { tokenId, padRecording, address } = body;
-      const verifiedAddress = utils.verifyMessage(address, signature);
+      const verifiedAddress = utils.verifyMessage(ownerAddress, signature);
 
-      if (verifiedAddress && verifiedAddress === address) {
+      if (verifiedAddress && verifiedAddress === ownerAddress) {
         // TODO: remove "exampleTokenId" from query once tokenId implemented
-        await db.collection("mixes").insertOne({
-          address: address.toLowerCase(),
-          tokenId: tokenId || "exampleTokenId",
-          padRecording: padRecording
+
+        const existingUserMix = await db.collection("mixes").findOne({
+          address: ownerAddress.toLowerCase(),
+          tokenAddress: tokenAddress || "exampleTokenAddress",
+          tokenId: tokenId || "exampleTokenId"
         });
 
-        return {
-          status: 200,
-          response: "Successfully saved mix!"
-        };
+        if (!existingUserMix) {
+          await db.collection("mixes").insertOne({
+            address: ownerAddress.toLowerCase(),
+            tokenAddress: tokenAddress || "exampleTokenAddress",
+            tokenId: tokenId || "exampleTokenId",
+            padRecording: padRecording
+          });
+
+          return {
+            status: 200,
+            response: "Successfully saved mix!"
+          };
+        } else {
+          await db.collection("mixes").updateOne(
+            {
+              address: ownerAddress.toLowerCase()
+            },
+            {
+              $set: {
+                tokenAddress: tokenAddress || "exampleTokenAddress",
+                tokenId: tokenId || "exampleTokenId",
+                padRecording: padRecording
+              }
+            },
+            { upsert: true }
+          );
+
+          return {
+            status: 200,
+            response: "Successfully updated mix!"
+          };
+        }
       }
     } catch (error) {
       console.log(error);
@@ -240,14 +279,7 @@ async function saveMix(address, signature, tokenId, padRecording) {
   return { status: 400, response: "User does not own this token." };
 }
 
-async function getMix(
-  // address,
-  ownerAddress,
-  tokenAddress,
-  tokenId
-  // address = "0x518e354ca7419b5c9b4d13090321fc9a03e036d5",
-  // tokenId = "1"
-) {
+async function getMix(ownerAddress, tokenAddress, tokenId) {
   console.log({ ownerAddress, tokenId });
   if (!ownerAddress) {
     return { status: 400, response: "User has not connected a wallet" };
@@ -259,16 +291,12 @@ async function getMix(
     // token => token.owner_of === ownerAddress.toLowerCase()
     token => token.owner_of === address.toLowerCase()
   );
-  console.log("getting mix in controller: ", ownedTokens);
 
   if (ownedTokens.length > 0) {
     try {
       const userMix = await db.collection("mixes").findOne({
-        // address: address.toLowerCase(),
-        address: "0x38417b6096511c81ca3f5afdfb47167664ab301e",
-        // tokenId
-        tokenId:
-          "38073025139353667032454064671333707862066974273359587084832734458301906944001"
+        address: ownerAddress.toLowerCase(),
+        tokenId
       });
       console.log("userMix: ", userMix);
 

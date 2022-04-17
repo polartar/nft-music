@@ -104,9 +104,11 @@ app.post("/api/exportRecording", upload.single("video"), async (req, res) => {
 });
 
 app.post("/api/saveMix", async (req, res) => {
+  console.log("saving mix...");
   const { status, response } = await uploadController.saveMix(
     req.body.address,
     req.body.signature,
+    req.body.tokenAddress,
     req.body.tokenId,
     req.body.padRecording
   );
@@ -117,10 +119,8 @@ app.get("/api/getMix", async (req, res) => {
   console.log("getting mix: ", req);
   const { status, response } = await uploadController.getMix(
     req.query.address,
-    // req.body.ownerAddress,
     req.query.tokenAddress,
     req.query.tokenId
-    // req.body.signature
   );
   res.status(status).send(response);
 });
