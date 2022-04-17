@@ -182,11 +182,20 @@ async function getNFTsForOwner(tokenAddress, ownerAddress, chain) {
     );
 
     const nftIds = nftIdResponse.data.result.map(item => item.token_id);
+    // const nftIds = ["111"];
 
-    const nfts  = await db.collection("NFTs").find({
+    const nftQuery  = await db.collection("NFTs").find({
       tokenId: { $in: nftIds },
+      tokenAddress
     });
 
+    const nfts = [];
+
+    while (await nftQuery.hasNext()) {
+      let nft = await nftQuery.next();
+
+      nfts.push(nft);
+    }
 
     return {
       status: 200,

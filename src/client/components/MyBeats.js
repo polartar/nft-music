@@ -41,15 +41,13 @@ function Collection(props) {
           chain: 'rinkeby'
         },
       });
-      console.log("nfts", nftsResponse.data)
+
       setNFTs(nftsResponse.data);
       const userResponse = await axios.get("/api/getUser", {
         params: {
           address: userAddress,
         },
       });
-      console.log({userAddress})
-      console.log("user", userResponse);
 
       if (userResponse.data.name) {
         setDisplayName(userResponse.data.name);
@@ -118,7 +116,7 @@ function Collection(props) {
                         <div className="editionSoldText">{`Edition: ${nft.edition}`}</div>
                       </div>
                       <div className="editionSold boughtFor">
-                        <div className="editionSoldText">{`Bought for: ${nft.saleAmount.toFixed(
+                        <div className="editionSoldText">{`Bought for: ${nft.saleAmount?.toFixed(
                           2
                         )} ETH`}</div>
                       </div>
