@@ -28,34 +28,43 @@ function Collection(props) {
   const [displayName, setDisplayName] = useState();
 
   const refreshData = async () => {
-    const nftsResponse = await axios.get("/api/getNFTsForUser", {
-      params: {
-        address: props.match.params.address,
-      },
-    });
+    let userAddress;
+    if (window.ethereum) {
+      userAddress = window.ethereum.selectedAddress;
+    }    
 
-    setNFTs(nftsResponse.data);
+    if (userAddress) {
+      const nftsResponse = await axios.get("/api/getNFTsForOwner", {
+        params: {
+          collection: props.match.params.address,
+          owner: userAddress,
+          chain: 'rinkeby'
+        },
+      });
+      console.log("nfts", nftsResponse.data)
+      setNFTs(nftsResponse.data);
+      const userResponse = await axios.get("/api/getUser", {
+        params: {
+          address: userAddress,
+        },
+      });
+      console.log({userAddress})
+      console.log("user", userResponse);
 
-    const userResponse = await axios.get("/api/getUser", {
-      params: {
-        address: props.match.params.address,
-      },
-    });
-
-    console.log(userResponse);
-
-    if (userResponse.data.name) {
-      setDisplayName(userResponse.data.name);
-    } else {
-      setDisplayName(props.match.params.address);
-    }
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const accounts = await provider.listAccounts();
-
-    if (accounts.length > 0) {
+      if (userResponse.data.name) {
+        setDisplayName(userResponse.data.name);
+      } else {
+        setDisplayName(props.match.params.address);
+      }
       setIsLoggedIntoMetamask(true);
     }
+
+    // const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // const accounts = await provider.listAccounts();
+
+    // if (accounts.length > 0) {
+    //   setIsLoggedIntoMetamask(true);
+    // }
 
     setLoaded(true);
   };

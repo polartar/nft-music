@@ -35,7 +35,7 @@ async function getUser(address) {
     const user = await db.collection("users").findOne({
       address: address.toLowerCase(),
     });
-
+    console.log({user})
     return {
       status: 200,
       response: user,
