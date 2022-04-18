@@ -279,38 +279,39 @@ async function saveMix(
   return { status: 400, response: "User does not own this token." };
 }
 
-async function getMix(ownerAddress, tokenAddress, tokenId) {
-  console.log({ ownerAddress, tokenId });
-  if (!ownerAddress) {
-    return { status: 400, response: "User has not connected a wallet" };
+async function getMix(tokenAddress, tokenId) {
+  console.log({ tokenAddress, tokenId });
+  // if (!ownerAddress) {
+  //   return { status: 400, response: "User has not connected a wallet" };
+  // }
+  // const tokenOwners = await fetchTokenOwners(tokenAddress, tokenId);
+
+  // const address = "0x518e354ca7419b5c9b4d13090321fc9a03e036d5";
+  // const ownedTokens = tokenOwners.filter(
+  //   // token => token.owner_of === ownerAddress.toLowerCase()
+  //   token => token.owner_of === address.toLowerCase()
+  // );
+
+  // if (ownedTokens.length > 0) {
+  try {
+    const userMix = await db.collection("mixes").findOne({
+      // address: ownerAddress.toLowerCase(),
+      tokenAddress,
+      tokenId
+    });
+    console.log("userMix: ", userMix);
+
+    return {
+      status: 200,
+      response: userMix
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
   }
-  const tokenOwners = await fetchTokenOwners(tokenAddress, tokenId);
+  // }
 
-  const address = "0x518e354ca7419b5c9b4d13090321fc9a03e036d5";
-  const ownedTokens = tokenOwners.filter(
-    // token => token.owner_of === ownerAddress.toLowerCase()
-    token => token.owner_of === address.toLowerCase()
-  );
-
-  if (ownedTokens.length > 0) {
-    try {
-      const userMix = await db.collection("mixes").findOne({
-        address: ownerAddress.toLowerCase(),
-        tokenId
-      });
-      console.log("userMix: ", userMix);
-
-      return {
-        status: 200,
-        response: userMix
-      };
-    } catch (error) {
-      console.log(error);
-      return { status: 400, response: error.toString() };
-    }
-  }
-
-  return { status: 400, response: "User does not own this token." };
+  // return { status: 400, response: "User does not own this token." };
 }
 
 module.exports = {

@@ -577,14 +577,13 @@ class Sequencer extends Component {
         delay: 0
       });
     }
-    if (prevState.address !== this.state.address) {
-      if (this.state.nft) {
-        this.getMix(
-          this.state.address,
-          this.state.nft.tokenAddress,
-          this.state.nft.tokenId
-        );
-      }
+    if (prevState.nft !== this.state.nft && this.state.nft) {
+      console.log("this.state.nft: ", this.state.nft);
+      this.getMix(
+        // this.state.address,
+        this.state.nft.tokenAddress,
+        this.state.nft.tokenId
+      );
     }
 
     if (
@@ -1056,7 +1055,7 @@ class Sequencer extends Component {
       });
   };
 
-  getMix = async (address, tokenAddress, tokenId) => {
+  getMix = async (tokenAddress, tokenId) => {
     this.setState({
       isLoading: true
     });
@@ -1064,19 +1063,20 @@ class Sequencer extends Component {
     await axios
       .get("/api/getMix", {
         params: {
-          address,
           tokenAddress,
           tokenId
         }
       })
       .then(response => {
         if (response.data.padRecording) {
-          this.setState({
-            padRecording: response.data.padRecording,
-            repeat: true,
-            isLoading: false
-          });
-          return response.data.padRecording;
+          setTimeout(() => {
+            this.setState({
+              padRecording: response.data.padRecording,
+              repeat: true,
+              isLoading: false
+            });
+            return response.data.padRecording;
+          }, 7000);
         } else {
           console.log("User has no previously saved mix.");
           this.setState({

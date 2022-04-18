@@ -118,7 +118,7 @@ app.post("/api/saveMix", async (req, res) => {
 app.get("/api/getMix", async (req, res) => {
   console.log("getting mix: ", req);
   const { status, response } = await uploadController.getMix(
-    req.query.address,
+    // req.query.address,
     req.query.tokenAddress,
     req.query.tokenId
   );
