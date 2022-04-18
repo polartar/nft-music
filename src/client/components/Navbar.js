@@ -229,13 +229,13 @@ export default function Navbar(props) {
               />
             </div> */}
             <div className="wallet-container">
-              <button
+              {/* <button
                 id="mint-button"
                 className="cta-button"
                 onClick={() => setOpenMint(true)}
               >
                 PRE-SALE
-              </button>
+              </button> */}
 
               {!isLoggedIntoMetamask && (
                 <div onClick={connectWallet} className="walletText">
