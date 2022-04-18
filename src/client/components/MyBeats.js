@@ -31,14 +31,14 @@ function Collection(props) {
     let userAddress;
     if (window.ethereum) {
       userAddress = window.ethereum.selectedAddress;
-    }    
+    }
 
     if (userAddress) {
       const nftsResponse = await axios.get("/api/getNFTsForOwner", {
         params: {
           collection: props.match.params.address,
           owner: userAddress,
-          chain: 'rinkeby'
+          chain: "rinkeby",
         },
       });
 
@@ -113,13 +113,13 @@ function Collection(props) {
                         {nft.artistName}
                       </div>
                       <div className="editionSold">
-                        <div className="editionSoldText">{`Edition: ${nft.edition}`}</div>
+                        <div className="editionSoldText">{`Edition: #${nft.edition}`}</div>
                       </div>
-                      <div className="editionSold boughtFor">
+                      {/* <div className="editionSold boughtFor">
                         <div className="editionSoldText">{`Bought for: ${nft.saleAmount?.toFixed(
                           2
                         )} ETH`}</div>
-                      </div>
+                      </div> */}
                     </div>
                   </a>
                 );
