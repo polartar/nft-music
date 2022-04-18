@@ -10,10 +10,9 @@ import "../css/footer.css";
 import { ethers, utils } from "ethers";
 import { ThemeProvider } from "@material-ui/styles";
 
-
-import PlayCircleIcon from '../images/PlayCircleIcon.svg';
-import ShuffleCircleIcon from '../images/ShuffleCircleIcon.svg';
-import StopCircleIcon from '../images/StopCircleIcon.svg';
+import PlayCircleIcon from "../images/PlayCircleIcon.svg";
+import ShuffleCircleIcon from "../images/ShuffleCircleIcon.svg";
+import StopCircleIcon from "../images/StopCircleIcon.svg";
 
 import Discord from "../images/discord.svg";
 import Twitter from "../images/Twitter.svg";
@@ -21,7 +20,6 @@ import Instagram from "../images/Instagram.svg";
 
 import Share from "../images/Share.svg";
 import ControlsButton from "./ControlsButton";
-
 
 export default function Footer(props) {
   const {
@@ -35,6 +33,7 @@ export default function Footer(props) {
     canvas,
     playing,
     handleShuffle,
+    playMix
     setOpenControls,
     openControls
   } = props;
@@ -45,7 +44,6 @@ export default function Footer(props) {
   const [openEmail, setOpenEmail] = useState(false);
   const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
   const [showMintMenu, setShowMintMenu] = useState(false);
-
 
   const refreshData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -123,24 +121,25 @@ export default function Footer(props) {
           <div className="play-controls">
             <div className="stopBtnContainer">
               <div className="stopBtnWrapper">
-              {
-                playing ?
-                <span style={{display:"flex", gap:"8px", marginRight: "8px"}}>
-                  <a href="#" onClick={clearSelections}>
-                    <img src={StopCircleIcon} style={{height:"35px"}}/>
+                {playing ? (
+                  <span
+                    style={{ display: "flex", gap: "8px", marginRight: "8px" }}
+                  >
+                    <a href="#" onClick={clearSelections}>
+                      <img src={StopCircleIcon} style={{ height: "35px" }} />
+                    </a>
+                    <a href="#" onClick={handleShuffle}>
+                      <img src={ShuffleCircleIcon} style={{ height: "35px" }} />
+                    </a>
+                  </span>
+                ) : (
+                  <a href="#" onClick={playMix}>
+                    <img
+                      src={PlayCircleIcon}
+                      style={{ height: "35px", marginRight: "8px" }}
+                    />
                   </a>
-                  <a href="#" onClick={handleShuffle}>
-                    <img src={ShuffleCircleIcon} style={{height:"35px"}}/>
-                  </a>
-                </span>
-                :
-                <a href="#" onClick={handleShuffle}>
-                  <img src={PlayCircleIcon} style={{height:"35px", marginRight:"8px"}}/>
-                </a>
-
-              }
-
-
+                )}
               </div>
             </div>
 
@@ -180,7 +179,9 @@ export default function Footer(props) {
                 </div>
               </a>
               <a href="https://instagram.com/SecretGarden_FM">
-                <div className=""><img src={Instagram}/></div>
+                <div className="">
+                  <img src={Instagram} />
+                </div>
               </a>
               <div
                 className=""
@@ -189,7 +190,6 @@ export default function Footer(props) {
               >
                 <img src={Share} />
               </div>
-
             </div>
           )}
           <div>

@@ -538,6 +538,7 @@ input[type="number"] {
   // bottom: 75px;
   // left: 33px;
   // width: 20%;
+  display: flex; // center volume slider
   width: 100%;
   @media only screen and (min-width: 768px) {
     max-width: 440px;
@@ -592,12 +593,14 @@ input[type="number"] {
 }
 
 .record-container {
+  display: flex;
+  flex-direction: column;
   opacity: 0;
-    order: 2;
-    gap: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  order: 2;
+  gap: 8px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
 }
 
 .controls-container {
@@ -2031,20 +2034,43 @@ footer {
   border-radius: 99px;
   color: white;
   text-transform: uppercase;
-    display: flex;
-    gap: 8px;
-    padding: 8px 14px 8px 12px;
-    width: auto;
-    height: auto;
-    border: none;
-    .circle {
-      height: 15px;
-      width: 15px;
-      border-radius: 50%;
-      background-color: white;
+  display: flex;
+  gap: 8px;
+  padding: 8px 14px 8px 12px;
+  width: auto;
+  // height: auto;
+  border: none;
+  .circle {
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    background-color: white;
 
-    }
+  }
+  margin: 0px;
+}
 
+.button.disabled {
+  background: rgba(255, 255, 255, 0.75);
+  /* Background Blur S */
+  backdrop-filter: blur(2px);
+  /* Note: backdrop-filter has minimal browser support */
+  border-radius: 99px;
+  color: white;
+  text-transform: uppercase;
+  display: flex;
+  gap: 8px;
+  padding: 8px 14px 8px 12px;
+  width: auto;
+  height: auto;
+  border: none;
+  .circle {
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    background-color: white;
+  }
+  cursor: auto;
 }
 
 

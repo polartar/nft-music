@@ -7,10 +7,13 @@ const ffmpeg = require("fluent-ffmpeg");
 const { MongoClient, ObjectId } = require("mongodb");
 const { Readable, PassThrough } = require("stream");
 const { response } = require("express");
+const { ethers, utils } = require("ethers");
+
+const { fetchTokenOwners } = require("../utility/moralisApi");
 
 const AWS_ENDPOINT = "sfo2.digitaloceanspaces.com";
 const limiter = new Bottleneck({
-  minTime: 10,
+  minTime: 10
 });
 
 // connect to our mongodb database
@@ -22,7 +25,7 @@ async function connectToDatabase() {
       useNewurlParser: true,
       useUnifiedTopology: true,
       tls: true,
-      tlsCAFile: "./ca-certificate.crt",
+      tlsCAFile: "./ca-certificate.crt"
     };
   }
   const client = await MongoClient.connect(
@@ -67,7 +70,7 @@ async function exportRecording(response, recording, artistName, name, edition) {
     let nft = await db.collection("NFTs").findOne({
       artistName,
       name,
-      edition: parseFloat(edition),
+      edition: parseFloat(edition)
     });
 
     console.log(recording);
@@ -106,8 +109,8 @@ async function exportRecording(response, recording, artistName, name, edition) {
             fontsize: 48,
             fontcolor: "white",
             x: "10",
-            y: "h-th-40",
-          },
+            y: "h-th-40"
+          }
         },
         {
           filter: "drawtext",
@@ -119,8 +122,8 @@ async function exportRecording(response, recording, artistName, name, edition) {
             fontsize: 28,
             fontcolor: "white",
             x: "10",
-            y: "h-th-10",
-          },
+            y: "h-th-10"
+          }
         },
         {
           filter: "drawtext",
@@ -130,11 +133,11 @@ async function exportRecording(response, recording, artistName, name, edition) {
             fontsize: 36,
             fontcolor: "white",
             x: "w-tw-10",
-            y: "h-th-10",
-          },
-        },
+            y: "h-th-10"
+          }
+        }
       ])
-      .on("error", (error) => console.log(`Encoding Error: ${error.message}`))
+      .on("error", error => console.log(`Encoding Error: ${error.message}`))
       .saveToFile(`${uuid}.mp4`)
       .on("end", () => {
         response.download(`./${uuid}.mp4`, "my recording.mp4", function(err) {
@@ -158,14 +161,14 @@ async function uploadFile(file, folder, extension) {
   const s3 = new AWS.S3({
     endpoint: spacesEndpoint,
     accessKeyId: config.spacesAccessKeyId,
-    secretAccessKey: config.spacesSecretKey,
+    secretAccessKey: config.spacesSecretKey
   });
   const uuid = md5(file.buffer);
   const params = {
     Body: file.buffer,
     Bucket: "properties",
     Key: `${uuid}.${extension}`,
-    ACL: "public-read",
+    ACL: "public-read"
   };
 
   try {
@@ -188,12 +191,12 @@ async function deleteFileWithURL(url) {
   const s3 = new AWS.S3({
     endpoint: spacesEndpoint,
     accessKeyId: config.spacesAccessKeyId,
-    secretAccessKey: config.spacesSecretKey,
+    secretAccessKey: config.spacesSecretKey
   });
 
   const params = {
     Bucket: "properties",
-    Key: fileName,
+    Key: fileName
   };
 
   try {
@@ -204,9 +207,118 @@ async function deleteFileWithURL(url) {
   }
 }
 
+async function saveMix(
+  ownerAddress,
+  signature,
+  tokenAddress,
+  tokenId,
+  padRecording
+) {
+  console.log("inside uploadController, saving mix...");
+  const tokenOwners = await fetchTokenOwners();
+
+  const address = "0x518e354ca7419b5c9b4d13090321fc9a03e036d5";
+
+  const ownedTokens = tokenOwners.filter(
+    // token => token.owner_of === ownerAddress.toLowerCase()
+    token => token.owner_of === address.toLowerCase()
+  );
+
+  if (ownedTokens.length > 0) {
+    try {
+      const verifiedAddress = utils.verifyMessage(ownerAddress, signature);
+
+      if (verifiedAddress && verifiedAddress === ownerAddress) {
+        // TODO: remove "exampleTokenId" from query once tokenId implemented
+
+        const existingUserMix = await db.collection("mixes").findOne({
+          address: ownerAddress.toLowerCase(),
+          tokenAddress: tokenAddress || "exampleTokenAddress",
+          tokenId: tokenId || "exampleTokenId"
+        });
+
+        if (!existingUserMix) {
+          await db.collection("mixes").insertOne({
+            address: ownerAddress.toLowerCase(),
+            tokenAddress: tokenAddress || "exampleTokenAddress",
+            tokenId: tokenId || "exampleTokenId",
+            padRecording: padRecording
+          });
+
+          return {
+            status: 200,
+            response: "Successfully saved mix!"
+          };
+        } else {
+          await db.collection("mixes").updateOne(
+            {
+              address: ownerAddress.toLowerCase()
+            },
+            {
+              $set: {
+                tokenAddress: tokenAddress || "exampleTokenAddress",
+                tokenId: tokenId || "exampleTokenId",
+                padRecording: padRecording
+              }
+            },
+            { upsert: true }
+          );
+
+          return {
+            status: 200,
+            response: "Successfully updated mix!"
+          };
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      return { status: 400, response: error.toString() };
+    }
+  }
+
+  return { status: 400, response: "User does not own this token." };
+}
+
+async function getMix(tokenAddress, tokenId) {
+  console.log({ tokenAddress, tokenId });
+  // if (!ownerAddress) {
+  //   return { status: 400, response: "User has not connected a wallet" };
+  // }
+  // const tokenOwners = await fetchTokenOwners(tokenAddress, tokenId);
+
+  // const address = "0x518e354ca7419b5c9b4d13090321fc9a03e036d5";
+  // const ownedTokens = tokenOwners.filter(
+  //   // token => token.owner_of === ownerAddress.toLowerCase()
+  //   token => token.owner_of === address.toLowerCase()
+  // );
+
+  // if (ownedTokens.length > 0) {
+  try {
+    const userMix = await db.collection("mixes").findOne({
+      // address: ownerAddress.toLowerCase(),
+      tokenAddress,
+      tokenId
+    });
+    console.log("userMix: ", userMix);
+
+    return {
+      status: 200,
+      response: userMix
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+  // }
+
+  // return { status: 400, response: "User does not own this token." };
+}
+
 module.exports = {
   commitVideo,
   uploadFile,
   deleteFileWithURL,
   exportRecording,
+  saveMix,
+  getMix
 };

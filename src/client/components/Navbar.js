@@ -11,12 +11,14 @@ import SecretGardenBlack from "../images/SecretGardenBlack.png";
 import "../css/navBar.css";
 import IconButton from "@material-ui/core/IconButton";
 import axios from "axios";
-import anime from 'animejs/lib/anime.es.js';
+import anime from "animejs/lib/anime.es.js";
 import MintModal from "./MintModal";
 
 import Countdown, { zeroPad } from "react-countdown";
+import Moralis from "moralis";
 
 import { ethers, utils } from "ethers";
+import Web3 from "web3";
 
 export default function Navbar(props) {
   const { white, loggedIntoMetamaskOverride, didConnectWallet } = props;
@@ -52,8 +54,8 @@ export default function Navbar(props) {
 
       const userResponse = await axios.get("/api/getUser", {
         params: {
-          address,
-        },
+          address
+        }
       });
 
       if (userResponse.data.name) {
@@ -84,40 +86,100 @@ export default function Navbar(props) {
     initWallet();
   }, [loggedIntoMetamaskOverride]);
 
-
-    const handleCloseMint = () => {
-      setOpenMint(false);
-    };
-
+  const handleCloseMint = () => {
+    setOpenMint(false);
+  };
 
   useEffect(() => {
     refreshData();
 
     anime({
-      targets: ['.wordLogo'],
-      easing: 'easeInOutSine',
+      targets: [".wordLogo"],
+      easing: "easeInOutSine",
       duration: 1000,
-      opacity:1,
-      delay: 1500,
+      opacity: 1,
+      delay: 1500
     });
 
     anime({
-      targets: ['#mint-date'],
-      easing: 'easeInOutSine',
+      targets: ["#mint-date"],
+      easing: "easeInOutSine",
       duration: 1000,
       opacity: 0.7,
-      delay: 2000,
+      delay: 2000
     });
 
     anime({
-      targets: ['#mint-button'],
-      easing: 'easeInOutSine',
+      targets: ["#mint-button"],
+      easing: "easeInOutSine",
       duration: 1000,
       opacity: 0.7,
-      delay: 2000,
+      delay: 2000
     });
   }, [loaded]);
 
+  // moralis fetch moved to backend
+  // const nfts = [];
+  // const wait = ms => {
+  //   return new Promise(resolve => {
+  //     setTimeout(resolve, ms);
+  //   });
+  // };
+
+  // const fetchNftOwners = async () => {
+  //   console.log("nft: ", nft);
+  //   const nftResponse = await axios.get(
+  //     // `https://deep-index.moralis.io/api/v2/nft/${nft.tokenAddress}/${nft.tokenId}/owners?chain=eth&format=decimal`,
+  //     "https://deep-index.moralis.io/api/v2/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a/1/owners?chain=eth&format=decimal",
+  //     {
+  //       headers: {
+  //         accept: "application/json",
+  //         "X-API-Key":
+  //           // "QL0Tp07l7YwtzRIsFOMqhQmjVCmcS3skO8Rsbo0y7OZYTaBBTaEr6fNRBcVtXMfn"
+  //           "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y"
+  //       }
+  //     }
+  //   );
+  //   console.log("nftResponse: ", nftResponse);
+  //   nfts.push.apply(nfts, nftResponse.data.result);
+  //   let qty = nftResponse.data.total;
+  //   let nextPage = nftResponse.data.cursor;
+  //   while (qty > 0) {
+  //     console.log("nextPage: ", nextPage);
+  //     const subsequentResponse = await axios
+  //       .get(
+  //         // `https://deep-index.moralis.io/api/v2/nft/${nft.tokenAddress}/${nft.tokenId}/owners?chain=eth&format=decimal&cursor=${nextPage}`,
+  //         `https://deep-index.moralis.io/api/v2/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a/1/owners?chain=eth&format=decimal&cursor=${nextPage}`,
+  //         {
+  //           headers: {
+  //             accept: "application/json",
+  //             "X-API-Key":
+  //               // "QL0Tp07l7YwtzRIsFOMqhQmjVCmcS3skO8Rsbo0y7OZYTaBBTaEr6fNRBcVtXMfn",
+  //               "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y"
+  //           }
+  //         }
+  //       )
+  //       .then(subsequentResponse => {
+  //         nfts.push.apply(nfts, subsequentResponse.data.result);
+  //         nextPage = subsequentResponse.data.cursor;
+  //         qty -= 500;
+  //       })
+  //       .then(await wait(1000));
+  //   }
+  //   return nfts;
+  // };
+
+  // const getMix = async (address, tokenId) => {
+  //   // const signature = await this.state.signer.signMessage(address);
+
+  //   const response = await axios.get("/api/getMix", {
+  //     address,
+  //     tokenId
+  //     // signature,
+  //   });
+
+  //   console.log("response from api fetch: ", response);
+  // };
 
   return (
     <React.Fragment>
@@ -126,28 +188,24 @@ export default function Navbar(props) {
           <div
             className={white ? "navBar scrollBar white" : "navBar scrollBar"}
           >
-
-            <a href="/"  className="wordLogo">
+            <a href="/" className="wordLogo">
               {/*<img
                 src={white ? SecretGardenBlack : SecretGardenLogo}
                 className="logo"
               />
               */}
-
-                Secret Garden
-
+              Secret Garden
             </a>
-              {/*<div className="body-medium yellow-text" id="mint-date">MINTING APRIL 2022</div>*/}
-                <button
-                  id="mint-button"
-                  className="metamask-button"
-                  onClick={() => setOpenMint(true)}
-                >
-                  PRE-SALE
-                </button>
+            {/*<div className="body-medium yellow-text" id="mint-date">MINTING APRIL 2022</div>*/}
+            <button
+              id="mint-button"
+              className="metamask-button"
+              onClick={() => setOpenMint(true)}
+            >
+              PRE-SALE
+            </button>
 
-
-              <MintModal onClose={handleCloseMint} open={openMint} />
+            <MintModal onClose={handleCloseMint} open={openMint} />
 
             {/* <div className={white ? "timer white" : "timer"}>
               <Countdown
@@ -171,11 +229,11 @@ export default function Navbar(props) {
               />
             </div> */}
 
-            {/* {!isLoggedIntoMetamask && (
+            {!isLoggedIntoMetamask && (
               <div onClick={connectWallet} className="walletText">
                 CONNECT WALLET
               </div>
-            )} */}
+            )}
 
             {isLoggedIntoMetamask && (
               <div className="signedInWrapper">
