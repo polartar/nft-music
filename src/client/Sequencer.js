@@ -37,6 +37,9 @@ import Cookies from "universal-cookie";
 import { formatEther } from "@ethersproject/units";
 import FlowerArrangement from "./components/FlowerArrangement";
 import Stopwatch from "./components/Stopwatch";
+import OpaqueLoadingScreen from "./components/OpaqueLoading";
+import LoadingFlower from "./components/LoadingFlower";
+import "./css/bidModal.css";
 
 import anime from "animejs/lib/anime.es.js";
 
@@ -96,7 +99,8 @@ class Sequencer extends Component {
     isPlayingBack: false,
     signer: null,
     repeat: false,
-    endOfPlayback: false
+    endOfPlayback: false,
+    isLoading: false
   };
 
   constructor(props) {
@@ -1032,16 +1036,30 @@ class Sequencer extends Component {
 
   saveMix = async (address, tokenAddress, tokenId, padRecording) => {
     const signature = await this.state.signer.signMessage(address);
-    await axios.post("/api/saveMix", {
-      address,
-      signature,
-      tokenAddress,
-      tokenId,
-      padRecording
+    this.setState({
+      isLoading: true
     });
+    await axios
+      .post("/api/saveMix", {
+        address,
+        signature,
+        tokenAddress,
+        tokenId,
+        padRecording
+      })
+      .then(response => {
+        if (response) {
+          this.setState({
+            isLoading: false
+          });
+        }
+      });
   };
 
   getMix = async (address, tokenAddress, tokenId) => {
+    this.setState({
+      isLoading: true
+    });
     // const signature = await this.state.signer.signMessage(address);
     await axios
       .get("/api/getMix", {
@@ -1055,11 +1073,15 @@ class Sequencer extends Component {
         if (response.data.padRecording) {
           this.setState({
             padRecording: response.data.padRecording,
-            repeat: true
+            repeat: true,
+            isLoading: false
           });
           return response.data.padRecording;
         } else {
           console.log("User has no previously saved mix.");
+          this.setState({
+            isLoading: false
+          });
         }
       });
   };
@@ -1124,6 +1146,26 @@ class Sequencer extends Component {
 
       return (
         <React.StrictMode>
+          {this.state.isLoading && (
+            <div style={{ backgroundColor: "black", height: "100vh" }}>
+              <div className="modalBody2" style={{ paddingBottom: "80px" }}>
+                <div style={{ textAlign: "center" }}>
+                  <div>
+                    <p
+                      className="body-medium white-text"
+                      style={{ margin: "16px auto", maxWidth: "360px" }}
+                    >
+                      Loading assets, please wait...
+                    </p>
+                    <div id="loading-spinner" style={{ marginTop: "44px" }}>
+                      {" "}
+                      <LoadingFlower id="loading-flower" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           <BidModal
             nft={nft}
             open={this.state.openBidModal}

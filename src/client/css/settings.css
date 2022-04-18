@@ -18,6 +18,17 @@
   background-color: black;
   font-family: "DM Mono", monospace;
 }
+.opaqueLoadingScreen {
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  opacity: 0.35;
+  font-family: "DM Mono", monospace;
+}
 .tosContainer {
   height: 100%;
   position: relative;
