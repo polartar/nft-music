@@ -197,13 +197,7 @@ export default function Navbar(props) {
               Secret Garden
             </a>
             {/*<div className="body-medium yellow-text" id="mint-date">MINTING APRIL 2022</div>*/}
-            <button
-              id="mint-button"
-              className="metamask-button"
-              onClick={() => setOpenMint(true)}
-            >
-              PRE-SALE
-            </button>
+
 
             <MintModal onClose={handleCloseMint} open={openMint} />
 
@@ -228,6 +222,14 @@ export default function Navbar(props) {
                 }}
               />
             </div> */}
+            <div className="wallet-container">
+            <button
+              id="mint-button"
+              className="cta-button"
+              onClick={() => setOpenMint(true)}
+            >
+              PRE-SALE
+            </button>
 
             {!isLoggedIntoMetamask && (
               <div onClick={connectWallet} className="walletText">
@@ -248,6 +250,7 @@ export default function Navbar(props) {
                 </a>
               </div>
             )}
+            </div>
           </div>
         </React.Fragment>
       )}

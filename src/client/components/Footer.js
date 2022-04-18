@@ -33,7 +33,7 @@ export default function Footer(props) {
     canvas,
     playing,
     handleShuffle,
-    playMix
+    playMix,
     setOpenControls,
     openControls
   } = props;
