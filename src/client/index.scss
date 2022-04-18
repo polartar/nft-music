@@ -1614,6 +1614,12 @@ footer {
   height: 13px;
 }
 
+.wallet-container {
+  display: flex;
+  @media only screen and (max-width: 640px) {
+    flex-direction: column;
+  }
+}
 .navBar.white > .signedInWrapper > .walletOuter > .walletAmount {
   color: #222222;
 }
@@ -1691,12 +1697,18 @@ footer {
   font-size: 16px;
   line-height: 19px;
   color: white;
+  cursor: pointer;
 }
 
 #mint-date, #mint-button {
   opacity: 0;
 }
 
+#mint-button {
+  padding: 10px 15px 10px 15px;
+  border-radius: 15px;
+  font-size: 11px;
+}
 @media only screen and (max-width: 1100px) {
   .timer {
     display: none;
@@ -1851,6 +1863,7 @@ footer {
   padding: 20px 28px;
   font-size: 16px;
   line-height: 16px;
+  font-weight: bold;
 }
 
 .cta-button:disabled, .cta-button[disabled] {

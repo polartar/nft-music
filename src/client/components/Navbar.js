@@ -228,26 +228,38 @@ export default function Navbar(props) {
                 }}
               />
             </div> */}
+            <div className="wallet-container">
+              <button
+                id="mint-button"
+                className="cta-button"
+                onClick={() => setOpenMint(true)}
+              >
+                PRE-SALE
+              </button>
 
-            {!isLoggedIntoMetamask && (
-              <div onClick={connectWallet} className="walletText">
-                CONNECT WALLET
-              </div>
-            )}
-
-            {isLoggedIntoMetamask && (
-              <div className="signedInWrapper">
-                <div className="walletOuter">
-                  <img src={white ? WalletBlack : Wallet} className="wallet" />
-                  <span className="walletAmount">{`${parseFloat(
-                    utils.formatEther(balance)
-                  ).toFixed(4)} ETH`}</span>
+              {!isLoggedIntoMetamask && (
+                <div onClick={connectWallet} className="walletText">
+                  CONNECT WALLET
                 </div>
-                <a href="/profile">
-                  <div className="userName">{displayName}</div>
-                </a>
-              </div>
-            )}
+              )}
+
+              {isLoggedIntoMetamask && (
+                <div className="signedInWrapper">
+                  <div className="walletOuter">
+                    <img
+                      src={white ? WalletBlack : Wallet}
+                      className="wallet"
+                    />
+                    <span className="walletAmount">{`${parseFloat(
+                      utils.formatEther(balance)
+                    ).toFixed(4)} ETH`}</span>
+                  </div>
+                  <a href="/profile">
+                    <div className="userName">{displayName}</div>
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
         </React.Fragment>
       )}

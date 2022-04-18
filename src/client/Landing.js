@@ -1843,10 +1843,10 @@ class Sequencer extends Component {
                                 : "Stop Recording"
                               : "Record"}
                           </button>
-                          <p className="body-medium yellow-text">
+                          {this.state.isRecording && <p className="body-medium yellow-text">
                             {this.state.recordingStatus}
                             {this.state.isRecording && <Stopwatch/>}
-                          </p>
+                          </p>}
                         </div>
                         <button
                           className={"button record control-item"}
