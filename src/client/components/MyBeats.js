@@ -28,34 +28,41 @@ function Collection(props) {
   const [displayName, setDisplayName] = useState();
 
   const refreshData = async () => {
-    const nftsResponse = await axios.get("/api/getNFTsForUser", {
-      params: {
-        address: props.match.params.address,
-      },
-    });
-
-    setNFTs(nftsResponse.data);
-
-    const userResponse = await axios.get("/api/getUser", {
-      params: {
-        address: props.match.params.address,
-      },
-    });
-
-    console.log(userResponse);
-
-    if (userResponse.data.name) {
-      setDisplayName(userResponse.data.name);
-    } else {
-      setDisplayName(props.match.params.address);
+    let userAddress;
+    if (window.ethereum) {
+      userAddress = window.ethereum.selectedAddress;
     }
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const accounts = await provider.listAccounts();
+    if (userAddress) {
+      const nftsResponse = await axios.get("/api/getNFTsForOwner", {
+        params: {
+          collection: props.match.params.address,
+          owner: userAddress,
+          chain: "rinkeby",
+        },
+      });
 
-    if (accounts.length > 0) {
+      setNFTs(nftsResponse.data);
+      const userResponse = await axios.get("/api/getUser", {
+        params: {
+          address: userAddress,
+        },
+      });
+
+      if (userResponse.data.name) {
+        setDisplayName(userResponse.data.name);
+      } else {
+        setDisplayName(props.match.params.address);
+      }
       setIsLoggedIntoMetamask(true);
     }
+
+    // const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // const accounts = await provider.listAccounts();
+
+    // if (accounts.length > 0) {
+    //   setIsLoggedIntoMetamask(true);
+    // }
 
     setLoaded(true);
   };
@@ -106,13 +113,13 @@ function Collection(props) {
                         {nft.artistName}
                       </div>
                       <div className="editionSold">
-                        <div className="editionSoldText">{`Edition: ${nft.edition}`}</div>
+                        <div className="editionSoldText">{`Edition: #${nft.edition}`}</div>
                       </div>
-                      <div className="editionSold boughtFor">
-                        <div className="editionSoldText">{`Bought for: ${nft.saleAmount.toFixed(
+                      {/* <div className="editionSold boughtFor">
+                        <div className="editionSoldText">{`Bought for: ${nft.saleAmount?.toFixed(
                           2
                         )} ETH`}</div>
-                      </div>
+                      </div> */}
                     </div>
                   </a>
                 );

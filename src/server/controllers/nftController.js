@@ -170,10 +170,51 @@ async function getOrdersForNFT(nftID, useTestnet) {
   }
 }
 
+async function getNFTsForOwner(tokenAddress, ownerAddress, chain) {
+  try {
+    const nftIdResponse = await axios.get(
+      `https://deep-index.moralis.io/api/v2/${ownerAddress}/nft/${tokenAddress}?chain=${chain}`,
+      {
+        headers: {
+          "X-API-KEY":
+            "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y",
+        },
+      }
+    );
+
+    const nftIds = nftIdResponse.data.result.map((item) => item.token_id);
+
+    const metadata = await db.collection("NFTs").findOne({
+      tokenAddress,
+    });
+
+    if (!metadata) {
+      throw new Error("No metadata found for token address");
+    }
+
+    const nfts = [];
+
+    nftIds.forEach((nftId) => {
+      const nft = { ...metadata };
+      nft.tokenId = nftId;
+      nfts.push(nft);
+    });
+
+    return {
+      status: 200,
+      response: nfts,
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
+
 module.exports = {
   getNFT,
   getFeaturedNFT,
   getAllNFTs,
   getNFTsForUser,
   getOrdersForNFT,
+  getNFTsForOwner,
 };

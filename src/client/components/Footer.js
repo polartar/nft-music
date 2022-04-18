@@ -19,6 +19,7 @@ import Twitter from "../images/Twitter.svg";
 import Instagram from "../images/Instagram.svg";
 
 import Share from "../images/Share.svg";
+import ControlsButton from "./ControlsButton";
 
 export default function Footer(props) {
   const {
@@ -33,6 +34,8 @@ export default function Footer(props) {
     playing,
     handleShuffle,
     playMix
+    setOpenControls,
+    openControls
   } = props;
   const [loaded, setLoaded] = useState(false);
   const [address, setAddress] = useState();
@@ -70,8 +73,8 @@ export default function Footer(props) {
   return (
     <React.Fragment>
       <ShareModal shareURL={shareURL} onClose={handleClose} open={openShare} />
-
       <EmailModal onClose={handleCloseEmail} open={openEmail} />
+
       {/* <a href="/directory">
                 <div className="bottomItem mobileLink">DIRECTORY</div>
               </a> */}
@@ -166,7 +169,7 @@ export default function Footer(props) {
           </div>
           )} */}
           {showShare && (
-            <div style={{ display: "flex", gap: "16px" }}>
+            <div style={{ display: "flex", gap: "16px", marginRight:"16px" }}>
               {/* <a href="https://discord.gg/ykrzXB9ZsV">
                 <div className=""><img src={Discord}/></div>
               </a> */}
@@ -189,6 +192,13 @@ export default function Footer(props) {
               </div>
             </div>
           )}
+          <div>
+            <ControlsButton
+              className=""
+              onClick={setOpenControls}
+              fill={openControls ? "#FFF" : "#575757"}
+            />
+          </div>
 
           {/* <button className="button" onClick={() => handleMintMenu()}>
             TO MINT MENU

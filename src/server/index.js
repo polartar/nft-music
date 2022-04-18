@@ -164,6 +164,16 @@ app.get("/api/getOrdersForNFT", async (req, res) => {
   res.status(status).send(response);
 });
 
+app.get("/api/getNFTsForOwner", async (req, res) => {
+  const { status, response } = await nftController.getNFTsForOwner(
+    req.query.collection,
+    req.query.owner,
+    req.query.chain
+  );
+
+  res.status(status).send(response);
+});
+
 app.get("*", (req, res) => {
   res.sendFile(path.resolve("./dist/index.html"));
 });
