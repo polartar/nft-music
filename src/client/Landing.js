@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unused-state, react/no-array-index-key */
-import React, { Component, createRef } from "react";
+import React, { useState, Component, createRef } from "react";
 import cx from "classnames";
 import Synth from "./Synth";
 // import Canvas from './Canvas';
@@ -238,6 +238,8 @@ class Sequencer extends Component {
     isRecording: false,
     timer: 0,
     recordingStatus: "",
+    openControls: false,
+    hideBeatpad: false
   };
 
   constructor(props) {
@@ -264,6 +266,7 @@ class Sequencer extends Component {
 
     this.activeAnimations = {};
   }
+
 
   initWallet = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -589,9 +592,7 @@ class Sequencer extends Component {
 
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-      if (prevState.showTutorial !== this.state.showTutorial) {
-        //tutorial is over we can show the record button
-
+      if (prevState.openControls !== this.state.openControls) {
         anime({
           targets: ['.record-container'],
           easing: 'easeInOutSine',
@@ -1003,18 +1004,6 @@ class Sequencer extends Component {
       opacity: 1,
       delay: 2000,
     });
-
-
-    if (!this.state.showTutorial) {
-      anime({
-        targets: ['.record-container'],
-        easing: 'easeInOutSine',
-        duration: 750,
-        opacity:1,
-        delay: 2000,
-      });
-
-    }
 
     anime({
       targets: [
@@ -1602,6 +1591,36 @@ class Sequencer extends Component {
     );
   }
 
+  setOpenControls() {
+    this.setState({openControls: !this.state.openControls})
+  }
+
+  setHideBeatpad() {
+    if (this.state.hideBeatpad) {
+      anime({
+        targets: ['.gridOuter'],
+        easing: 'easeInOutSine',
+        duration: 250,
+        opacity:1,
+        delay: 0,
+      });
+    } else {
+      anime({
+        targets: ['.gridOuter'],
+        easing: 'easeInOutSine',
+        duration: 250,
+        opacity:0,
+        delay: 0,
+      });
+    }
+    this.setState({hideBeatpad: !this.state.hideBeatpad})
+  }
+
+  setShowTutorial() {
+    this.setState({showTutorial: !this.state.showTutorial})
+
+  }
+
   render() {
     const {
       pads,
@@ -1622,6 +1641,7 @@ class Sequencer extends Component {
       timer,
       tutorialStep,
       volume,
+      openControls
     } = this.state;
 
     const currentBidAmount =
@@ -1798,8 +1818,9 @@ class Sequencer extends Component {
                       </React.Fragment>
                     )}
                     <div className="song-info-container">
-                      {!showTutorial && (
-                        <div className="record-container">
+                      {openControls &&
+                        <div className="controls-container">
+                        <div className="record-container control-item">
                           <button
                             className={
                               this.state.shouldStartRecording ||
@@ -1827,7 +1848,20 @@ class Sequencer extends Component {
                             {this.state.isRecording && <Stopwatch/>}
                           </p>
                         </div>
-                      )}
+                        <button
+                          className={"button record control-item"}
+                          onClick={this.setHideBeatpad.bind(this)}
+                        >
+                          {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
+                        </button>
+                        <button
+                          className={"button record control-item"}
+                          onClick={this.setShowTutorial.bind(this)}
+                        >
+                          {this.state.showTutorial ? "Hide Tutorial" : "Show Tutorial"}
+                        </button>
+                      </div>
+                      }
                       <div className="song-details">
                         <div className="beatPackTitle display-medium">
                           {nft.name}
@@ -2167,6 +2201,8 @@ class Sequencer extends Component {
 
                 canvas={this.canvas}
                 playing={this.state.playing}
+                setOpenControls={this.setOpenControls.bind(this)}
+                openControls={openControls}
               />
             </div>
           </div>
