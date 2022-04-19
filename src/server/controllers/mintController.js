@@ -77,11 +77,15 @@ async function getMetadata(address, tokenId) {
       tokenAddress: address.toLowerCase(),
     });
 
+    const baseURL = process.env.BASE_URL
+      ? process.env.BASE_URL
+      : "https://localhost:3001";
+
     const formattedMetadata = {
       name: metadata.name,
       description: metadata.description,
-      external_url: `https://secretgarden.fm/bouquet/${metadata.artistName}/${metadata.name}/${tokenId}`,
-      animation_url: `https://secretgarden.fm/bouquetEmbed/${address.toLowerCase()}/${tokenId}`,
+      external_url: `https://${baseURL}/bouquet/${metadata.artistName}/${metadata.name}/${tokenId}`,
+      animation_url: `https://${baseURL}/bouquetEmbed/${address.toLowerCase()}/${tokenId}`,
       image: metadata.thumbnail,
       attributes: [
         {
