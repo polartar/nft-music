@@ -6,7 +6,7 @@ import {
   Route,
   Link,
   withRouter,
-  Redirect
+  Redirect,
 } from "react-router-dom";
 import { MoralisProvider } from "react-moralis";
 
@@ -36,14 +36,14 @@ export default function App(props) {
                 <Landing />
               </Route>
               <Route
-                render={props => <Sequencer {...props} />}
+                render={(props) => <Sequencer {...props} />}
                 exact
-                path="/nft/:artistName/:nftName/:edition"
+                path="/bouquet/:artistName/:nftName/:edition"
               />
               <Route
-                render={props => <Sequencer {...props} />}
+                render={(props) => <SequencerNFT {...props} />}
                 exact
-                path="/sequencer/:tokenAddress/:tokenId"
+                path="/bouquetEmbed/:tokenAddress/:tokenId"
               />
               {/* <Route exact path="/featured/">
                 <Sequencer />
@@ -73,7 +73,7 @@ export default function App(props) {
                 <Privacy />
               </Route>
               <Route
-                render={props => <MyBeats {...props} />}
+                render={(props) => <MyBeats {...props} />}
                 exact
                 path="/collection/:address"
               />

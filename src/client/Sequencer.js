@@ -100,7 +100,7 @@ class Sequencer extends Component {
     signer: null,
     repeat: false,
     endOfPlayback: false,
-    isLoading: false
+    isLoading: false,
   };
 
   constructor(props) {
@@ -130,7 +130,7 @@ class Sequencer extends Component {
       location.reload();
     });
 
-    window.ethereum.on("chainChanged", chainId => {
+    window.ethereum.on("chainChanged", (chainId) => {
       location.reload();
     });
 
@@ -143,7 +143,7 @@ class Sequencer extends Component {
         provider,
         address,
         signer,
-        balance: await provider.getBalance(address)
+        balance: await provider.getBalance(address),
       });
     }
   };
@@ -159,11 +159,11 @@ class Sequencer extends Component {
       isLoggedIntoMetamask: true,
       provider,
       address,
-      signer
+      signer,
     });
   };
 
-  exportRecording = async blob => {
+  exportRecording = async (blob) => {
     try {
       const form = new FormData();
 
@@ -173,7 +173,7 @@ class Sequencer extends Component {
       form.append("edition", this.state.nft.edition);
 
       const response = await axios.post("/api/exportRecording", form, {
-        responseType: "blob"
+        responseType: "blob",
       });
 
       const url = URL.createObjectURL(
@@ -185,7 +185,7 @@ class Sequencer extends Component {
       anchor.click();
 
       this.setState({
-        recordingStatus: ""
+        recordingStatus: "",
       });
     } catch (error) {
       console.log(error);
@@ -195,16 +195,15 @@ class Sequencer extends Component {
   fetchNFT = async () => {
     let nftResponse;
     if (this.props.match) {
-      console.log("THIS.PROPS.MATCH: ", this.props.match.params);
       nftResponse = await axios.get("/api/getNFT", {
-        params: this.props.match.params
+        params: this.props.match.params,
       });
     } else {
       nftResponse = await axios.get("/api/getFeaturedNFT");
     }
 
     this.setState({
-      nft: nftResponse.data
+      nft: nftResponse.data,
     });
 
     // Initial pads setup
@@ -212,7 +211,7 @@ class Sequencer extends Component {
       const pads = {};
       const queue = {};
 
-      Object.keys(nftResponse.data.filePaths).map(group => {
+      Object.keys(nftResponse.data.filePaths).map((group) => {
         const filePaths = nftResponse.data.filePaths[group];
         this.players[group] = [];
         pads[group] = [];
@@ -220,13 +219,13 @@ class Sequencer extends Component {
 
         this.activePlayers[group] = [];
 
-        Object.keys(nftResponse.data.filePaths).map(group => {
+        Object.keys(nftResponse.data.filePaths).map((group) => {
           const filePaths = nftResponse.data.filePaths[group];
           this.players[group] = [];
           pads[group] = [];
           queue[group] = [];
 
-          filePaths.forEach(filePath => {
+          filePaths.forEach((filePath) => {
             const player = new Tone.Player(
               `/public/${encodeURIComponent(filePath)}`
             );
@@ -260,7 +259,7 @@ class Sequencer extends Component {
 
           analyser.set({
             size: 256,
-            smoothing: 0.9
+            smoothing: 0.9,
           });
 
           analyser.normalRange = true;
@@ -270,7 +269,7 @@ class Sequencer extends Component {
       }
 
       Tone.Transport.bpm.value = nftResponse.data.bpm;
-      Tone.Transport.scheduleRepeat(async time => {
+      Tone.Transport.scheduleRepeat(async (time) => {
         if (this.state.step % subSteps === 0) {
           const updatedPads = {};
           const updatedQueue = {};
@@ -280,7 +279,7 @@ class Sequencer extends Component {
           let didPlayBasses = false;
           let didPlaySounds = false;
 
-          Object.keys(this.state.queue).forEach(group => {
+          Object.keys(this.state.queue).forEach((group) => {
             updatedPads[group] = Array.from(
               { length: this.state.pads[group].length },
               () => 0
@@ -298,7 +297,7 @@ class Sequencer extends Component {
               }
             }
 
-            updatedQueue[group].forEach(soundIndex => {
+            updatedQueue[group].forEach((soundIndex) => {
               if (
                 this.players[group][soundIndex].state !== "started" ||
                 this.state.step === 0
@@ -352,7 +351,7 @@ class Sequencer extends Component {
             queue: updatedQueue,
             shareablePadNumbers: updatedShareablePadNumbers,
             showTutorial: updatedShowTutorial,
-            tutorialStep: updatedTutorialStep
+            tutorialStep: updatedTutorialStep,
           });
         }
 
@@ -365,7 +364,7 @@ class Sequencer extends Component {
             this.setState({
               shouldStartRecording: false,
               isRecording: true,
-              recordingStatus: "Recording..."
+              recordingStatus: "Recording...",
             });
           }
 
@@ -378,39 +377,24 @@ class Sequencer extends Component {
               shouldStopRecording: false,
               isRecording: false,
               recordingStatus: "Preparing export...",
-              recording
-            });
-          }
-
-          if (this.state.repeat && this.state.endOfPlayback) {
-            this.setState({
-              endOfPlayback: false
-            });
-            this.playbackRecording(this.state.padRecording, pad =>
-              this.togglePad(pad[0], pad[1])
-            );
-          }
-
-          if (!this.state.repeat && this.state.endOfPlayback) {
-            this.setState({
-              isPlayingBack: false
+              recording,
             });
           }
         }
 
-        // if (this.state.step === this.state.steps - 1) {
-        //   if (this.state.repeat && this.state.endOfPlayback) {
-        //     this.setState({
-        //       endOfPlayback: false
-        //     });
-        //     this.playbackRecording(this.state.padRecording, pad =>
-        //       this.togglePad(pad[0], pad[1])
-        //     );
-        //   }
-        // }
+        if (this.state.step === this.state.steps - 1) {
+          if (this.state.repeat && this.state.endOfPlayback) {
+            this.setState({
+              endOfPlayback: false,
+            });
+            this.playbackRecording(this.state.padRecording, (pad) =>
+              this.togglePad(pad[0], pad[1])
+            );
+          }
+        }
 
-        this.setState(state => ({
-          step: (state.step + 1) % state.steps
+        this.setState((state) => ({
+          step: (state.step + 1) % state.steps,
         }));
       }, "4n");
 
@@ -425,7 +409,7 @@ class Sequencer extends Component {
             showTutorial:
               this.state.showTutorial && sharedPadNumbers !== null
                 ? false
-                : this.state.showTutorial
+                : this.state.showTutorial,
           }),
           () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -437,7 +421,7 @@ class Sequencer extends Component {
               this.setState({ showTutorial: false });
             }
 
-            sharedPadNumbers.forEach(padNumber => {
+            sharedPadNumbers.forEach((padNumber) => {
               const col = parseInt(padNumber / this.state.padFormat.length);
               const row = parseInt(padNumber % this.state.padFormat.length);
 
@@ -454,7 +438,7 @@ class Sequencer extends Component {
     }
   };
 
-  didRender = async blob => {
+  didRender = async (blob) => {
     try {
       const form = new FormData();
 
@@ -472,12 +456,12 @@ class Sequencer extends Component {
         ".video-container",
         ".beatPackTitle",
         ".artistName",
-        ".gridOuter"
+        ".gridOuter",
       ],
       easing: "easeInOutSine",
       duration: 750,
       opacity: 1,
-      delay: 1000
+      delay: 1000,
     });
 
     anime({
@@ -485,7 +469,7 @@ class Sequencer extends Component {
       easing: "easeInOutSine",
       duration: 750,
       opacity: 1,
-      delay: 2000
+      delay: 2000,
     });
 
     if (!this.state.showTutorial) {
@@ -494,7 +478,7 @@ class Sequencer extends Component {
         easing: "easeInOutSine",
         duration: 750,
         opacity: 1,
-        delay: 2000
+        delay: 2000,
       });
     }
 
@@ -504,12 +488,12 @@ class Sequencer extends Component {
         "#video-player-section .quaking-grass",
         "#video-player-section .carnation",
         "#video-player-section .hyacinth",
-        "#video-player-section .chrysanthemum"
+        "#video-player-section .chrysanthemum",
       ],
       easing: "easeInOutSine",
       duration: 500,
       opacity: 1,
-      delay: 0
+      delay: 0,
     });
 
     anime({
@@ -524,7 +508,7 @@ class Sequencer extends Component {
       },
       delay: 250,
       direction: "alternate",
-      loop: true
+      loop: true,
     });
 
     anime({
@@ -535,7 +519,7 @@ class Sequencer extends Component {
       skewY: -0.75,
       delay: 250,
       direction: "alternate",
-      loop: true
+      loop: true,
     });
 
     anime({
@@ -546,7 +530,7 @@ class Sequencer extends Component {
       skewY: -0.6,
       delay: 250,
       direction: "alternate",
-      loop: true
+      loop: true,
     });
 
     anime({
@@ -557,7 +541,7 @@ class Sequencer extends Component {
       skewY: -0.5,
       delay: 250,
       direction: "alternate",
-      loop: true
+      loop: true,
     });
 
     anime({
@@ -568,7 +552,7 @@ class Sequencer extends Component {
       skewY: 1,
       delay: 250,
       direction: "alternate",
-      loop: true
+      loop: true,
     });
   };
 
@@ -590,18 +574,16 @@ class Sequencer extends Component {
         easing: "easeInOutSine",
         duration: 750,
         opacity: 1,
-        delay: 0
+        delay: 0,
       });
     }
-
     if (prevState.nft !== this.state.nft && this.state.nft) {
       console.log("this.state.nft: ", this.state.nft);
-      // this.getMix(
-      //   // this.state.address,
-      //   this.state.nft.tokenAddress,
-      //   this.state.nft.tokenId
-      // );
-      this.getMix();
+      this.getMix(
+        // this.state.address,
+        this.state.nft.tokenAddress,
+        this.props.match.params.edition
+      );
     }
 
     if (
@@ -610,7 +592,7 @@ class Sequencer extends Component {
       !this.state.isRecording &&
       !this.state.shouldStartRecording
     ) {
-      this.playbackRecording(this.state.padRecording, pad =>
+      this.playbackRecording(this.state.padRecording, (pad) =>
         this.togglePad(pad[0], pad[1])
       );
     }
@@ -622,16 +604,16 @@ class Sequencer extends Component {
         await this.connectWallet();
       }
       this.setState({
-        openBidModal: true
+        openBidModal: true,
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  handleClose = value => {
+  handleClose = (value) => {
     this.setState({
-      openBidModal: false
+      openBidModal: false,
     });
   };
 
@@ -670,9 +652,9 @@ class Sequencer extends Component {
       }
     }
 
-    let frequency_array = new Uint8Array(analyser.map(x => x * 7000));
+    let frequency_array = new Uint8Array(analyser.map((x) => x * 7000));
 
-    const isAllZero = frequency_array.every(item => item === 0);
+    const isAllZero = frequency_array.every((item) => item === 0);
 
     if (!isAllZero) {
       canvas.width = window.innerWidth;
@@ -756,14 +738,14 @@ class Sequencer extends Component {
     this.togglePlay();
 
     this.setState(() => ({
-      playing: true
+      playing: true,
     }));
   }
 
   pause() {
     this.setState(() => ({
       playing: false,
-      step: 0
+      step: 0,
     }));
 
     clearInterval(this.interval);
@@ -783,12 +765,12 @@ class Sequencer extends Component {
 
     if (this.state.padRecording.length <= 0) {
       this.setState({
-        startRecordingTime: Date.now()
+        startRecordingTime: Date.now(),
       });
     }
 
     this.setState(
-      state => {
+      (state) => {
         const clonedPads = { ...state.pads };
         const padState = clonedPads[group][pad];
         const updatedQueue = { ...state.queue };
@@ -808,21 +790,21 @@ class Sequencer extends Component {
 
           // update active pads
           this.activePlayers[group] = this.activePlayers[group].filter(
-            activePad => activePad !== pad
+            (activePad) => activePad !== pad
           );
           updatedQueue[group] = updatedQueue[group].filter(
-            soundIndex => soundIndex !== pad
+            (soundIndex) => soundIndex !== pad
           );
         }
 
         clonedPads[group][pad] = padState === 1 ? 0 : 1;
 
         const unstartedQueueGroup = updatedQueue[group].filter(
-          soundIndex => this.players[group][soundIndex].state !== "started"
+          (soundIndex) => this.players[group][soundIndex].state !== "started"
         );
 
         const startedQueueGroup = updatedQueue[group].filter(
-          soundIndex => this.players[group][soundIndex].state === "started"
+          (soundIndex) => this.players[group][soundIndex].state === "started"
         );
 
         // We shaved something off, let's make it stop blinking
@@ -832,13 +814,13 @@ class Sequencer extends Component {
             -state.nft.activeSoundLimits[group]
           );
 
-          toRemove.forEach(soundIndex => {
+          toRemove.forEach((soundIndex) => {
             clonedPads[group][soundIndex] = 0;
           });
 
           updatedQueue[group] = [
             ...startedQueueGroup,
-            ...unstartedQueueGroup.slice(-state.nft.activeSoundLimits[group])
+            ...unstartedQueueGroup.slice(-state.nft.activeSoundLimits[group]),
           ];
         }
 
@@ -862,9 +844,9 @@ class Sequencer extends Component {
                       pad,
                       this.state.padRecording.length > 0
                         ? Number(currentTime - this.state.startRecordingTime)
-                        : 0
-                    ]
-                  ]
+                        : 0,
+                    ],
+                  ],
                 });
               }
             });
@@ -874,7 +856,7 @@ class Sequencer extends Component {
         return {
           pads: clonedPads,
           totalSoundsPlaying: numPads,
-          queue: updatedQueue
+          queue: updatedQueue,
         };
       },
       () => {
@@ -888,13 +870,13 @@ class Sequencer extends Component {
     this.setState({
       shouldStartRecording: true,
       recordingStatus: "Waiting for next loop to start...",
-      padRecording: []
+      padRecording: [],
     });
     let milliseconds = 0;
 
     const incrementMilliseconds = () => {
       this.setState({
-        timer: (milliseconds += 1000)
+        timer: (milliseconds += 1000),
       });
     };
 
@@ -912,7 +894,7 @@ class Sequencer extends Component {
     this.setState({
       shouldStopRecording: true,
       recordingStatus: "Preparing export...",
-      timer: 0
+      timer: 0,
     });
   }
   w1;
@@ -921,25 +903,25 @@ class Sequencer extends Component {
     overrides: {
       MuiSlider: {
         thumb: {
-          color: "white"
+          color: "white",
         },
         track: {
-          color: "white"
+          color: "white",
         },
         rail: {
-          color: "white"
-        }
-      }
-    }
+          color: "white",
+        },
+      },
+    },
   });
 
   setVolume(volume) {
     if (volume != null) {
       this.setState({
-        volume: volume
+        volume: volume,
       });
 
-      Object.keys(this.players).forEach(group => {
+      Object.keys(this.players).forEach((group) => {
         this.players[group].forEach((_, soundIndex) => {
           this.players[group][soundIndex].volume.value = volume;
         });
@@ -961,7 +943,7 @@ class Sequencer extends Component {
     const updatedPads = {};
     const updatedQueue = {};
 
-    Object.keys(this.players).forEach(group => {
+    Object.keys(this.players).forEach((group) => {
       updatedPads[group] = [];
       this.players[group].forEach((_, soundIndex) => {
         updatedPads[group][soundIndex] = 0;
@@ -983,7 +965,7 @@ class Sequencer extends Component {
       shouldStopRecording: false,
       repeat: false,
       isPlayingBack: false,
-      endOfPlayback: false
+      endOfPlayback: false,
     });
 
     for (const group in this.activePlayers) {
@@ -1023,56 +1005,14 @@ class Sequencer extends Component {
   }
 
   playbackRecording(padRecording, callback) {
-    // this.clearSelections();
-    let highestId = window.setTimeout(() => {
-      for (let i = highestId; i >= 0; i--) {
-        window.clearInterval(i);
-      }
-    }, 0);
-
-    Tone.Transport.stop();
-
-    const updatedPads = {};
-    const updatedQueue = {};
-
-    Object.keys(this.players).forEach(group => {
-      updatedPads[group] = [];
-      this.players[group].forEach((_, soundIndex) => {
-        updatedPads[group][soundIndex] = 0;
-        updatedQueue[group] = [];
-      });
-    });
-
-    // update queue and se
     this.setState({
-      pads: updatedPads,
-      playing: false,
-      queue: updatedQueue,
-      shareablePadNumbers: [],
-      totalSoundsPlaying: 0,
-      // step: 0, // reset step count to 0,
-      step: this.state.steps - 1, // reset step count to 0,
-      isPlayingBack: true
+      isPlayingBack: true,
     });
-
-    for (const group in this.activePlayers) {
-      if (this.activePlayers[group].length > 0) {
-        // loop to stop active pads instead of entire player list
-        for (let i = 0; i < this.activePlayers[group].length; i++) {
-          this.players[group][this.activePlayers[group][i]].stop();
-        }
-      }
-    }
-    // end clear pads work
-
-    // this.setState({
-    //   isPlayingBack: true
-    // });
 
     if (!this.state.repeat) {
       // reset step so that playback isn't dependent on waiting for "next loop"
       this.setState({
-        step: 0
+        step: 0,
       });
     }
 
@@ -1085,7 +1025,8 @@ class Sequencer extends Component {
         // }, padRecording[i][2] + (padRecording[i - 1] ? padRecording[i - 1][2] : padRecording[0][2]));
         if (i === padRecording.length - 1) {
           this.setState({
-            endOfPlayback: true
+            isPlayingBack: false,
+            endOfPlayback: true,
           });
         }
       }, padRecording[i][2]);
@@ -1095,7 +1036,7 @@ class Sequencer extends Component {
   saveMix = async (address, tokenAddress, tokenId, padRecording) => {
     const signature = await this.state.signer.signMessage(address);
     this.setState({
-      isLoading: true
+      isLoading: true,
     });
     await axios
       .post("/api/saveMix", {
@@ -1103,80 +1044,45 @@ class Sequencer extends Component {
         signature,
         tokenAddress,
         tokenId,
-        padRecording
+        padRecording,
       })
-      .then(response => {
+      .then((response) => {
         if (response) {
           this.setState({
-            isLoading: false
+            isLoading: false,
           });
         }
       });
   };
 
-  // getMix = async (tokenAddress, tokenId) => {
-  getMix = async () => {
+  getMix = async (tokenAddress, tokenId) => {
     this.setState({
-      isLoading: true
-    });
-    console.log("getMix: ", {
-      tokenAddress: this.props.match.params.tokenAddress,
-      tokenId: this.props.match.params.tokenId
+      isLoading: true,
     });
     // const signature = await this.state.signer.signMessage(address);
-    if (this.props.match) {
-      await axios
-        .get("/api/getMix", {
-          // params: {
-          //   tokenAddress,
-          //   tokenId
-          // }
-          params: {
-            tokenAddress: this.props.match.params.tokenAddress,
-            tokenId: this.props.match.params.tokenId
-          }
-        })
-        .then(response => {
-          if (response.data.padRecording) {
-            setTimeout(() => {
-              this.setState({
-                padRecording: response.data.padRecording,
-                repeat: true,
-                isLoading: false
-              });
-              return response.data.padRecording;
-            }, 7000);
-          } else {
-            console.log("User has no previously saved mix.");
-            this.setState({
-              isLoading: false
-            });
-          }
-        });
-    }
-  };
 
-  getTokenMix = async (tokenAddress, tokenId) => {
-    this.setState({
-      isLoading: true
-    });
-    // const signature = await this.state.signer.signMessage(address);
+    console.log(tokenId);
     await axios
-      .get(`/api/sequencer/${tokenAddress}/${tokenId}`)
-      .then(response => {
+      .get("/api/getMix", {
+        params: {
+          tokenAddress,
+          tokenId,
+        },
+      })
+      .then((response) => {
         if (response.data.padRecording) {
           setTimeout(() => {
             this.setState({
               padRecording: response.data.padRecording,
               repeat: true,
-              isLoading: false
+              isLoading: false,
             });
             return response.data.padRecording;
           }, 7000);
         } else {
           console.log("User has no previously saved mix.");
           this.setState({
-            isLoading: false
+            isLoading: false,
           });
         }
       });
@@ -1208,7 +1114,7 @@ class Sequencer extends Component {
       showTutorial,
       tutorialStep,
       padRecording,
-      timer
+      timer,
     } = this.state;
 
     const currentBidAmount =
@@ -1227,7 +1133,7 @@ class Sequencer extends Component {
         prefixAssetPath: "/public/artists/oksami/garden/visualizer/",
         onError: function(e) {
           console.error("err", e);
-        }
+        },
       });
 
       this.patch.config.didRender = this.didRender;
@@ -1243,26 +1149,24 @@ class Sequencer extends Component {
       return (
         <React.StrictMode>
           {this.state.isLoading && (
-            // EDGAR LOADING FLOWER SPINNER
-            // <div style={{ backgroundColor: "black", height: "100vh" }}>
-            //   <div className="modalBody2" style={{ paddingBottom: "80px" }}>
-            //     <div style={{ textAlign: "center" }}>
-            //       <div>
-            //         <p
-            //           className="body-medium white-text"
-            //           style={{ margin: "16px auto", maxWidth: "360px" }}
-            //         >
-            //           Loading assets, please wait...
-            //         </p>
-            //         <div id="loading-spinner" style={{ marginTop: "44px" }}>
-            //           {" "}
-            //           <LoadingFlower id="loading-flower" />
-            //         </div>
-            //       </div>
-            //     </div>
-            //   </div>
-            // </div>
-            <Loading />
+            <div style={{ backgroundColor: "black", height: "100vh" }}>
+              <div className="modalBody2" style={{ paddingBottom: "80px" }}>
+                <div style={{ textAlign: "center" }}>
+                  <div>
+                    <p
+                      className="body-medium white-text"
+                      style={{ margin: "16px auto", maxWidth: "360px" }}
+                    >
+                      Loading assets, please wait...
+                    </p>
+                    <div id="loading-spinner" style={{ marginTop: "44px" }}>
+                      {" "}
+                      <LoadingFlower id="loading-flower" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
           <BidModal
             nft={nft}
@@ -1314,7 +1218,7 @@ class Sequencer extends Component {
                                 active:
                                   groupIndex ===
                                   (((step - 1) % steps) + steps) % steps,
-                                on: pad === 1
+                                on: pad === 1,
                               })}
                             />
                           ))}
@@ -1371,7 +1275,7 @@ class Sequencer extends Component {
                             <div
                               key={`pad-group-${i}`}
                               className={`${cx(padClass, {
-                                on
+                                on,
                               })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
                               onClick={() => {
                                 this.togglePad(group, soundIndex);
@@ -1424,132 +1328,128 @@ class Sequencer extends Component {
                       )}
 
                       <div className="song-info-container">
-                        {!showTutorial &&
-                          this.state.address &&
-                          this.state.address ===
-                            this.state.nft.ownerAddress && (
-                            <div className="record-container">
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center"
-                                }}
-                              >
-                                {this.shouldRenderPostRecording() ? (
-                                  <button
-                                    className="button record"
-                                    style={{ marginRight: "10px" }}
-                                    onClick={() =>
-                                      this.exportRecording(this.state.recording)
-                                    }
-                                  >
-                                    Export
-                                  </button>
-                                ) : (
-                                  <div
-                                    style={{ marginRight: "10px" }}
-                                    className="body-medium yellow-text"
-                                  >
-                                    {this.state.recordingStatus}
-                                    {this.state.isRecording && <Stopwatch />}
-                                  </div>
-                                )}
+                        {!showTutorial && (
+                          <div className="record-container">
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }}
+                            >
+                              {this.shouldRenderPostRecording() ? (
                                 <button
-                                  className={
-                                    this.state.shouldStartRecording ||
-                                    this.state.isRecording
-                                      ? "button record blink whitePad padWhiteVersion"
-                                      : this.state.isPlayingBack ||
-                                        this.state.repeat
-                                      ? "button disabled"
-                                      : "button record"
-                                  }
-                                  onClick={() => {
-                                    if (this.state.isRecording) {
-                                      this.stopRecording();
-                                    } else {
-                                      this.startRecording();
-                                    }
-                                  }}
-                                  disabled={
-                                    this.state.isPlayingBack ||
-                                    this.state.repeat
+                                  className="button record"
+                                  style={{ marginRight: "10px" }}
+                                  onClick={() =>
+                                    this.exportRecording(this.state.recording)
                                   }
                                 >
-                                  <div className="circle" />
-                                  {this.state.isRecording
-                                    ? this.state.shouldStopRecording
-                                      ? "Stopping"
-                                      : "Stop Recording"
-                                    : "Record"}
+                                  Export
                                 </button>
-                              </div>
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
-                                  width: "100%"
+                              ) : (
+                                <div
+                                  style={{ marginRight: "10px" }}
+                                  className="body-medium yellow-text"
+                                >
+                                  {this.state.recordingStatus}
+                                  {this.state.isRecording && <Stopwatch />}
+                                </div>
+                              )}
+                              <button
+                                className={
+                                  this.state.shouldStartRecording ||
+                                  this.state.isRecording
+                                    ? "button record blink whitePad padWhiteVersion"
+                                    : this.state.isPlayingBack ||
+                                      this.state.repeat
+                                    ? "button disabled"
+                                    : "button record"
+                                }
+                                onClick={() => {
+                                  if (this.state.isRecording) {
+                                    this.stopRecording();
+                                  } else {
+                                    this.startRecording();
+                                  }
                                 }}
+                                disabled={
+                                  this.state.isPlayingBack || this.state.repeat
+                                }
                               >
-                                {this.shouldRenderPostRecording() && (
-                                  <button
-                                    style={{
-                                      marginRight: "10px"
-                                    }}
-                                    className="button record"
-                                    onClick={() =>
-                                      this.saveMix(
-                                        this.state.address,
-                                        this.state.nft.tokenAddress,
-                                        this.state.nft.tokenId,
-                                        this.state.padRecording
-                                      )
-                                    }
-                                  >
-                                    Save Mix
-                                  </button>
-                                )}
+                                <div className="circle" />
+                                {this.state.isRecording
+                                  ? this.state.shouldStopRecording
+                                    ? "Stopping"
+                                    : "Stop Recording"
+                                  : "Record"}
+                              </button>
+                            </div>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                width: "100%",
+                              }}
+                            >
+                              {this.shouldRenderPostRecording() && (
                                 <button
                                   style={{
-                                    visibility: this.shouldRenderPostRecording()
-                                      ? "visible"
-                                      : "hidden"
+                                    marginRight: "10px",
                                   }}
-                                  className={
-                                    this.state.padRecording.length <= 0 ||
-                                    this.state.isRecording
-                                      ? "button disabled"
-                                      : "button record"
-                                  }
-                                  onClick={() => {
-                                    if (!this.state.isPlayingBack) {
-                                      this.playbackRecording(
-                                        this.state.padRecording,
-                                        pad => {
-                                          this.togglePad(pad[0], pad[1]);
-                                        }
-                                      );
-                                    } else {
-                                      this.setState({
-                                        isPlayingBack: false
-                                      });
-                                      this.clearSelections();
-                                    }
-                                  }}
-                                  disabled={
-                                    this.state.padRecording.length <= 0 ||
-                                    this.state.isRecording
+                                  className="button record"
+                                  onClick={() =>
+                                    this.saveMix(
+                                      this.state.address,
+                                      this.state.nft.tokenAddress,
+                                      this.props.match.params.edition,
+                                      this.state.padRecording
+                                    )
                                   }
                                 >
-                                  {!this.state.isPlayingBack
-                                    ? "Playback"
-                                    : "Stop Playback"}
+                                  Save Mix
                                 </button>
-                              </div>
+                              )}
+                              <button
+                                style={{
+                                  visibility: this.shouldRenderPostRecording()
+                                    ? "visible"
+                                    : "hidden",
+                                }}
+                                className={
+                                  this.state.padRecording.length <= 0 ||
+                                  this.state.isRecording
+                                    ? "button disabled"
+                                    : "button record"
+                                }
+                                onClick={() => {
+                                  if (!this.state.isPlayingBack) {
+                                    this.playbackRecording(
+                                      this.state.padRecording,
+                                      (pad) => {
+                                        this.togglePad(pad[0], pad[1]);
+                                      }
+                                    );
+                                  } else {
+                                    this.setState({
+                                      isPlayingBack: false,
+                                    });
+                                    this.clearSelections();
+                                  }
+                                }}
+                                disabled={
+                                  this.state.padRecording.length <= 0 ||
+                                  this.state.isRecording
+                                }
+                              >
+                                {!this.state.isPlayingBack
+                                  ? "Playback"
+                                  : "Stop Playback"}
+                              </button>
                             </div>
-                          )}
+                          </div>
+                        )}
                         <div className="song-details">
                           <div className="beatPackTitle">{nft.name}</div>
                           <div className="artistName">{`by ${nft.artistName} ${
@@ -1615,7 +1515,7 @@ class Sequencer extends Component {
                         hours,
                         minutes,
                         seconds,
-                        completed
+                        completed,
                       }) => {
                         if (completed) {
                           // Render a completed state
