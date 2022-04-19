@@ -2,7 +2,10 @@ const { MongoClient, ObjectId } = require("mongodb");
 const config = require("../config.json");
 const { ethers, utils } = require("ethers");
 const { useRadioGroup } = require("@material-ui/core");
+const { soliditySha3 } = require("web3-utils");
+const EthCrypto = require("eth-crypto");
 
+const HASH_PREFIX_DISCOUNTED = "Leveling Up Heroes Epic Discounted Verification:";
 // connect to our mongodb database
 async function connectToDatabase() {
   let params = {};
@@ -141,9 +144,39 @@ async function addEmail(email) {
   }
 }
 
+async function makeDiscountedSignature(address) {
+  try {
+    // const userQuery = await db.collection("users").find({
+    //   address: { $in: addresses ? addresses : [] },
+    // });
+
+    // const users = {};
+    // while (await userQuery.hasNext()) {
+    //   const user = await userQuery.next();
+    //   users[user.address] = user;
+    // }
+
+    const discounthash = soliditySha3(HASH_PREFIX_DISCOUNTED, address);
+    console.log("private key", REACT_APP_PRIVATEKEY);
+    const ownerSignature = EthCrypto.sign(process.env.REACT_APP_PRIVATEKEY, discounthash);
+
+    return {
+      status: 200,
+      response: {
+        hash: discounthash,
+        signature: ownerSignature
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
+
 module.exports = {
   updateUser,
   getUser,
   getUsers,
   addEmail,
+  makeDiscountedSignature
 };
