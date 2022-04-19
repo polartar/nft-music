@@ -100,7 +100,9 @@ class Sequencer extends Component {
     signer: null,
     repeat: false,
     endOfPlayback: false,
-    isLoading: false
+    isLoading: false,
+    openControls: false,
+    hideBeatpad: false
   };
 
   constructor(props) {
@@ -566,17 +568,17 @@ class Sequencer extends Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevState.showTutorial !== this.state.showTutorial) {
-      //tutorial is over we can show the record button
+      if (prevState.openControls !== this.state.openControls) {
+        anime({
+          targets: ['.record-container'],
+          easing: 'easeInOutSine',
+          duration: 750,
+          opacity:1,
+          delay: 0,
+        });
 
-      anime({
-        targets: [".record-container"],
-        easing: "easeInOutSine",
-        duration: 750,
-        opacity: 1,
-        delay: 0
-      });
-    }
+      }
+
     if (prevState.nft !== this.state.nft && this.state.nft) {
       console.log("this.state.nft: ", this.state.nft);
       this.getMix(
@@ -1094,6 +1096,36 @@ class Sequencer extends Component {
     );
   };
 
+  setOpenControls() {
+    this.setState({openControls: !this.state.openControls})
+  }
+
+  setHideBeatpad() {
+    if (this.state.hideBeatpad) {
+      anime({
+        targets: ['.gridOuter'],
+        easing: 'easeInOutSine',
+        duration: 250,
+        opacity:1,
+        delay: 0,
+      });
+    } else {
+      anime({
+        targets: ['.gridOuter'],
+        easing: 'easeInOutSine',
+        duration: 250,
+        opacity:0,
+        delay: 0,
+      });
+    }
+    this.setState({hideBeatpad: !this.state.hideBeatpad})
+  }
+
+  setShowTutorial() {
+    this.setState({showTutorial: !this.state.showTutorial})
+
+  }
+
   render() {
     const {
       pads,
@@ -1112,7 +1144,8 @@ class Sequencer extends Component {
       showTutorial,
       tutorialStep,
       padRecording,
-      timer
+      timer,
+      openControls
     } = this.state;
 
     const currentBidAmount =
@@ -1326,8 +1359,9 @@ class Sequencer extends Component {
                       )}
 
                       <div className="song-info-container">
-                        {!showTutorial && (
-                          <div className="record-container">
+                        {openControls && (
+                          <div className="controls-container">
+                          <div className="record-container control-item">
                             <div
                               style={{
                                 display: "flex",
@@ -1383,6 +1417,7 @@ class Sequencer extends Component {
                                   : "Record"}
                               </button>
                             </div>
+
                             <div
                               style={{
                                 display: "flex",
@@ -1447,6 +1482,20 @@ class Sequencer extends Component {
                               </button>
                             </div>
                           </div>
+                          <button
+                            className={"button record control-item"}
+                            onClick={this.setHideBeatpad.bind(this)}
+                          >
+                            {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
+                          </button>
+                          <button
+                            className={"button record control-item"}
+                            onClick={this.setShowTutorial.bind(this)}
+                          >
+                            {this.state.showTutorial ? "Hide Tutorial" : "Show Tutorial"}
+                          </button>
+                        </div>
+
                         )}
                         <div className="song-details">
                           <div className="beatPackTitle">{nft.name}</div>
@@ -1641,6 +1690,8 @@ class Sequencer extends Component {
             clearSelections={this.clearSelections}
             canvas={this.canvas}
             playing={this.state.playing}
+            setOpenControls={this.setOpenControls.bind(this)}
+            openControls={openControls}
           />
         </React.StrictMode>
       );

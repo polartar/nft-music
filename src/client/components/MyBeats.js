@@ -128,6 +128,8 @@ function Collection(props) {
 
           <Footer
             white={true}
+            showShare={true}
+            hidePlayControls={true}
             loggedIntoMetamaskOverride={isLoggedIntoMetamask}
           />
         </div>

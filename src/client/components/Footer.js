@@ -24,6 +24,7 @@ import ControlsButton from "./ControlsButton";
 export default function Footer(props) {
   const {
     loggedIntoMetamaskOverride,
+    hidePlayControls,
     showShare,
     shareURL,
     setVolume,
@@ -118,44 +119,48 @@ export default function Footer(props) {
           }
         >
           {/* {showShare && !isLoggedIntoMetamask && ( */}
-          <div className="play-controls">
-            <div className="stopBtnContainer">
-              <div className="stopBtnWrapper">
-                {playing ? (
-                  <span
-                    style={{ display: "flex", gap: "8px", marginRight: "8px" }}
-                  >
-                    <a href="#" onClick={clearSelections}>
-                      <img src={StopCircleIcon} style={{ height: "35px" }} />
-                    </a>
-                    <a href="#" onClick={handleShuffle}>
-                      <img src={ShuffleCircleIcon} style={{ height: "35px" }} />
-                    </a>
-                  </span>
-                ) : (
-                  <a href="#" onClick={playMix}>
-                    <img
-                      src={PlayCircleIcon}
-                      style={{ height: "35px", marginRight: "8px" }}
-                    />
-                  </a>
-                )}
-              </div>
-            </div>
+            {
+              hidePlayControls ||
+              <div className="play-controls">
+                <div className="stopBtnContainer">
+                  <div className="stopBtnWrapper">
+                    {playing ? (
+                      <span
+                        style={{ display: "flex", gap: "8px", marginRight: "8px" }}
+                      >
+                        <a href="#" onClick={clearSelections}>
+                          <img src={StopCircleIcon} style={{ height: "35px" }} />
+                        </a>
+                        <a href="#" onClick={handleShuffle}>
+                          <img src={ShuffleCircleIcon} style={{ height: "35px" }} />
+                        </a>
+                      </span>
+                    ) : (
+                      <a href="#" onClick={playMix}>
+                        <img
+                          src={PlayCircleIcon}
+                          style={{ height: "35px", marginRight: "8px" }}
+                        />
+                      </a>
+                    )}
+                  </div>
+                </div>
 
-            <div className="volumeContainer">
-              <div className="volumeWrapper">
-                <ThemeProvider theme={muiTheme}>
-                  <Slider
-                    min={-50}
-                    max={0}
-                    defaultValue={volume}
-                    onChange={(event, newValue) => setVolume(newValue)}
-                  />
-                </ThemeProvider>
+                <div className="volumeContainer">
+                  <div className="volumeWrapper">
+                    <ThemeProvider theme={muiTheme}>
+                      <Slider
+                        min={-50}
+                        max={0}
+                        defaultValue={volume}
+                        onChange={(event, newValue) => setVolume(newValue)}
+                      />
+                    </ThemeProvider>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            }
+
 
           {/* )} */}
 
@@ -192,6 +197,8 @@ export default function Footer(props) {
               </div>
             </div>
           )}
+          {
+            hidePlayControls ||
           <div>
             <ControlsButton
               className=""
@@ -199,6 +206,7 @@ export default function Footer(props) {
               fill={openControls ? "#FFF" : "#575757"}
             />
           </div>
+        }
 
           {/* <button className="button" onClick={() => handleMintMenu()}>
             TO MINT MENU

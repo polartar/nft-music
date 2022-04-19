@@ -223,18 +223,12 @@ export default function Navbar(props) {
               />
             </div> */}
             <div className="wallet-container">
-            <button
-              id="mint-button"
-              className="cta-button"
-              onClick={() => setOpenMint(true)}
-            >
-              PRE-SALE
-            </button>
+
 
             {!isLoggedIntoMetamask && (
-              <div onClick={connectWallet} className="walletText">
+              <button onClick={connectWallet} className={white ? "metamask-button dark" : "metamask-button"}>
                 CONNECT WALLET
-              </div>
+              </button>
             )}
 
             {isLoggedIntoMetamask && (
@@ -250,6 +244,13 @@ export default function Navbar(props) {
                 </a>
               </div>
             )}
+            <button
+              id="mint-button"
+              className={white ? "cta-button dark" : "cta-button"}
+              onClick={() => setOpenMint(true)}
+            >
+              PRE-SALE
+            </button>
             </div>
           </div>
         </React.Fragment>
