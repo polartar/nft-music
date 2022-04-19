@@ -52,13 +52,6 @@ export default function Navbar(props) {
       setAddress(address);
       setBalance(await provider.getBalance(address));
 
-      const signatureResponse = await axios.get("/api/makeDiscountedSignature", {
-        params: {
-          address,
-        },
-      });
-      console.log({signatureResponse})
-
       const userResponse = await axios.get("/api/getUser", {
         params: {
           address,

@@ -40,8 +40,10 @@ import * as Web3 from "web3";
 import axios from "axios";
 import { OpenSeaPort, Network } from "opensea-js";
 import { WyvernSchemaName } from "opensea-js/lib/types";
-
+import AuctionABI from "../constants/AuctionABI.json";
+import { auctionAddress } from "../constants/config.json";
 import Typography from "@material-ui/core/Typography";
+import { parseEther } from "ethers/lib/utils";
 
 const useStyles = makeStyles({
   dialog: {
@@ -106,19 +108,47 @@ export default function SimpleDialog(props) {
     if (open) {
       setText("Copy Link");
     }
+    if (window.ethereum) {
+      checkNetwork();
+      const userAddress = window.ethereum.selectedAddress;
+      if (userAddress) {
+        setMetamaskAddress(userAddress);
+      }
+    }
 
 
   }, [open]);
+  
 
   const handleMint = async () => {
     setIsMinting(true)
     try {
       const mintStatus = await axios.get("/api/getMintStatusForAddress", {
         params: {
-          address: metamaskAddress,
+          address: metamaskAddress.toLowerCase(),
         },
       });
-      console.log(mintStatus);
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner(0);
+      
+      const contract = new Contract(auctionAddress, AuctionABI, signer);
+      
+      if (mintStatus.data === 'PUBLIC') {
+        await contract.mintPublic(1, {value: parseEther("5")});
+      } else if (mintStatus.data === 'MINT LIST') {
+        const signatureResponse = await axios.get("/api/makeDiscountedSignature", {
+          params: {
+            address: metamaskAddress,
+          },
+        });  
+        
+        if (signatureResponse.status === 200) {
+          await contract.mintWhitelistDiscounted(signatureResponse.data.hash, signatureResponse.data.signature, 1, {value: parseEther("0.5")});
+        }
+      } else if (mintStatus.data === 'CAPSULE HOUSE') {
+        await contract.mintPublic(1, {value: parseEther("0.2")});
+      }
     } catch (err) {
       console.log({err})
     } finally {
@@ -129,9 +159,9 @@ export default function SimpleDialog(props) {
   const handleMetamask = async() => {
     if (window.ethereum) {
       await window.ethereum.enable();
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner(0);
-      const address = await signer.getAddress();
+      const address = window.ethereum.selectedAddress;
+
+      checkNetwork();
 
       setMetamaskAddress(address)
     }
