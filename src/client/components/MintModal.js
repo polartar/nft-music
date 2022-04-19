@@ -110,17 +110,31 @@ export default function SimpleDialog(props) {
 
   }, [open]);
 
-  const handleMint = () => {
+  const handleMint = async () => {
     setIsMinting(true)
-    setTimeout(() => {
+    try {
+      const mintStatus = await axios.get("/api/getMintStatusForAddress", {
+        params: {
+          address: metamaskAddress,
+        },
+      });
+      console.log(mintStatus);
+    } catch (err) {
+      console.log({err})
+    } finally {
       setIsMinting(false)
-      setDidMint(true)
-    }, 5000);
-
+    }
   }
 
-  const handleMetamask = () => {
-    setMetamaskAddress("0asdanisdunaid10200")
+  const handleMetamask = async() => {
+    if (window.ethereum) {
+      await window.ethereum.enable();
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner(0);
+      const address = await signer.getAddress();
+
+      setMetamaskAddress(address)
+    }
   }
 
   const removeMetamask = () => {
