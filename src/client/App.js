@@ -38,7 +38,12 @@ export default function App(props) {
               <Route
                 render={props => <Sequencer {...props} />}
                 exact
-                path="/:artistName/:nftName/:edition"
+                path="/nft/:artistName/:nftName/:edition"
+              />
+              <Route
+                render={props => <Sequencer {...props} />}
+                exact
+                path="/sequencer/:tokenAddress/:tokenId"
               />
               {/* <Route exact path="/featured/">
                 <Sequencer />

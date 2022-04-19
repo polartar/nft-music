@@ -12,7 +12,7 @@ async function connectToDatabase() {
       useNewurlParser: true,
       useUnifiedTopology: true,
       tls: true,
-      tlsCAFile: "./ca-certificate.crt",
+      tlsCAFile: "./ca-certificate.crt"
     };
   }
   const client = await MongoClient.connect(
@@ -32,11 +32,11 @@ setTimeout(() => {
 
 async function getNFTWithMetadata(nftID) {
   const nft = await db.collection("NFTs").findOne({
-    _id: ObjectId(nftID),
+    _id: ObjectId(nftID)
   });
 
   const artist = await db.collection("artists").findOne({
-    name: nft.artistName,
+    name: nft.artistName
   });
 
   nft.artist = artist;
@@ -54,14 +54,14 @@ async function getNFTWithMetadata(nftID) {
 async function getFeaturedNFT() {
   try {
     const settings = await db.collection("settings").findOne({
-      _id: ObjectId("605d225f34d1d94b02ef8591"),
+      _id: ObjectId("605d225f34d1d94b02ef8591")
     });
 
     const featuredNFT = await getNFTWithMetadata(settings.featuredNFTID);
 
     return {
       status: 200,
-      response: featuredNFT,
+      response: featuredNFT
     };
   } catch (error) {
     console.log(error);
@@ -74,14 +74,34 @@ async function getNFT(artistName, name, edition) {
     let nft = await db.collection("NFTs").findOne({
       artistName,
       name,
-      edition: parseFloat(edition),
+      edition: parseFloat(edition)
     });
 
     nft = await getNFTWithMetadata(nft._id.toString());
 
     return {
       status: 200,
-      response: nft,
+      response: nft
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
+
+async function getSequencerToken(tokenAddress, tokenId) {
+  console.log({ tokenAddress, tokenId });
+  try {
+    let nft = await db.collection("NFTs").findOne({
+      tokenAddress,
+      tokenId
+    });
+
+    nft = await getNFTWithMetadata(nft._id.toString());
+
+    return {
+      status: 200,
+      response: nft
     };
   } catch (error) {
     console.log(error);
@@ -104,7 +124,7 @@ async function getAllNFTs() {
 
     return {
       status: 200,
-      response: nfts,
+      response: nfts
     };
   } catch (error) {
     console.log(error);
@@ -115,7 +135,7 @@ async function getAllNFTs() {
 async function getNFTsForUser(address) {
   try {
     const nftQuery = await db.collection("NFTs").find({
-      ownerAddress: address.toLowerCase(),
+      ownerAddress: address.toLowerCase()
     });
 
     const nfts = [];
@@ -127,7 +147,7 @@ async function getNFTsForUser(address) {
 
     return {
       status: 200,
-      response: nfts,
+      response: nfts
     };
   } catch (error) {
     console.log(error);
@@ -138,7 +158,7 @@ async function getNFTsForUser(address) {
 async function getOrdersForNFT(nftID, useTestnet) {
   try {
     const nft = await db.collection("NFTs").findOne({
-      _id: ObjectId(nftID),
+      _id: ObjectId(nftID)
     });
 
     const orderResponse = await axios.get(
@@ -152,17 +172,17 @@ async function getOrdersForNFT(nftID, useTestnet) {
           limit: 50,
           side: 0,
           order_by: "eth_price",
-          order_direction: "desc",
+          order_direction: "desc"
         },
         headers: {
-          "X-API-KEY": "e6de7b0f341949a1a3258887428c1ebc",
-        },
+          "X-API-KEY": "e6de7b0f341949a1a3258887428c1ebc"
+        }
       }
     );
 
     return {
       status: 200,
-      response: orderResponse.data,
+      response: orderResponse.data
     };
   } catch (error) {
     console.log(error);
@@ -177,15 +197,15 @@ async function getNFTsForOwner(tokenAddress, ownerAddress, chain) {
       {
         headers: {
           "X-API-KEY":
-            "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y",
-        },
+            "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y"
+        }
       }
     );
 
-    const nftIds = nftIdResponse.data.result.map((item) => item.token_id);
+    const nftIds = nftIdResponse.data.result.map(item => item.token_id);
 
     const metadata = await db.collection("NFTs").findOne({
-      tokenAddress,
+      tokenAddress
     });
 
     if (!metadata) {
@@ -194,7 +214,7 @@ async function getNFTsForOwner(tokenAddress, ownerAddress, chain) {
 
     const nfts = [];
 
-    nftIds.forEach((nftId) => {
+    nftIds.forEach(nftId => {
       const nft = { ...metadata };
       nft.tokenId = nftId;
       nfts.push(nft);
@@ -202,7 +222,7 @@ async function getNFTsForOwner(tokenAddress, ownerAddress, chain) {
 
     return {
       status: 200,
-      response: nfts,
+      response: nfts
     };
   } catch (error) {
     console.log(error);
@@ -217,4 +237,5 @@ module.exports = {
   getNFTsForUser,
   getOrdersForNFT,
   getNFTsForOwner,
+  getSequencerToken
 };

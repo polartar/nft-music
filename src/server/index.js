@@ -116,9 +116,8 @@ app.post("/api/saveMix", async (req, res) => {
 });
 
 app.get("/api/getMix", async (req, res) => {
-  console.log("getting mix: ", req);
+  console.log("getting mix: ", req.query);
   const { status, response } = await uploadController.getMix(
-    // req.query.address,
     req.query.tokenAddress,
     req.query.tokenId
   );
@@ -132,13 +131,29 @@ app.get("/api/getAllNFTs", async (req, res) => {
 });
 
 app.get("/api/getNFT", async (req, res) => {
-  const { status, response } = await nftController.getNFT(
-    req.query.artistName,
-    req.query.nftName,
-    req.query.edition
-  );
+  console.log("getNFT: ", req.query);
+  const { artistName, nftName, edition, tokenAddress, tokenId } = req.query;
 
-  res.status(status).send(response);
+  if (artistName && nftName && edition) {
+    const { status, response } = await nftController.getNFT(
+      req.query.artistName,
+      req.query.nftName,
+      req.query.edition
+    );
+
+    res.status(status).send(response);
+    return;
+  }
+
+  if (tokenAddress && tokenId) {
+    const { status, response } = await nftController.getSequencerToken(
+      req.query.tokenAddress,
+      req.query.tokenId
+    );
+
+    res.status(status).send(response);
+    return;
+  }
 });
 
 app.get("/api/getFeaturedNFT", async (req, res) => {
