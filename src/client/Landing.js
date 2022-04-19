@@ -239,7 +239,7 @@ class Sequencer extends Component {
     timer: 0,
     recordingStatus: "",
     openControls: false,
-    hideBeatpad: false
+    hideBeatpad: false,
   };
 
   constructor(props) {
@@ -267,7 +267,6 @@ class Sequencer extends Component {
     this.activeAnimations = {};
   }
 
-
   initWallet = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
@@ -290,6 +289,14 @@ class Sequencer extends Component {
         address,
         balance: await provider.getBalance(address),
       });
+
+      const mintStatus = await axios.get("/api/getMintStatusForAddress", {
+        params: {
+          address,
+        },
+      });
+
+      console.log(mintStatus);
     }
   };
 
@@ -590,19 +597,17 @@ class Sequencer extends Component {
     document.body.appendChild(script);
   }
 
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-      if (prevState.openControls !== this.state.openControls) {
-        anime({
-          targets: ['.record-container'],
-          easing: 'easeInOutSine',
-          duration: 750,
-          opacity:1,
-          delay: 0,
-        });
-
-      }
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevState.openControls !== this.state.openControls) {
+      anime({
+        targets: [".record-container"],
+        easing: "easeInOutSine",
+        duration: 750,
+        opacity: 1,
+        delay: 0,
+      });
     }
+  }
 
   handleClickOpen = async () => {
     try {
@@ -917,7 +922,7 @@ class Sequencer extends Component {
 
   handleShuffle() {
     //shuffle function here
-  };
+  }
 
   clearSelections() {
     const updatedPads = {};
@@ -972,17 +977,17 @@ class Sequencer extends Component {
     }
   };
 
-    handleInitialAnimations = () => {
-      let el = document.querySelector("#main-wrapper")
-      //scroll handling
-      el.addEventListener('wheel', e => {
-        e.preventDefault()
-        const direction = e.deltaY > 0 ? 'next' : 'prev';
-        this.handleScroll(direction)
-      });
-      //mobile touch controls
-      el.addEventListener('touchstart', this.touchStart.bind(this));
-      el.addEventListener('touchend', this.touchMove.bind(this));
+  handleInitialAnimations = () => {
+    let el = document.querySelector("#main-wrapper");
+    //scroll handling
+    el.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const direction = e.deltaY > 0 ? "next" : "prev";
+      this.handleScroll(direction);
+    });
+    //mobile touch controls
+    el.addEventListener("touchstart", this.touchStart.bind(this));
+    el.addEventListener("touchend", this.touchMove.bind(this));
 
     anime({
       targets: [
@@ -1258,49 +1263,49 @@ class Sequencer extends Component {
       this.activeAnimations.secondSectionHyacinthes.play();
     } else if (this.activeFPIndex == 2) {
       // Removed slide 2
-    //   anime({
-    //     targets: "#leaf-1",
-    //     easing: "easeInOutSine",
-    //     delay: 100,
-    //     duration: 500,
-    //     opacity: 1,
-    //     translateY: ["-50%", "-51%"],
-    //
-    //     rotate: [-10, -10],
-    //   });
-    //
-    //   anime({
-    //     targets: "#leaf-2",
-    //     easing: "easeInOutSine",
-    //     delay: 50,
-    //     duration: 500,
-    //     opacity: 1,
-    //     rotate: [-5, -5],
-    //     translateY: [0, -10],
-    //   });
-    //   anime({
-    //     targets: "#hyacinth-4",
-    //     easing: "easeInOutSine",
-    //     delay: 50,
-    //     duration: 500,
-    //     opacity: 1,
-    //     rotate: [200, 200],
-    //     translateY: [0, -10],
-    //   });
-    //
-    //   anime({
-    //     targets: "#carnation-3",
-    //     easing: "easeInOutSine",
-    //     delay: 0,
-    //     duration: 500,
-    //     opacity: 1,
-    //     rotate: [-30, -30],
-    //     translateY: [0, -10],
-    //   });
-    //
-    //   this.activeAnimations.thirdSectionHyacinthes.play();
-    //   this.activeAnimations.thirdSectionMonsteraLeaves.play();
-    // } else if (this.activeFPIndex == 3) {
+      //   anime({
+      //     targets: "#leaf-1",
+      //     easing: "easeInOutSine",
+      //     delay: 100,
+      //     duration: 500,
+      //     opacity: 1,
+      //     translateY: ["-50%", "-51%"],
+      //
+      //     rotate: [-10, -10],
+      //   });
+      //
+      //   anime({
+      //     targets: "#leaf-2",
+      //     easing: "easeInOutSine",
+      //     delay: 50,
+      //     duration: 500,
+      //     opacity: 1,
+      //     rotate: [-5, -5],
+      //     translateY: [0, -10],
+      //   });
+      //   anime({
+      //     targets: "#hyacinth-4",
+      //     easing: "easeInOutSine",
+      //     delay: 50,
+      //     duration: 500,
+      //     opacity: 1,
+      //     rotate: [200, 200],
+      //     translateY: [0, -10],
+      //   });
+      //
+      //   anime({
+      //     targets: "#carnation-3",
+      //     easing: "easeInOutSine",
+      //     delay: 0,
+      //     duration: 500,
+      //     opacity: 1,
+      //     rotate: [-30, -30],
+      //     translateY: [0, -10],
+      //   });
+      //
+      //   this.activeAnimations.thirdSectionHyacinthes.play();
+      //   this.activeAnimations.thirdSectionMonsteraLeaves.play();
+      // } else if (this.activeFPIndex == 3) {
       anime({
         targets: "#leaf-3",
         easing: "easeInOutSine",
@@ -1491,9 +1496,9 @@ class Sequencer extends Component {
       this.activeAnimations.firstChrysantheum.pause();
       this.activeAnimations.secondSectionHyacinthes.pause();
     } else if (this.activeFPIndex == 2) {
-    //   this.activeAnimations.thirdSectionHyacinthes.pause();
-    //   this.activeAnimations.thirdSectionMonsteraLeaves.pause();
-    // } else if (this.activeFPIndex == 3) {
+      //   this.activeAnimations.thirdSectionHyacinthes.pause();
+      //   this.activeAnimations.thirdSectionMonsteraLeaves.pause();
+      // } else if (this.activeFPIndex == 3) {
       this.activeAnimations.fourthSectionCarnations.pause();
       this.activeAnimations.fourthSectionChrysantheum.pause();
       this.activeAnimations.fourthSectionMonsteraLeaves.pause();
@@ -1592,33 +1597,32 @@ class Sequencer extends Component {
   }
 
   setOpenControls() {
-    this.setState({openControls: !this.state.openControls})
+    this.setState({ openControls: !this.state.openControls });
   }
 
   setHideBeatpad() {
     if (this.state.hideBeatpad) {
       anime({
-        targets: ['.gridOuter'],
-        easing: 'easeInOutSine',
+        targets: [".gridOuter"],
+        easing: "easeInOutSine",
         duration: 250,
-        opacity:1,
+        opacity: 1,
         delay: 0,
       });
     } else {
       anime({
-        targets: ['.gridOuter'],
-        easing: 'easeInOutSine',
+        targets: [".gridOuter"],
+        easing: "easeInOutSine",
         duration: 250,
-        opacity:0,
+        opacity: 0,
         delay: 0,
       });
     }
-    this.setState({hideBeatpad: !this.state.hideBeatpad})
+    this.setState({ hideBeatpad: !this.state.hideBeatpad });
   }
 
   setShowTutorial() {
-    this.setState({showTutorial: !this.state.showTutorial})
-
+    this.setState({ showTutorial: !this.state.showTutorial });
   }
 
   render() {
@@ -1641,7 +1645,7 @@ class Sequencer extends Component {
       timer,
       tutorialStep,
       volume,
-      openControls
+      openControls,
     } = this.state;
 
     const currentBidAmount =
@@ -1682,7 +1686,6 @@ class Sequencer extends Component {
                 id="video-player-section"
                 data-slideindex="0"
               >
-
                 <FlowerArrangement />
 
                 <Navbar
@@ -1818,50 +1821,54 @@ class Sequencer extends Component {
                       </React.Fragment>
                     )}
                     <div className="song-info-container">
-                      {openControls &&
+                      {openControls && (
                         <div className="controls-container">
-                        <div className="record-container control-item">
-                          <button
-                            className={
-                              this.state.shouldStartRecording ||
-                              this.state.isRecording
-                                ? "button record blink whitePad padWhiteVersion"
-                                : "button record"
-                            }
-                            onClick={() => {
-                              if (this.state.isRecording) {
-                                this.stopRecording();
-                              } else {
-                                this.startRecording();
+                          <div className="record-container control-item">
+                            <button
+                              className={
+                                this.state.shouldStartRecording ||
+                                this.state.isRecording
+                                  ? "button record blink whitePad padWhiteVersion"
+                                  : "button record"
                               }
-                            }}
+                              onClick={() => {
+                                if (this.state.isRecording) {
+                                  this.stopRecording();
+                                } else {
+                                  this.startRecording();
+                                }
+                              }}
+                            >
+                              <div className="circle"></div>
+                              {this.state.isRecording
+                                ? this.state.shouldStopRecording
+                                  ? "Stopping"
+                                  : "Stop Recording"
+                                : "Record"}
+                            </button>
+                            {this.state.isRecording && (
+                              <p className="body-medium yellow-text">
+                                {this.state.recordingStatus}
+                                {this.state.isRecording && <Stopwatch />}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            className={"button record control-item"}
+                            onClick={this.setHideBeatpad.bind(this)}
                           >
-                          <div className="circle"></div>
-                            {this.state.isRecording
-                              ? this.state.shouldStopRecording
-                                ? "Stopping"
-                                : "Stop Recording"
-                              : "Record"}
+                            {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
                           </button>
-                          {this.state.isRecording && <p className="body-medium yellow-text">
-                            {this.state.recordingStatus}
-                            {this.state.isRecording && <Stopwatch/>}
-                          </p>}
+                          <button
+                            className={"button record control-item"}
+                            onClick={this.setShowTutorial.bind(this)}
+                          >
+                            {this.state.showTutorial
+                              ? "Hide Tutorial"
+                              : "Show Tutorial"}
+                          </button>
                         </div>
-                        <button
-                          className={"button record control-item"}
-                          onClick={this.setHideBeatpad.bind(this)}
-                        >
-                          {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
-                        </button>
-                        <button
-                          className={"button record control-item"}
-                          onClick={this.setShowTutorial.bind(this)}
-                        >
-                          {this.state.showTutorial ? "Hide Tutorial" : "Show Tutorial"}
-                        </button>
-                      </div>
-                      }
+                      )}
                       <div className="song-details">
                         <div className="beatPackTitle display-medium">
                           {nft.name}
@@ -2198,7 +2205,6 @@ class Sequencer extends Component {
                 volume={this.state.volume}
                 clearSelections={this.clearSelections}
                 handleShuffle={this.handleShuffle}
-
                 canvas={this.canvas}
                 playing={this.state.playing}
                 setOpenControls={this.setOpenControls.bind(this)}
