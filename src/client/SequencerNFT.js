@@ -922,6 +922,12 @@ class Sequencer extends Component {
 
   }
 
+  handlePlayMix() {
+    const element = document.getElementById('mix-overlay');
+    element.remove()
+    //handle play mix
+  }
+
   render() {
     const {
       pads,
@@ -951,6 +957,11 @@ class Sequencer extends Component {
 
       return (
         <React.StrictMode>
+          <div className="fullscreen-overlay" id="mix-overlay">
+            <button className="metamask-button" onClick={this.handlePlayMix}>
+              Play Mix
+            </button>
+          </div>
           {/* <canvas
             ref={this.cablesCanvas}
             id="glcanvas"
@@ -958,6 +969,7 @@ class Sequencer extends Component {
             height="500"
           ></canvas> */}
           <div className="container scrollbar">
+
             {mediaFileExtension === "mp4" && (
               <div className="video-container opensea">
                 <video

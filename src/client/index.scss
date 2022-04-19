@@ -1575,8 +1575,6 @@ footer {
   }
 }
 
-
-
 .navBar {
   width: 100%;
   display: flex;
@@ -1586,7 +1584,7 @@ footer {
   padding: 30px 80px;
   box-sizing: border-box;
   position: fixed;
-  z-index: 5000;
+  z-index: 1000;
   /* background-color: #1f1f1f; */
   background-color: transparent;
 }
@@ -1619,14 +1617,6 @@ footer {
   height: 13px;
 }
 
-.wallet-container {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  @media only screen and (max-width: 640px) {
-    flex-direction: column;
-  }
-}
 .navBar.white > .signedInWrapper > .walletOuter > .walletAmount {
   color: #222222;
 }
@@ -1708,18 +1698,27 @@ footer {
   cursor: pointer;
 }
 
-#mint-date, #mint-button {
+#mint-date, .wallet-container {
   opacity: 0;
 }
 
-.wallet-container {
-  .cta-button, .metamask-button  {
-    padding: 10px 15px 10px 15px;
+.cta-button, .metamask-button  {
+  &.small {
+    padding: 8px 12px;
     font-size: 12px;
   }
 
+}
+
+
+.wallet-container {
+  display: flex;
+  gap: 16px;
+  // align-items: center;
   @media only screen and (max-width: 414px) {
-    .metamask-button  {
+    gap: 8px;
+
+    #wallet-button  {
       display: none;
     }
   }
@@ -1841,6 +1840,18 @@ footer {
   text-align: left;
 }
 
+.fullscreen-overlay {
+  position: absolute;
+  z-index: 15000;
+  background-color: rgba(31,31,31,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
 .metamask-button {
   background: transparent;
   color: $yellow;
@@ -1884,8 +1895,20 @@ footer {
   font-size: 16px;
   line-height: 16px;
   font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   &.dark {
     border-color: $dark-gray;
+  }
+  &.light-dark {
+    background-color: $mid-gray;
+    border-color: $mid-gray;
+
+  }
+  &.white {
+    background-color: white;
+    border-color: white;
   }
 }
 
@@ -2109,7 +2132,13 @@ footer {
   cursor: auto;
 }
 
-
+.menu-modal-container {
+  padding: 32px;
+}
+.menu-modal-header {
+  display: flex;
+  justify-content: flex-end;
+}
 @media only screen and (max-width: 700px) {
   .mint-modal-container {
     padding: 0 8px;

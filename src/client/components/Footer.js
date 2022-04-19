@@ -14,11 +14,11 @@ import PlayCircleIcon from "../images/PlayCircleIcon.svg";
 import ShuffleCircleIcon from "../images/ShuffleCircleIcon.svg";
 import StopCircleIcon from "../images/StopCircleIcon.svg";
 
-import Discord from "../images/discord.svg";
-import Twitter from "../images/Twitter.svg";
-import Instagram from "../images/Instagram.svg";
+// import Discord from "../images/discord.svg";
+// import Twitter from "../images/Twitter.svg";
+// import Instagram from "../images/Instagram.svg";
+// import Share from "../images/Share.svg";
 
-import Share from "../images/Share.svg";
 import ControlsButton from "./ControlsButton";
 
 export default function Footer(props) {
@@ -172,12 +172,12 @@ export default function Footer(props) {
           >
             SHARE
           </div>
-          )} */}
+          )}
           {showShare && (
             <div style={{ display: "flex", gap: "16px", marginRight:"16px" }}>
-              {/* <a href="https://discord.gg/ykrzXB9ZsV">
+              <a href="https://discord.gg/ykrzXB9ZsV">
                 <div className=""><img src={Discord}/></div>
-              </a> */}
+              </a>
               <a href="https://twitter.com/SecretGarden_FM">
                 <div className="">
                   <img src={Twitter} />
@@ -196,14 +196,14 @@ export default function Footer(props) {
                 <img src={Share} />
               </div>
             </div>
-          )}
+          */}
           {
             hidePlayControls ||
           <div>
             <ControlsButton
-              className=""
+              className={`cta-button small ${openControls ? 'white' : 'light-dark'}`}
               onClick={setOpenControls}
-              fill={openControls ? "#FFF" : "#575757"}
+              fill={openControls ? "#575757" : "#FFF"}
             />
           </div>
         }

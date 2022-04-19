@@ -125,13 +125,6 @@ function Collection(props) {
                 );
               })}
           </div>
-
-          <Footer
-            white={true}
-            showShare={true}
-            hidePlayControls={true}
-            loggedIntoMetamaskOverride={isLoggedIntoMetamask}
-          />
         </div>
       )}
     </React.StrictMode>
