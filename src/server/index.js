@@ -89,7 +89,7 @@ app.post("/api/addEmail", async (req, res) => {
 });
 
 app.get("/api/makeDiscountedSignature", async (req, res) => {
-  const { status, response } = await userController.makeDiscountedSignature(req.query.email);
+  const { status, response } = await userController.makeDiscountedSignature(req.query.address);
 
   res.status(status).send(response);
 });

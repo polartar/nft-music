@@ -52,6 +52,13 @@ export default function Navbar(props) {
       setAddress(address);
       setBalance(await provider.getBalance(address));
 
+      const signatureResponse = await axios.get("/api/makeDiscountedSignature", {
+        params: {
+          address,
+        },
+      });
+      console.log({signatureResponse})
+
       const userResponse = await axios.get("/api/getUser", {
         params: {
           address,
@@ -197,13 +204,13 @@ export default function Navbar(props) {
               Secret Garden
             </a>
             {/*<div className="body-medium yellow-text" id="mint-date">MINTING APRIL 2022</div>*/}
-            {/* <button
+            <button
               id="mint-button"
               className="metamask-button"
               onClick={() => setOpenMint(true)}
             >
               PRE-SALE
-            </button> */}
+            </button>
 
             <MintModal onClose={handleCloseMint} open={openMint} />
 
