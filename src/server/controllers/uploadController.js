@@ -9,7 +9,7 @@ const { Readable, PassThrough } = require("stream");
 const { response } = require("express");
 const { ethers, utils } = require("ethers");
 
-const { fetchTokenOwners } = require("../utility/moralisApi");
+const { fetchOwnerNfts } = require("../utility/moralisApi");
 
 const AWS_ENDPOINT = "sfo2.digitaloceanspaces.com";
 const limiter = new Bottleneck({
@@ -215,33 +215,25 @@ async function saveMix(
   padRecording
 ) {
   console.log("inside uploadController, saving mix...");
-  const tokenOwners = await fetchTokenOwners();
+  // const ownerNfts = await fetchTokenOwners();
+  const ownerNfts = await fetchOwnerNfts(tokenAddress, ownerAddress);
 
-  const address = "0x518e354ca7419b5c9b4d13090321fc9a03e036d5";
+  // const address = "0x518e354ca7419b5c9b4d13090321fc9a03e036d5";
 
-  const ownedTokens = tokenOwners.filter(
-    // token => token.owner_of === ownerAddress.toLowerCase()
-    token => token.owner_of === address.toLowerCase()
-  );
-
-  if (ownedTokens.length > 0) {
+  if (ownerNfts.length > 0) {
     try {
       const verifiedAddress = utils.verifyMessage(ownerAddress, signature);
 
       if (verifiedAddress && verifiedAddress === ownerAddress) {
-        // TODO: remove "exampleTokenId" from query once tokenId implemented
-
-        const existingUserMix = await db.collection("mixes").findOne({
-          address: ownerAddress.toLowerCase(),
-          tokenAddress: tokenAddress || "exampleTokenAddress",
-          tokenId: tokenId || "exampleTokenId"
+        const existingTokenMix = await db.collection("mixes").findOne({
+          tokenAddress: tokenAddress,
+          tokenId: tokenId
         });
 
-        if (!existingUserMix) {
+        if (!existingTokenMix) {
           await db.collection("mixes").insertOne({
-            address: ownerAddress.toLowerCase(),
-            tokenAddress: tokenAddress || "exampleTokenAddress",
-            tokenId: tokenId || "exampleTokenId",
+            tokenAddress: tokenAddress,
+            tokenId: tokenId,
             padRecording: padRecording
           });
 
@@ -252,12 +244,11 @@ async function saveMix(
         } else {
           await db.collection("mixes").updateOne(
             {
-              address: ownerAddress.toLowerCase()
+              tokenAddress: tokenAddress,
+              tokenId: tokenId
             },
             {
               $set: {
-                tokenAddress: tokenAddress || "exampleTokenAddress",
-                tokenId: tokenId || "exampleTokenId",
                 padRecording: padRecording
               }
             },
