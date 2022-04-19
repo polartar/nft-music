@@ -156,7 +156,7 @@ export default function SimpleDialog(props) {
       } else if (mintStatus.data === 'MINT LIST') {
         const signatureResponse = await axios.get("/api/makeDiscountedSignature", {
           params: {
-            address: metamaskAddress,
+            address: metamaskAddress.toLowerCase(),
           },
         });  
         

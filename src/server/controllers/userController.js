@@ -144,28 +144,9 @@ async function addEmail(email) {
   }
 }
 
-async function makeDiscountedSignature(address) {
-  try {
-    const discounthash = soliditySha3(HASH_PREFIX_DISCOUNTED, address);
-    const ownerSignature = EthCrypto.sign(PRIVATE_KEY, discounthash);
-
-    return {
-      status: 200,
-      response: {
-        hash: discounthash,
-        signature: ownerSignature
-      },
-    };
-  } catch (error) {
-    console.log(error);
-    return { status: 400, response: error.toString() };
-  }
-}
-
 module.exports = {
   updateUser,
   getUser,
   getUsers,
-  addEmail,
-  makeDiscountedSignature
+  addEmail
 };

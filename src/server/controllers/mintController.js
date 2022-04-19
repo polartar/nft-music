@@ -110,7 +110,30 @@ async function getMetadata(address, tokenId) {
   }
 }
 
+async function makeDiscountedSignature(address) {
+  const mintStatus = getMintStatusForAddress(address);
+  if (mintStatus.data !== 'MINT LIST') {
+    return { status: 400, response: "invalid user" };
+  }
+  try {
+    const discounthash = soliditySha3(HASH_PREFIX_DISCOUNTED, address);
+    const ownerSignature = EthCrypto.sign(PRIVATE_KEY, discounthash);
+
+    return {
+      status: 200,
+      response: {
+        hash: discounthash,
+        signature: ownerSignature
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
+
 module.exports = {
   getMintStatusForAddress,
   getMetadata,
+  makeDiscountedSignature
 };
