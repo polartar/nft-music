@@ -45,6 +45,7 @@ app.enable("trust proxy");
 const nftController = require("./controllers/nftController");
 const userController = require("./controllers/userController");
 const uploadController = require("./controllers/uploadController");
+const mintController = require("./controllers/mintController");
 
 app.get("/api/metadata/:id", async (req, res) => {
   res.status(200).json({
@@ -53,7 +54,7 @@ app.get("/api/metadata/:id", async (req, res) => {
     external_url: "https://openseacreatures.io/3",
     image:
       "https://storage.googleapis.com/opensea-prod.appspot.com/puffs/3.png",
-    name: "Dave Starbelly"
+    name: "Dave Starbelly",
   });
 });
 
@@ -186,6 +187,23 @@ app.get("/api/getNFTsForOwner", async (req, res) => {
     req.query.chain
   );
 
+  res.status(status).send(response);
+});
+
+// getMintStatusForAddress
+app.get("/api/getMintStatusForAddress", async (req, res) => {
+  const { status, response } = await mintController.getMintStatusForAddress(
+    req.query.address
+  );
+
+  res.status(status).send(response);
+});
+
+app.get("/api/metadata/:address/:id", async (req, res) => {
+  const { status, response } = await mintController.getMetadata(
+    req.params.address,
+    req.params.id
+  );
   res.status(status).send(response);
 });
 
