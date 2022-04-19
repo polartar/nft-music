@@ -868,7 +868,7 @@ class Sequencer extends Component {
               isLoading: false,
             });
             return response.data.padRecording;
-          }, 7000);
+          }, 1000);
         } else {
           console.log("User has no previously saved mix.");
           this.setState({
