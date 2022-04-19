@@ -80,8 +80,8 @@ async function getMetadata(address, tokenId) {
     const formattedMetadata = {
       name: metadata.name,
       description: metadata.description,
-      external_url: `https://secretgarden.fm/${metadata.artistName}/${metadata.name}/${tokenId}`,
-      animation_url: `https://secretgarden.fm/sequencer/${address.toLowerCase()}/${tokenId}`,
+      external_url: `https://secretgarden.fm/bouquet/${metadata.artistName}/${metadata.name}/${tokenId}`,
+      animation_url: `https://secretgarden.fm/bouquetEmbed/${address.toLowerCase()}/${tokenId}`,
       image: metadata.thumbnail,
       attributes: [
         {
