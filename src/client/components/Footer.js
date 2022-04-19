@@ -14,16 +14,17 @@ import PlayCircleIcon from "../images/PlayCircleIcon.svg";
 import ShuffleCircleIcon from "../images/ShuffleCircleIcon.svg";
 import StopCircleIcon from "../images/StopCircleIcon.svg";
 
-import Discord from "../images/discord.svg";
-import Twitter from "../images/Twitter.svg";
-import Instagram from "../images/Instagram.svg";
+// import Discord from "../images/discord.svg";
+// import Twitter from "../images/Twitter.svg";
+// import Instagram from "../images/Instagram.svg";
+// import Share from "../images/Share.svg";
 
-import Share from "../images/Share.svg";
 import ControlsButton from "./ControlsButton";
 
 export default function Footer(props) {
   const {
     loggedIntoMetamaskOverride,
+    hidePlayControls,
     showShare,
     shareURL,
     setVolume,
@@ -118,44 +119,48 @@ export default function Footer(props) {
           }
         >
           {/* {showShare && !isLoggedIntoMetamask && ( */}
-          <div className="play-controls">
-            <div className="stopBtnContainer">
-              <div className="stopBtnWrapper">
-                {playing ? (
-                  <span
-                    style={{ display: "flex", gap: "8px", marginRight: "8px" }}
-                  >
-                    <a href="#" onClick={clearSelections}>
-                      <img src={StopCircleIcon} style={{ height: "35px" }} />
-                    </a>
-                    {/* <a href="#" onClick={handleShuffle}>
-                      <img src={ShuffleCircleIcon} style={{ height: "35px" }} />
-                    </a> */}
-                  </span>
-                ) : (
-                  <a href="#" onClick={playMix}>
-                    <img
-                      src={PlayCircleIcon}
-                      style={{ height: "35px", marginRight: "8px" }}
-                    />
-                  </a>
-                )}
-              </div>
-            </div>
+            {
+              hidePlayControls ||
+              <div className="play-controls">
+                <div className="stopBtnContainer">
+                  <div className="stopBtnWrapper">
+                    {playing ? (
+                      <span
+                        style={{ display: "flex", gap: "8px", marginRight: "8px" }}
+                      >
+                        <a href="#" onClick={clearSelections}>
+                          <img src={StopCircleIcon} style={{ height: "35px" }} />
+                        </a>
+                        {/* <a href="#" onClick={handleShuffle}>
+                          <img src={ShuffleCircleIcon} style={{ height: "35px" }} />
+                        </a> */}
+                      </span>
+                    ) : (
+                      <a href="#" onClick={playMix}>
+                        <img
+                          src={PlayCircleIcon}
+                          style={{ height: "35px", marginRight: "8px" }}
+                        />
+                      </a>
+                    )}
+                  </div>
+                </div>
 
-            <div className="volumeContainer">
-              <div className="volumeWrapper">
-                <ThemeProvider theme={muiTheme}>
-                  <Slider
-                    min={-50}
-                    max={0}
-                    defaultValue={volume}
-                    onChange={(event, newValue) => setVolume(newValue)}
-                  />
-                </ThemeProvider>
+                <div className="volumeContainer">
+                  <div className="volumeWrapper">
+                    <ThemeProvider theme={muiTheme}>
+                      <Slider
+                        min={-50}
+                        max={0}
+                        defaultValue={volume}
+                        onChange={(event, newValue) => setVolume(newValue)}
+                      />
+                    </ThemeProvider>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            }
+
 
           {/* )} */}
 
@@ -167,12 +172,12 @@ export default function Footer(props) {
           >
             SHARE
           </div>
-          )} */}
+          )}
           {showShare && (
-            <div style={{ display: "flex", gap: "16px", marginRight: "16px" }}>
-              {/* <a href="https://discord.gg/ykrzXB9ZsV">
+            <div style={{ display: "flex", gap: "16px", marginRight:"16px" }}>
+              <a href="https://discord.gg/ykrzXB9ZsV">
                 <div className=""><img src={Discord}/></div>
-              </a> */}
+              </a>
               <a href="https://twitter.com/SecretGarden_FM">
                 <div className="">
                   <img src={Twitter} />
@@ -191,14 +196,17 @@ export default function Footer(props) {
                 <img src={Share} />
               </div>
             </div>
-          )}
+          */}
+          {
+            hidePlayControls ||
           <div>
             <ControlsButton
-              className=""
+              className={`cta-button small ${openControls ? 'white' : 'light-dark'}`}
               onClick={setOpenControls}
-              fill={openControls ? "#FFF" : "#575757"}
+              fill={openControls ? "#575757" : "#FFF"}
             />
           </div>
+        }
 
           {/* <button className="button" onClick={() => handleMintMenu()}>
             TO MINT MENU

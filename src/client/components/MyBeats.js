@@ -125,11 +125,6 @@ function Collection(props) {
                 );
               })}
           </div>
-
-          <Footer
-            white={true}
-            loggedIntoMetamaskOverride={isLoggedIntoMetamask}
-          />
         </div>
       )}
     </React.StrictMode>
