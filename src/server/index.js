@@ -184,6 +184,14 @@ app.get("/api/getMintStatusForAddress", async (req, res) => {
   res.status(status).send(response);
 });
 
+app.get("/api/metadata/:address/:id", async (req, res) => {
+  const { status, response } = await mintController.getMetadata(
+    req.params.address,
+    req.params.id
+  );
+  res.status(status).send(response);
+});
+
 app.get("*", (req, res) => {
   res.sendFile(path.resolve("./dist/index.html"));
 });

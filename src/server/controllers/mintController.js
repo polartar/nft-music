@@ -69,6 +69,48 @@ async function getMintStatusForAddress(address) {
   }
 }
 
+async function getMetadata(address, tokenId) {
+  try {
+    tokenId = tokenId.toString();
+
+    const metadata = await db.collection("NFTs").findOne({
+      tokenAddress: address.toLowerCase(),
+    });
+
+    const formattedMetadata = {
+      name: metadata.name,
+      description: metadata.description,
+      external_url: `https://secretgarden.fm/${metadata.artistName}/${metadata.name}/${tokenId}`,
+      animation_url: `https://secretgarden.fm/sequencer/${address.toLowerCase()}/${tokenId}`,
+      image: metadata.thumbnail,
+      attributes: [
+        {
+          trait_type: "Music Artist",
+          value: metadata.artistName,
+        },
+        {
+          trait_type: "Visual Artist",
+          value: metadata.visualArtistName,
+        },
+        {
+          trait_type: "Beats Per Minute",
+          value: metadata.bpm,
+        },
+        {
+          trait_type: "Key",
+          value: metadata.key,
+        },
+      ],
+    };
+
+    return { status: 200, response: formattedMetadata };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
+
 module.exports = {
   getMintStatusForAddress,
+  getMetadata,
 };
