@@ -856,6 +856,8 @@ class Sequencer extends Component {
           tokenAddress,
           tokenId,
         },
+        xsrfCookieName: null,
+        withCredentials: false,
       })
       .then((response) => {
         if (response.data.padRecording) {
