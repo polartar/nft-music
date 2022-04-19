@@ -36,7 +36,7 @@ export default function Footer(props) {
     handleShuffle,
     playMix,
     setOpenControls,
-    openControls
+    openControls,
   } = props;
   const [loaded, setLoaded] = useState(false);
   const [address, setAddress] = useState();
@@ -131,9 +131,9 @@ export default function Footer(props) {
                         <a href="#" onClick={clearSelections}>
                           <img src={StopCircleIcon} style={{ height: "35px" }} />
                         </a>
-                        <a href="#" onClick={handleShuffle}>
+                        {/* <a href="#" onClick={handleShuffle}>
                           <img src={ShuffleCircleIcon} style={{ height: "35px" }} />
-                        </a>
+                        </a> */}
                       </span>
                     ) : (
                       <a href="#" onClick={playMix}>

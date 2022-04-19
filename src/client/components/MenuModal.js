@@ -23,6 +23,7 @@ import Dialog from "@material-ui/core/Dialog";
 import CloseIcon from '@mui/icons-material/Close';
 import AlbumArt from "../images/albumArt.png";
 import InstaPic from "../images/instaPic.png";
+import Wallet from "../images/wallet.png";
 
 import Telegram from "../images/telegram.png";
 import Messenger from "../images/messenger.png";
@@ -97,81 +98,13 @@ const useStyles = makeStyles({
 
 export default function SimpleDialog(props) {
   const classes = useStyles();
-  const { onClose, open, shareURL, loggedIntoMetamaskOverride, didConnectWallet } = props;
-  const [text, setText] = React.useState("Copy Link");
-  const [metamaskAddress, setMetamaskAddress] = React.useState(null);
-  const [transactionHash, setTransactionHash] = React.useState("OX1892AKSD3981120030039");
+  const { onClose, open, shareURL, loggedIntoMetamaskOverride, isLoggedIntoMetamask, didConnectWallet, connectWallet, balance, displayName } = props;
+
   const [openShare, setOpenShare] = useState(false);
-
-  const [isMinting, setIsMinting] = React.useState(false);
-  const [didMint, setDidMint] = React.useState(false);
-
-  const mintPrice = 0.5;
-  const editionsMinted = 0.5;
-  const nextPriceDropDate = "4/12";
-  const priceDropAmount = 0.1;
-  const currentNFT = "Sunday Journal";
-  const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
-
-  const initWallet = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-    const accounts = await provider.listAccounts();
-
-    if (accounts.length > 0) {
-      setIsLoggedIntoMetamask(true);
-      setProvider(provider);
-
-      const address = await provider.getSigner(0).getAddress();
-      setAddress(address);
-      setBalance(await provider.getBalance(address));
-
-      const userResponse = await axios.get("/api/getUser", {
-        params: {
-          address
-        }
-      });
-
-      if (userResponse.data.name) {
-        setDisplayName(userResponse.data.name);
-      } else {
-        setDisplayName(address);
-      }
-    }
-  };
-
-  const connectWallet = async () => {
-    await window.ethereum.enable();
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const address = await provider.getSigner(0).getAddress();
-
-    setIsLoggedIntoMetamask(true);
-    setProvider(provider);
-    setAddress(address);
-    setBalance(await provider.getBalance(address));
-
-    if (didConnectWallet) {
-      didConnectWallet();
-    }
-  };
 
   const handleCloseShare = () => {
     setOpenShare(false);
   };
-
-  useEffect(() => {
-    initWallet();
-  }, [loggedIntoMetamaskOverride]);
-
-
-  useEffect(() => {
-    if (open) {
-      setText("Copy Link");
-    }
-
-
-  }, [open]);
 
   return (
     <Dialog
@@ -191,8 +124,7 @@ export default function SimpleDialog(props) {
       </div>
       <div className="menu-modal-body">
         <div style={{textAlign:"center"}}>
-          <p className="body-large white-text">My Collection</p>
-          <p className="body-large white-text">Profile</p>
+
             {!isLoggedIntoMetamask && (
               <button onClick={connectWallet} className="metamask-button">
                 CONNECT WALLET
@@ -200,17 +132,23 @@ export default function SimpleDialog(props) {
             )}
 
             {isLoggedIntoMetamask && (
-              <div className="signedInWrapper">
-                <div className="walletOuter">
-                  <img src={Wallet} className="wallet" />
-                  <span className="walletAmount">{`${parseFloat(
-                    utils.formatEther(balance)
-                  ).toFixed(4)} ETH`}</span>
-                </div>
-                <a href="/profile">
-                  <div className="userName">{displayName}</div>
-                </a>
-              </div>
+              <React.Fragment>
+                <p className="body-large white-text">My Collection</p>
+                <p className="body-large white-text">Profile</p>
+
+                    <div className="walletOuter">
+                      <img src={Wallet} className="wallet" />
+                      <span className="walletAmount">{`${parseFloat(
+                        utils.formatEther(balance)
+                      ).toFixed(4)} ETH`}</span>
+                    </div>
+                    <br/>
+                    <a href="/profile">
+                      <div className="userName">{displayName}</div>
+                    </a>
+
+              </React.Fragment>
+
             )}
             <br/><br/>
           <div style={{ display: "inline-flex", gap: "16px" }}>
