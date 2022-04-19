@@ -118,7 +118,24 @@ export default function SimpleDialog(props) {
 
 
   }, [open]);
-  
+  const checkNetwork = async () => {
+    const currentChainId = await window.ethereum.request({
+      method: 'eth_chainId',
+    });
+
+    if (currentChainId !== '0x1' && currentChainId !== '0x4') {
+      switchNetwork('0x4');
+    }
+  }
+  const switchNetwork = async (targetNetworkId) => {
+    console.log({targetNetworkId})
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: targetNetworkId }],
+    });
+    // refresh
+    window.location.reload();
+  };
 
   const handleMint = async () => {
     setIsMinting(true)
@@ -144,7 +161,7 @@ export default function SimpleDialog(props) {
         });  
         
         if (signatureResponse.status === 200) {
-          await contract.mintWhitelistDiscounted(signatureResponse.data.hash, signatureResponse.data.signature, 1, {value: parseEther("0.5")});
+          await contract.mintWhitelistDiscounted(signatureResponse.data.hash, signatureResponse.data.signature, 1, {value: parseEther("0.75")});
         }
       } else if (mintStatus.data === 'CAPSULE HOUSE') {
         await contract.mintPublic(1, {value: parseEther("0.2")});
