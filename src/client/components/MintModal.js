@@ -152,7 +152,7 @@ export default function SimpleDialog(props) {
       const contract = new Contract(auctionAddress, AuctionABI, signer);
       
       if (mintStatus.data === 'PUBLIC') {
-        await contract.mintPublic(1, {value: parseEther("5")});
+        await contract.mintPublic(1, {value: parseEther("0.05")});
       } else if (mintStatus.data === 'MINT LIST') {
         const signatureResponse = await axios.get("/api/makeDiscountedSignature", {
           params: {
@@ -161,7 +161,7 @@ export default function SimpleDialog(props) {
         });  
         
         if (signatureResponse.status === 200) {
-          await contract.mintWhitelistDiscounted(signatureResponse.data.hash, signatureResponse.data.signature, 1, {value: parseEther("0.75")});
+          await contract.mintWhitelistDiscounted(signatureResponse.data.hash, signatureResponse.data.signature, 1, {value: parseEther("0.0075")});
         }
       } else if (mintStatus.data === 'CAPSULE HOUSE') {
         await contract.mintPublic(1, {value: parseEther("0.2")});
