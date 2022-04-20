@@ -2,6 +2,7 @@ const { MongoClient, ObjectId } = require("mongodb");
 const config = require("../config.json");
 const userController = require("./userController");
 const axios = require("axios");
+const CHAIN = process.env.CHAIN ? process.env.CHAIN : "rinkeby";
 
 // connect to our mongodb database
 async function connectToDatabase() {
@@ -191,7 +192,7 @@ async function getOrdersForNFT(nftID, useTestnet) {
 async function getNFTsForOwner(tokenAddress, ownerAddress, chain) {
   try {
     const nftIdResponse = await axios.get(
-      `https://deep-index.moralis.io/api/v2/${ownerAddress}/nft/${tokenAddress}?chain=${chain}`,
+      `https://deep-index.moralis.io/api/v2/${ownerAddress}/nft/${tokenAddress}?chain=${CHAIN}`,
       {
         headers: {
           "X-API-KEY":

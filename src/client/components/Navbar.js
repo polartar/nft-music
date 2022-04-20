@@ -126,8 +126,6 @@ export default function Navbar(props) {
     });
   }, [loaded]);
 
-  console.log(nft);
-
   return (
     <React.Fragment>
       {loaded && (

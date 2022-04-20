@@ -79,7 +79,7 @@ function Collection(props) {
         <div className="containerDirectory scrollBar">
           <Navbar white={true} didConnectWallet={refreshData} />
           <div className="directoryBody">
-            <div className="currentAuctionTitle">{`${displayName}'s Collection`}</div>
+            {/* <div className="currentAuctionTitle">{`${displayName}'s Collection`}</div> */}
             {nfts.length === 0 && (
               <div className="currentAuctionTitle">
                 This user currently has no stem packs in their collection.
@@ -117,7 +117,7 @@ function Collection(props) {
                         {nft.artistName}
                       </div>
                       <div className="editionSold">
-                        <div className="editionSoldText">{`Edition: #${nft.edition}`}</div>
+                        <div className="editionSoldText">{`Edition: #${nft.tokenId}`}</div>
                       </div>
                       {/* <div className="editionSold boughtFor">
                         <div className="editionSoldText">{`Bought for: ${nft.saleAmount?.toFixed(
