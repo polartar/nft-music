@@ -206,7 +206,7 @@ export default function SimpleDialog(props) {
 
   const canMint = () => {
     return publicMinted + mintInfo.whitelistMinted < mintInfo.publicLimitPerWallet &&
-          publicTotalMinted < publicTotalLimit;
+          totalPublicMinted < mintInfo.publicTotalLimit;
   }
 
   const initializePrice = async() => {
