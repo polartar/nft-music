@@ -100,8 +100,14 @@ export default function SimpleDialog(props) {
   const [isMinting, setIsMinting] = React.useState(false);
   const [didMint, setDidMint] = React.useState(false);
   const [currentPrice, setCurrentPrice] = useState();
-  const [totalMinted, setTotalMinted] = useState(0);
+  const [publicMinted, setPublicMinted] = useState(0);
+  const [totalPublicMinted, setTotalPublicMinted] = useState(0);
   const [mintStatus, setMintStatus] = useState("");
+  const [mintInfo, setMintInfo] = useState({
+    whitelistMinted: 0,
+    publicLimitPerWallet: 0,
+    publicTotalLimit: 0
+  })
   const [contract, setContract] = useState(null);
 
   const priceDropAmount = "Public auction drops 0.0125 ETH every 15 minutes";
@@ -163,6 +169,8 @@ export default function SimpleDialog(props) {
         setMintStatus(mintStatusResponse.data);
       }
     }
+   
+    getMintBalances();
 
     getStatus();
   }, [metamaskAddress]);
@@ -173,7 +181,36 @@ export default function SimpleDialog(props) {
     initializePrice();
   }, [mintStatus]);
 
-  const initializePrice = async () => {
+  const getMintBalances = async() => {
+    let instance = contract;
+    if (!instance) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner(0);
+      
+      instance = new Contract(auctionAddress, AuctionABI, signer);
+    }
+
+    const amount = await instance.getPublicMinted();
+    const totalAmount = await instance.publicTotalMinted();
+    const whitelistAmount = await instance.getWhitelistMinted();
+    const publicLimitPerWallet = await instance.publicListMaxMint();
+    const publicTotalLimit = await instance.publicTotalMaxMint();
+
+    setPublicMinted(amount.toNumber());
+    setTotalPublicMinted(totalAmount.toNumber())
+    setMintInfo({
+      whitelistMinted: whitelistAmount,
+      publicLimitPerWallet,
+      publicTotalLimit
+    })
+  }
+
+  const canMint = () => {
+    return publicMinted + mintInfo.whitelistMinted < mintInfo.publicLimitPerWallet &&
+          totalPublicMinted < mintInfo.publicTotalLimit;
+  }
+
+  const initializePrice = async() => {
     let price;
     if (mintStatus === "PUBLIC") {
       if (!contract) return;
@@ -243,6 +280,8 @@ export default function SimpleDialog(props) {
 
       setTransactionHash(tx.hash);
       await tx.wait();
+      setPublicMinted(publicMinted + 1);
+      setTotalPublicMinted(totalPublicMinted + 1);
       setDidMint(true);
     } catch (err) {
       console.log({ err });
@@ -364,6 +403,13 @@ export default function SimpleDialog(props) {
 
                 {didMint ? (
                   <React.Fragment>
+                    <button className="cta-button" onClick={handleMint} disabled={(metamaskAddress && !isMinting) && contract ? false : true}>BUY NOW - {currentPrice}ETH</button>
+                    <div style={{height:"44px"}}/>
+                    <p className="body-medium yellowish-gray-text text-uppercase">Mint Status: <b>{mintStatus}</b></p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">Total Editions Minted: <b>{publicMinted}</b></p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">Total Public Editions Minted: <b>{totalPublicMinted}</b></p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">Next Price Drop: <b>{nextPriceDropDate}</b> </p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">Price Drop Aount: <b>{priceDropAmount}</b> </p>
                     <p className="body-medium yellowish-gray-text text-uppercase">
                       Transaction Hash
                     </p>
@@ -378,7 +424,8 @@ export default function SimpleDialog(props) {
                         className="cta-button"
                         onClick={handleMint}
                         disabled={
-                          metamaskAddress && !isMinting && contract
+                          (metamaskAddress && !isMinting && contract) && 
+                          ((mintStatus === 'PUBLIC' && canMint()) || (mintStatus !== 'PUBLIC'))
                             ? false
                             : true
                         }
@@ -393,7 +440,7 @@ export default function SimpleDialog(props) {
                       </p>
                     )}
                     <p className="body-medium yellowish-gray-text text-uppercase">
-                      Total Editions Minted: <b>{totalMinted}</b>
+                      Total Editions Minted: <b>{publicMinted}</b>
                     </p>
                     {mintStatus === "PUBLIC" && (
                       <>
