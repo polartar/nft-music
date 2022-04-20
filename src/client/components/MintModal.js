@@ -109,6 +109,7 @@ export default function SimpleDialog(props) {
     publicTotalLimit: 0,
   });
   const [contract, setContract] = useState(null);
+  const [totalSupply, setTotalSupply] = useState(0);
 
   const priceDropAmount = "Public auction drops 0.0125 ETH every 15 minutes";
   const currentNFT = "Sunday Journal";
@@ -190,20 +191,24 @@ export default function SimpleDialog(props) {
       instance = new Contract(auctionAddress, AuctionABI, signer);
     }
 
-    const amount = await instance.getPublicMinted();
+    const myPublicAmountMinted = await instance.getPublicMinted();
+    const myWhitelistAmountMinted = await instance.getWhitelistMinted();
     const totalAmount = await instance.publicTotalMinted();
+    const totalSupply = await instance.totalSupply();
     const whitelistAmount = await instance.getWhitelistMinted();
     const publicLimitPerWallet = await instance.publicListMaxMint();
     const publicTotalLimit = await instance.publicTotalMaxMint();
 
-    setPublicMinted(amount.toNumber());
-    console.log(amount);
+    setPublicMinted(
+      myPublicAmountMinted.toNumber() + myWhitelistAmountMinted.toNumber()
+    );
     setTotalPublicMinted(totalAmount.toNumber());
     setMintInfo({
       whitelistMinted: whitelistAmount,
       publicLimitPerWallet,
       publicTotalLimit,
     });
+    setTotalSupply(totalSupply.toNumber());
   };
 
   const canMint = () => {
@@ -413,14 +418,14 @@ export default function SimpleDialog(props) {
                         metamaskAddress && !isMinting && contract ? false : true
                       }
                     >
-                      BUY NOW - {currentPrice}ETH
+                      MINT - {currentPrice} ETH
                     </button>
                     <div style={{ height: "44px" }} />
                     <p className="body-medium yellowish-gray-text text-uppercase">
                       Mint Status: <b>{mintStatus}</b>
                     </p>
                     <p className="body-medium yellowish-gray-text text-uppercase">
-                      Total Editions Minted: <b>{publicMinted}</b>
+                      Total Editions Minted: <b>{totalSupply}</b>
                     </p>
                     <p className="body-medium yellowish-gray-text text-uppercase">
                       Total Public Editions Minted: <b>{totalPublicMinted}</b>
@@ -429,7 +434,7 @@ export default function SimpleDialog(props) {
                       Next Price Drop: <b>{nextPriceDropDate}</b>{" "}
                     </p>
                     <p className="body-medium yellowish-gray-text text-uppercase">
-                      Price Drop Aount: <b>{priceDropAmount}</b>{" "}
+                      Price Drop Amount: <b>{priceDropAmount}</b>{" "}
                     </p>
                     <p className="body-medium yellowish-gray-text text-uppercase">
                       Transaction Hash
@@ -458,13 +463,20 @@ export default function SimpleDialog(props) {
                       </button>
                     )}
                     <div style={{ height: "44px" }} />
+                    <p className="body-medium yellowish-gray-text text-uppercase">
+                      <b>Limit 1 per wallet</b>
+                    </p>
                     {metamaskAddress && (
                       <p className="body-medium yellowish-gray-text text-uppercase">
                         Mint Status: <b>{mintStatus}</b>
                       </p>
                     )}
+
                     <p className="body-medium yellowish-gray-text text-uppercase">
-                      Total Editions Minted: <b>{publicMinted}</b>
+                      Total Editions Minted: <b>{totalSupply}</b>
+                    </p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">
+                      Total Public Editions Minted: <b>{totalPublicMinted}</b>
                     </p>
                     {mintStatus === "PUBLIC" && (
                       <>
