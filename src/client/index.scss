@@ -16,6 +16,9 @@ $footer-height: 58px;
 $yellow: #e4f0a8;
 $yellowish-gray: #8F8F8A;
 $error: #F0A8A8;
+$dark-gray: #1F1F1F;
+$mid-gray: #353535;
+
 /* #UTILS - START */
 
 .display-large {
@@ -617,7 +620,7 @@ input[type="number"] {
 
 .wordLogo {
   font-size: 20px;
-  color: $yellow;
+  color: $yellowish-gray;
   text-transform: uppercase;
   font-family: "Bentham", serif;
   /* margin-top: 100px; */
@@ -1572,8 +1575,6 @@ footer {
   }
 }
 
-
-
 .navBar {
   width: 100%;
   display: flex;
@@ -1583,12 +1584,13 @@ footer {
   padding: 30px 80px;
   box-sizing: border-box;
   position: fixed;
-  z-index: 5000;
+  z-index: 1000;
   /* background-color: #1f1f1f; */
   background-color: transparent;
 }
 .navBar.white {
-  background-color: #f2f2f2;
+  // background-color: #f2f2f2;
+  background: transparent;
 }
 .scrollBar {
   -ms-overflow-style: none;
@@ -1608,18 +1610,13 @@ footer {
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 16px;
 }
 .wallet {
   width: 19px;
   height: 13px;
 }
 
-.wallet-container {
-  display: flex;
-  @media only screen and (max-width: 640px) {
-    flex-direction: column;
-  }
-}
 .navBar.white > .signedInWrapper > .walletOuter > .walletAmount {
   color: #222222;
 }
@@ -1639,15 +1636,16 @@ footer {
 .walletOuter {
   border: solid 1px white;
   border-radius: 15px;
-  width: 153px;
-  max-width: 153px;
+  // width: 153px;
+  // max-width: 153px;
   height: 30px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  // justify-content: space-between;
+  gap: 16px;
   padding-left: 15px;
   padding-right: 15px;
-  transform: scale(0.8);
+  // transform: scale(0.8);
 }
 .userName {
   font-family: "Rubik", sans-serif;
@@ -1700,15 +1698,32 @@ footer {
   cursor: pointer;
 }
 
-#mint-date, #mint-button {
+#mint-date, .wallet-container {
   opacity: 0;
 }
 
-#mint-button {
-  padding: 10px 15px 10px 15px;
-  border-radius: 15px;
-  font-size: 11px;
+.cta-button, .metamask-button  {
+  &.small {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
 }
+
+
+.wallet-container {
+  display: flex;
+  gap: 16px;
+  // align-items: center;
+  @media only screen and (max-width: 414px) {
+    gap: 8px;
+
+    #wallet-button  {
+      display: none;
+    }
+  }
+}
+
 @media only screen and (max-width: 1100px) {
   .timer {
     display: none;
@@ -1718,7 +1733,7 @@ footer {
   }
 }
 @media only screen and (max-width: 700px) {
-  .signedInWrapper {
+  #signedInWrapper {
     display: none;
   }
   .navBar {
@@ -1765,8 +1780,8 @@ footer {
   margin-top: 0;
   z-index: 1200;
   @media only screen and (max-width: 700px) {
-    top: 30%;
-    transform: translate(-50%, -30%) rotate(45deg) scale(0.9);
+    top: 41%;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0.9);
   }
 }
 
@@ -1780,8 +1795,8 @@ footer {
   // left: 190px;
   // margin-top: 300px;
   @media only screen and (max-width: 700px) {
-    top: 30%;
-    transform: translate(-50%, -30%) rotate(45deg) scale(0.9);
+    top: 41%;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0.9);
   }
   margin-top: 0px;
   left: 50%;
@@ -1825,6 +1840,18 @@ footer {
   text-align: left;
 }
 
+.fullscreen-overlay {
+  position: absolute;
+  z-index: 15000;
+  background-color: rgba(31,31,31,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
 .metamask-button {
   background: transparent;
   color: $yellow;
@@ -1850,6 +1877,10 @@ footer {
      border: none;
    }
  }
+ &.dark {
+   color: $dark-gray;
+   border-color: $dark-gray;
+ }
 }
 
 .cta-button {
@@ -1864,7 +1895,21 @@ footer {
   font-size: 16px;
   line-height: 16px;
   font-weight: bold;
-  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  &.dark {
+    border-color: $dark-gray;
+  }
+  &.light-dark {
+    background-color: $mid-gray;
+    border-color: $mid-gray;
+
+  }
+  &.white {
+    background-color: white;
+    border-color: white;
+  }
 }
 
 .cta-button:disabled, .cta-button[disabled] {
@@ -2087,7 +2132,13 @@ footer {
   cursor: auto;
 }
 
-
+.menu-modal-container {
+  padding: 32px;
+}
+.menu-modal-header {
+  display: flex;
+  justify-content: flex-end;
+}
 @media only screen and (max-width: 700px) {
   .mint-modal-container {
     padding: 0 8px;

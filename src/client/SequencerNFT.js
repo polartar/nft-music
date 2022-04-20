@@ -11,6 +11,7 @@ import StopCircleIcon from "@mui/icons-material/StopCircle";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import Footer from "./components/Footer";
+import anime from "animejs/lib/anime.es.js";
 
 const sixBySixThreeGroups = [
   [
@@ -204,7 +205,9 @@ class Sequencer extends Component {
     signer: null,
     repeat: false,
     endOfPlayback: false,
-    isLoading: false
+    isLoading: false,
+    openControls: false,
+    hideBeatpad: false
   };
 
   constructor(props) {
@@ -462,6 +465,7 @@ class Sequencer extends Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
+
     if (prevState.nft !== this.state.nft && this.state.nft) {
       console.log("this.state.nft: ", this.state.nft);
       this.getMix(this.state.nft.tokenAddress, this.state.nft.tokenId);
@@ -888,6 +892,42 @@ class Sequencer extends Component {
     }
   };
 
+  setOpenControls() {
+    this.setState({openControls: !this.state.openControls})
+  }
+
+  setHideBeatpad() {
+    if (this.state.hideBeatpad) {
+      anime({
+        targets: ['.gridOuter'],
+        easing: 'easeInOutSine',
+        duration: 250,
+        opacity:1,
+        delay: 0,
+      });
+    } else {
+      anime({
+        targets: ['.gridOuter'],
+        easing: 'easeInOutSine',
+        duration: 250,
+        opacity:0,
+        delay: 0,
+      });
+    }
+    this.setState({hideBeatpad: !this.state.hideBeatpad})
+  }
+
+  setShowTutorial() {
+    this.setState({showTutorial: !this.state.showTutorial})
+
+  }
+
+  handlePlayMix() {
+    const element = document.getElementById('mix-overlay');
+    element.remove()
+    //handle play mix
+  }
+
   render() {
     const {
       pads,
@@ -904,7 +944,8 @@ class Sequencer extends Component {
       padFormatStyleClass,
       shareablePadNumbers,
       showTutorial,
-      tutorialStep
+      tutorialStep,
+      openControls
     } = this.state;
 
     // Set up active sounds limit
@@ -916,6 +957,11 @@ class Sequencer extends Component {
 
       return (
         <React.StrictMode>
+          <div className="fullscreen-overlay" id="mix-overlay">
+            <button className="metamask-button" onClick={this.handlePlayMix}>
+              Play Mix
+            </button>
+          </div>
           {/* <canvas
             ref={this.cablesCanvas}
             id="glcanvas"
@@ -923,6 +969,7 @@ class Sequencer extends Component {
             height="500"
           ></canvas> */}
           <div className="container scrollbar">
+
             {mediaFileExtension === "mp4" && (
               <div className="video-container opensea">
                 <video
@@ -1007,7 +1054,34 @@ class Sequencer extends Component {
                 });
               })}
             </div>
+            {openControls &&
+              <div className="song-info-wrapper" style={{paddingBottom:"58px"}}>
+                <div className="song-info-container">
+
+              <div className="controls-container">
+              <button
+                className={"button record control-item"}
+                onClick={this.setHideBeatpad.bind(this)}
+              >
+                {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
+              </button>
+              <button
+                className={"button record control-item"}
+                onClick={this.setShowTutorial.bind(this)}
+              >
+                {this.state.showTutorial ? "Hide Tutorial" : "Show Tutorial"}
+              </button>
+            </div>
+            <div className="song-details">
+
+            </div>
           </div>
+
+        </div>
+
+            }
+          </div>
+
           <div
             onClick={() => console.log("this.state.pads: ", this.state.pads)}
           >
@@ -1024,6 +1098,8 @@ class Sequencer extends Component {
             canvas={this.canvas}
             playing={this.state.playing}
             playMix={this.playMix}
+            setOpenControls={this.setOpenControls.bind(this)}
+            openControls={openControls}
           />
         </React.StrictMode>
       );
