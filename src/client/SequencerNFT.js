@@ -819,16 +819,47 @@ class Sequencer extends Component {
   }
 
   playbackRecording(padRecording, callback) {
+    // this.clearSelections();
+    let highestId = window.setTimeout(() => {
+      for (let i = highestId; i >= 0; i--) {
+        window.clearInterval(i);
+      }
+    }, 0);
+
+    Tone.Transport.stop();
+
+    const updatedPads = {};
+    const updatedQueue = {};
+
+    Object.keys(this.players).forEach(group => {
+      updatedPads[group] = [];
+      this.players[group].forEach((_, soundIndex) => {
+        updatedPads[group][soundIndex] = 0;
+        updatedQueue[group] = [];
+      });
+    });
+
+    // update queue and se
     this.setState({
+      pads: updatedPads,
+      playing: false,
+      queue: updatedQueue,
+      shareablePadNumbers: [],
+      totalSoundsPlaying: 0,
+      // step: 0, // reset step count to 0,
+      step: this.state.steps - 1, // reset step count to 0,
       isPlayingBack: true
     });
 
-    if (!this.state.repeat) {
-      // reset step so that playback isn't dependent on waiting for "next loop"
-      this.setState({
-        step: 0
-      });
+    for (const group in this.activePlayers) {
+      if (this.activePlayers[group].length > 0) {
+        // loop to stop active pads instead of entire player list
+        for (let i = 0; i < this.activePlayers[group].length; i++) {
+          this.players[group][this.activePlayers[group][i]].stop();
+        }
+      }
     }
+    // end clear pads work
 
     for (let i = 0; i <= padRecording.length - 1; i++) {
       setTimeout(() => {
@@ -839,7 +870,6 @@ class Sequencer extends Component {
         // }, padRecording[i][2] + (padRecording[i - 1] ? padRecording[i - 1][2] : padRecording[0][2]));
         if (i === padRecording.length - 1) {
           this.setState({
-            isPlayingBack: false,
             endOfPlayback: true
           });
         }
