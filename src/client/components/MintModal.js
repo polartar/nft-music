@@ -450,6 +450,8 @@ export default function SimpleDialog(props) {
                 ) : (
                   <React.Fragment>
                     {mintStatus !== "CAPSULE HOUSE" && metamaskAddress && (
+                      <React.Fragment>
+
                       <button
                         className="cta-button"
                         onClick={handleMint}
@@ -465,6 +467,8 @@ export default function SimpleDialog(props) {
                       >
                         BUY NOW - {currentPrice} ETH
                       </button>
+                      <p className="body-medium yellowish-gray-text">By clicking Buy Now, you agree to our&nbsp;<a className="white-text" href="https://secretgarden.fm/tos" target="_blank">Terms of Service</a></p>
+                      </React.Fragment>
                     )}
                     <div style={{ height: "44px" }} />
                     <p className="body-medium yellowish-gray-text text-uppercase">

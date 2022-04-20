@@ -1299,6 +1299,28 @@ class Sequencer extends Component {
             didCompleteBid={this.fetchNFT}
             currentBidAmount={currentBidAmount}
           />
+          <div className="fullscreen-overlay" id="mix-overlay">
+            {/* <button className="metamask-button" onClick={this.handlePlayMix}> */}
+            <button
+              className="metamask-button"
+              onClick={() => {
+                const element = document.getElementById("mix-overlay");
+                element.remove();
+                //handle play mix
+                if (this.state.padRecording.length > 0) {
+                  this.setState({
+                    repeat: true
+                  });
+
+                  this.playbackRecording(this.state.padRecording, pad =>
+                    this.togglePad(pad[0], pad[1])
+                  );
+                }
+              }}
+            >
+              Play Mix
+            </button>
+          </div>
           {/* <canvas
             ref={this.cablesCanvas}
             id="glcanvas"
