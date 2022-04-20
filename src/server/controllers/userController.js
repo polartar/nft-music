@@ -5,8 +5,7 @@ const { useRadioGroup } = require("@material-ui/core");
 const { soliditySha3 } = require("web3-utils");
 const EthCrypto = require("eth-crypto");
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const HASH_PREFIX_DISCOUNTED =
-  "Leveling Up Heroes Epic Discounted Verification:";
+const HASH_PREFIX_DISCOUNTED = "Sunday Journal Discounted Verification:";
 // connect to our mongodb database
 async function connectToDatabase() {
   let params = {};

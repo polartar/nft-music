@@ -108,6 +108,7 @@ export default function SimpleDialog(props) {
     connectWallet,
     balance,
     displayName,
+    tokenAddress,
   } = props;
 
   const [openShare, setOpenShare] = useState(false);
@@ -150,10 +151,9 @@ export default function SimpleDialog(props) {
 
             {isLoggedIntoMetamask && (
               <React.Fragment>
-                <p href="/collection/" className="body-large white-text">
-                  My Collection
+                <p className="body-large white-text">
+                  <a href={`/collection/${tokenAddress}`}>My Collection</a>
                 </p>
-                // <p className="body-large white-text">Profile</p>
                 <div className="walletOuter">
                   <img src={Wallet} className="wallet" />
                   <span className="walletAmount">{`${parseFloat(
