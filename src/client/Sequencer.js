@@ -102,7 +102,8 @@ class Sequencer extends Component {
     endOfPlayback: false,
     isLoading: false,
     openControls: false,
-    hideBeatpad: false
+    hideBeatpad: false,
+    isOwner: false
   };
 
   constructor(props) {
@@ -573,7 +574,7 @@ class Sequencer extends Component {
     document.body.appendChild(script);
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  async componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevState.openControls !== this.state.openControls) {
       anime({
         targets: [".record-container"],
@@ -602,6 +603,33 @@ class Sequencer extends Component {
       this.playbackRecording(this.state.padRecording, pad =>
         this.togglePad(pad[0], pad[1])
       );
+    }
+
+    if (
+      prevState.address !== this.state.address &&
+      this.state.address &&
+      this.state.nft
+    ) {
+      await axios
+        .get("/api/getNFTsForOwner", {
+          params: {
+            collection: this.state.nft.tokenAddress,
+            owner: this.state.address,
+            chain: "rinkeby"
+          }
+        })
+        .then(response => {
+          console.log("response: ", response);
+          if (
+            response.data.some(
+              nft => nft.tokenId === props.match.params.edition
+            )
+          ) {
+            this.setState({
+              isOwner: true
+            });
+          }
+        });
     }
   }
 
@@ -1174,10 +1202,6 @@ class Sequencer extends Component {
     this.setState({ showTutorial: !this.state.showTutorial });
   }
 
-  userOwnsThisToken() {
-    return this.state.address === this.state.nft.ownerAddress;
-  }
-
   render() {
     const {
       pads,
@@ -1421,7 +1445,7 @@ class Sequencer extends Component {
                                   alignItems: "center"
                                 }}
                               >
-                                {this.userOwnsThisToken() &&
+                                {this.state.isOwner &&
                                 this.shouldRenderPostRecording() ? (
                                   <button
                                     className="button record"
@@ -1441,7 +1465,7 @@ class Sequencer extends Component {
                                     {this.state.isRecording && <Stopwatch />}
                                   </div>
                                 )}
-                                {this.userOwnsThisToken() && (
+                                {this.state.isOwner && (
                                   <button
                                     className={
                                       this.state.shouldStartRecording ||
@@ -1482,7 +1506,7 @@ class Sequencer extends Component {
                                   width: "100%"
                                 }}
                               >
-                                {this.userOwnsThisToken() &&
+                                {this.state.isOwner &&
                                   this.shouldRenderPostRecording() && (
                                     <button
                                       style={{
@@ -1501,7 +1525,7 @@ class Sequencer extends Component {
                                       Save Mix
                                     </button>
                                   )}
-                                {this.userOwnsThisToken() && (
+                                {this.state.isOwner && (
                                   <button
                                     style={{
                                       visibility: this.shouldRenderPostRecording()
