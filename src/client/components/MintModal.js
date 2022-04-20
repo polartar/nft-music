@@ -104,6 +104,7 @@ export default function SimpleDialog(props) {
   const [didMint, setDidMint] = React.useState(false);
   const [currentPrice, setCurrentPrice] = useState();
   const [totalMinted, setTotalMinted] = useState(0);
+  const [totalPublicMinted, setTotalPublicMinted] = useState(0);
   const [mintStatus, setMintStatus] = useState("");
   const [contract, setContract] = useState(null);
 
@@ -145,7 +146,8 @@ export default function SimpleDialog(props) {
         setMintStatus(mintStatusResponse.data);
       }
     }
-    
+   
+    getMintBalances();
     getStatus();
   }, [metamaskAddress])
 
@@ -154,6 +156,22 @@ export default function SimpleDialog(props) {
 
     initializePrice();
   }, [mintStatus])
+
+  const getMintBalances = () => {
+    let instance = contract;
+    if (!instance) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner(0);
+      
+      instance = new Contract(auctionAddress, AuctionABI, signer);
+    }
+
+    const publicMinted = instance.getPublicMinted();
+    const totalAmount = instance.balanceOf(metamaskAddress);
+
+    setTotalMinted(totalAmount);
+    setTotalPublicMinted(publicMinted)
+  }
 
   const initializePrice = async() => {
     let price;
@@ -313,6 +331,7 @@ export default function SimpleDialog(props) {
                     <div style={{height:"44px"}}/>
                     <p className="body-medium yellowish-gray-text text-uppercase">Mint Status: <b>{mintStatus}</b></p>
                     <p className="body-medium yellowish-gray-text text-uppercase">Total Editions Minted: <b>{totalMinted}</b></p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">Total Public Editions Minted: <b>{totalPublicMinted}</b></p>
                     <p className="body-medium yellowish-gray-text text-uppercase">Next Price Drop: <b>{nextPriceDropDate}</b> </p>
                     <p className="body-medium yellowish-gray-text text-uppercase">Price Drop Aount: <b>{priceDropAmount}</b> </p>
                   </React.Fragment>
