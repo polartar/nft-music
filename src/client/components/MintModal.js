@@ -175,7 +175,7 @@ export default function SimpleDialog(props) {
     initializePrice();
   }, [mintStatus]);
 
-  const getMintBalances = () => {
+  const getMintBalances = async() => {
     let instance = contract;
     if (!instance) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -184,11 +184,11 @@ export default function SimpleDialog(props) {
       instance = new Contract(auctionAddress, AuctionABI, signer);
     }
 
-    const amount = instance.getPublicMinted();
-    const totalAmount = instance.publicTotalMinted();
+    const amount = await instance.getPublicMinted();
+    const totalAmount = await instance.publicTotalMinted();
 
-    setPublicMinted(amount);
-    setTotalPublicMinted(totalAmount)
+    setPublicMinted(amount.toString());
+    setTotalPublicMinted(totalAmount.toString())
   }
 
   const initializePrice = async() => {
@@ -418,7 +418,7 @@ export default function SimpleDialog(props) {
                       </p>
                     )}
                     <p className="body-medium yellowish-gray-text text-uppercase">
-                      Total Editions Minted: <b>{totalMinted}</b>
+                      Total Editions Minted: <b>{publicMinted}</b>
                     </p>
                     {mintStatus === "PUBLIC" && (
                       <>
