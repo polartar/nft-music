@@ -214,16 +214,21 @@ async function saveMix(
   tokenId,
   padRecording
 ) {
-  console.log("inside uploadController, saving mix...");
-  // const ownerNfts = await fetchTokenOwners();
+  console.log("inside uploadController, saving mix...", {
+    ownerAddress,
+    tokenAddress,
+    tokenId
+  });
   const ownerNfts = await fetchOwnerNfts(tokenAddress, ownerAddress);
 
   // const address = "0x518e354ca7419b5c9b4d13090321fc9a03e036d5";
 
+  console.log("ownerNfts: ", ownerNfts);
   if (ownerNfts.length > 0) {
     try {
       const verifiedAddress = utils.verifyMessage(ownerAddress, signature);
 
+      console.log({ verifiedAddress, ownerAddress });
       if (verifiedAddress && verifiedAddress === ownerAddress) {
         const existingTokenMix = await db.collection("mixes").findOne({
           tokenAddress: tokenAddress,
@@ -231,6 +236,7 @@ async function saveMix(
         });
 
         if (!existingTokenMix) {
+          console.log("mix doesn't exist, saving it");
           await db.collection("mixes").insertOne({
             tokenAddress: tokenAddress,
             tokenId: tokenId,
@@ -242,6 +248,7 @@ async function saveMix(
             response: "Successfully saved mix!"
           };
         } else {
+          console.log("mix already exists, updating it");
           await db.collection("mixes").updateOne(
             {
               tokenAddress: tokenAddress,
