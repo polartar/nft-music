@@ -9,13 +9,13 @@ import {
   RedditShareButton,
   TelegramShareButton,
   TwitterShareButton,
-  FacebookMessengerShareButton,
+  FacebookMessengerShareButton
 } from "react-share";
 import {
   FacebookMessengerIcon,
   RedditIcon,
   TelegramIcon,
-  TwitterIcon,
+  TwitterIcon
 } from "react-share";
 import X from "../images/x.png";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -53,7 +53,7 @@ const useStyles = makeStyles({
     background: "#1f1f1f",
     // border: "1px solid #FFFFFF",
     borderRadius: "24px",
-    margin: "20px",
+    margin: "20px"
     // boxShadow: "0 0 40px 20px rgba(255,255,255,0.12)",
   },
   backButton: {
@@ -66,7 +66,7 @@ const useStyles = makeStyles({
     fontSize: "16px",
     backgroundColor: "#1f1f1f",
     textTransform: "none",
-    fontWeight: "400",
+    fontWeight: "400"
   },
   continueButton: {
     border: "solid 1px white",
@@ -78,23 +78,19 @@ const useStyles = makeStyles({
     fontSize: "16px",
     backgroundColor: "white",
     textTransform: "none",
-    fontWeight: "400",
+    fontWeight: "400"
   },
   checkBox: {
-    color: "white!important",
+    color: "white!important"
   },
   checkBoxText: {
-    color: "white",
-  },
+    color: "white"
+  }
 });
 
-const priceDropAmount = "Public auction drops 0.0125 ETH every 15 minutes";
-const currentNFT = "Sunday Journal";
-const discountedPrice = "0.0075";
-const capsulePrice = "0.2";
 export default function SimpleDialog(props) {
   const classes = useStyles();
-  const { onClose, open, shareURL } = props;
+  const { onClose, open, shareURL, tokenAddress, discountedPrice } = props;
   const [text, setText] = React.useState("Copy Link");
   const [metamaskAddress, setMetamaskAddress] = React.useState(null);
   const [transactionHash, setTransactionHash] = React.useState(
@@ -107,6 +103,11 @@ export default function SimpleDialog(props) {
   const [totalMinted, setTotalMinted] = useState(0);
   const [mintStatus, setMintStatus] = useState("");
   const [contract, setContract] = useState(null);
+
+  const priceDropAmount = "Public auction drops 0.0125 ETH every 15 minutes";
+  const currentNFT = "Sunday Journal";
+  // const discountedPrice = "0.0075";
+  const capsulePrice = "0.2";
 
   const RoundUp = (intervalMilliseconds, datetime) => {
     datetime = datetime || new Date();
@@ -153,8 +154,8 @@ export default function SimpleDialog(props) {
         "/api/getMintStatusForAddress",
         {
           params: {
-            address: metamaskAddress.toLowerCase(),
-          },
+            address: metamaskAddress.toLowerCase()
+          }
         }
       );
 
@@ -190,17 +191,17 @@ export default function SimpleDialog(props) {
 
   const checkNetwork = async () => {
     const currentChainId = await window.ethereum.request({
-      method: "eth_chainId",
+      method: "eth_chainId"
     });
 
     if (currentChainId !== "0x1" && currentChainId !== "0x4") {
       switchNetwork("0x4");
     }
   };
-  const switchNetwork = async (targetNetworkId) => {
+  const switchNetwork = async targetNetworkId => {
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
-      params: [{ chainId: targetNetworkId }],
+      params: [{ chainId: targetNetworkId }]
     });
     // refresh
     window.location.reload();
@@ -223,8 +224,8 @@ export default function SimpleDialog(props) {
           "/api/makeDiscountedSignature",
           {
             params: {
-              address: metamaskAddress.toLowerCase(),
-            },
+              address: metamaskAddress.toLowerCase()
+            }
           }
         );
 
@@ -254,7 +255,7 @@ export default function SimpleDialog(props) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner(0);
 
-    const instance = new Contract(auctionAddress, AuctionABI, signer);
+    const instance = new Contract(tokenAddress, AuctionABI, signer);
 
     setContract(instance);
   };
@@ -436,5 +437,5 @@ export default function SimpleDialog(props) {
 
 SimpleDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
+  open: PropTypes.bool.isRequired
 };

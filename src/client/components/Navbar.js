@@ -58,8 +58,8 @@ export default function Navbar(props) {
 
       const userResponse = await axios.get("/api/getUser", {
         params: {
-          address,
-        },
+          address
+        }
       });
 
       if (userResponse.data.name) {
@@ -106,7 +106,7 @@ export default function Navbar(props) {
       easing: "easeInOutSine",
       duration: 1000,
       opacity: 1,
-      delay: 1500,
+      delay: 1500
     });
 
     anime({
@@ -114,7 +114,7 @@ export default function Navbar(props) {
       easing: "easeInOutSine",
       duration: 1000,
       opacity: 0.7,
-      delay: 2000,
+      delay: 2000
     });
 
     anime({
@@ -122,72 +122,9 @@ export default function Navbar(props) {
       easing: "easeInOutSine",
       duration: 1000,
       opacity: 0.7,
-      delay: 2000,
+      delay: 2000
     });
   }, [loaded]);
-
-  // moralis fetch moved to backend
-  // const nfts = [];
-  // const wait = ms => {
-  //   return new Promise(resolve => {
-  //     setTimeout(resolve, ms);
-  //   });
-  // };
-
-  // const fetchNftOwners = async () => {
-  //   console.log("nft: ", nft);
-  //   const nftResponse = await axios.get(
-  //     // `https://deep-index.moralis.io/api/v2/nft/${nft.tokenAddress}/${nft.tokenId}/owners?chain=eth&format=decimal`,
-  //     "https://deep-index.moralis.io/api/v2/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a/1/owners?chain=eth&format=decimal",
-  //     {
-  //       headers: {
-  //         accept: "application/json",
-  //         "X-API-Key":
-  //           // "QL0Tp07l7YwtzRIsFOMqhQmjVCmcS3skO8Rsbo0y7OZYTaBBTaEr6fNRBcVtXMfn"
-  //           "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y"
-  //       }
-  //     }
-  //   );
-  //   console.log("nftResponse: ", nftResponse);
-  //   nfts.push.apply(nfts, nftResponse.data.result);
-  //   let qty = nftResponse.data.total;
-  //   let nextPage = nftResponse.data.cursor;
-  //   while (qty > 0) {
-  //     console.log("nextPage: ", nextPage);
-  //     const subsequentResponse = await axios
-  //       .get(
-  //         // `https://deep-index.moralis.io/api/v2/nft/${nft.tokenAddress}/${nft.tokenId}/owners?chain=eth&format=decimal&cursor=${nextPage}`,
-  //         `https://deep-index.moralis.io/api/v2/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a/1/owners?chain=eth&format=decimal&cursor=${nextPage}`,
-  //         {
-  //           headers: {
-  //             accept: "application/json",
-  //             "X-API-Key":
-  //               // "QL0Tp07l7YwtzRIsFOMqhQmjVCmcS3skO8Rsbo0y7OZYTaBBTaEr6fNRBcVtXMfn",
-  //               "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y"
-  //           }
-  //         }
-  //       )
-  //       .then(subsequentResponse => {
-  //         nfts.push.apply(nfts, subsequentResponse.data.result);
-  //         nextPage = subsequentResponse.data.cursor;
-  //         qty -= 500;
-  //       })
-  //       .then(await wait(1000));
-  //   }
-  //   return nfts;
-  // };
-
-  // const getMix = async (address, tokenId) => {
-  //   // const signature = await this.state.signer.signMessage(address);
-
-  //   const response = await axios.get("/api/getMix", {
-  //     address,
-  //     tokenId
-  //     // signature,
-  //   });
-
-  //   console.log("response from api fetch: ", response);
-  // };
 
   return (
     <React.Fragment>
@@ -213,7 +150,12 @@ export default function Navbar(props) {
               PRE-SALE
             </button> */}
 
-            <MintModal onClose={handleCloseMint} open={openMint} />
+            <MintModal
+              onClose={handleCloseMint}
+              open={openMint}
+              discountedPrice={nft.discountedPrice}
+              tokenAddress={nft.tokenAddress}
+            />
             <MenuModal
               onClose={handleCloseMenu}
               open={openMenu}
@@ -277,13 +219,17 @@ export default function Navbar(props) {
                   </a>
                 </div>
               )}
-              <button
-                id="mint-button"
-                className={white ? "cta-button small dark" : "cta-button small"}
-                onClick={() => setOpenMint(true)}
-              >
-                MINT
-              </button>
+              {nft && nft.showMintButton && (
+                <button
+                  id="mint-button"
+                  className={
+                    white ? "cta-button small dark" : "cta-button small"
+                  }
+                  onClick={() => setOpenMint(true)}
+                >
+                  MINT
+                </button>
+              )}
               <HamburgerMenuButton
                 onClick={() => setOpenMenu(true)}
                 className={
