@@ -161,7 +161,7 @@ export default function SimpleDialog(props) {
       if (!contract) return;
       price = await getCurrentMintPrice();
 
-      setTimeout(initializePrice, 1000 * 60 * 15);
+      setTimeout(initializePrice, 1000 * 30);
     } else if (mintStatus === "MINT LIST") {
       price = discountedPrice;
     } else if (mintStatus === "CAPSULE HOUSE") {
