@@ -93,7 +93,7 @@ function Collection(props) {
                   .toLowerCase();
                 return (
                   <a
-                    href={`/bouquet/${nft.artistName}/${nft.name}/${nft.edition}`}
+                    href={`/bouquet/${nft.artistName}/${nft.name}/${nft.tokenId}`}
                   >
                     <div className="beatPackItem">
                       {mediaFileExtension === "mp4" && (
