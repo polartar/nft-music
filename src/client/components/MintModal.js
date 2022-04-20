@@ -160,6 +160,7 @@ export default function SimpleDialog(props) {
     if (mintStatus === "PUBLIC") {
       if (!contract) return;
       price = await getCurrentMintPrice();
+
       setTimeout(initializePrice, 1000 * 60 * 15);
     } else if (mintStatus === "MINT LIST") {
       price = discountedPrice;
@@ -196,8 +197,9 @@ export default function SimpleDialog(props) {
   const handleMint = async () => {
     setIsMinting(true)
     try {
+      let tx;
       if (mintStatus === 'PUBLIC') {
-        await contract.mintPublic(1, {value: parseEther(currentPrice)});
+        tx = await contract.mintPublic(1, {value: parseEther(currentPrice)});
       } else if (mintStatus === 'MINT LIST') {
         const signatureResponse = await axios.get("/api/makeDiscountedSignature", {
           params: {
@@ -206,11 +208,14 @@ export default function SimpleDialog(props) {
         });  
         
         if (signatureResponse.status === 200) {
-          await contract.mintWhitelistDiscounted(signatureResponse.data.hash, signatureResponse.data.signature, 1, {value: parseEther(discountedPrice)});
+          tx = await contract.mintWhitelistDiscounted(signatureResponse.data.hash, signatureResponse.data.signature, 1, {value: parseEther(discountedPrice)});
         }
       } else if (mintStatus === 'CAPSULE HOUSE') {
-        await contract.mintPublic(1, {value: capsulePrice});
+        tx = await contract.mintPublic(1, {value: capsulePrice});
       }
+
+      setTransactionHash(tx.hash);
+      await tx.wait();
       setDidMint(true);
     } catch (err) {
       console.log({err})
