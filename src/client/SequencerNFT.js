@@ -466,10 +466,10 @@ class Sequencer extends Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevState.nft !== this.state.nft && this.state.nft) {
-      console.log("this.state.nft: ", this.state.nft);
       this.getMix(this.state.nft.tokenAddress, this.props.match.params.tokenId);
     }
 
+    // autoplay
     // if (
     //   prevState.padRecording.length <= 0 &&
     //   this.state.padRecording.length > 0 &&
@@ -644,7 +644,6 @@ class Sequencer extends Component {
       }
     }
 
-    console.log({ group, pad, pads: this.state.pads });
     this.setState(
       state => {
         const clonedPads = { ...state.pads };
@@ -1107,11 +1106,6 @@ class Sequencer extends Component {
             )}
           </div>
 
-          <div
-            onClick={() => console.log("this.state.pads: ", this.state.pads)}
-          >
-            CLICK FOR LOGS
-          </div>
           <Footer
             white={false}
             showShare={false}
