@@ -188,7 +188,7 @@ export default function SimpleDialog(props) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner(0);
 
-      instance = new Contract(auctionAddress, AuctionABI, signer);
+      instance = new Contract(tokenAddress, AuctionABI, signer);
     }
 
     const myPublicAmountMinted = await instance.getPublicMinted();
@@ -198,6 +198,8 @@ export default function SimpleDialog(props) {
     const whitelistAmount = await instance.getWhitelistMinted();
     const publicLimitPerWallet = await instance.publicListMaxMint();
     const publicTotalLimit = await instance.publicTotalMaxMint();
+
+    console.log(totalSupply);
 
     setPublicMinted(
       myPublicAmountMinted.toNumber() + myWhitelistAmountMinted.toNumber()
@@ -224,7 +226,7 @@ export default function SimpleDialog(props) {
       if (!contract) return;
       price = await getCurrentMintPrice();
 
-      setTimeout(initializePrice, 1000 * 30);
+      setTimeout(initializePrice, 1000 * 10);
     } else if (mintStatus === "MINT LIST") {
       price = discountedPrice;
     } else if (mintStatus === "CAPSULE HOUSE") {
