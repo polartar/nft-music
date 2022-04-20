@@ -13,7 +13,7 @@ const { fetchOwnerNfts } = require("../utility/moralisApi");
 
 const AWS_ENDPOINT = "sfo2.digitaloceanspaces.com";
 const limiter = new Bottleneck({
-  minTime: 10
+  minTime: 10,
 });
 
 // connect to our mongodb database
@@ -25,7 +25,7 @@ async function connectToDatabase() {
       useNewurlParser: true,
       useUnifiedTopology: true,
       tls: true,
-      tlsCAFile: "./ca-certificate.crt"
+      tlsCAFile: "./ca-certificate.crt",
     };
   }
   const client = await MongoClient.connect(
@@ -70,7 +70,7 @@ async function exportRecording(response, recording, artistName, name, edition) {
     let nft = await db.collection("NFTs").findOne({
       artistName,
       name,
-      edition: parseFloat(edition)
+      edition: parseFloat(edition),
     });
 
     console.log(recording);
@@ -109,8 +109,8 @@ async function exportRecording(response, recording, artistName, name, edition) {
             fontsize: 48,
             fontcolor: "white",
             x: "10",
-            y: "h-th-40"
-          }
+            y: "h-th-40",
+          },
         },
         {
           filter: "drawtext",
@@ -122,8 +122,8 @@ async function exportRecording(response, recording, artistName, name, edition) {
             fontsize: 28,
             fontcolor: "white",
             x: "10",
-            y: "h-th-10"
-          }
+            y: "h-th-10",
+          },
         },
         {
           filter: "drawtext",
@@ -133,11 +133,11 @@ async function exportRecording(response, recording, artistName, name, edition) {
             fontsize: 36,
             fontcolor: "white",
             x: "w-tw-10",
-            y: "h-th-10"
-          }
-        }
+            y: "h-th-10",
+          },
+        },
       ])
-      .on("error", error => console.log(`Encoding Error: ${error.message}`))
+      .on("error", (error) => console.log(`Encoding Error: ${error.message}`))
       .saveToFile(`${uuid}.mp4`)
       .on("end", () => {
         response.download(`./${uuid}.mp4`, "my recording.mp4", function(err) {
@@ -161,14 +161,14 @@ async function uploadFile(file, folder, extension) {
   const s3 = new AWS.S3({
     endpoint: spacesEndpoint,
     accessKeyId: config.spacesAccessKeyId,
-    secretAccessKey: config.spacesSecretKey
+    secretAccessKey: config.spacesSecretKey,
   });
   const uuid = md5(file.buffer);
   const params = {
     Body: file.buffer,
     Bucket: "properties",
     Key: `${uuid}.${extension}`,
-    ACL: "public-read"
+    ACL: "public-read",
   };
 
   try {
@@ -191,12 +191,12 @@ async function deleteFileWithURL(url) {
   const s3 = new AWS.S3({
     endpoint: spacesEndpoint,
     accessKeyId: config.spacesAccessKeyId,
-    secretAccessKey: config.spacesSecretKey
+    secretAccessKey: config.spacesSecretKey,
   });
 
   const params = {
     Bucket: "properties",
-    Key: fileName
+    Key: fileName,
   };
 
   try {
@@ -217,9 +217,9 @@ async function saveMix(
   console.log("inside uploadController, saving mix...", {
     ownerAddress,
     tokenAddress,
-    tokenId
+    tokenId,
   });
-  const ownerNfts = await fetchOwnerNfts(tokenAddress, ownerAddress);
+  const ownerNfts = await fetchOwnerNfts(ownerAddress, tokenAddress);
 
   // const address = "0x518e354ca7419b5c9b4d13090321fc9a03e036d5";
 
@@ -232,7 +232,7 @@ async function saveMix(
       if (verifiedAddress && verifiedAddress === ownerAddress) {
         const existingTokenMix = await db.collection("mixes").findOne({
           tokenAddress: tokenAddress,
-          tokenId: tokenId
+          tokenId: tokenId,
         });
 
         if (!existingTokenMix) {
@@ -240,31 +240,31 @@ async function saveMix(
           await db.collection("mixes").insertOne({
             tokenAddress: tokenAddress,
             tokenId: tokenId,
-            padRecording: padRecording
+            padRecording: padRecording,
           });
 
           return {
             status: 200,
-            response: "Successfully saved mix!"
+            response: "Successfully saved mix!",
           };
         } else {
           console.log("mix already exists, updating it");
           await db.collection("mixes").updateOne(
             {
               tokenAddress: tokenAddress,
-              tokenId: tokenId
+              tokenId: tokenId,
             },
             {
               $set: {
-                padRecording: padRecording
-              }
+                padRecording: padRecording,
+              },
             },
             { upsert: true }
           );
 
           return {
             status: 200,
-            response: "Successfully updated mix!"
+            response: "Successfully updated mix!",
           };
         }
       }
@@ -295,13 +295,13 @@ async function getMix(tokenAddress, tokenId) {
     const userMix = await db.collection("mixes").findOne({
       // address: ownerAddress.toLowerCase(),
       tokenAddress,
-      tokenId
+      tokenId,
     });
     console.log("userMix: ", userMix);
 
     return {
       status: 200,
-      response: userMix
+      response: userMix,
     };
   } catch (error) {
     console.log(error);
@@ -318,5 +318,5 @@ module.exports = {
   deleteFileWithURL,
   exportRecording,
   saveMix,
-  getMix
+  getMix,
 };
