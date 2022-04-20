@@ -470,16 +470,16 @@ class Sequencer extends Component {
       this.getMix(this.state.nft.tokenAddress, this.props.match.params.tokenId);
     }
 
-    if (
-      prevState.padRecording.length <= 0 &&
-      this.state.padRecording.length > 0 &&
-      !this.state.isRecording &&
-      !this.state.shouldStartRecording
-    ) {
-      this.playbackRecording(this.state.padRecording, pad =>
-        this.togglePad(pad[0], pad[1])
-      );
-    }
+    // if (
+    //   prevState.padRecording.length <= 0 &&
+    //   this.state.padRecording.length > 0 &&
+    //   !this.state.isRecording &&
+    //   !this.state.shouldStartRecording
+    // ) {
+    //   this.playbackRecording(this.state.padRecording, pad =>
+    //     this.togglePad(pad[0], pad[1])
+    //   );
+    // }
   }
 
   handleClickOpen = async () => {
@@ -926,6 +926,15 @@ class Sequencer extends Component {
     const element = document.getElementById("mix-overlay");
     element.remove();
     //handle play mix
+    if (this.state.padRecording.length > 0) {
+      this.setState({
+        repeat: true
+      });
+
+      this.playbackRecording(this.state.padRecording, pad =>
+        this.togglePad(pad[0], pad[1])
+      );
+    }
   }
 
   render() {
@@ -958,7 +967,24 @@ class Sequencer extends Component {
       return (
         <React.StrictMode>
           <div className="fullscreen-overlay" id="mix-overlay">
-            <button className="metamask-button" onClick={this.handlePlayMix}>
+            {/* <button className="metamask-button" onClick={this.handlePlayMix}> */}
+            <button
+              className="metamask-button"
+              onClick={() => {
+                const element = document.getElementById("mix-overlay");
+                element.remove();
+                //handle play mix
+                if (this.state.padRecording.length > 0) {
+                  this.setState({
+                    repeat: true
+                  });
+
+                  this.playbackRecording(this.state.padRecording, pad =>
+                    this.togglePad(pad[0], pad[1])
+                  );
+                }
+              }}
+            >
               Play Mix
             </button>
           </div>
