@@ -48,7 +48,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_publicMaxMint",
+        "name": "_publicTotalMaxMint",
         "type": "uint256"
       }
     ],
@@ -697,6 +697,19 @@
   },
   {
     "inputs": [],
+    "name": "publicTotalMinted",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "refund",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -980,6 +993,19 @@
       }
     ],
     "name": "setPublicListMaxMint",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "setPublicTotalMaxMint",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

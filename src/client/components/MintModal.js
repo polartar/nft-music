@@ -104,7 +104,7 @@ export default function SimpleDialog(props) {
   const [isMinting, setIsMinting] = React.useState(false);
   const [didMint, setDidMint] = React.useState(false);
   const [currentPrice, setCurrentPrice] = useState();
-  const [totalMinted, setTotalMinted] = useState(0);
+  const [publicMinted, setPublicMinted] = useState(0);
   const [totalPublicMinted, setTotalPublicMinted] = useState(0);
   const [mintStatus, setMintStatus] = useState("");
   const [contract, setContract] = useState(null);
@@ -184,11 +184,11 @@ export default function SimpleDialog(props) {
       instance = new Contract(auctionAddress, AuctionABI, signer);
     }
 
-    const publicMinted = instance.getPublicMinted();
-    const totalAmount = instance.balanceOf(metamaskAddress);
+    const amount = instance.getPublicMinted();
+    const totalAmount = instance.publicTotalMinted();
 
-    setTotalMinted(totalAmount);
-    setTotalPublicMinted(publicMinted)
+    setPublicMinted(amount);
+    setTotalPublicMinted(totalAmount)
   }
 
   const initializePrice = async() => {
@@ -385,7 +385,7 @@ export default function SimpleDialog(props) {
                     <button className="cta-button" onClick={handleMint} disabled={(metamaskAddress && !isMinting) && contract ? false : true}>BUY NOW - {currentPrice}ETH</button>
                     <div style={{height:"44px"}}/>
                     <p className="body-medium yellowish-gray-text text-uppercase">Mint Status: <b>{mintStatus}</b></p>
-                    <p className="body-medium yellowish-gray-text text-uppercase">Total Editions Minted: <b>{totalMinted}</b></p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">Total Editions Minted: <b>{publicMinted}</b></p>
                     <p className="body-medium yellowish-gray-text text-uppercase">Total Public Editions Minted: <b>{totalPublicMinted}</b></p>
                     <p className="body-medium yellowish-gray-text text-uppercase">Next Price Drop: <b>{nextPriceDropDate}</b> </p>
                     <p className="body-medium yellowish-gray-text text-uppercase">Price Drop Aount: <b>{priceDropAmount}</b> </p>
