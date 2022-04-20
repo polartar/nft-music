@@ -36,7 +36,7 @@ export default function Footer(props) {
     handleShuffle,
     playMix,
     setOpenControls,
-    openControls,
+    openControls
   } = props;
   const [loaded, setLoaded] = useState(false);
   const [address, setAddress] = useState();
@@ -119,48 +119,50 @@ export default function Footer(props) {
           }
         >
           {/* {showShare && !isLoggedIntoMetamask && ( */}
-            {
-              hidePlayControls ||
-              <div className="play-controls">
-                <div className="stopBtnContainer">
-                  <div className="stopBtnWrapper">
-                    {playing ? (
-                      <span
-                        style={{ display: "flex", gap: "8px", marginRight: "8px" }}
-                      >
-                        <a href="#" onClick={clearSelections}>
-                          <img src={StopCircleIcon} style={{ height: "35px" }} />
-                        </a>
-                        {/* <a href="#" onClick={handleShuffle}>
+          {hidePlayControls || (
+            <div className="play-controls">
+              <div className="stopBtnContainer">
+                <div className="stopBtnWrapper">
+                  {playing ? (
+                    <span
+                      style={{
+                        display: "flex",
+                        gap: "8px",
+                        marginRight: "8px"
+                      }}
+                    >
+                      <a href="#" onClick={clearSelections}>
+                        <img src={StopCircleIcon} style={{ height: "35px" }} />
+                      </a>
+                      {/* <a href="#" onClick={handleShuffle}>
                           <img src={ShuffleCircleIcon} style={{ height: "35px" }} />
                         </a> */}
-                      </span>
-                    ) : (
-                      <a href="#" onClick={playMix}>
-                        <img
-                          src={PlayCircleIcon}
-                          style={{ height: "35px", marginRight: "8px" }}
-                        />
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                <div className="volumeContainer">
-                  <div className="volumeWrapper">
-                    <ThemeProvider theme={muiTheme}>
-                      <Slider
-                        min={-50}
-                        max={0}
-                        defaultValue={volume}
-                        onChange={(event, newValue) => setVolume(newValue)}
+                    </span>
+                  ) : (
+                    <a href="#" onClick={playMix}>
+                      <img
+                        src={PlayCircleIcon}
+                        style={{ height: "35px", marginRight: "8px" }}
                       />
-                    </ThemeProvider>
-                  </div>
+                    </a>
+                  )}
                 </div>
               </div>
-            }
 
+              <div className="volumeContainer">
+                <div className="volumeWrapper">
+                  <ThemeProvider theme={muiTheme}>
+                    <Slider
+                      min={-50}
+                      max={0}
+                      defaultValue={volume}
+                      onChange={(event, newValue) => setVolume(newValue)}
+                    />
+                  </ThemeProvider>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* )} */}
 
@@ -197,16 +199,17 @@ export default function Footer(props) {
               </div>
             </div>
           */}
-          {
-            hidePlayControls ||
-          <div>
-            <ControlsButton
-              className={`cta-button small ${openControls ? 'white' : 'light-dark'}`}
-              onClick={setOpenControls}
-              fill={openControls ? "#575757" : "#FFF"}
-            />
-          </div>
-        }
+          {hidePlayControls || (
+            <div>
+              <ControlsButton
+                className={`cta-button small ${
+                  openControls ? "white" : "light-dark"
+                }`}
+                onClick={setOpenControls}
+                fill={openControls ? "#575757" : "#FFF"}
+              />
+            </div>
+          )}
 
           {/* <button className="button" onClick={() => handleMintMenu()}>
             TO MINT MENU
