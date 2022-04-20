@@ -146,7 +146,7 @@ export default function Navbar(props) {
             <MintModal
               onClose={handleCloseMint}
               open={openMint}
-              discountedPrice={nft.discountedPrice}
+              discountedPrice={nft.discountedPrice.toString()}
               tokenAddress={nft.tokenAddress}
             />
             <MenuModal

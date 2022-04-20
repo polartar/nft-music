@@ -54,7 +54,7 @@ app.get("/api/metadata/:id", async (req, res) => {
     external_url: "https://openseacreatures.io/3",
     image:
       "https://storage.googleapis.com/opensea-prod.appspot.com/puffs/3.png",
-    name: "Dave Starbelly"
+    name: "Dave Starbelly",
   });
 });
 
@@ -90,7 +90,9 @@ app.post("/api/addEmail", async (req, res) => {
 });
 
 app.get("/api/makeDiscountedSignature", async (req, res) => {
-  const { status, response } = await userController.makeDiscountedSignature(req.query.address);
+  const { status, response } = await mintController.makeDiscountedSignature(
+    req.query.address
+  );
 
   res.status(status).send(response);
 });

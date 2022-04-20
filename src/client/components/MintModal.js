@@ -275,6 +275,7 @@ export default function SimpleDialog(props) {
         );
 
         if (signatureResponse.status === 200) {
+          console.log(signatureResponse.data);
           tx = await contract.mintWhitelistDiscounted(
             signatureResponse.data.hash,
             signatureResponse.data.signature,
@@ -289,6 +290,7 @@ export default function SimpleDialog(props) {
       setTransactionHash(tx.hash);
       await tx.wait();
       setPublicMinted(publicMinted + 1);
+      setTotalSupply(totalSupply + 1);
       setTotalPublicMinted(totalPublicMinted + 1);
       setDidMint(true);
     } catch (err) {
@@ -409,7 +411,7 @@ export default function SimpleDialog(props) {
                 )}
                 <div style={{ height: "44px" }} />
 
-                {didMint ? (
+                {didMint && publicMinted === 0 ? (
                   <React.Fragment>
                     <button
                       className="cta-button"

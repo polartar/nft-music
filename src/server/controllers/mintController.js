@@ -4,6 +4,10 @@ const userController = require("./userController");
 const axios = require("axios");
 const mintList = require("../mintList.json");
 const capsuleHouseList = require("../capsuleHouseList.json");
+const { soliditySha3 } = require("web3-utils");
+const HASH_PREFIX_DISCOUNTED = "Sunday Journal Discounted Verification:";
+const EthCrypto = require("eth-crypto");
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 // connect to our mongodb database
 async function connectToDatabase() {
@@ -101,8 +105,8 @@ async function getMetadata(address, tokenId) {
 }
 
 async function makeDiscountedSignature(address) {
-  const mintStatus = getMintStatusForAddress(address);
-  if (mintStatus.data !== "MINT LIST") {
+  const mintStatus = await getMintStatusForAddress(address);
+  if (mintStatus.response !== "MINT LIST") {
     return { status: 400, response: "invalid user" };
   }
   try {
