@@ -107,6 +107,11 @@ export default function SimpleDialog(props) {
   const [publicMinted, setPublicMinted] = useState(0);
   const [totalPublicMinted, setTotalPublicMinted] = useState(0);
   const [mintStatus, setMintStatus] = useState("");
+  const [mintInfo, setMintInfo] = useState({
+    whitelistMinted: 0,
+    publicLimitPerWallet: 0,
+    publicTotalLimit: 0
+  })
   const [contract, setContract] = useState(null);
 
   const RoundUp = (intervalMilliseconds, datetime) => {
@@ -186,9 +191,22 @@ export default function SimpleDialog(props) {
 
     const amount = await instance.getPublicMinted();
     const totalAmount = await instance.publicTotalMinted();
+    const whitelistAmount = await instance.getWhitelistMinted();
+    const publicLimitPerWallet = await instance.publicListMaxMint();
+    const publicTotalLimit = await instance.publicTotalMaxMint();
 
-    setPublicMinted(amount.toString());
-    setTotalPublicMinted(totalAmount.toString())
+    setPublicMinted(amount.toNumber());
+    setTotalPublicMinted(totalAmount.toNumber())
+    setMintInfo({
+      whitelistMinted: whitelistAmount,
+      publicLimitPerWallet,
+      publicTotalLimit
+    })
+  }
+
+  const canMint = () => {
+    return publicMinted + mintInfo.whitelistMinted < mintInfo.publicLimitPerWallet &&
+          publicTotalMinted < publicTotalLimit;
   }
 
   const initializePrice = async() => {
@@ -261,6 +279,8 @@ export default function SimpleDialog(props) {
 
       setTransactionHash(tx.hash);
       await tx.wait();
+      setPublicMinted(publicMinted + 1);
+      setTotalPublicMinted(totalPublicMinted + 1);
       setDidMint(true);
     } catch (err) {
       console.log({ err });
@@ -403,7 +423,8 @@ export default function SimpleDialog(props) {
                         className="cta-button"
                         onClick={handleMint}
                         disabled={
-                          metamaskAddress && !isMinting && contract
+                          (metamaskAddress && !isMinting && contract) && 
+                          ((mintStatus === 'PUBLIC' && canMint()) || (mintStatus !== 'PUBLIC'))
                             ? false
                             : true
                         }
