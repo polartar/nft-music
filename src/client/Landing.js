@@ -2056,14 +2056,22 @@ class Sequencer extends Component {
                                   What do I get by buying a Bouquet?
                                 </div>
                                 <div className="details animated-content body-medium light-yellow-text">
-                                  You own this one-of-a-kind interactive,
-                                  playable experience as an NFT.
+                                  - You can create your sound identity by
+                                  recording and imprinting a mix right on your
+                                  NFT.
                                   <br /> <br />
-                                  You receive a non-exclusive license to sample
-                                  and commercialize every Bouquet sound.
+                                  - You can download a .wav file of every stem
+                                  in your NFT.
                                   <br /> <br />
-                                  You get access to an exclusive artist/holder
-                                  channel on The Secret Garden Discord.
+                                  - You receive a non-exclusive license to
+                                  sample, make derivatives, and commercialize
+                                  every sound and mix on your NFT, so long as
+                                  you give full attribution and credit to the
+                                  original musician (e.g. co-producer) and
+                                  Secret Garden.
+                                  <br /> <br />
+                                  - You get access to the (secret) Secret
+                                  Garden.
                                   <br /> <br />
                                 </div>
                               </div>
@@ -2081,23 +2089,16 @@ class Sequencer extends Component {
                                   HOW CAN I SHARE MY BOUQUET?
                                 </div>
                                 <div className="details animated-content body-medium light-yellow-text">
-                                  The Bouquet is your own mix to create and play
-                                  with! Anyone can download an .mp4 of their mix
-                                  via the "Record" button, please be patient as
-                                  the download can take a minute.
+                                  - Holders can download an .mp4 of their mix
+                                  and share it anywhere they want.
                                   <br /> <br />
-                                  NFT holders can imprint a default recording
-                                  that forms the cover of your NFT for all to
-                                  listen. The experience is fully functional,
-                                  even on OpenSea: <br />
-                                  <br />
-                                  <a
-                                    className="cta-link"
-                                    target="_blank"
-                                    href="https://testnets.opensea.io/assets/0x52b1dd5c27705aa4dfd3889db223b5c4c84f6b54/1"
-                                  >
-                                    View on OpenSea
-                                  </a>
+                                  - Holders can also display their actual
+                                  Bouquet NFT with their imprinted mix and
+                                  audiovisual experience anywhere that can
+                                  display interactive code (e.g. Opensea).
+                                  <br /> <br />- The Secret Garden may allow
+                                  different versions of sharing in the future.
+                                  We’ll let you know when!
                                 </div>
                               </div>
                             </div>
@@ -2116,7 +2117,9 @@ class Sequencer extends Component {
                                 <div className="details animated-content body-medium light-yellow-text">
                                   Drops will occur on this site on mint days,
                                   which will be announced on Discord and
-                                  Twitter. Follow us on{" "}
+                                  Twitter. You may also purchase Secret Garden
+                                  NFTs on secondary marketplaces like Opensea.
+                                  Follow us on{" "}
                                   <a
                                     target="_blank"
                                     href="https://twitter.com/SecretGarden_FM"
@@ -2166,7 +2169,11 @@ class Sequencer extends Component {
                         <a className="body-medium" target="_blank">
                           Yokai House Inc.
                         </a>
-                        <a className="body-medium" href="/tos" target="_blank">
+                        <a
+                          className="body-medium"
+                          href="https://secretgarden.nyc3.digitaloceanspaces.com/Terms%20Of%20Service%204.19.22.pdf"
+                          target="_blank"
+                        >
                           Terms of Service
                         </a>
 

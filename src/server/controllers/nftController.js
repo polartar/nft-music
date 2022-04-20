@@ -200,11 +200,6 @@ async function getNFTsForOwner(tokenAddress, ownerAddress, chain) {
       }
     );
 
-    console.log(nftIdResponse);
-    console.log(tokenAddress);
-    console.log(ownerAddress);
-    console.log(chain);
-
     const nftIds = nftIdResponse.data.result.map((item) => item.token_id);
 
     const metadata = await db.collection("NFTs").findOne({
