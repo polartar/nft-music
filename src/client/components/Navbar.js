@@ -58,8 +58,8 @@ export default function Navbar(props) {
 
       const userResponse = await axios.get("/api/getUser", {
         params: {
-          address
-        }
+          address,
+        },
       });
 
       if (userResponse.data.name) {
@@ -106,7 +106,7 @@ export default function Navbar(props) {
       easing: "easeInOutSine",
       duration: 1000,
       opacity: 1,
-      delay: 1500
+      delay: 1500,
     });
 
     anime({
@@ -114,7 +114,7 @@ export default function Navbar(props) {
       easing: "easeInOutSine",
       duration: 1000,
       opacity: 0.7,
-      delay: 2000
+      delay: 2000,
     });
 
     anime({
@@ -122,7 +122,7 @@ export default function Navbar(props) {
       easing: "easeInOutSine",
       duration: 1000,
       opacity: 0.7,
-      delay: 2000
+      delay: 2000,
     });
   }, [loaded]);
 
@@ -142,13 +142,6 @@ export default function Navbar(props) {
               Secret Garden
             </a>
             {/*<div className="body-medium yellow-text" id="mint-date">MINTING APRIL 2022</div>*/}
-            <button
-              id="mint-button"
-              className="metamask-button"
-              onClick={() => setOpenMint(true)}
-            >
-              PRE-SALE
-            </button>
 
             <MintModal
               onClose={handleCloseMint}

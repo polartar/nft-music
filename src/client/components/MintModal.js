@@ -9,13 +9,13 @@ import {
   RedditShareButton,
   TelegramShareButton,
   TwitterShareButton,
-  FacebookMessengerShareButton
+  FacebookMessengerShareButton,
 } from "react-share";
 import {
   FacebookMessengerIcon,
   RedditIcon,
   TelegramIcon,
-  TwitterIcon
+  TwitterIcon,
 } from "react-share";
 import X from "../images/x.png";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -53,7 +53,7 @@ const useStyles = makeStyles({
     background: "#1f1f1f",
     // border: "1px solid #FFFFFF",
     borderRadius: "24px",
-    margin: "20px"
+    margin: "20px",
     // boxShadow: "0 0 40px 20px rgba(255,255,255,0.12)",
   },
   backButton: {
@@ -66,7 +66,7 @@ const useStyles = makeStyles({
     fontSize: "16px",
     backgroundColor: "#1f1f1f",
     textTransform: "none",
-    fontWeight: "400"
+    fontWeight: "400",
   },
   continueButton: {
     border: "solid 1px white",
@@ -78,14 +78,14 @@ const useStyles = makeStyles({
     fontSize: "16px",
     backgroundColor: "white",
     textTransform: "none",
-    fontWeight: "400"
+    fontWeight: "400",
   },
   checkBox: {
-    color: "white!important"
+    color: "white!important",
   },
   checkBoxText: {
-    color: "white"
-  }
+    color: "white",
+  },
 });
 
 export default function SimpleDialog(props) {
@@ -106,8 +106,8 @@ export default function SimpleDialog(props) {
   const [mintInfo, setMintInfo] = useState({
     whitelistMinted: 0,
     publicLimitPerWallet: 0,
-    publicTotalLimit: 0
-  })
+    publicTotalLimit: 0,
+  });
   const [contract, setContract] = useState(null);
 
   const priceDropAmount = "Public auction drops 0.0125 ETH every 15 minutes";
@@ -160,8 +160,8 @@ export default function SimpleDialog(props) {
         "/api/getMintStatusForAddress",
         {
           params: {
-            address: metamaskAddress.toLowerCase()
-          }
+            address: metamaskAddress.toLowerCase(),
+          },
         }
       );
 
@@ -169,7 +169,7 @@ export default function SimpleDialog(props) {
         setMintStatus(mintStatusResponse.data);
       }
     }
-   
+
     getMintBalances();
 
     getStatus();
@@ -181,12 +181,12 @@ export default function SimpleDialog(props) {
     initializePrice();
   }, [mintStatus]);
 
-  const getMintBalances = async() => {
+  const getMintBalances = async () => {
     let instance = contract;
     if (!instance) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner(0);
-      
+
       instance = new Contract(auctionAddress, AuctionABI, signer);
     }
 
@@ -197,20 +197,23 @@ export default function SimpleDialog(props) {
     const publicTotalLimit = await instance.publicTotalMaxMint();
 
     setPublicMinted(amount.toNumber());
-    setTotalPublicMinted(totalAmount.toNumber())
+    console.log(amount);
+    setTotalPublicMinted(totalAmount.toNumber());
     setMintInfo({
       whitelistMinted: whitelistAmount,
       publicLimitPerWallet,
-      publicTotalLimit
-    })
-  }
+      publicTotalLimit,
+    });
+  };
 
   const canMint = () => {
-    return publicMinted + mintInfo.whitelistMinted < mintInfo.publicLimitPerWallet &&
-          totalPublicMinted < mintInfo.publicTotalLimit;
-  }
+    return (
+      publicMinted + mintInfo.whitelistMinted < mintInfo.publicLimitPerWallet &&
+      totalPublicMinted < mintInfo.publicTotalLimit
+    );
+  };
 
-  const initializePrice = async() => {
+  const initializePrice = async () => {
     let price;
     if (mintStatus === "PUBLIC") {
       if (!contract) return;
@@ -228,17 +231,17 @@ export default function SimpleDialog(props) {
 
   const checkNetwork = async () => {
     const currentChainId = await window.ethereum.request({
-      method: "eth_chainId"
+      method: "eth_chainId",
     });
 
     if (currentChainId !== "0x1" && currentChainId !== "0x4") {
       switchNetwork("0x4");
     }
   };
-  const switchNetwork = async targetNetworkId => {
+  const switchNetwork = async (targetNetworkId) => {
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
-      params: [{ chainId: targetNetworkId }]
+      params: [{ chainId: targetNetworkId }],
     });
     // refresh
     window.location.reload();
@@ -261,8 +264,8 @@ export default function SimpleDialog(props) {
           "/api/makeDiscountedSignature",
           {
             params: {
-              address: metamaskAddress.toLowerCase()
-            }
+              address: metamaskAddress.toLowerCase(),
+            },
           }
         );
 
@@ -403,13 +406,31 @@ export default function SimpleDialog(props) {
 
                 {didMint ? (
                   <React.Fragment>
-                    <button className="cta-button" onClick={handleMint} disabled={(metamaskAddress && !isMinting) && contract ? false : true}>BUY NOW - {currentPrice}ETH</button>
-                    <div style={{height:"44px"}}/>
-                    <p className="body-medium yellowish-gray-text text-uppercase">Mint Status: <b>{mintStatus}</b></p>
-                    <p className="body-medium yellowish-gray-text text-uppercase">Total Editions Minted: <b>{publicMinted}</b></p>
-                    <p className="body-medium yellowish-gray-text text-uppercase">Total Public Editions Minted: <b>{totalPublicMinted}</b></p>
-                    <p className="body-medium yellowish-gray-text text-uppercase">Next Price Drop: <b>{nextPriceDropDate}</b> </p>
-                    <p className="body-medium yellowish-gray-text text-uppercase">Price Drop Aount: <b>{priceDropAmount}</b> </p>
+                    <button
+                      className="cta-button"
+                      onClick={handleMint}
+                      disabled={
+                        metamaskAddress && !isMinting && contract ? false : true
+                      }
+                    >
+                      BUY NOW - {currentPrice}ETH
+                    </button>
+                    <div style={{ height: "44px" }} />
+                    <p className="body-medium yellowish-gray-text text-uppercase">
+                      Mint Status: <b>{mintStatus}</b>
+                    </p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">
+                      Total Editions Minted: <b>{publicMinted}</b>
+                    </p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">
+                      Total Public Editions Minted: <b>{totalPublicMinted}</b>
+                    </p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">
+                      Next Price Drop: <b>{nextPriceDropDate}</b>{" "}
+                    </p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">
+                      Price Drop Aount: <b>{priceDropAmount}</b>{" "}
+                    </p>
                     <p className="body-medium yellowish-gray-text text-uppercase">
                       Transaction Hash
                     </p>
@@ -424,8 +445,11 @@ export default function SimpleDialog(props) {
                         className="cta-button"
                         onClick={handleMint}
                         disabled={
-                          (metamaskAddress && !isMinting && contract) && 
-                          ((mintStatus === 'PUBLIC' && canMint()) || (mintStatus !== 'PUBLIC'))
+                          metamaskAddress &&
+                          !isMinting &&
+                          contract &&
+                          ((mintStatus === "PUBLIC" && canMint()) ||
+                            mintStatus !== "PUBLIC")
                             ? false
                             : true
                         }
@@ -484,5 +508,5 @@ export default function SimpleDialog(props) {
 
 SimpleDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired
+  open: PropTypes.bool.isRequired,
 };
