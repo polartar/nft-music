@@ -465,22 +465,21 @@ class Sequencer extends Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-
     if (prevState.nft !== this.state.nft && this.state.nft) {
-      console.log("this.state.nft: ", this.state.nft);
-      this.getMix(this.state.nft.tokenAddress, this.state.nft.tokenId);
+      this.getMix(this.state.nft.tokenAddress, this.props.match.params.tokenId);
     }
 
-    if (
-      prevState.padRecording.length <= 0 &&
-      this.state.padRecording.length > 0 &&
-      !this.state.isRecording &&
-      !this.state.shouldStartRecording
-    ) {
-      this.playbackRecording(this.state.padRecording, pad =>
-        this.togglePad(pad[0], pad[1])
-      );
-    }
+    // autoplay
+    // if (
+    //   prevState.padRecording.length <= 0 &&
+    //   this.state.padRecording.length > 0 &&
+    //   !this.state.isRecording &&
+    //   !this.state.shouldStartRecording
+    // ) {
+    //   this.playbackRecording(this.state.padRecording, pad =>
+    //     this.togglePad(pad[0], pad[1])
+    //   );
+    // }
   }
 
   handleClickOpen = async () => {
@@ -645,7 +644,6 @@ class Sequencer extends Component {
       }
     }
 
-    console.log({ group, pad, pads: this.state.pads });
     this.setState(
       state => {
         const clonedPads = { ...state.pads };
@@ -821,16 +819,47 @@ class Sequencer extends Component {
   }
 
   playbackRecording(padRecording, callback) {
+    // this.clearSelections();
+    let highestId = window.setTimeout(() => {
+      for (let i = highestId; i >= 0; i--) {
+        window.clearInterval(i);
+      }
+    }, 0);
+
+    Tone.Transport.stop();
+
+    const updatedPads = {};
+    const updatedQueue = {};
+
+    Object.keys(this.players).forEach(group => {
+      updatedPads[group] = [];
+      this.players[group].forEach((_, soundIndex) => {
+        updatedPads[group][soundIndex] = 0;
+        updatedQueue[group] = [];
+      });
+    });
+
+    // update queue and se
     this.setState({
+      pads: updatedPads,
+      playing: false,
+      queue: updatedQueue,
+      shareablePadNumbers: [],
+      totalSoundsPlaying: 0,
+      // step: 0, // reset step count to 0,
+      step: this.state.steps - 1, // reset step count to 0,
       isPlayingBack: true
     });
 
-    if (!this.state.repeat) {
-      // reset step so that playback isn't dependent on waiting for "next loop"
-      this.setState({
-        step: 0
-      });
+    for (const group in this.activePlayers) {
+      if (this.activePlayers[group].length > 0) {
+        // loop to stop active pads instead of entire player list
+        for (let i = 0; i < this.activePlayers[group].length; i++) {
+          this.players[group][this.activePlayers[group][i]].stop();
+        }
+      }
     }
+    // end clear pads work
 
     for (let i = 0; i <= padRecording.length - 1; i++) {
       setTimeout(() => {
@@ -841,7 +870,6 @@ class Sequencer extends Component {
         // }, padRecording[i][2] + (padRecording[i - 1] ? padRecording[i - 1][2] : padRecording[0][2]));
         if (i === padRecording.length - 1) {
           this.setState({
-            isPlayingBack: false,
             endOfPlayback: true
           });
         }
@@ -859,7 +887,9 @@ class Sequencer extends Component {
         params: {
           tokenAddress,
           tokenId
-        }
+        },
+        xsrfCookieName: null,
+        withCredentials: false
       })
       .then(response => {
         if (response.data.padRecording) {
@@ -870,7 +900,7 @@ class Sequencer extends Component {
               isLoading: false
             });
             return response.data.padRecording;
-          }, 7000);
+          }, 1000);
         } else {
           console.log("User has no previously saved mix.");
           this.setState({
@@ -893,39 +923,47 @@ class Sequencer extends Component {
   };
 
   setOpenControls() {
-    this.setState({openControls: !this.state.openControls})
+    this.setState({ openControls: !this.state.openControls });
   }
 
   setHideBeatpad() {
     if (this.state.hideBeatpad) {
       anime({
-        targets: ['.gridOuter'],
-        easing: 'easeInOutSine',
+        targets: [".gridOuter"],
+        easing: "easeInOutSine",
         duration: 250,
-        opacity:1,
-        delay: 0,
+        opacity: 1,
+        delay: 0
       });
     } else {
       anime({
-        targets: ['.gridOuter'],
-        easing: 'easeInOutSine',
+        targets: [".gridOuter"],
+        easing: "easeInOutSine",
         duration: 250,
-        opacity:0,
-        delay: 0,
+        opacity: 0,
+        delay: 0
       });
     }
-    this.setState({hideBeatpad: !this.state.hideBeatpad})
+    this.setState({ hideBeatpad: !this.state.hideBeatpad });
   }
 
   setShowTutorial() {
-    this.setState({showTutorial: !this.state.showTutorial})
-
+    this.setState({ showTutorial: !this.state.showTutorial });
   }
 
   handlePlayMix() {
-    const element = document.getElementById('mix-overlay');
-    element.remove()
+    const element = document.getElementById("mix-overlay");
+    element.remove();
     //handle play mix
+    if (this.state.padRecording.length > 0) {
+      this.setState({
+        repeat: true
+      });
+
+      this.playbackRecording(this.state.padRecording, pad =>
+        this.togglePad(pad[0], pad[1])
+      );
+    }
   }
 
   render() {
@@ -958,7 +996,24 @@ class Sequencer extends Component {
       return (
         <React.StrictMode>
           <div className="fullscreen-overlay" id="mix-overlay">
-            <button className="metamask-button" onClick={this.handlePlayMix}>
+            {/* <button className="metamask-button" onClick={this.handlePlayMix}> */}
+            <button
+              className="metamask-button"
+              onClick={() => {
+                const element = document.getElementById("mix-overlay");
+                element.remove();
+                //handle play mix
+                if (this.state.padRecording.length > 0) {
+                  this.setState({
+                    repeat: true
+                  });
+
+                  this.playbackRecording(this.state.padRecording, pad =>
+                    this.togglePad(pad[0], pad[1])
+                  );
+                }
+              }}
+            >
               Play Mix
             </button>
           </div>
@@ -969,7 +1024,6 @@ class Sequencer extends Component {
             height="500"
           ></canvas> */}
           <div className="container scrollbar">
-
             {mediaFileExtension === "mp4" && (
               <div className="video-container opensea">
                 <video
@@ -1054,39 +1108,34 @@ class Sequencer extends Component {
                 });
               })}
             </div>
-            {openControls &&
-              <div className="song-info-wrapper" style={{paddingBottom:"58px"}}>
+            {openControls && (
+              <div
+                className="song-info-wrapper"
+                style={{ paddingBottom: "58px" }}
+              >
                 <div className="song-info-container">
-
-              <div className="controls-container">
-              <button
-                className={"button record control-item"}
-                onClick={this.setHideBeatpad.bind(this)}
-              >
-                {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
-              </button>
-              <button
-                className={"button record control-item"}
-                onClick={this.setShowTutorial.bind(this)}
-              >
-                {this.state.showTutorial ? "Hide Tutorial" : "Show Tutorial"}
-              </button>
-            </div>
-            <div className="song-details">
-
-            </div>
+                  <div className="controls-container">
+                    <button
+                      className={"button record control-item"}
+                      onClick={this.setHideBeatpad.bind(this)}
+                    >
+                      {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
+                    </button>
+                    <button
+                      className={"button record control-item"}
+                      onClick={this.setShowTutorial.bind(this)}
+                    >
+                      {this.state.showTutorial
+                        ? "Hide Tutorial"
+                        : "Show Tutorial"}
+                    </button>
+                  </div>
+                  <div className="song-details"></div>
+                </div>
+              </div>
+            )}
           </div>
 
-        </div>
-
-            }
-          </div>
-
-          <div
-            onClick={() => console.log("this.state.pads: ", this.state.pads)}
-          >
-            CLICK FOR LOGS
-          </div>
           <Footer
             white={false}
             showShare={false}

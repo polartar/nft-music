@@ -74,7 +74,25 @@ async function getNFT(artistName, name, edition) {
     let nft = await db.collection("NFTs").findOne({
       artistName,
       name,
-      edition: parseFloat(edition),
+    });
+
+    nft = await getNFTWithMetadata(nft._id.toString());
+
+    return {
+      status: 200,
+      response: nft,
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
+
+async function getSequencerToken(tokenAddress, tokenId) {
+  console.log(tokenAddress);
+  try {
+    let nft = await db.collection("NFTs").findOne({
+      tokenAddress,
     });
 
     nft = await getNFTWithMetadata(nft._id.toString());
@@ -217,4 +235,5 @@ module.exports = {
   getNFTsForUser,
   getOrdersForNFT,
   getNFTsForOwner,
+  getSequencerToken,
 };
