@@ -34,28 +34,14 @@ setTimeout(() => {
 
 async function getMintStatusForAddress(address) {
   try {
-    // Check capsuleHouseList addresses array for address case insensitive match
-    const capsuleHouseAddressMatch = capsuleHouseList.addresses.find(
-      (capsuleHouseAddress) =>
-        capsuleHouseAddress.toLowerCase() === address.toLowerCase()
-    );
+    const mintStatus = await db
+      .collection("mintStatus")
+      .findOne({ address: address.toLowerCase() });
 
-    if (capsuleHouseAddressMatch) {
+    if (mintStatus) {
       return {
         status: 200,
-        response: "CAPSULE HOUSE",
-      };
-    }
-
-    // Check mintList addresses array for address case insensitive match
-    const addressMatch = mintList.addresses.find(
-      (mintAddress) => mintAddress.toLowerCase() === address.toLowerCase()
-    );
-
-    if (addressMatch) {
-      return {
-        status: 200,
-        response: "MINT LIST",
+        response: mintStatus.status,
       };
     }
 
@@ -112,7 +98,7 @@ async function getMetadata(address, tokenId) {
 
 async function makeDiscountedSignature(address) {
   const mintStatus = getMintStatusForAddress(address);
-  if (mintStatus.data !== 'MINT LIST') {
+  if (mintStatus.data !== "MINT LIST") {
     return { status: 400, response: "invalid user" };
   }
   try {
@@ -123,7 +109,7 @@ async function makeDiscountedSignature(address) {
       status: 200,
       response: {
         hash: discounthash,
-        signature: ownerSignature
+        signature: ownerSignature,
       },
     };
   } catch (error) {
@@ -135,5 +121,5 @@ async function makeDiscountedSignature(address) {
 module.exports = {
   getMintStatusForAddress,
   getMetadata,
-  makeDiscountedSignature
+  makeDiscountedSignature,
 };

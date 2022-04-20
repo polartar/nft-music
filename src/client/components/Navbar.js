@@ -98,7 +98,6 @@ export default function Navbar(props) {
     setOpenMenu(false);
   };
 
-
   useEffect(() => {
     refreshData();
 
@@ -206,16 +205,25 @@ export default function Navbar(props) {
               Secret Garden
             </a>
             {/*<div className="body-medium yellow-text" id="mint-date">MINTING APRIL 2022</div>*/}
-            <button
+            {/* <button
               id="mint-button"
               className="metamask-button"
               onClick={() => setOpenMint(true)}
             >
               PRE-SALE
-            </button>
+            </button> */}
 
             <MintModal onClose={handleCloseMint} open={openMint} />
-            <MenuModal onClose={handleCloseMenu} open={openMenu} didConnectWallet={didConnectWallet} loggedIntoMetamaskOverride={loggedIntoMetamaskOverride} isLoggedIntoMetamask={isLoggedIntoMetamask} connectWallet={connectWallet} balance={balance} displayName={displayName}  />
+            <MenuModal
+              onClose={handleCloseMenu}
+              open={openMenu}
+              didConnectWallet={didConnectWallet}
+              loggedIntoMetamaskOverride={loggedIntoMetamaskOverride}
+              isLoggedIntoMetamask={isLoggedIntoMetamask}
+              connectWallet={connectWallet}
+              balance={balance}
+              displayName={displayName}
+            />
 
             {/* <div className={white ? "timer white" : "timer"}>
               <Countdown
@@ -239,37 +247,51 @@ export default function Navbar(props) {
               />
             </div> */}
             <div className="wallet-container">
+              {!isLoggedIntoMetamask && (
+                <button
+                  onClick={connectWallet}
+                  id="wallet-button"
+                  className={
+                    white
+                      ? "metamask-button small dark"
+                      : "metamask-button small"
+                  }
+                >
+                  CONNECT WALLET
+                </button>
+              )}
 
-
-            {!isLoggedIntoMetamask && (
-              <button onClick={connectWallet} id="wallet-button" className={white ? "metamask-button small dark" : "metamask-button small"}>
-                CONNECT WALLET
-              </button>
-            )}
-
-            {isLoggedIntoMetamask && (
-              <div id="signedInWrapper" className="signedInWrapper">
-                <div className="walletOuter">
-                  <img src={white ? WalletBlack : Wallet} className="wallet" />
-                  <span className="walletAmount">{`${parseFloat(
-                    utils.formatEther(balance)
-                  ).toFixed(4)} ETH`}</span>
+              {isLoggedIntoMetamask && (
+                <div id="signedInWrapper" className="signedInWrapper">
+                  <div className="walletOuter">
+                    <img
+                      src={white ? WalletBlack : Wallet}
+                      className="wallet"
+                    />
+                    <span className="walletAmount">{`${parseFloat(
+                      utils.formatEther(balance)
+                    ).toFixed(4)} ETH`}</span>
+                  </div>
+                  <a href="/profile">
+                    <div className="userName">{displayName}</div>
+                  </a>
                 </div>
-                <a href="/profile">
-                  <div className="userName">{displayName}</div>
-                </a>
-              </div>
-            )}
-            <button
-              id="mint-button"
-              className={white ? "cta-button small dark" : "cta-button small"}
-              onClick={() => setOpenMint(true)}
-            >
-              PRE-SALE
-            </button>
-            <HamburgerMenuButton onClick={() => setOpenMenu(true)} className={white ? "metamask-button small dark" : "metamask-button small"} stroke={white ? "#353535" : "#E4F0A8"}/>
+              )}
+              <button
+                id="mint-button"
+                className={white ? "cta-button small dark" : "cta-button small"}
+                onClick={() => setOpenMint(true)}
+              >
+                MINT
+              </button>
+              <HamburgerMenuButton
+                onClick={() => setOpenMenu(true)}
+                className={
+                  white ? "metamask-button small dark" : "metamask-button small"
+                }
+                stroke={white ? "#353535" : "#E4F0A8"}
+              />
             </div>
-
           </div>
         </React.Fragment>
       )}

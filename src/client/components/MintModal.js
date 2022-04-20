@@ -20,7 +20,7 @@ import {
 import X from "../images/x.png";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import AlbumArt from "../images/albumArt.png";
 import InstaPic from "../images/instaPic.png";
 
@@ -88,17 +88,18 @@ const useStyles = makeStyles({
   },
 });
 
-const nextPriceDropDate = "4/12";
-const priceDropAmount = "0.0125";
+const priceDropAmount = "Public auction drops 0.0125 ETH every 15 minutes";
 const currentNFT = "Sunday Journal";
 const discountedPrice = "0.0075";
-const capsulePrice = "0.2"
+const capsulePrice = "0.2";
 export default function SimpleDialog(props) {
   const classes = useStyles();
   const { onClose, open, shareURL } = props;
   const [text, setText] = React.useState("Copy Link");
   const [metamaskAddress, setMetamaskAddress] = React.useState(null);
-  const [transactionHash, setTransactionHash] = React.useState("OX1892AKSD3981120030039");
+  const [transactionHash, setTransactionHash] = React.useState(
+    "OX1892AKSD3981120030039"
+  );
 
   const [isMinting, setIsMinting] = React.useState(false);
   const [didMint, setDidMint] = React.useState(false);
@@ -107,6 +108,19 @@ export default function SimpleDialog(props) {
   const [totalPublicMinted, setTotalPublicMinted] = useState(0);
   const [mintStatus, setMintStatus] = useState("");
   const [contract, setContract] = useState(null);
+
+  const RoundUp = (intervalMilliseconds, datetime) => {
+    datetime = datetime || new Date();
+    var modTicks = datetime.getTime() % intervalMilliseconds;
+    var delta = modTicks === 0 ? 0 : datetime.getTime() - modTicks;
+    delta += intervalMilliseconds;
+    return new Date(delta);
+  };
+
+  const nextPriceDropDate = RoundUp(
+    15 * 60 * 1000,
+    new Date()
+  ).toLocaleTimeString();
 
   useEffect(() => {
     if (open) {
@@ -119,7 +133,7 @@ export default function SimpleDialog(props) {
       async function init() {
         await checkNetwork();
         await window.ethereum.enable();
-  
+
         const userAddress = window.ethereum.selectedAddress;
         if (userAddress) {
           setMetamaskAddress(userAddress);
@@ -127,35 +141,39 @@ export default function SimpleDialog(props) {
           await createContractInstance();
         }
       }
-      
+
       init();
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (!metamaskAddress) return;
 
     async function getStatus() {
-      const mintStatusResponse = await axios.get("/api/getMintStatusForAddress", {
-        params: {
-          address: metamaskAddress.toLowerCase(),
-        },
-      });
-  
+      const mintStatusResponse = await axios.get(
+        "/api/getMintStatusForAddress",
+        {
+          params: {
+            address: metamaskAddress.toLowerCase(),
+          },
+        }
+      );
+
       if (mintStatusResponse.status === 200) {
         setMintStatus(mintStatusResponse.data);
       }
     }
    
     getMintBalances();
+
     getStatus();
-  }, [metamaskAddress])
+  }, [metamaskAddress]);
 
   useEffect(() => {
     if (!mintStatus) return;
 
     initializePrice();
-  }, [mintStatus])
+  }, [mintStatus]);
 
   const getMintBalances = () => {
     let instance = contract;
@@ -187,20 +205,20 @@ export default function SimpleDialog(props) {
     }
 
     setCurrentPrice(price);
-  }
+  };
 
   const checkNetwork = async () => {
     const currentChainId = await window.ethereum.request({
-      method: 'eth_chainId',
+      method: "eth_chainId",
     });
 
-    if (currentChainId !== '0x1' && currentChainId !== '0x4') {
-      switchNetwork('0x4');
+    if (currentChainId !== "0x1" && currentChainId !== "0x4") {
+      switchNetwork("0x4");
     }
-  }
+  };
   const switchNetwork = async (targetNetworkId) => {
     await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
+      method: "wallet_switchEthereumChain",
       params: [{ chainId: targetNetworkId }],
     });
     // refresh
@@ -210,48 +228,57 @@ export default function SimpleDialog(props) {
   const getCurrentMintPrice = async () => {
     const cost = await contract.cost(1);
     return ethers.utils.formatEther(cost);
-  }
+  };
 
   const handleMint = async () => {
-    setIsMinting(true)
+    setIsMinting(true);
     try {
       let tx;
-      if (mintStatus === 'PUBLIC') {
-        tx = await contract.mintPublic(1, {value: parseEther(currentPrice)});
-      } else if (mintStatus === 'MINT LIST') {
-        const signatureResponse = await axios.get("/api/makeDiscountedSignature", {
-          params: {
-            address: metamaskAddress.toLowerCase(),
-          },
-        });  
-        
+      if (mintStatus === "PUBLIC") {
+        const price = await getCurrentMintPrice();
+        tx = await contract.mintPublic(1, { value: parseEther(price) });
+      } else if (mintStatus === "MINT LIST") {
+        const signatureResponse = await axios.get(
+          "/api/makeDiscountedSignature",
+          {
+            params: {
+              address: metamaskAddress.toLowerCase(),
+            },
+          }
+        );
+
         if (signatureResponse.status === 200) {
-          tx = await contract.mintWhitelistDiscounted(signatureResponse.data.hash, signatureResponse.data.signature, 1, {value: parseEther(discountedPrice)});
+          tx = await contract.mintWhitelistDiscounted(
+            signatureResponse.data.hash,
+            signatureResponse.data.signature,
+            1,
+            { value: parseEther(discountedPrice) }
+          );
         }
-      } else if (mintStatus === 'CAPSULE HOUSE') {
-        tx = await contract.mintPublic(1, {value: capsulePrice});
+      } else if (mintStatus === "CAPSULE HOUSE") {
+        tx = await contract.mintPublic(1, { value: capsulePrice });
       }
 
       setTransactionHash(tx.hash);
       await tx.wait();
       setDidMint(true);
     } catch (err) {
-      console.log({err})
+      console.log({ err });
     } finally {
-      setIsMinting(false)
+      setIsMinting(false);
     }
-  }
+  };
 
   const createContractInstance = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner(0);
-     
+
     const instance = new Contract(auctionAddress, AuctionABI, signer);
 
     setContract(instance);
-  }
+  };
 
-  const handleMetamask = async() => {
+  const handleMetamask = async () => {
     if (window.ethereum) {
       await window.ethereum.enable();
       const address = window.ethereum.selectedAddress;
@@ -259,17 +286,16 @@ export default function SimpleDialog(props) {
       checkNetwork();
       createContractInstance();
 
-      setMetamaskAddress(address)
+      setMetamaskAddress(address);
     }
-  }
+  };
 
   const removeMetamask = () => {
-    setMetamaskAddress(null)
-  }
+    setMetamaskAddress(null);
+  };
 
   // var path = anime.path('#loading-flower path');
   //
-
 
   return (
     <Dialog
@@ -278,54 +304,83 @@ export default function SimpleDialog(props) {
       aria-labelledby="simple-dialog-title"
       open={open}
     >
-    <div className="mint-modal-container">
-      <div className="modalHeader2" style={{borderBottomWidth:"0px"}}>
-        <div></div>
-        <IconButton>
-          <CloseIcon style={{color:"#8F8F8A"}} fontSize="large"  onClick={onClose}/>
-        </IconButton>
-      </div>
-      <div className="modalBody2" style={{paddingTop:"0px", paddingBottom:"80px"}}>
-        <div style={{textAlign:"center"}}>
-          {isMinting ?
-            <div className="display-small sm:display-medium white-text">Minting...</div>
-            :
-            <div className="display-small sm:display-medium white-text">{didMint ? "Congrats!" : "Access Pre-Sale"}</div>
-          }
-            {
-              isMinting ?
-              <div>
-                <p className="body-medium white-text" style={{margin:"16px auto", maxWidth:"360px"}}>Follow the on-screen dialogs for the wallet provider selected. Approve or reject a transaction to finalize sale</p>
-                <div id="loading-spinner" style={{marginTop:"44px"}}> <LoadingFlower id="loading-flower"/></div>
+      <div className="mint-modal-container">
+        <div className="modalHeader2" style={{ borderBottomWidth: "0px" }}>
+          <div></div>
+          <IconButton>
+            <CloseIcon
+              style={{ color: "#8F8F8A" }}
+              fontSize="large"
+              onClick={onClose}
+            />
+          </IconButton>
+        </div>
+        <div
+          className="modalBody2"
+          style={{ paddingTop: "0px", paddingBottom: "80px" }}
+        >
+          <div style={{ textAlign: "center" }}>
+            {isMinting ? (
+              <div className="display-small sm:display-medium white-text">
+                Minting...
               </div>
-
-              :
-              <div style={{paddingTop:"44px"}}>
-                {
-                  didMint ?
-                  <p className="body-medium sm:body-large white-text" style={{margin:"16px auto", maxWidth:"360px"}}>You succesfully purchased <b>{currentNFT}</b></p>
-                  :
+            ) : (
+              <div className="display-small sm:display-medium white-text">
+                {didMint ? "Congrats!" : "Mint"}
+              </div>
+            )}
+            {isMinting ? (
+              <div>
+                <p
+                  className="body-medium white-text"
+                  style={{ margin: "16px auto", maxWidth: "360px" }}
+                >
+                  Follow the on-screen dialogs for the wallet provider selected.
+                  Approve or reject a transaction to finalize sale
+                </p>
+                <div id="loading-spinner" style={{ marginTop: "44px" }}>
+                  {" "}
+                  <LoadingFlower id="loading-flower" />
+                </div>
+              </div>
+            ) : (
+              <div style={{ paddingTop: "44px" }}>
+                {didMint ? (
+                  <p
+                    className="body-medium sm:body-large white-text"
+                    style={{ margin: "16px auto", maxWidth: "360px" }}
+                  >
+                    You succesfully purchased <b>{currentNFT}</b>
+                  </p>
+                ) : (
                   <React.Fragment>
-                    {
-                      metamaskAddress ?
+                    {metamaskAddress ? (
                       <div>
-                        <p className="body-medium sm:body-large white-text text-uppercase">{metamaskAddress}</p>
-                        <button className="metamask-button disconnect" onClick={removeMetamask}><img src={ErrorLink} />Disconnect Metamask</button>
+                        <p className="body-medium sm:body-large white-text text-uppercase">
+                          {metamaskAddress}
+                        </p>
+                        {/* <button
+                          className="metamask-button disconnect"
+                          onClick={removeMetamask}
+                        >
+                          <img src={ErrorLink} />
+                          Disconnect Metamask
+                        </button> */}
                       </div>
-                      :
-                      <button className="metamask-button body-large" onClick={handleMetamask}><img src={Link} />Connect Metamask</button>
-                    }
+                    ) : (
+                      <button
+                        className="metamask-button body-large"
+                        onClick={handleMetamask}
+                      >
+                        <img src={Link} />
+                        Connect Metamask
+                      </button>
+                    )}
                   </React.Fragment>
-                }
-                <div style={{height:"44px"}}/>
+                )}
+                <div style={{ height: "44px" }} />
 
-                {
-                    didMint ?
-                    <React.Fragment>
-                      <p className="body-medium yellowish-gray-text text-uppercase">Transaction Hash</p>
-                      <p className="body-medium sm:body-large yellow-text text-uppercase">{transactionHash}</p>
-                    </React.Fragment>
-                  :
+                {didMint ? (
                   <React.Fragment>
                     <button className="cta-button" onClick={handleMint} disabled={(metamaskAddress && !isMinting) && contract ? false : true}>BUY NOW - {currentPrice}ETH</button>
                     <div style={{height:"44px"}}/>
@@ -334,15 +389,73 @@ export default function SimpleDialog(props) {
                     <p className="body-medium yellowish-gray-text text-uppercase">Total Public Editions Minted: <b>{totalPublicMinted}</b></p>
                     <p className="body-medium yellowish-gray-text text-uppercase">Next Price Drop: <b>{nextPriceDropDate}</b> </p>
                     <p className="body-medium yellowish-gray-text text-uppercase">Price Drop Aount: <b>{priceDropAmount}</b> </p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">
+                      Transaction Hash
+                    </p>
+                    <p className="body-medium sm:body-large yellow-text text-uppercase">
+                      {transactionHash}
+                    </p>
                   </React.Fragment>
-                }
-
+                ) : (
+                  <React.Fragment>
+                    {mintStatus !== "CAPSULE HOUSE" && metamaskAddress && (
+                      <button
+                        className="cta-button"
+                        onClick={handleMint}
+                        disabled={
+                          metamaskAddress && !isMinting && contract
+                            ? false
+                            : true
+                        }
+                      >
+                        BUY NOW - {currentPrice} ETH
+                      </button>
+                    )}
+                    <div style={{ height: "44px" }} />
+                    {metamaskAddress && (
+                      <p className="body-medium yellowish-gray-text text-uppercase">
+                        Mint Status: <b>{mintStatus}</b>
+                      </p>
+                    )}
+                    <p className="body-medium yellowish-gray-text text-uppercase">
+                      Total Editions Minted: <b>{totalMinted}</b>
+                    </p>
+                    {mintStatus === "PUBLIC" && (
+                      <>
+                        <p className="body-medium yellowish-gray-text text-uppercase">
+                          Next Price Drop: <b>{nextPriceDropDate}</b>{" "}
+                        </p>
+                        <p className="body-medium yellowish-gray-text text-uppercase">
+                          <b>{priceDropAmount}</b>
+                        </p>
+                      </>
+                    )}
+                    {mintStatus === "MINT LIST" && (
+                      <>
+                        <p className="body-medium yellowish-gray-text text-uppercase">
+                          Mint List winners will always mint at 0.5 ETH.
+                        </p>
+                        <p className="body-medium yellowish-gray-text text-uppercase">
+                          You will be able to claim a refund when sales end for
+                          the difference between your price and the lowest Dutch
+                          Auction price.
+                        </p>
+                      </>
+                    )}
+                    {mintStatus === "CAPSULE HOUSE" && (
+                      <>
+                        <p className="body-medium yellowish-gray-text text-uppercase">
+                          You will be able to mint at 0.2 ETH on 4/21.
+                        </p>
+                      </>
+                    )}
+                  </React.Fragment>
+                )}
               </div>
-          }
+            )}
+          </div>
         </div>
-
-        </div>
-        </div>
+      </div>
     </Dialog>
   );
 }

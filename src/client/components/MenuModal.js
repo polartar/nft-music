@@ -20,7 +20,7 @@ import {
 import X from "../images/x.png";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import AlbumArt from "../images/albumArt.png";
 import InstaPic from "../images/instaPic.png";
 import Wallet from "../images/wallet.png";
@@ -61,7 +61,7 @@ const useStyles = makeStyles({
     margin: "20px",
     top: 0,
     right: 0,
-    position: isMobile ? "static" : "absolute"
+    position: isMobile ? "static" : "absolute",
     // boxShadow: "0 0 40px 20px rgba(255,255,255,0.12)",
   },
   backButton: {
@@ -98,7 +98,17 @@ const useStyles = makeStyles({
 
 export default function SimpleDialog(props) {
   const classes = useStyles();
-  const { onClose, open, shareURL, loggedIntoMetamaskOverride, isLoggedIntoMetamask, didConnectWallet, connectWallet, balance, displayName } = props;
+  const {
+    onClose,
+    open,
+    shareURL,
+    loggedIntoMetamaskOverride,
+    isLoggedIntoMetamask,
+    didConnectWallet,
+    connectWallet,
+    balance,
+    displayName,
+  } = props;
 
   const [openShare, setOpenShare] = useState(false);
 
@@ -113,18 +123,25 @@ export default function SimpleDialog(props) {
       aria-labelledby="simple-dialog-title"
       open={open}
     >
-    <ShareModal shareURL={shareURL} onClose={handleCloseShare} open={openShare} />
+      <ShareModal
+        shareURL={shareURL}
+        onClose={handleCloseShare}
+        open={openShare}
+      />
 
-    <div className="menu-modal-container">
-      <div className="menu-modal-header" style={{borderBottomWidth:"0px"}}>
-        <div></div>
-        <IconButton>
-          <CloseIcon style={{color:"#8F8F8A"}} fontSize="large"  onClick={onClose}/>
-        </IconButton>
-      </div>
-      <div className="menu-modal-body">
-        <div style={{textAlign:"center"}}>
-
+      <div className="menu-modal-container">
+        <div className="menu-modal-header" style={{ borderBottomWidth: "0px" }}>
+          <div></div>
+          <IconButton>
+            <CloseIcon
+              style={{ color: "#8F8F8A" }}
+              fontSize="large"
+              onClick={onClose}
+            />
+          </IconButton>
+        </div>
+        <div className="menu-modal-body">
+          <div style={{ textAlign: "center" }}>
             {!isLoggedIntoMetamask && (
               <button onClick={connectWallet} className="metamask-button">
                 CONNECT WALLET
@@ -133,50 +150,49 @@ export default function SimpleDialog(props) {
 
             {isLoggedIntoMetamask && (
               <React.Fragment>
-                <p className="body-large white-text">My Collection</p>
-                <p className="body-large white-text">Profile</p>
-
-                    <div className="walletOuter">
-                      <img src={Wallet} className="wallet" />
-                      <span className="walletAmount">{`${parseFloat(
-                        utils.formatEther(balance)
-                      ).toFixed(4)} ETH`}</span>
-                    </div>
-                    <br/>
-                    <a href="/profile">
-                      <div className="userName">{displayName}</div>
-                    </a>
-
+                <p href="/collection/" className="body-large white-text">
+                  My Collection
+                </p>
+                // <p className="body-large white-text">Profile</p>
+                <div className="walletOuter">
+                  <img src={Wallet} className="wallet" />
+                  <span className="walletAmount">{`${parseFloat(
+                    utils.formatEther(balance)
+                  ).toFixed(4)} ETH`}</span>
+                </div>
+                <br />
+                <a href="/profile">
+                  <div className="userName">{displayName}</div>
+                </a>
               </React.Fragment>
-
             )}
-            <br/><br/>
-          <div style={{ display: "inline-flex", gap: "16px" }}>
-            {/* <a href="https://discord.gg/ykrzXB9ZsV">
+            <br />
+            <br />
+            <div style={{ display: "inline-flex", gap: "16px" }}>
+              {/* <a href="https://discord.gg/ykrzXB9ZsV">
               <div className=""><img src={Discord}/></div>
             </a> */}
-            <a href="https://twitter.com/SecretGarden_FM">
-              <div className="">
-                <img src={Twitter} />
+              <a href="https://twitter.com/SecretGarden_FM">
+                <div className="">
+                  <img src={Twitter} />
+                </div>
+              </a>
+              <a href="https://instagram.com/SecretGarden_FM">
+                <div className="">
+                  <img src={Instagram} />
+                </div>
+              </a>
+              <div
+                className=""
+                onClick={() => setOpenShare(true)}
+                style={{ fontWeight: "700" }}
+              >
+                <img src={Share} />
               </div>
-            </a>
-            <a href="https://instagram.com/SecretGarden_FM">
-              <div className="">
-                <img src={Instagram} />
-              </div>
-            </a>
-            <div
-              className=""
-              onClick={() => setOpenShare(true)}
-              style={{ fontWeight: "700" }}
-            >
-              <img src={Share} />
             </div>
           </div>
         </div>
-
-        </div>
-        </div>
+      </div>
     </Dialog>
   );
 }
