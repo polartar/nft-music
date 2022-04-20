@@ -289,14 +289,6 @@ class Sequencer extends Component {
         address,
         balance: await provider.getBalance(address),
       });
-
-      const mintStatus = await axios.get("/api/getMintStatusForAddress", {
-        params: {
-          address,
-        },
-      });
-
-      console.log(mintStatus);
     }
   };
 

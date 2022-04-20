@@ -89,6 +89,12 @@ app.post("/api/addEmail", async (req, res) => {
   res.status(status).send(response);
 });
 
+app.get("/api/makeDiscountedSignature", async (req, res) => {
+  const { status, response } = await userController.makeDiscountedSignature(req.query.address);
+
+  res.status(status).send(response);
+});
+
 app.post("/api/upload", upload.single("video"), async (req, res) => {
   uploadController.commitVideo(req.file);
   console.log(req.file);
