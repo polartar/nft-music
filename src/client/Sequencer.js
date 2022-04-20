@@ -391,7 +391,7 @@ class Sequencer extends Component {
           });
         }
 
-        if (this.state.step === this.state.steps - 1) {
+        if (this.state.step === 0) {
           if (this.state.repeat && this.state.endOfPlayback) {
             this.setState({
               endOfPlayback: false,
