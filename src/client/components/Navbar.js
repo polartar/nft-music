@@ -158,6 +158,7 @@ export default function Navbar(props) {
               connectWallet={connectWallet}
               balance={balance}
               displayName={displayName}
+              tokenAddress={nft.tokenAddress}
             />
 
             {/* <div className={white ? "timer white" : "timer"}>

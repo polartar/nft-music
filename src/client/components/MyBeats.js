@@ -42,6 +42,8 @@ function Collection(props) {
         },
       });
 
+      console.log(nftsResponse);
+
       setNFTs(nftsResponse.data);
       const userResponse = await axios.get("/api/getUser", {
         params: {
@@ -90,7 +92,9 @@ function Collection(props) {
                   .pop()
                   .toLowerCase();
                 return (
-                  <a href={`/${nft.artistName}/${nft.name}/${nft.edition}`}>
+                  <a
+                    href={`/bouquet/${nft.artistName}/${nft.name}/${nft.edition}`}
+                  >
                     <div className="beatPackItem">
                       {mediaFileExtension === "mp4" && (
                         <video
