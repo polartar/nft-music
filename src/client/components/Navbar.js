@@ -205,13 +205,13 @@ export default function Navbar(props) {
               Secret Garden
             </a>
             {/*<div className="body-medium yellow-text" id="mint-date">MINTING APRIL 2022</div>*/}
-            {/* <button
+            <button
               id="mint-button"
               className="metamask-button"
               onClick={() => setOpenMint(true)}
             >
               PRE-SALE
-            </button> */}
+            </button>
 
             <MintModal onClose={handleCloseMint} open={openMint} />
             <MenuModal
