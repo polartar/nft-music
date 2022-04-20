@@ -88,6 +88,11 @@ const useStyles = makeStyles({
   },
 });
 
+const nextPriceDropDate = "4/12";
+const priceDropAmount = "0.0125";
+const currentNFT = "Sunday Journal";
+const discountedPrice = "0.0075";
+const capsulePrice = "0.2"
 export default function SimpleDialog(props) {
   const classes = useStyles();
   const { onClose, open, shareURL } = props;
@@ -97,27 +102,74 @@ export default function SimpleDialog(props) {
 
   const [isMinting, setIsMinting] = React.useState(false);
   const [didMint, setDidMint] = React.useState(false);
-
-  const mintPrice = 0.5;
-  const editionsMinted = 0.5;
-  const nextPriceDropDate = "4/12";
-  const priceDropAmount = 0.1;
-  const currentNFT = "Sunday Journal";
+  const [currentPrice, setCurrentPrice] = useState();
+  const [totalMinted, setTotalMinted] = useState(0);
+  const [mintStatus, setMintStatus] = useState("");
+  const [contract, setContract] = useState(null);
 
   useEffect(() => {
     if (open) {
       setText("Copy Link");
     }
+  }, [open]);
+
+  useEffect(() => {
     if (window.ethereum) {
-      checkNetwork();
-      const userAddress = window.ethereum.selectedAddress;
-      if (userAddress) {
-        setMetamaskAddress(userAddress);
+      async function init() {
+        await checkNetwork();
+        await window.ethereum.enable();
+  
+        const userAddress = window.ethereum.selectedAddress;
+        if (userAddress) {
+          setMetamaskAddress(userAddress);
+
+          await createContractInstance();
+        }
+      }
+      
+      init();
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!metamaskAddress) return;
+
+    async function getStatus() {
+      const mintStatusResponse = await axios.get("/api/getMintStatusForAddress", {
+        params: {
+          address: metamaskAddress.toLowerCase(),
+        },
+      });
+  
+      if (mintStatusResponse.status === 200) {
+        setMintStatus(mintStatusResponse.data);
       }
     }
+    
+    getStatus();
+  }, [metamaskAddress])
 
+  useEffect(() => {
+    if (!mintStatus) return;
 
-  }, [open]);
+    initializePrice();
+  }, [mintStatus])
+
+  const initializePrice = async() => {
+    let price;
+    if (mintStatus === "PUBLIC") {
+      if (!contract) return;
+      price = await getCurrentMintPrice();
+      setTimeout(initializePrice, 1000 * 60 * 15);
+    } else if (mintStatus === "MINT LIST") {
+      price = discountedPrice;
+    } else if (mintStatus === "CAPSULE HOUSE") {
+      price = capsulePrice;
+    }
+
+    setCurrentPrice(price);
+  }
+
   const checkNetwork = async () => {
     const currentChainId = await window.ethereum.request({
       method: 'eth_chainId',
@@ -128,7 +180,6 @@ export default function SimpleDialog(props) {
     }
   }
   const switchNetwork = async (targetNetworkId) => {
-    console.log({targetNetworkId})
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: targetNetworkId }],
@@ -137,23 +188,17 @@ export default function SimpleDialog(props) {
     window.location.reload();
   };
 
+  const getCurrentMintPrice = async () => {
+    const cost = await contract.cost(1);
+    return ethers.utils.formatEther(cost);
+  }
+
   const handleMint = async () => {
     setIsMinting(true)
     try {
-      const mintStatus = await axios.get("/api/getMintStatusForAddress", {
-        params: {
-          address: metamaskAddress.toLowerCase(),
-        },
-      });
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner(0);
-      
-      const contract = new Contract(auctionAddress, AuctionABI, signer);
-      
-      if (mintStatus.data === 'PUBLIC') {
-        await contract.mintPublic(1, {value: parseEther("0.05")});
-      } else if (mintStatus.data === 'MINT LIST') {
+      if (mintStatus === 'PUBLIC') {
+        await contract.mintPublic(1, {value: parseEther(currentPrice)});
+      } else if (mintStatus === 'MINT LIST') {
         const signatureResponse = await axios.get("/api/makeDiscountedSignature", {
           params: {
             address: metamaskAddress.toLowerCase(),
@@ -161,16 +206,26 @@ export default function SimpleDialog(props) {
         });  
         
         if (signatureResponse.status === 200) {
-          await contract.mintWhitelistDiscounted(signatureResponse.data.hash, signatureResponse.data.signature, 1, {value: parseEther("0.0075")});
+          await contract.mintWhitelistDiscounted(signatureResponse.data.hash, signatureResponse.data.signature, 1, {value: parseEther(discountedPrice)});
         }
-      } else if (mintStatus.data === 'CAPSULE HOUSE') {
-        await contract.mintPublic(1, {value: parseEther("0.2")});
+      } else if (mintStatus === 'CAPSULE HOUSE') {
+        await contract.mintPublic(1, {value: capsulePrice});
       }
+      setDidMint(true);
     } catch (err) {
       console.log({err})
     } finally {
       setIsMinting(false)
     }
+  }
+
+  const createContractInstance = () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner(0);
+     
+    const instance = new Contract(auctionAddress, AuctionABI, signer);
+
+    setContract(instance);
   }
 
   const handleMetamask = async() => {
@@ -179,6 +234,7 @@ export default function SimpleDialog(props) {
       const address = window.ethereum.selectedAddress;
 
       checkNetwork();
+      createContractInstance();
 
       setMetamaskAddress(address)
     }
@@ -248,9 +304,10 @@ export default function SimpleDialog(props) {
                     </React.Fragment>
                   :
                   <React.Fragment>
-                    <button className="cta-button" onClick={handleMint} disabled={(metamaskAddress && !isMinting) ? false : true}>BUY NOW - {mintPrice}ETH</button>
+                    <button className="cta-button" onClick={handleMint} disabled={(metamaskAddress && !isMinting) && contract ? false : true}>BUY NOW - {currentPrice}ETH</button>
                     <div style={{height:"44px"}}/>
-                    <p className="body-medium yellowish-gray-text text-uppercase">Total Editions Minted: <b>{editionsMinted}</b></p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">Mint Status: <b>{mintStatus}</b></p>
+                    <p className="body-medium yellowish-gray-text text-uppercase">Total Editions Minted: <b>{totalMinted}</b></p>
                     <p className="body-medium yellowish-gray-text text-uppercase">Next Price Drop: <b>{nextPriceDropDate}</b> </p>
                     <p className="body-medium yellowish-gray-text text-uppercase">Price Drop Aount: <b>{priceDropAmount}</b> </p>
                   </React.Fragment>
