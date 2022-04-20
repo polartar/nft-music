@@ -48,22 +48,22 @@ const fetchTokenOwners = async (tokenAddress, tokenId) => {
   return tokenList;
 };
 
-const fetchOwnerNfts = (ownerAddress, tokenAddress) => {
+const fetchOwnerNfts = async (ownerAddress, tokenAddress) => {
   const nftIdResponse = await axios.get(
     `https://deep-index.moralis.io/api/v2/${ownerAddress}/nft/${tokenAddress}`,
     `https://deep-index.moralis.io/api/v2/0x518e354ca7419b5c9b4d13090321fc9a03e036d5/nft/0x40875223d61a688954263892d0f76c94fd6b3d4a`,
     {
       headers: {
         "X-API-KEY":
-          "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y",
-      },
+          "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y"
+      }
     }
   );
 
-  const nftIds = nftIdResponse.data.result.map((item) => item.token_id);
+  const nftIds = nftIdResponse.data.result.map(item => item.token_id);
 
   const metadata = await db.collection("NFTs").findOne({
-    tokenAddress,
+    tokenAddress
   });
 
   if (!metadata) {
@@ -72,7 +72,7 @@ const fetchOwnerNfts = (ownerAddress, tokenAddress) => {
 
   const nfts = [];
 
-  nftIds.forEach((nftId) => {
+  nftIds.forEach(nftId => {
     const nft = { ...metadata };
     nft.tokenId = nftId;
     nfts.push(nft);
@@ -80,9 +80,9 @@ const fetchOwnerNfts = (ownerAddress, tokenAddress) => {
 
   return {
     status: 200,
-    response: nfts,
+    response: nfts
   };
-}
+};
 
 module.exports = {
   fetchTokenOwners,
