@@ -72,7 +72,7 @@ async function getMetadata(address, tokenId) {
       : "localhost:3001";
 
     const formattedMetadata = {
-      name: metadata.name,
+      name: `${metadata.name} #${tokenId}`,
       description: metadata.description,
       external_url: `https://${baseURL}/bouquet/${metadata.artistName}/${metadata.name}/${tokenId}`,
       animation_url: `https://${baseURL}/bouquetEmbed/${address.toLowerCase()}/${tokenId}`,
