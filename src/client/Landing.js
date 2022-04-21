@@ -1829,7 +1829,7 @@ class Sequencer extends Component {
                     <div className="song-info-container">
                       {openControls && (
                         <div className="controls-container">
-                          <div className="record-container control-item">
+                          {/* <div className="record-container control-item">
                             <button
                               className={
                                 this.state.shouldStartRecording ||
@@ -1858,7 +1858,7 @@ class Sequencer extends Component {
                                 {this.state.isRecording && <Stopwatch />}
                               </p>
                             )}
-                          </div>
+                          </div> */}
                           <button
                             className={"button record control-item"}
                             onClick={this.setHideBeatpad.bind(this)}
@@ -2029,7 +2029,7 @@ class Sequencer extends Component {
                     <a
                       target="_blank"
                       className="cta-link"
-                      href="https://testnets.opensea.io/assets/0x52b1dd5c27705aa4dfd3889db223b5c4c84f6b54/1"
+                      href="https://opensea.io/collection/sunday-journal"
                     >
                       View on OpenSea
                     </a>

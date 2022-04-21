@@ -161,9 +161,7 @@ export default function SimpleDialog(props) {
                   ).toFixed(4)} ETH`}</span>
                 </div>
                 <br />
-                <a href="/profile">
-                  <div className="userName">{displayName}</div>
-                </a>
+                <div className="userName">{displayName}</div>
               </React.Fragment>
             )}
             <br />

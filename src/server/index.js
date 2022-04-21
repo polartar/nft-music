@@ -97,6 +97,14 @@ app.get("/api/makeDiscountedSignature", async (req, res) => {
   res.status(status).send(response);
 });
 
+app.get("/api/makeWhitelistSignature", async (req, res) => {
+  const { status, response } = await mintController.makeWhitelistSignature(
+    req.query.address
+  );
+
+  res.status(status).send(response);
+});
+
 app.post("/api/upload", upload.single("video"), async (req, res) => {
   uploadController.commitVideo(req.file);
   console.log(req.file);
