@@ -30,7 +30,11 @@ function Collection(props) {
   const refreshData = async () => {
     let userAddress;
     if (window.ethereum) {
-      userAddress = window.ethereum.selectedAddress;
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+      if (accounts.length > 0) {
+        userAddress = accounts[0]
+      }
     }
 
     if (userAddress) {
@@ -41,8 +45,6 @@ function Collection(props) {
           chain: "rinkeby",
         },
       });
-
-      console.log(nftsResponse);
 
       setNFTs(nftsResponse.data);
       const userResponse = await axios.get("/api/getUser", {
