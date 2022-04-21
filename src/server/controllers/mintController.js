@@ -6,6 +6,7 @@ const mintList = require("../mintList.json");
 const capsuleHouseList = require("../capsuleHouseList.json");
 const { soliditySha3 } = require("web3-utils");
 const HASH_PREFIX_DISCOUNTED = "Sunday Journal Discounted Verification:";
+const HASH_PREFIX_WHITELISTED = "Sunday Journal Base Verification:";
 const EthCrypto = require("eth-crypto");
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
@@ -106,7 +107,7 @@ async function getMetadata(address, tokenId) {
 
 async function makeDiscountedSignature(address) {
   const mintStatus = await getMintStatusForAddress(address);
-  if (mintStatus.response !== "MINT LIST") {
+  if (mintStatus.response !== "CAPSULE HOUSE") {
     return { status: 400, response: "invalid user" };
   }
   try {
@@ -126,8 +127,31 @@ async function makeDiscountedSignature(address) {
   }
 }
 
+async function makeWhitelistSignature(address) {
+  const mintStatus = await getMintStatusForAddress(address);
+  if (mintStatus.response !== "CAPSULE HOUSE") {
+    return { status: 400, response: "invalid user" };
+  }
+  try {
+    const hash = soliditySha3(HASH_PREFIX_WHITELISTED, address);
+    const ownerSignature = EthCrypto.sign(PRIVATE_KEY, hash);
+
+    return {
+      status: 200,
+      response: {
+        hash: hash,
+        signature: ownerSignature,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
+
 module.exports = {
   getMintStatusForAddress,
   getMetadata,
   makeDiscountedSignature,
+  makeWhitelistSignature,
 };
