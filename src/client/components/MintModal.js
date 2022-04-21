@@ -138,10 +138,14 @@ export default function SimpleDialog(props) {
   useEffect(() => {
     if (window.ethereum) {
       async function init() {
-        await checkNetwork();
-        await window.ethereum.enable();
+        let userAddress
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-        const userAddress = window.ethereum.selectedAddress;
+        if (accounts.length > 0) {
+          userAddress = accounts[0]
+        }
+        await checkNetwork();
+
         if (userAddress) {
           setMetamaskAddress(userAddress);
 
@@ -311,13 +315,17 @@ export default function SimpleDialog(props) {
 
   const handleMetamask = async () => {
     if (window.ethereum) {
-      await window.ethereum.enable();
-      const address = window.ethereum.selectedAddress;
+      let userAddress;
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+      if (accounts.length > 0) {
+        userAddress = accounts[0]
+      }
 
       checkNetwork();
       createContractInstance();
 
-      setMetamaskAddress(address);
+      setMetamaskAddress(userAddress);
     }
   };
 
