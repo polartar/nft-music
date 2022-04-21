@@ -26,35 +26,40 @@ function Collection(props) {
   const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
   const [nfts, setNFTs] = useState([]);
   const [displayName, setDisplayName] = useState();
-  const [ownerAddress, setOwnerAddress] = useState(
-    window.ethereum ? window.ethereum.selectedAddress : null
-  );
+  const [ownerAddress, setOwnerAddress] = useState(null);
 
   const refreshData = async () => {
-    // let userAddress;
-    // if (window.ethereum) {
-    // userAddress = window.ethereum.selectedAddress;
-    // }
+    let userAddress;
+    if (window.ethereum) {
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts"
+      });
+
+      if (accounts.length > 0) {
+        userAddress = accounts[0];
+        if (userAddress !== ownerAddress) {
+          setOwnerAddress(accounts[0]);
+        }
+      }
+    }
 
     // if (userAddress) {
-    if (ownerAddress) {
+    if (userAddress || ownerAddress) {
       const nftsResponse = await axios.get("/api/getNFTsForOwner", {
         params: {
           collection: props.match.params.address,
-          owner: ownerAddress,
+          owner: userAddress || ownerAddress,
           // owner: userAddress,
           // chain: "rinkeby",
           chain: "eth"
         }
       });
 
-      console.log(nftsResponse);
-
       setNFTs(nftsResponse.data);
       const userResponse = await axios.get("/api/getUser", {
         params: {
           // address: userAddress
-          address: ownerAddress
+          address: userAddress || ownerAddress
         }
       });
 

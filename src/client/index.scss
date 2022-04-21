@@ -106,13 +106,13 @@ $mid-gray: #353535;
 #main-wrapper {
   position: relative;
   height: 100%;
-  background-color: #1f1f1f;
+  background-color: $dark-gray;
 }
 
 #slideshow {
   position: relative;
   height: 100%;
-  background-color: #1f1f1f;
+  background-color: $dark-gray;
 }
 
 %abs {
@@ -132,7 +132,7 @@ $mid-gray: #353535;
   &:after {
     content: "";
     @extend %abs;
-    background-color: rgba(0, 0, 0, 0.25);
+    background-color: rgba(0,0,0,0.25);
     // z-index: 100;
   }
 }
@@ -140,13 +140,13 @@ $mid-gray: #353535;
 /* #FULLPAGE SLIDESHOW - START */
 #slides-main {
   overflow: hidden;
-  background-color: #1f1f1f;
+  background-color: $dark-gray;
 
   .vslide {
     @extend %abs;
     overflow: visible;
     will-change: transform;
-    background-color: #1f1f1f;
+    background-color: $dark-gray;
 
     .section-intro-text,
     .details,
@@ -543,9 +543,9 @@ input[type="number"] {
   // width: 20%;
   display: flex; // center volume slider
   width: 100%;
-  @media only screen and (min-width: 768px) {
-    max-width: 440px;
-  }
+  max-width: 440px;
+  padding-right: 16px;
+  box-sizing: border-box;
   // height: 250px;
 }
 
@@ -672,7 +672,7 @@ input[type="range"] {
 }
 
 #wrapper {
-  background: #1f1f1f;
+  background: $dark-gray;
 }
 
 .content-container {
@@ -701,7 +701,7 @@ input[type="range"] {
 }
 
 .container2 {
-  background: #1f1f1f;
+  background: $dark-gray;
   z-index: 1;
   height: 100vh;
   position: relative;
@@ -718,7 +718,7 @@ input[type="range"] {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #1f1f1f;
+  background: $dark-gray;
   scroll-snap-align: start;
 }
 .expand {
@@ -1299,7 +1299,7 @@ canvas {
     transform: translate(-50%, -30%);
     &.opensea {
       height: 100%;
-      background-color: #1f1f1f;
+      background-color: $dark-gray;
     }
   }
 }
@@ -1354,7 +1354,7 @@ canvas {
   width: 12.5%;
   height: 4px;
   background: transparent;
-  // background: #1f1f1f;
+  // background: $dark-gray;
 
   display: inline-block;
   cursor: pointer;
@@ -1585,7 +1585,7 @@ footer {
   box-sizing: border-box;
   position: fixed;
   z-index: 1000;
-  /* background-color: #1f1f1f; */
+  /* background-color: $dark-gray; */
   background-color: transparent;
 }
 .navBar.white {
@@ -1627,7 +1627,7 @@ footer {
   color: #222222;
 }
 .navBar.white > .walletText {
-  color: #1f1f1f;
+  color: $dark-gray;
 }
 .walletAmount {
   font-size: 12px;
@@ -1782,6 +1782,10 @@ footer {
   @media only screen and (max-width: 700px) {
     top: 41%;
     transform: translate(-50%, -50%) rotate(45deg) scale(0.9);
+    &.embed {
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(45deg) scale(0.9);
+    }
   }
 }
 
@@ -1866,6 +1870,7 @@ footer {
   gap: 12px;
   font-size: 16px;
   line-height: 16px;
+  cursor: pointer;
   &.disconnect {
     padding: 0px;
    border-width: 0px;
@@ -1898,6 +1903,7 @@ footer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
   &.dark {
     border-color: $dark-gray;
   }
@@ -2249,22 +2255,6 @@ footer {
   .scrollSnap {
     scroll-snap-type: y mandatory;
   }
-
-  .stopBtnWrapper {
-    // position: absolute;
-    // bottom: -4px;
-    // left: 10px;
-  }
-
-  .volumeContainer {
-    width: 50%;
-  }
-
-  .volumeWrapper {
-    // position: absolute;
-    // width: 30%;
-    // left: 70px;
-  }
 }
 
 .bottomNav {
@@ -2280,7 +2270,7 @@ footer {
   position: fixed;
   bottom: 0px;
   border-top: solid 1px white;
-  background-color: #1f1f1f;
+  background-color: $dark-gray;
   z-index: 10000;
 }
 .bottomNav.white {

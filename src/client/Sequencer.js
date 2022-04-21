@@ -1210,12 +1210,26 @@ class Sequencer extends Component {
         opacity: 1,
         delay: 0
       });
+      anime({
+        targets: [".waterLoopVideo"],
+        easing: "easeInOutSine",
+        duration: 250,
+        filter: "brightness(40%)",
+        delay: 0
+      });
     } else {
       anime({
         targets: [".gridOuter"],
         easing: "easeInOutSine",
         duration: 250,
         opacity: 0,
+        delay: 0
+      });
+      anime({
+        targets: [".waterLoopVideo"],
+        easing: "easeInOutSine",
+        duration: 250,
+        filter: "brightness(100%)",
         delay: 0
       });
     }

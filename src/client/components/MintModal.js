@@ -138,10 +138,14 @@ export default function SimpleDialog(props) {
   useEffect(() => {
     if (window.ethereum) {
       async function init() {
-        await checkNetwork();
-        await window.ethereum.enable();
+        let userAddress
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-        const userAddress = window.ethereum.selectedAddress;
+        if (accounts.length > 0) {
+          userAddress = accounts[0]
+        }
+        await checkNetwork();
+
         if (userAddress) {
           setMetamaskAddress(userAddress);
 
@@ -262,13 +266,13 @@ export default function SimpleDialog(props) {
   const handleMint = async () => {
     setIsMinting(true);
     try {
+      const price = await getCurrentMintPrice();
       let tx;
       if (mintStatus === "PUBLIC") {
-        const price = await getCurrentMintPrice();
         tx = await contract.mintPublic(1, { value: parseEther(price) });
-      } else if (mintStatus === "MINT LIST") {
+      } else if (mintStatus === "CAPSULE HOUSE") {
         const signatureResponse = await axios.get(
-          "/api/makeDiscountedSignature",
+          "/api/makeWhitelistSignature",
           {
             params: {
               address: metamaskAddress.toLowerCase(),
@@ -278,15 +282,13 @@ export default function SimpleDialog(props) {
 
         if (signatureResponse.status === 200) {
           console.log(signatureResponse.data);
-          tx = await contract.mintWhitelistDiscounted(
+          tx = await contract.mintWhitelist(
             signatureResponse.data.hash,
             signatureResponse.data.signature,
             1,
-            { value: parseEther(discountedPrice) }
+            { value: parseEther(price) }
           );
         }
-      } else if (mintStatus === "CAPSULE HOUSE") {
-        tx = await contract.mintPublic(1, { value: capsulePrice });
       }
 
       setTransactionHash(tx.hash);
@@ -313,13 +315,17 @@ export default function SimpleDialog(props) {
 
   const handleMetamask = async () => {
     if (window.ethereum) {
-      await window.ethereum.enable();
-      const address = window.ethereum.selectedAddress;
+      let userAddress;
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+      if (accounts.length > 0) {
+        userAddress = accounts[0]
+      }
 
       checkNetwork();
       createContractInstance();
 
-      setMetamaskAddress(address);
+      setMetamaskAddress(userAddress);
     }
   };
 
@@ -449,25 +455,33 @@ export default function SimpleDialog(props) {
                   </React.Fragment>
                 ) : (
                   <React.Fragment>
-                    {mintStatus !== "CAPSULE HOUSE" && metamaskAddress && (
+                    {mintStatus === "CAPSULE HOUSE" && metamaskAddress && (
                       <React.Fragment>
-
-                      <button
-                        className="cta-button"
-                        onClick={handleMint}
-                        disabled={
-                          metamaskAddress &&
-                          !isMinting &&
-                          contract &&
-                          ((mintStatus === "PUBLIC" && canMint()) ||
-                            mintStatus !== "PUBLIC")
-                            ? false
-                            : true
-                        }
-                      >
-                        BUY NOW - {currentPrice} ETH
-                      </button>
-                      <p className="body-medium yellowish-gray-text">By clicking Buy Now, you agree to our&nbsp;<a className="white-text" href="https://secretgarden.fm/tos" target="_blank">Terms of Service</a></p>
+                        <button
+                          className="cta-button"
+                          onClick={handleMint}
+                          disabled={
+                            metamaskAddress &&
+                            !isMinting &&
+                            contract &&
+                            ((mintStatus === "PUBLIC" && canMint()) ||
+                              mintStatus !== "PUBLIC")
+                              ? false
+                              : true
+                          }
+                        >
+                          BUY NOW - {currentPrice} ETH
+                        </button>
+                        <p className="body-medium yellowish-gray-text">
+                          By clicking Buy Now, you agree to our&nbsp;
+                          <a
+                            className="white-text"
+                            href="https://secretgarden.fm/tos"
+                            target="_blank"
+                          >
+                            Terms of Service
+                          </a>
+                        </p>
                       </React.Fragment>
                     )}
                     <div style={{ height: "44px" }} />
@@ -511,7 +525,7 @@ export default function SimpleDialog(props) {
                     {mintStatus === "CAPSULE HOUSE" && (
                       <>
                         <p className="body-medium yellowish-gray-text text-uppercase">
-                          You will be able to mint at 0.2 ETH on 4/21.
+                          You will be able to mint at 0.2 ETH.
                         </p>
                       </>
                     )}

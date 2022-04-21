@@ -146,7 +146,7 @@ export default function Navbar(props) {
             <MintModal
               onClose={handleCloseMint}
               open={openMint}
-              discountedPrice={nft.discountedPrice.toString()}
+              discountedPrice={nft.discountedPrice?.toString()}
               tokenAddress={nft.tokenAddress}
             />
             <MenuModal
@@ -208,7 +208,7 @@ export default function Navbar(props) {
                       utils.formatEther(balance)
                     ).toFixed(4)} ETH`}</span>
                   </div>
-                  <a href="/profile">
+                  <a href={`/collection/${nft.tokenAddress}`}>
                     <div className="userName">{displayName}</div>
                   </a>
                 </div>
