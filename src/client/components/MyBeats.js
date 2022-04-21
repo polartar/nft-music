@@ -26,20 +26,26 @@ function Collection(props) {
   const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
   const [nfts, setNFTs] = useState([]);
   const [displayName, setDisplayName] = useState();
+  const [ownerAddress, setOwnerAddress] = useState(
+    window.ethereum ? window.ethereum.selectedAddress : null
+  );
 
   const refreshData = async () => {
-    let userAddress;
-    if (window.ethereum) {
-      userAddress = window.ethereum.selectedAddress;
-    }
+    // let userAddress;
+    // if (window.ethereum) {
+    // userAddress = window.ethereum.selectedAddress;
+    // }
 
-    if (userAddress) {
+    // if (userAddress) {
+    if (ownerAddress) {
       const nftsResponse = await axios.get("/api/getNFTsForOwner", {
         params: {
           collection: props.match.params.address,
-          owner: userAddress,
-          chain: "rinkeby",
-        },
+          owner: ownerAddress,
+          // owner: userAddress,
+          // chain: "rinkeby",
+          chain: "eth"
+        }
       });
 
       console.log(nftsResponse);
@@ -47,8 +53,9 @@ function Collection(props) {
       setNFTs(nftsResponse.data);
       const userResponse = await axios.get("/api/getUser", {
         params: {
-          address: userAddress,
-        },
+          // address: userAddress
+          address: ownerAddress
+        }
       });
 
       if (userResponse.data.name) {
@@ -57,6 +64,10 @@ function Collection(props) {
         setDisplayName(props.match.params.address);
       }
       setIsLoggedIntoMetamask(true);
+    }
+
+    if (!ownerAddress) {
+      console.log("User not logged in.");
     }
 
     // const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -71,7 +82,7 @@ function Collection(props) {
 
   useEffect(() => {
     refreshData();
-  }, [loaded]);
+  }, [loaded, ownerAddress]);
 
   return (
     <React.StrictMode>
@@ -86,7 +97,7 @@ function Collection(props) {
               </div>
             )}
             {nfts.length > 0 &&
-              nfts.map((nft) => {
+              nfts.map(nft => {
                 const mediaFileExtension = nft.imageURL
                   .split(".")
                   .pop()

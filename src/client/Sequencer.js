@@ -565,13 +565,36 @@ class Sequencer extends Component {
     });
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const script = document.createElement("script");
 
     script.src = "/public/artists/oksami/garden/visualizer/js/patch.js";
     script.async = true;
 
     document.body.appendChild(script);
+
+    if (this.state.address) {
+      await axios
+        .get("/api/getNFTsForOwner", {
+          params: {
+            collection: this.state.nft.tokenAddress,
+            owner: this.state.address,
+            chain: "eth"
+          }
+        })
+        .then(response => {
+          console.log("response: ", response);
+          if (
+            response.data.some(
+              nft => nft.tokenId === this.props.match.params.edition
+            )
+          ) {
+            this.setState({
+              isOwner: true
+            });
+          }
+        });
+    }
   }
 
   async componentDidUpdate(prevProps, prevState, snapshot) {
@@ -616,7 +639,7 @@ class Sequencer extends Component {
           params: {
             collection: this.state.nft.tokenAddress,
             owner: this.state.address,
-            chain: "rinkeby"
+            chain: "eth"
           }
         })
         .then(response => {
