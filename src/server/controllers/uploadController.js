@@ -223,7 +223,6 @@ async function saveMix(
 
   // const address = "0x518e354ca7419b5c9b4d13090321fc9a03e036d5";
 
-  console.log("ownerNfts: ", ownerNfts);
   if (ownerNfts.length > 0) {
     try {
       const verifiedAddress = utils.verifyMessage(ownerAddress, signature);

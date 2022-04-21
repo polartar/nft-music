@@ -104,6 +104,7 @@ class Sequencer extends Component {
     openControls: false,
     hideBeatpad: false,
     isOwner: false,
+    didFetchOwnerNFTs: false,
   };
 
   constructor(props) {
@@ -629,11 +630,7 @@ class Sequencer extends Component {
     //   );
     // }
 
-    if (
-      prevState.address !== this.state.address &&
-      this.state.address &&
-      this.state.nft
-    ) {
+    if (!this.state.didFetchOwnerNFTs && this.state.address && this.state.nft) {
       await axios
         .get("/api/getNFTsForOwner", {
           params: {
@@ -651,6 +648,7 @@ class Sequencer extends Component {
           ) {
             this.setState({
               isOwner: true,
+              didFetchOwnerNFTs: true,
             });
           }
         });
@@ -1136,9 +1134,9 @@ class Sequencer extends Component {
 
   saveMix = async (address, tokenAddress, tokenId, padRecording) => {
     const signature = await this.state.signer.signMessage(address);
-    this.setState({
-      isLoading: true,
-    });
+    // this.setState({
+    //   isLoading: true,
+    // });
     await axios
       .post("/api/saveMix", {
         address,
