@@ -1815,7 +1815,7 @@ class Sequencer extends Component {
                     <div className="song-info-container">
                       {openControls && (
                         <div className="controls-container">
-                          <div className="record-container control-item">
+                          {/* <div className="record-container control-item">
                             <button
                               className={
                                 this.state.shouldStartRecording ||
@@ -1844,7 +1844,7 @@ class Sequencer extends Component {
                                 {this.state.isRecording && <Stopwatch />}
                               </p>
                             )}
-                          </div>
+                          </div> */}
                           <button
                             className={"button record control-item"}
                             onClick={this.setHideBeatpad.bind(this)}
