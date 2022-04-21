@@ -936,6 +936,13 @@ class Sequencer extends Component {
         opacity: 1,
         delay: 0
       });
+      anime({
+        targets: [".waterLoopVideo"],
+        easing: "easeInOutSine",
+        duration: 250,
+        filter: "brightness(40%)",
+        delay: 0
+      });
     } else {
       anime({
         targets: [".gridOuter"],
@@ -944,6 +951,14 @@ class Sequencer extends Component {
         opacity: 0,
         delay: 0
       });
+      anime({
+        targets: [".waterLoopVideo"],
+        easing: "easeInOutSine",
+        duration: 250,
+        filter: "brightness(100%)",
+        delay: 0
+      });
+
     }
     this.setState({ hideBeatpad: !this.state.hideBeatpad });
   }
@@ -1063,7 +1078,7 @@ class Sequencer extends Component {
               <div className="artistName">{`by ${nft.artistName} ${
                 nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
               }`}</div> */}
-            <div className={`gridOuter ${padFormatStyleClass}`}>
+            <div className={`gridOuter ${padFormatStyleClass} embed`}>
               {padFormat.map((column, j) => {
                 return column.map((remappedCoordinates, i) => {
                   const group = remappedCoordinates[0];
@@ -1113,7 +1128,7 @@ class Sequencer extends Component {
             {openControls && (
               <div
                 className="song-info-wrapper"
-                style={{ paddingBottom: "58px" }}
+               style={{ paddingBottom: "58px" }}
               >
                 <div className="song-info-container">
                   <div className="controls-container">

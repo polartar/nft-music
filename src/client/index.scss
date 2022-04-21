@@ -1782,6 +1782,10 @@ footer {
   @media only screen and (max-width: 700px) {
     top: 41%;
     transform: translate(-50%, -50%) rotate(45deg) scale(0.9);
+    &.embed {
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(45deg) scale(0.9);
+    }
   }
 }
 
@@ -1866,6 +1870,7 @@ footer {
   gap: 12px;
   font-size: 16px;
   line-height: 16px;
+  cursor: pointer;
   &.disconnect {
     padding: 0px;
    border-width: 0px;
@@ -1898,6 +1903,7 @@ footer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
   &.dark {
     border-color: $dark-gray;
   }
