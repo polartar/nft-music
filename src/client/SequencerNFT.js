@@ -1011,6 +1011,9 @@ class Sequencer extends Component {
 
       return (
         <React.StrictMode>
+        <div id="main-wrapper">
+          <div id="slideshow">
+            <div id="slides-main">
           <div className="fullscreen-overlay" id="mix-overlay">
             {/* <button className="metamask-button" onClick={this.handlePlayMix}> */}
             <button
@@ -1128,7 +1131,6 @@ class Sequencer extends Component {
             {openControls && (
               <div
                 className="song-info-wrapper"
-               style={{ paddingBottom: "58px" }}
               >
                 <div className="song-info-container">
                   <div className="controls-container">
@@ -1152,7 +1154,6 @@ class Sequencer extends Component {
               </div>
             )}
           </div>
-
           <Footer
             white={false}
             showShare={false}
@@ -1167,6 +1168,10 @@ class Sequencer extends Component {
             setOpenControls={this.setOpenControls.bind(this)}
             openControls={openControls}
           />
+        </div>
+      </div>
+    </div>
+
         </React.StrictMode>
       );
     } else {
