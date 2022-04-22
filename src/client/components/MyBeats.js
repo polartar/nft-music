@@ -128,12 +128,12 @@ function Collection(props) {
                       {mediaFileExtension !== "mp4" && (
                         <img src={nft.imageURL} className="directoryAlbum" />
                       )}
-                      <div className="directoryItemName white-text">{nft.name}</div>
-                      <div className="directoryArtistName light-yellow-text">
+                      <div className="directoryItemName white-text display-small">{nft.name}</div>
+                      <div className="directoryArtistName light-yellow-text body-medium">
                         {nft.artistName}
                       </div>
                       <div className="editionSold">
-                        <div className="editionSoldText light-yellow-text">{`Edition: #${nft.tokenId}`}</div>
+                        <div className="editionSoldText yellowish-gray-text">{`Edition: #${nft.tokenId}`}</div>
                       </div>
                       {/* <div className="editionSold boughtFor">
                         <div className="editionSoldText">{`Bought for: ${nft.saleAmount?.toFixed(

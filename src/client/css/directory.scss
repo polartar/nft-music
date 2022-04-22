@@ -1,5 +1,4 @@
 @import "variables";
-@import "utils";
 
 .containerDirectory {
   height: 100%;
@@ -21,6 +20,7 @@
 .directoryBody {
   padding: 80px;
   padding-top: 140px;
+  padding-left: 20%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -29,6 +29,9 @@
   width: 100%;
   box-sizing: border-box;
   max-width: 1440px;
+  @media only screen and (min-width: 1680px) {
+    padding-left: 10%;
+  }
 }
 .beatPackItem {
   display: flex;
@@ -37,6 +40,9 @@
   justify-content: flex-start;
   margin-right: 20px;
   margin-bottom: 50px;
+  video {
+    border-radius: 16px;
+  }
 }
 .directoryAlbum {
   width: 300px;
@@ -220,6 +226,7 @@
   .directoryBody {
     padding: 40px;
     padding-bottom: 100px;
+    padding-top: 100px;
   }
   .currentAuctionInfo {
     flex-wrap: wrap;
