@@ -26,31 +26,41 @@ function Collection(props) {
   const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
   const [nfts, setNFTs] = useState([]);
   const [displayName, setDisplayName] = useState();
+  const [ownerAddress, setOwnerAddress] = useState(null);
 
   const refreshData = async () => {
     let userAddress;
     if (window.ethereum) {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts"
+      });
 
       if (accounts.length > 0) {
-        userAddress = accounts[0]
+        userAddress = accounts[0];
+        if (userAddress !== ownerAddress) {
+          setOwnerAddress(accounts[0]);
+        }
       }
     }
 
-    if (userAddress) {
+    // if (userAddress) {
+    if (userAddress || ownerAddress) {
       const nftsResponse = await axios.get("/api/getNFTsForOwner", {
         params: {
           collection: props.match.params.address,
-          owner: userAddress,
-          chain: "rinkeby",
-        },
+          owner: userAddress || ownerAddress,
+          // owner: userAddress,
+          // chain: "rinkeby",
+          chain: "eth"
+        }
       });
 
       setNFTs(nftsResponse.data);
       const userResponse = await axios.get("/api/getUser", {
         params: {
-          address: userAddress,
-        },
+          // address: userAddress
+          address: userAddress || ownerAddress
+        }
       });
 
       if (userResponse.data.name) {
@@ -59,6 +69,10 @@ function Collection(props) {
         setDisplayName(props.match.params.address);
       }
       setIsLoggedIntoMetamask(true);
+    }
+
+    if (!ownerAddress) {
+      console.log("User not logged in.");
     }
 
     // const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -73,7 +87,7 @@ function Collection(props) {
 
   useEffect(() => {
     refreshData();
-  }, [loaded]);
+  }, [loaded, ownerAddress]);
 
   return (
     <React.StrictMode>
@@ -88,7 +102,7 @@ function Collection(props) {
               </div>
             )}
             {nfts.length > 0 &&
-              nfts.map((nft) => {
+              nfts.map(nft => {
                 const mediaFileExtension = nft.imageURL
                   .split(".")
                   .pop()
