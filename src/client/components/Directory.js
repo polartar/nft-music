@@ -17,7 +17,7 @@ import ExpandMore from "../images/expandMore.png";
 import Waterpond from "../images/waterpond.mp4";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import "../css/directory.css";
+import "../css/directory.scss";
 import axios from "axios";
 import Countdown, { zeroPad } from "react-countdown";
 import { ethers, utils } from "ethers";
@@ -155,7 +155,7 @@ function Directory() {
                                 );
                               } else {
                                 return (
-                                  <div className="bidInfo">{`${days} days, 
+                                  <div className="bidInfo">{`${days} days,
                               ${hours} hrs, ${minutes} mins, ${seconds} secs`}</div>
                                 );
                               }

@@ -16,7 +16,7 @@ import Expand from "../images/expand.png";
 import ExpandMore from "../images/expandMore.png";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import "../css/directory.css";
+import "../css/directory.scss";
 
 import axios from "axios";
 import { ethers, utils } from "ethers";
@@ -78,12 +78,12 @@ function Collection(props) {
   return (
     <React.StrictMode>
       {loaded && (
-        <div className="containerDirectory scrollBar">
-          <Navbar white={true} didConnectWallet={refreshData} />
+        <div className="containerDirectory scrollBar dark-background">
+          <Navbar white={false} didConnectWallet={refreshData} />
           <div className="directoryBody">
             {/* <div className="currentAuctionTitle">{`${displayName}'s Collection`}</div> */}
             {nfts.length === 0 && (
-              <div className="currentAuctionTitle">
+              <div className="currentAuctionTitle yellowish-gray-text">
                 This user currently has no stem packs in their collection.
               </div>
             )}
@@ -114,12 +114,12 @@ function Collection(props) {
                       {mediaFileExtension !== "mp4" && (
                         <img src={nft.imageURL} className="directoryAlbum" />
                       )}
-                      <div className="directoryItemName">{nft.name}</div>
-                      <div className="directoryArtistName">
+                      <div className="directoryItemName white-text">{nft.name}</div>
+                      <div className="directoryArtistName light-yellow-text">
                         {nft.artistName}
                       </div>
                       <div className="editionSold">
-                        <div className="editionSoldText">{`Edition: #${nft.tokenId}`}</div>
+                        <div className="editionSoldText light-yellow-text">{`Edition: #${nft.tokenId}`}</div>
                       </div>
                       {/* <div className="editionSold boughtFor">
                         <div className="editionSoldText">{`Bought for: ${nft.saleAmount?.toFixed(

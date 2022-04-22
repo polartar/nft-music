@@ -1,0 +1,88 @@
+@import "variables";
+
+.display-large {
+  font-size: 48px;
+  line-height: 56px;
+  font-family: "Bentham", serif;
+  text-transform: uppercase;
+}
+
+.display-medium {
+  font-size: 38px;
+  line-height: 44px;
+  font-family: "Bentham", serif;
+  text-transform: uppercase;
+}
+
+.display-small {
+  font-size: 32px;
+  line-height: 40px;
+  font-family: "Bentham", serif;
+  text-transform: uppercase;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.body-large {
+  font-size: 24px;
+  line-height: 28px;
+}
+
+.body-medium {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.white-text {
+  color: #fff;
+}
+
+.light-yellow-text {
+  color: $light-yellow;
+}
+.yellowish-gray-text {
+  color: $yellowish-gray;
+}
+.yellow-text {
+  color: $yellow;
+}
+.text-center {
+  text-align: center;
+}
+
+.float-right {
+  float: right;
+}
+
+/* BACKGROUND */
+
+.dark-background {
+  background-color: $dark-gray;
+}
+
+
+@media (min-width: 640px) {
+    .sm\:display-medium {
+      font-size: 38px;
+      line-height: 44px;
+    }
+
+    .sm\:body-large {
+      font-size: 24px;
+      line-height: 28px;
+    }
+}
+
+@media (min-width: 768px) {
+    .md\:flex {
+        display:flex
+    }
+}
+
+@media (min-width: 1024px) {
+    .lg\:w-0 {
+        width:0
+    }
+}

@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Rubik:wght@300;400;500;700&display=swap");
+@import "variables";
+@import "utils";
 
 .containerDirectory {
   height: 100%;
@@ -7,8 +8,6 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  background-color: #f2f2f2;
-  font-family: "DM Mono", monospace;
   overflow: scroll;
 }
 .scrollBar {
@@ -46,16 +45,12 @@
 }
 .directoryItemName {
   font-size: 16px;
-  color: #222222;
-  font-family: "Rubik", sans-serif;
   line-height: 19px;
   width: 100%;
   text-align: left;
 }
 .directoryArtistName {
   font-size: 14px;
-  color: #222222;
-  font-family: "Rubik", sans-serif;
   line-height: 19px;
   width: 100%;
   text-align: left;
@@ -69,7 +64,6 @@
   margin-top: 10px;
 }
 .editionInfoDirectory {
-  color: #808080;
   font-size: 14px;
   line-height: 18px;
   max-width: 180px;
@@ -84,7 +78,6 @@
   max-width: none;
 }
 .editionPriceDirectory {
-  color: #808080;
   font-size: 14px;
   line-height: 18px;
 }
@@ -99,7 +92,6 @@
 }
 .currentAuctionTitle {
   font-size: 16px;
-  color: #222222;
   width: 100%;
   text-align: left;
   margin-bottom: 22px;
@@ -138,8 +130,6 @@
   width: 100%;
 }
 .currentAuctionPack {
-  font-family: "Rubik", sans-serif;
-  color: #222222;
   font-size: 24px;
   text-transform: uppercase;
 }
@@ -148,9 +138,7 @@
   height: 300px;
 }
 .currentAuctionArtist {
-  font-family: "Rubik", sans-serif;
   font-size: 18px;
-  color: #222222;
   margin-top: 5px;
 }
 .auctionExtraInfo {
@@ -168,14 +156,12 @@
 }
 .currentAuctionInfoItemTitle {
   font-size: 14px;
-  color: #222222;
   margin-top: 30px;
   width: 100%;
   text-align: left;
 }
 .currentAuctionInfoItemText {
   font-size: 14px;
-  color: #222222;
   text-align: left;
   margin-top: 5px;
 }
@@ -191,11 +177,9 @@
   width: 100%;
   text-align: left;
   font-size: 14px;
-  color: #808080;
 }
 .artistSummary {
   font-size: 14px;
-  color: #808080;
   line-height: 16px;
   text-align: left;
   width: 30%;
@@ -214,7 +198,6 @@
   margin-top: 10px;
 }
 .editionSoldText {
-  color: #808080;
   font-size: 14px;
   text-align: left;
 }
