@@ -1129,7 +1129,7 @@ class Sequencer extends Component {
     });
 
     this.activeAnimations.fourthSectionMonsteraLeaves = anime({
-      targets: '[data-slideindex="3"] .monstera-leaf path',
+      targets: '[data-slideindex="2"] .monstera-leaf path',
       easing: "easeInOutSine",
       duration: 1500,
       skewX: -1,
@@ -1141,7 +1141,7 @@ class Sequencer extends Component {
     });
 
     this.activeAnimations.fourthSectionCarnations = anime({
-      targets: '[data-slideindex="3"] .carnation path',
+      targets: '[data-slideindex="2"] .carnation path',
       easing: "easeInOutSine",
       duration: 1500,
       skewX: -1,
@@ -1153,7 +1153,7 @@ class Sequencer extends Component {
     });
 
     this.activeAnimations.fourthSectionChrysantheum = anime({
-      targets: '[data-slideindex="3"] .chrysanthemum path',
+      targets: '[data-slideindex="2"] .chrysanthemum path',
       easing: "easeInOutSine",
       duration: 1500,
       skewX: -1,
@@ -1163,6 +1163,18 @@ class Sequencer extends Component {
       loop: true,
       autoPlay: false,
     });
+
+    this.activeAnimations.fifthSectionHyacinth = anime({
+        targets: '[data-slideindex="3"] .hyacinth path',
+        easing: "easeInOutSine",
+        duration: 1500,
+        skewX: 0.6,
+        skewY: -0.5,
+        delay: 250,
+        direction: "alternate",
+        loop: true,
+        autoPlay: false,
+      });
   };
 
   handleNewFPSlideAnimation() {
@@ -1350,6 +1362,8 @@ class Sequencer extends Component {
         rotate: [130, 130],
         translateY: [0, -10],
       });
+      
+      this.activeAnimations.fifthSectionHyacinth.play()
     }
   }
 
@@ -1366,8 +1380,8 @@ class Sequencer extends Component {
   }
 
   waitForIdle() {
-    let hero = document.querySelector("#main-wrapper");
-    let items = hero.querySelectorAll(".vslide");
+    let wrapper = document.querySelector("#main-wrapper");
+    let items = wrapper.querySelectorAll(".vslide");
 
     this.removeClasses(items, ["transition"]);
     this.handleNewFPSlideAnimation();
@@ -1386,31 +1400,29 @@ class Sequencer extends Component {
   }
 
   changeSlide(direction) {
-    let hero = document.querySelector("#main-wrapper");
+    let wrapper = document.querySelector("#main-wrapper");
     let main = document.querySelector("#slides-main");
-    let items = hero.querySelectorAll(".vslide");
+    let items = wrapper.querySelectorAll(".vslide");
     let total = items.length;
 
     let activeFPIndex = this.activeFPIndex;
-    let previousDirection = hero.classList.contains("prev") ? "prev" : "next";
+    let previousDirection = wrapper.classList.contains("prev") ? "prev" : "next";
     let didChangeDirection = previousDirection !== direction;
 
     if (activeFPIndex == total - 1 && direction == "next") {
-      console.log("at the end");
       return;
     } else if (activeFPIndex == 0 && direction == "prev") {
-      console.log("at the start");
       return;
     }
 
     this.idle = false;
-    hero.classList.remove("prev", "next");
+    wrapper.classList.remove("prev", "next");
     if (direction == "next") {
       activeFPIndex = (activeFPIndex + 1) % total;
-      hero.classList.add("next");
+      wrapper.classList.add("next");
     } else {
       activeFPIndex = (activeFPIndex - 1 + total) % total;
-      hero.classList.add("prev");
+      wrapper.classList.add("prev");
     }
 
     //reset classes
@@ -1419,7 +1431,7 @@ class Sequencer extends Component {
     //set prev
     const prevItems = [...items].filter((item) => {
       let prevIndex;
-      if (hero.classList.contains("prev")) {
+      if (wrapper.classList.contains("prev")) {
         prevIndex = activeFPIndex == total - 1 ? 0 : activeFPIndex + 1;
       } else {
         prevIndex = activeFPIndex == 0 ? total - 1 : activeFPIndex - 1;
@@ -1431,7 +1443,7 @@ class Sequencer extends Component {
     //set next
     const nextItems = [...items].filter((item) => {
       let nextIndex;
-      if (hero.classList.contains("next")) {
+      if (wrapper.classList.contains("next")) {
         nextIndex = activeFPIndex == total + 1 ? 0 : activeFPIndex + 1;
       } else {
         nextIndex = activeFPIndex == 0 ? total + 1 : activeFPIndex - 1;
@@ -1446,6 +1458,7 @@ class Sequencer extends Component {
     });
 
     if (didChangeDirection) {
+      //when changing directions, we need to add a transition class to smooth the css changes
       this.addClasses(nextItems, ["transition"]);
     }
 
@@ -1455,11 +1468,11 @@ class Sequencer extends Component {
 
     this.addClasses(activeItems, ["activeSlide"]);
 
-    const activeImageItem = main.querySelector(".activeSlide");
+    const activeSlide = main.querySelector(".activeSlide");
 
     this.activeFPIndex = activeFPIndex;
 
-    activeImageItem.addEventListener(
+    activeSlide.addEventListener(
       "transitionend",
       this.waitForIdle.bind(this),
       {
@@ -1476,7 +1489,7 @@ class Sequencer extends Component {
   }
 
   prepareForFPSlideChange() {
-    let hero = document.querySelector("#main-wrapper");
+    let wrapper = document.querySelector("#main-wrapper");
 
     if (this.activeFPIndex == 0) {
       this.activeAnimations.lily.pause();
@@ -1487,13 +1500,17 @@ class Sequencer extends Component {
     } else if (this.activeFPIndex == 1) {
       this.activeAnimations.firstChrysantheum.pause();
       this.activeAnimations.secondSectionHyacinthes.pause();
+      this.activeAnimations.fourthSectionCarnations.pause();
     } else if (this.activeFPIndex == 2) {
       //   this.activeAnimations.thirdSectionHyacinthes.pause();
       //   this.activeAnimations.thirdSectionMonsteraLeaves.pause();
       // } else if (this.activeFPIndex == 3) {
-      this.activeAnimations.fourthSectionCarnations.pause();
       this.activeAnimations.fourthSectionChrysantheum.pause();
       this.activeAnimations.fourthSectionMonsteraLeaves.pause();
+    } else if (this.activeFPIndex == 3) {
+      this.activeAnimations.fourthSectionCarnations.pause();
+      this.activeAnimations.fifthSectionHyacinth.pause();
+
     }
     // if (this.activeFPIndex !== 4) {
     anime({
@@ -1575,11 +1592,11 @@ class Sequencer extends Component {
 
     this.addClasses(activeItems, ["active"]);
 
-    const activeImageItem = main.querySelector(".active");
+    const activeSlide = main.querySelector(".active");
 
     this.activeFAQSlideIndex = activeFAQSlideIndex;
 
-    activeImageItem.addEventListener(
+    activeSlide.addEventListener(
       "transitionend",
       this.waitForFAQIdle.bind(this),
       {
