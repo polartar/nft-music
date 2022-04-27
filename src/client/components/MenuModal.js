@@ -52,7 +52,7 @@ const isMobile = window.innerWidth <= 414;
 
 const useStyles = makeStyles({
   dialog: {
-    width: "350px",
+    width: isMobile ? "auto" : "350px",
     maxWidth: "100%",
     // transform: "scale(.8)",
     background: "#1f1f1f",
@@ -61,7 +61,9 @@ const useStyles = makeStyles({
     margin: "20px",
     top: 0,
     right: 0,
-    position: isMobile ? "static" : "absolute",
+    left: isMobile ? 0 : "inherit",
+    position: "absolute",
+    boxSizing: "border-box"
     // boxShadow: "0 0 40px 20px rgba(255,255,255,0.12)",
   },
   backButton: {
@@ -171,21 +173,19 @@ export default function SimpleDialog(props) {
               <div className=""><img src={Discord}/></div>
             </a> */}
               <a href="https://twitter.com/SecretGarden_FM">
-                <div className="">
-                  <img src={Twitter} />
+                <div>
+                  <img src={Twitter} className="share-icon" />
                 </div>
               </a>
               <a href="https://instagram.com/SecretGarden_FM">
-                <div className="">
-                  <img src={Instagram} />
+                <div>
+                  <img src={Instagram} className="share-icon"/>
                 </div>
               </a>
               <div
-                className=""
                 onClick={() => setOpenShare(true)}
-                style={{ fontWeight: "700" }}
               >
-                <img src={Share} />
+                <img src={Share} className="share-icon"/>
               </div>
             </div>
           </div>

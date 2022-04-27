@@ -493,7 +493,7 @@ class Sequencer extends Component {
             queue: updatedQueue,
             shareablePadNumbers: updatedShareablePadNumbers,
             showTutorial: updatedShowTutorial,
-            tutorialStep: updatedTutorialStep,
+            tutorialStep: updatedShowTutorial ? updatedTutorialStep : 0,
           });
         }
 
@@ -1362,7 +1362,7 @@ class Sequencer extends Component {
         rotate: [130, 130],
         translateY: [0, -10],
       });
-      
+
       this.activeAnimations.fifthSectionHyacinth.play()
     }
   }
@@ -1645,7 +1645,7 @@ class Sequencer extends Component {
   }
 
   setShowTutorial() {
-    this.setState({ showTutorial: !this.state.showTutorial });
+    this.setState({ showTutorial: !this.state.showTutorial, openControls: !this.state.openControls });
   }
 
   render() {
@@ -1807,41 +1807,43 @@ class Sequencer extends Component {
 
                   <div className="song-info-wrapper">
                     {showTutorial && (
+                      <div className="tutorial-wrapper">
                       <React.Fragment>
                         {tutorialStep === 0 && (
                           <React.Fragment>
-                            <div className="tutorialInfo">
+                            <div className="body-small white-text">
                               To begin, press one of the highlighted squares on
-                              the left. These are the drum loops. <br />
+                              the left. These are the drum loops. <br /><br />
                               Only one will play at a time.
                             </div>
                           </React.Fragment>
                         )}
                         {tutorialStep === 1 && (
-                          <div className="tutorialInfo tutorialFormatting">
+                          <div className="body-small white-text">
                             Now, press one of the highlighted squares on the
-                            right. These are the bass loops. <br />
+                            right. These are the bass loops. <br /><br />
                             When the pad is flashing, the sound will wait to
                             play until the next bar.
-                            <br /> Only one will play at a time.
+                            <br /><br /> Only one will play at a time.
                           </div>
                         )}
                         {tutorialStep === 2 && (
-                          <div className="tutorialInfo tutorialFormatting">
+                          <div className="body-small white-text">
                             {`Lastly, press one of grey squares in the middle. These are
                           chords and melodies. Up to ${nft.activeSoundLimits["sounds"]} can play at at time.`}
                           </div>
                         )}
                         {tutorialStep === 3 && (
-                          <div className="tutorialInfo tutorialFormatting">
-                            You're ready to make some music! <br />
+                          <div className="body-small white-text">
+                            You're ready to make some music! <br /><br />
                             Try out different combinations and share them with
-                            friends below. <br />
+                            friends below. <br /><br />
                             If you'd like to learn more about Secret Garden,
                             scroll down.
                           </div>
                         )}
                       </React.Fragment>
+                      </div>
                     )}
                     <div className="song-info-container">
                       {openControls && (

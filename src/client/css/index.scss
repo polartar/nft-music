@@ -679,19 +679,44 @@ canvas {
   // border-bottom: solid 1px white;
   margin-bottom: -8px;
 }
+
+.tutorial-wrapper {
+  /* Mid Gray 85% */
+
+  background: rgba(53, 53, 53, 0.85);
+  /* Background Blur L */
+
+  backdrop-filter: blur(80px);
+  -webkit-backdrop-filter: blur(80px);
+  /* Note: backdrop-filter has minimal browser support */
+  border-radius: 16px;
+  padding: 24px;
+  width: 444px;
+  max-width: 100%;
+  box-sizing: border-box;
+  pointer-events: none;
+  margin: 0 auto;
+  position: absolute;
+  right: 0;
+  left: 0;
+  bottom:0;
+  p {
+    margin: 0;
+  }
+}
 .tutorialStep {
 }
 .tutorialFormatting {
 }
 .tutorialFormatting.tutorialInfo {
-  margin-top: -60px;
+  // margin-top: -60px;
 }
 .tutorialInfo {
-  margin-top: 10px;
+  // margin-top: 10px;
   font-size: 16px;
   font-weight: 300;
   width: 100%;
-  text-align: center;
+  // text-align: center;
   color: white;
   z-index: 1200;
   line-height: 20px;
@@ -1967,6 +1992,9 @@ footer {
   opacity: 1;
 }
 
+.share-icon {
+  width: 39px;
+}
 .button {
   position: relative;
   border-radius: 5px;
@@ -2134,7 +2162,7 @@ footer {
   }
   .tutorialInfo.tutorialFormatting {
     font-size: 10px;
-    margin-top: -120px;
+    // margin-top: -120px;
   }
   .beatPackTitle {
     font-size: 18px;
