@@ -71,16 +71,9 @@ export default function Navbar(props) {
   const { data: balance, mutate } = useSWR(["getBalance", account, "latest"], {
     fetcher: fetcher(library, ERC20ABI),
   });
-
-
-  // const [address, setAddress] = useState();
   const [displayName, setDisplayName] = useState();
-  // const [provider, setProvider] = useState();
-  // const [balance, setBalance] = useState(0);
-  // const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [nft, setNFT] = useState();
-  const [showMintMenu, setShowMintMenu] = useState(false);
   const [openMint, setOpenMint] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
 
@@ -154,26 +147,6 @@ export default function Navbar(props) {
     setNFT(nftResponse.data);
     setLoaded(true);
   };
-
-  
-
-  // const connectWallet = async () => {
-  //   await window.ethereum.enable();
-
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //   const address = await provider.getSigner(0).getAddress();
-
-  //   setIsLoggedIntoMetamask(true);
-  //   setProvider(provider);
-  //   setAddress(address);
-  //   setBalance(await provider.getBalance(address));
-
-  //   if (didConnectWallet) {
-  //     didConnectWallet();
-  //   }
-  // };
-
-
 
   const handleCloseMint = () => {
     setOpenMint(false);

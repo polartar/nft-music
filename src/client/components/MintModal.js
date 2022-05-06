@@ -1,48 +1,16 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import Checkbox from "@material-ui/core/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import copy from "copy-to-clipboard";
-import {
-  RedditShareButton,
-  TelegramShareButton,
-  TwitterShareButton,
-  FacebookMessengerShareButton,
-} from "react-share";
-import {
-  FacebookMessengerIcon,
-  RedditIcon,
-  TelegramIcon,
-  TwitterIcon,
-} from "react-share";
-import X from "../images/x.png";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
 import CloseIcon from "@mui/icons-material/Close";
-import AlbumArt from "../images/albumArt.png";
-import InstaPic from "../images/instaPic.png";
-
-import Telegram from "../images/telegram.png";
-import Twitter from "../images/twitter.png";
-import Messenger from "../images/messenger.png";
-import CopyLink from "../images/link.png";
 import Link from "../images/link.svg";
-import ErrorLink from "../images/error-link.svg";
-
 import LoadingFlower from "./LoadingFlower";
 
 import "../css/bidModal.css";
 import IconButton from "@material-ui/core/IconButton";
-import { ethers, Contract, utils } from "ethers";
-import * as Web3 from "web3";
+import { ethers, Contract } from "ethers";
 import axios from "axios";
-import { OpenSeaPort, Network } from "opensea-js";
-import { WyvernSchemaName } from "opensea-js/lib/types";
 import AuctionABI from "../constants/AuctionABI.json";
-import { auctionAddress } from "../constants/config.json";
-import Typography from "@material-ui/core/Typography";
 import { parseEther } from "ethers/lib/utils";
 import { useWeb3React } from "@web3-react/core";
 
@@ -93,7 +61,6 @@ export default function SimpleDialog(props) {
   const classes = useStyles();
   const { onClose, open, shareURL, tokenAddress, discountedPrice, onConnect} = props;
   const [text, setText] = React.useState("Copy Link");
-  // const [account, setMetamaskAddress] = React.useState(null);
   const [transactionHash, setTransactionHash] = React.useState(
     "OX1892AKSD3981120030039"
   );
@@ -182,7 +149,7 @@ export default function SimpleDialog(props) {
       instance = new Contract(tokenAddress, AuctionABI, library.getSigner());
       setContract(instance);
     }
-console.log(tokenAddress, instance);
+
     const myPublicAmountMinted = await instance.getPublicMinted();
     const myWhitelistAmountMinted = await instance.getWhitelistMinted();
     const totalAmount = await instance.publicTotalMinted();
