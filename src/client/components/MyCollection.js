@@ -22,52 +22,49 @@ import axios from "axios";
 import { ethers, utils } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 
-function Collection(props) {
+function MyCollection(props) {
   const [loaded, setLoaded] = useState(false);
-  const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
   const [nfts, setNFTs] = useState([]);
-  const [displayName, setDisplayName] = useState();
-  const [ownerAddress, setOwnerAddress] = useState(null);
   const { account} = useWeb3React();
 
-
   const refreshData = async () => {
-    const nftsResponse = await axios.get("/api/getNFTsForOwner", {
-      params: {
-        collection: props.match.params.address,
-        owner: account,
-        // owner: userAddress,
-        // chain: "rinkeby",
-        chain: "eth"
-      }
-    });
+    // if (userAddress) {
+       const nftsResponse = await axios.get("/api/getNFTsForOwner", {
+        params: {
+          collection: props.match.params.address,
+          owner: account,
+          // owner: userAddress,
+          // chain: "rinkeby",
+          chain: "eth"
+        }
+      });
 
-    setNFTs(nftsResponse.data);
-    const userResponse = await axios.get("/api/getUser", {
-      params: {
-        // address: userAddress
-        address: account
-      }
-    });
+      setNFTs(nftsResponse.data);
+      const userResponse = await axios.get("/api/getUser", {
+        params: {
+          // address: userAddress
+          address: account
+        }
+      });
 
-    if (userResponse.data.name) {
-      setDisplayName(userResponse.data.name);
-    } else {
-      setDisplayName(props.match.params.address);
-    }
+      if (userResponse.data.name) {
+        setDisplayName(userResponse.data.name);
+      } else {
+        setDisplayName(props.match.params.address);
+      }
   };
 
   useEffect(() => {
-    if (account && active) {
+    if (account) {
       refreshData();
     }
   }, [account]);
 
   return (
     <React.StrictMode>
-      {active && (
+      {loaded && (
         <div className="containerDirectory scrollBar dark-background">
-          <Navbar white={false}/>
+          <Navbar white={false} />
           <div className="directoryBody">
             {/* <div className="currentAuctionTitle">{`${displayName}'s Collection`}</div> */}
             {nfts.length === 0 && (
@@ -125,4 +122,4 @@ function Collection(props) {
   );
 }
 
-export default Collection;
+export default MyCollection;

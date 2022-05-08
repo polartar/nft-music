@@ -23,6 +23,7 @@ const MyBeats = lazy(() => import("./components/MyBeats"));
 const Loading = lazy(() => import("./components/Loading"));
 const Tos = lazy(() => import("./components/Tos"));
 const Privacy = lazy(() => import("./components/Privacy"));
+const MyCollection = lazy(() => import("./components/MyCollection"));
 
 export default function App(props) {
   return (
@@ -75,6 +76,11 @@ export default function App(props) {
                 <Route exact path="/privacy">
                   <Privacy />
                 </Route>
+                <Route
+                  render={(props) => <MyCollection {...props} />}
+                  exact
+                  path="/collection"
+                />
                 <Route
                   render={(props) => <MyBeats {...props} />}
                   exact
