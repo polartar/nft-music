@@ -24,12 +24,13 @@ import { useWeb3React } from "@web3-react/core";
 
 function MyCollection(props) {
   const [nfts, setNFTs] = useState([]);
-  const { account, active } = useWeb3React();
+  const { account, active, chainId } = useWeb3React();
 
   const refreshData = async () => {
-      const nftsResponse = await axios.get("/api/getAllTokenAddressForUser", {
+      const nftsResponse = await axios.get("/api/getAllNFTsForUser", {
       params: {
         address: account,
+        chain: chainId === 1 ? "eth" : "rinkeby"
       }
     });
 
@@ -40,11 +41,11 @@ function MyCollection(props) {
       }
     });
 
-    if (userResponse.data.name) {
-      setDisplayName(userResponse.data.name);
-    } else {
-      setDisplayName(props.match.params.address);
-    }
+    // if (userResponse.data.name) {
+    //   setDisplayName(userResponse.data.name);
+    // } else {
+    //   setDisplayName(props.match.params.address);
+    // }
   };
 
   useEffect(() => {
@@ -55,57 +56,70 @@ function MyCollection(props) {
 
   return (
     <React.StrictMode>
-      asd
-      {active && (
         <div className="containerDirectory scrollBar dark-background">
-          <Navbar white={false} />
-          <div className="directoryBody">
-            {nfts.length === 0 && (
-              <div className="currentAuctionTitle yellowish-gray-text">
-                This user currently has no stem packs in their collection.
-              </div>
-            )}
-            {nfts.length > 0 &&
-              nfts.map(nft => {
-                const mediaFileExtension = nft.imageURL
-                  .split(".")
-                  .pop()
-                  .toLowerCase();
-                return (
-                  <a
-                    href={`/bouquet/${nft.artistName}/${nft.name}/${nft.tokenId}`}
-                  >
-                    <div className="beatPackItem">
-                      {mediaFileExtension === "mp4" && (
-                        <video
-                          width="300"
-                          height="300"
-                          playsinline="true"
-                          autoplay="true"
-                          muted="true"
-                          loop="true"
-                          style={{ marginBottom: "20px" }}
-                        >
-                          <source src={nft.imageURL} type="video/mp4" />
-                        </video>
-                      )}
-                      {mediaFileExtension !== "mp4" && (
-                        <img src={nft.imageURL} className="directoryAlbum" />
-                      )}
-                      <div className="directoryItemName white-text display-small">{nft.name}</div>
-                      <div className="directoryArtistName light-yellow-text body-medium">
-                        {nft.artistName}
-                      </div>
-                      <div className="editionSold">
-                        <div className="editionSoldText yellowish-gray-text">{`Edition: #${nft.tokenId}`}</div>
-                      </div>
+          <Navbar white={false} isConnected = {active} />
+          {
+            active && 
+            <div className="directoryBody">
+              {Object.keys(nfts).length === 0 && (
+                <div className="currentAuctionTitle yellowish-gray-text">
+                  This user currently has no stem packs in their collection.
+                </div>
+              )}
+              {Object.keys(nfts).length > 0 &&
+                Object.keys(nfts).map(tokenAddress => {
+                  const myNFTs = nfts[tokenAddress];
+                  return (
+                    <div key={tokenAddress}>
+                      <h3>Collection Name: {myNFTs[0]?.name}</h3>
+                      {
+                        myNFTs.map(nft => {
+                          const mediaFileExtension = nft.imageURL
+                            .split(".")
+                            .pop()
+                            .toLowerCase();
+                          return (
+                            <a
+                              href={`/bouquet/${nft.artistName}/${nft.name}/${nft.tokenId}`}
+                              key={nft.imageURL}
+                            >
+                              <div className="beatPackItem">
+                                {mediaFileExtension === "mp4" && (
+                                  <video
+                                    width="300"
+                                    height="300"
+                                    playsInline={true}
+                                    autoPlay={true}
+                                    muted={true}
+                                    loop={true}
+                                    style={{ marginBottom: "20px" }}
+                                  >
+                                    <source src={nft.imageURL} type="video/mp4" />
+                                  </video>
+                                )}
+                                {mediaFileExtension !== "mp4" && (
+                                  <img src={nft.imageURL} className="directoryAlbum" />
+                                )}
+                                <div className="directoryItemName white-text display-small">{nft.name}</div>
+                                <div className="directoryArtistName light-yellow-text body-medium">
+                                  {nft.artistName}
+                                </div>
+                                <div className="editionSold">
+                                  <div className="editionSoldText yellowish-gray-text">{`Edition: #${nft.tokenId}`}</div>
+                                </div>
+                              </div>
+                            </a>
+                          );
+                        })
+                      }
                     </div>
-                  </a>
-                );
-              })}
-          </div>
+                  )
+                  
+                })
+              }
+            </div>
+          }
         </div>
-      )}
     </React.StrictMode>
   );
 }

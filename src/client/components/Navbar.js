@@ -65,7 +65,7 @@ const style = {
 
 export default function Navbar(props) {
   const classes = useStyles();
-  const { white, loggedIntoMetamaskOverride, didConnectWallet } = props;
+  const { white, loggedIntoMetamaskOverride, isConnected } = props;
   const { chainId, account, active, activate, deactivate, library } = useWeb3React();
   const [open, setOpen] = useState(false);
   const { data: balance, mutate } = useSWR(["getBalance", account, "latest"], {
@@ -78,9 +78,9 @@ export default function Navbar(props) {
   const [openMenu, setOpenMenu] = useState(false);
 
   useEffect(() => {
-    if (!active)
+    if (!active || !isConnected)
       connectWallet();
-  }, [active]);
+  }, [active, isConnected]);
 
   useEffect(() => {
     library?.on("block", () => {

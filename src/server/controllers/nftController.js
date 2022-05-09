@@ -155,21 +155,30 @@ async function getNFTsForUser(address) {
 }
 
 async function getAllNFTsForUser(address, chain) {
-  const allNFTs = getNFTsForUser(address);
-  if (allNFTs.length === 0) {
+  const allNFTs = await getNFTsForUser(address);
+
+  if (allNFTs.status !== 200) {
+    return allNFTs
+  }
+  if (allNFTs.response.length === 0) {
     return {
       status: 200,
       response: []
     }
   } else {
-    const allTokenAddresses = allNFTs.map(nft => nft.tokenAddress);
+    const allTokenAddresses = allNFTs.response.map(nft => nft.tokenAddress);
     const uniqueTokenAddresses = Array.from(new Set(allTokenAddresses));
     let tokens = {};
 
-    uniqueTokenAddresses.forEach(tokenAddress => {
-      const nfts = getNFTsForOwner(tokenAddress, address, chain);
-      tokens[tokenAddress] = nfts;
-    })
+    for (let i = 0; i < uniqueTokenAddresses.length; i ++) {
+      const tokenAddress = uniqueTokenAddresses[i];
+      const nfts = await getNFTsForOwner(tokenAddress, address, chain);
+      if (nfts.status === 200) {
+        console.log("-------------------",nfts.response)
+        tokens[tokenAddress] = nfts.response;
+      }
+    }
+  
     return {
       status: 200,
       response: tokens

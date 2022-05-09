@@ -209,6 +209,7 @@ app.get("/api/getNFTsForOwner", async (req, res) => {
 app.get("/api/getAllNFTsForUser", async (req, res) => {
   const { status, response } = await nftController.getAllNFTsForUser(
     req.query.address,
+    req.query.chain
   );
 
   res.status(status).send(response);
