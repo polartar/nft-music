@@ -154,7 +154,7 @@ async function getNFTsForUser(address) {
   }
 }
 
-async function getAllTokenAddressForUser(address) {
+async function getAllNFTsForUser(address, chain) {
   const allNFTs = getNFTsForUser(address);
   if (allNFTs.length === 0) {
     return {
@@ -162,10 +162,17 @@ async function getAllTokenAddressForUser(address) {
       response: []
     }
   } else {
-    const allTokens = allNFTs.map(nft => nft.tokenAddress);
+    const allTokenAddresses = allNFTs.map(nft => nft.tokenAddress);
+    const uniqueTokenAddresses = Array.from(new Set(allTokenAddresses));
+    let tokens = {};
+
+    uniqueTokenAddresses.forEach(tokenAddress => {
+      const nfts = getNFTsForOwner(tokenAddress, address, chain);
+      tokens[tokenAddress] = nfts;
+    })
     return {
       status: 200,
-      response: Array.from(new Set(allTokens))
+      response: tokens
     }
   }
 }
@@ -254,5 +261,5 @@ module.exports = {
   getOrdersForNFT,
   getNFTsForOwner,
   getSequencerToken,
-  getAllTokenAddressForUser
+  getAllNFTsForUser
 };

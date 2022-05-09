@@ -27,11 +27,9 @@ function MyCollection(props) {
   const { account, active } = useWeb3React();
 
   const refreshData = async () => {
-      const nftsResponse = await axios.get("/api/getNFTsForOwner", {
+      const nftsResponse = await axios.get("/api/getAllTokenAddressForUser", {
       params: {
-        collection: props.match.params.address,
-        owner: account,
-        chain: "eth"
+        address: account,
       }
     });
 
