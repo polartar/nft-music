@@ -23,35 +23,30 @@ import { ethers, utils } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 
 function MyCollection(props) {
-  const [loaded, setLoaded] = useState(false);
   const [nfts, setNFTs] = useState([]);
-  const { account} = useWeb3React();
+  const { account, active } = useWeb3React();
 
   const refreshData = async () => {
-    // if (userAddress) {
-       const nftsResponse = await axios.get("/api/getNFTsForOwner", {
-        params: {
-          collection: props.match.params.address,
-          owner: account,
-          // owner: userAddress,
-          // chain: "rinkeby",
-          chain: "eth"
-        }
-      });
-
-      setNFTs(nftsResponse.data);
-      const userResponse = await axios.get("/api/getUser", {
-        params: {
-          // address: userAddress
-          address: account
-        }
-      });
-
-      if (userResponse.data.name) {
-        setDisplayName(userResponse.data.name);
-      } else {
-        setDisplayName(props.match.params.address);
+      const nftsResponse = await axios.get("/api/getNFTsForOwner", {
+      params: {
+        collection: props.match.params.address,
+        owner: account,
+        chain: "eth"
       }
+    });
+
+    setNFTs(nftsResponse.data);
+    const userResponse = await axios.get("/api/getUser", {
+      params: {
+        address: account
+      }
+    });
+
+    if (userResponse.data.name) {
+      setDisplayName(userResponse.data.name);
+    } else {
+      setDisplayName(props.match.params.address);
+    }
   };
 
   useEffect(() => {
@@ -62,11 +57,11 @@ function MyCollection(props) {
 
   return (
     <React.StrictMode>
-      {loaded && (
+      asd
+      {active && (
         <div className="containerDirectory scrollBar dark-background">
           <Navbar white={false} />
           <div className="directoryBody">
-            {/* <div className="currentAuctionTitle">{`${displayName}'s Collection`}</div> */}
             {nfts.length === 0 && (
               <div className="currentAuctionTitle yellowish-gray-text">
                 This user currently has no stem packs in their collection.
@@ -106,11 +101,6 @@ function MyCollection(props) {
                       <div className="editionSold">
                         <div className="editionSoldText yellowish-gray-text">{`Edition: #${nft.tokenId}`}</div>
                       </div>
-                      {/* <div className="editionSold boughtFor">
-                        <div className="editionSoldText">{`Bought for: ${nft.saleAmount?.toFixed(
-                          2
-                        )} ETH`}</div>
-                      </div> */}
                     </div>
                   </a>
                 );

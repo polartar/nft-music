@@ -206,6 +206,14 @@ app.get("/api/getNFTsForOwner", async (req, res) => {
   res.status(status).send(response);
 });
 
+app.get("/api/getAllTokenAddressForUser", async (req, res) => {
+  const { status, response } = await nftController.getAllTokenAddressForUser(
+    req.query.address,
+  );
+
+  res.status(status).send(response);
+});
+
 // getMintStatusForAddress
 app.get("/api/getMintStatusForAddress", async (req, res) => {
   const { status, response } = await mintController.getMintStatusForAddress(
