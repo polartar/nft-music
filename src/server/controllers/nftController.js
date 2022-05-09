@@ -168,6 +168,7 @@ async function getAllNFTsForUser(address, chain) {
   } else {
     const allTokenAddresses = allNFTs.response.map(nft => nft.tokenAddress);
     const uniqueTokenAddresses = Array.from(new Set(allTokenAddresses));
+    console.log({uniqueTokenAddresses})
     let tokens = {};
 
     for (let i = 0; i < uniqueTokenAddresses.length; i ++) {

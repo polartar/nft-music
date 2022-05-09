@@ -33,7 +33,7 @@ function MyCollection(props) {
         chain: chainId === 1 ? "eth" : "rinkeby"
       }
     });
-
+console.log(nftsResponse.data)
     setNFTs(nftsResponse.data);
     const userResponse = await axios.get("/api/getUser", {
       params: {
@@ -60,7 +60,7 @@ function MyCollection(props) {
           <Navbar white={false} isConnected = {active} />
           {
             active && 
-            <div className="directoryBody">
+            <div className="directoryBody no-flex">
               {Object.keys(nfts).length === 0 && (
                 <div className="currentAuctionTitle yellowish-gray-text">
                   This user currently has no stem packs in their collection.
@@ -72,46 +72,48 @@ function MyCollection(props) {
                   return (
                     <div key={tokenAddress}>
                       <h3>Collection Name: {myNFTs[0]?.name}</h3>
-                      {
-                        myNFTs.map(nft => {
-                          const mediaFileExtension = nft.imageURL
-                            .split(".")
-                            .pop()
-                            .toLowerCase();
-                          return (
-                            <a
-                              href={`/bouquet/${nft.artistName}/${nft.name}/${nft.tokenId}`}
-                              key={nft.imageURL}
-                            >
-                              <div className="beatPackItem">
-                                {mediaFileExtension === "mp4" && (
-                                  <video
-                                    width="300"
-                                    height="300"
-                                    playsInline={true}
-                                    autoPlay={true}
-                                    muted={true}
-                                    loop={true}
-                                    style={{ marginBottom: "20px" }}
-                                  >
-                                    <source src={nft.imageURL} type="video/mp4" />
-                                  </video>
-                                )}
-                                {mediaFileExtension !== "mp4" && (
-                                  <img src={nft.imageURL} className="directoryAlbum" />
-                                )}
-                                <div className="directoryItemName white-text display-small">{nft.name}</div>
-                                <div className="directoryArtistName light-yellow-text body-medium">
-                                  {nft.artistName}
+                      <div className="nfts">
+                        {
+                          myNFTs.map(nft => {
+                            const mediaFileExtension = nft.imageURL
+                              .split(".")
+                              .pop()
+                              .toLowerCase();
+                            return (
+                              <a
+                                href={`/bouquet/${nft.artistName}/${nft.name}/${nft.tokenId}`}
+                                key={nft.tokenId + nft.imageURL}
+                              >
+                                <div className="beatPackItem">
+                                  {mediaFileExtension === "mp4" && (
+                                    <video
+                                      width="300"
+                                      height="300"
+                                      playsInline={true}
+                                      autoPlay={true}
+                                      muted={true}
+                                      loop={true}
+                                      style={{ marginBottom: "20px" }}
+                                    >
+                                      <source src={nft.imageURL} type="video/mp4" />
+                                    </video>
+                                  )}
+                                  {mediaFileExtension !== "mp4" && (
+                                    <img src={nft.imageURL} className="directoryAlbum" />
+                                  )}
+                                  <div className="directoryItemName white-text display-small">{nft.name}</div>
+                                  <div className="directoryArtistName light-yellow-text body-medium">
+                                    {nft.artistName}
+                                  </div>
+                                  <div className="editionSold">
+                                    <div className="editionSoldText yellowish-gray-text">{`Edition: #${nft.tokenId}`}</div>
+                                  </div>
                                 </div>
-                                <div className="editionSold">
-                                  <div className="editionSoldText yellowish-gray-text">{`Edition: #${nft.tokenId}`}</div>
-                                </div>
-                              </div>
-                            </a>
-                          );
-                        })
-                      }
+                              </a>
+                            );
+                          })
+                        }
+                      </div>
                     </div>
                   )
                   
