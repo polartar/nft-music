@@ -168,15 +168,14 @@ async function getAllNFTsForUser(address, chain) {
   } else {
     const allTokenAddresses = allNFTs.response.map(nft => nft.tokenAddress);
     const uniqueTokenAddresses = Array.from(new Set(allTokenAddresses));
-    console.log({uniqueTokenAddresses})
-    let tokens = {};
+
+    let tokens = [];
 
     for (let i = 0; i < uniqueTokenAddresses.length; i ++) {
       const tokenAddress = uniqueTokenAddresses[i];
       const nfts = await getNFTsForOwner(tokenAddress, address, chain);
       if (nfts.status === 200) {
-        console.log("-------------------",nfts.response)
-        tokens[tokenAddress] = nfts.response;
+        tokens = tokens.concat(nfts.response)
       }
     }
   
