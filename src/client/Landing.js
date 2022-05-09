@@ -1165,16 +1165,16 @@ class Sequencer extends Component {
     });
 
     this.activeAnimations.fifthSectionHyacinth = anime({
-        targets: '[data-slideindex="3"] .hyacinth path',
-        easing: "easeInOutSine",
-        duration: 1500,
-        skewX: 0.6,
-        skewY: -0.5,
-        delay: 250,
-        direction: "alternate",
-        loop: true,
-        autoPlay: false,
-      });
+      targets: '[data-slideindex="3"] .hyacinth path',
+      easing: "easeInOutSine",
+      duration: 1500,
+      skewX: 0.6,
+      skewY: -0.5,
+      delay: 250,
+      direction: "alternate",
+      loop: true,
+      autoPlay: false,
+    });
   };
 
   handleNewFPSlideAnimation() {
@@ -1363,7 +1363,7 @@ class Sequencer extends Component {
         translateY: [0, -10],
       });
 
-      this.activeAnimations.fifthSectionHyacinth.play()
+      this.activeAnimations.fifthSectionHyacinth.play();
     }
   }
 
@@ -1406,7 +1406,9 @@ class Sequencer extends Component {
     let total = items.length;
 
     let activeFPIndex = this.activeFPIndex;
-    let previousDirection = wrapper.classList.contains("prev") ? "prev" : "next";
+    let previousDirection = wrapper.classList.contains("prev")
+      ? "prev"
+      : "next";
     let didChangeDirection = previousDirection !== direction;
 
     if (activeFPIndex == total - 1 && direction == "next") {
@@ -1472,13 +1474,9 @@ class Sequencer extends Component {
 
     this.activeFPIndex = activeFPIndex;
 
-    activeSlide.addEventListener(
-      "transitionend",
-      this.waitForIdle.bind(this),
-      {
-        once: true,
-      }
-    );
+    activeSlide.addEventListener("transitionend", this.waitForIdle.bind(this), {
+      once: true,
+    });
   }
 
   handleScroll(direction) {
@@ -1510,7 +1508,6 @@ class Sequencer extends Component {
     } else if (this.activeFPIndex == 3) {
       this.activeAnimations.fourthSectionCarnations.pause();
       this.activeAnimations.fifthSectionHyacinth.pause();
-
     }
     // if (this.activeFPIndex !== 4) {
     anime({
@@ -1623,7 +1620,7 @@ class Sequencer extends Component {
         easing: "easeInOutSine",
         duration: 250,
         filter: "brightness(40%)",
-        delay: 0
+        delay: 0,
       });
     } else {
       anime({
@@ -1638,14 +1635,17 @@ class Sequencer extends Component {
         easing: "easeInOutSine",
         duration: 250,
         filter: "brightness(100%)",
-        delay: 0
+        delay: 0,
       });
     }
     this.setState({ hideBeatpad: !this.state.hideBeatpad });
   }
 
   setShowTutorial() {
-    this.setState({ showTutorial: !this.state.showTutorial, openControls: !this.state.openControls });
+    this.setState({
+      showTutorial: !this.state.showTutorial,
+      openControls: !this.state.openControls,
+    });
   }
 
   render() {
@@ -1808,47 +1808,52 @@ class Sequencer extends Component {
                   <div className="song-info-wrapper">
                     {showTutorial && (
                       <div className="tutorial-wrapper">
-                      <React.Fragment>
-                        {tutorialStep === 0 && (
-                          <React.Fragment>
+                        <React.Fragment>
+                          {tutorialStep === 0 && (
+                            <React.Fragment>
+                              <div className="body-small white-text">
+                                To begin, press one of the highlighted squares
+                                on the left. These are the drum loops. <br />
+                                <br />
+                                Only one will play at a time.
+                              </div>
+                            </React.Fragment>
+                          )}
+                          {tutorialStep === 1 && (
                             <div className="body-small white-text">
-                              To begin, press one of the highlighted squares on
-                              the left. These are the drum loops. <br /><br />
-                              Only one will play at a time.
+                              Now, press one of the highlighted squares on the
+                              right. These are the bass loops. <br />
+                              <br />
+                              When the pad is flashing, the sound will wait to
+                              play until the next bar.
+                              <br />
+                              <br /> Only one will play at a time.
                             </div>
-                          </React.Fragment>
-                        )}
-                        {tutorialStep === 1 && (
-                          <div className="body-small white-text">
-                            Now, press one of the highlighted squares on the
-                            right. These are the bass loops. <br /><br />
-                            When the pad is flashing, the sound will wait to
-                            play until the next bar.
-                            <br /><br /> Only one will play at a time.
-                          </div>
-                        )}
-                        {tutorialStep === 2 && (
-                          <div className="body-small white-text">
-                            {`Lastly, press one of grey squares in the middle. These are
+                          )}
+                          {tutorialStep === 2 && (
+                            <div className="body-small white-text">
+                              {`Lastly, press one of grey squares in the middle. These are
                           chords and melodies. Up to ${nft.activeSoundLimits["sounds"]} can play at at time.`}
-                          </div>
-                        )}
-                        {tutorialStep === 3 && (
-                          <div className="body-small white-text">
-                            You're ready to make some music! <br /><br />
-                            Try out different combinations and share them with
-                            friends below. <br /><br />
-                            If you'd like to learn more about Secret Garden,
-                            scroll down.
-                          </div>
-                        )}
-                      </React.Fragment>
+                            </div>
+                          )}
+                          {tutorialStep === 3 && (
+                            <div className="body-small white-text">
+                              You're ready to make some music! <br />
+                              <br />
+                              Try out different combinations and share them with
+                              friends below. <br />
+                              <br />
+                              If you'd like to learn more about Secret Garden,
+                              scroll down.
+                            </div>
+                          )}
+                        </React.Fragment>
                       </div>
                     )}
                     <div className="song-info-container">
                       {openControls && (
                         <div className="controls-container">
-                          {/* <div className="record-container control-item">
+                          <div className="record-container control-item">
                             <button
                               className={
                                 this.state.shouldStartRecording ||
@@ -1877,7 +1882,7 @@ class Sequencer extends Component {
                                 {this.state.isRecording && <Stopwatch />}
                               </p>
                             )}
-                          </div> */}
+                          </div>
                           <button
                             className={"button record control-item"}
                             onClick={this.setHideBeatpad.bind(this)}

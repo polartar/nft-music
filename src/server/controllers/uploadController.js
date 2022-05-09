@@ -80,7 +80,7 @@ async function exportRecording(response, recording, artistName, name, edition) {
     const uuid = md5(recording.buffer);
 
     ffmpeg()
-      .addInput("./desktop-square.mp4")
+      .addInput(nft.localImageURL)
       .inputOption("-stream_loop -1")
       .addInput(stream)
       .outputOptions(
