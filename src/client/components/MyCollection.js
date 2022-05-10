@@ -33,7 +33,7 @@ function MyCollection(props) {
         chain: chainId === 1 ? "eth" : "rinkeby"
       }
     });
-console.log(nftsResponse.data)
+
     setNFTs(nftsResponse.data);
     const userResponse = await axios.get("/api/getUser", {
       params: {
