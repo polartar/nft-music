@@ -155,7 +155,7 @@ async function getNFTsForUser(address) {
 }
 
 async function getAllNFTsForUser(address, chain) {
-  const allNFTs = await getNFTsForUser(address);
+  const allNFTs = await getAllNFTs(address, chain);
 
   if (allNFTs.status !== 200) {
     return allNFTs
@@ -235,7 +235,6 @@ async function getNFTsForOwner(tokenAddress, ownerAddress, chain) {
 
     const nftIds = nftIdResponse.data.result.map(item => item.token_id);
 
-    console.log({ nftIdResponse });
     const metadata = await db.collection("NFTs").findOne({
       tokenAddress
     });
@@ -249,6 +248,52 @@ async function getNFTsForOwner(tokenAddress, ownerAddress, chain) {
     nftIds.forEach(nftId => {
       const nft = { ...metadata };
       nft.tokenId = nftId;
+      nfts.push(nft);
+    });
+
+    return {
+      status: 200,
+      response: nfts
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
+
+async function getAllNFTs(ownerAddress, chain) {
+  try {
+    const nftIdResponse = await axios.get(
+      `https://deep-index.moralis.io/api/v2/${ownerAddress}/nft?chain=${chain}`,
+      {
+        headers: {
+          "X-API-KEY":
+            "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y"
+        }
+      }
+    );
+
+    let tokenAddresses = nftIdResponse.data.result.map(item => item.token_address);
+    tokenAddresses = Array.from(new Set(tokenAddresses));
+    const metadataQuery = await db.collection("NFTs").find({
+      tokenAddress: { $in: tokenAddresses}
+    });
+
+    let metadata = {};
+    while (await metadataQuery.hasNext()) {
+      const nft = await metadataQuery.next();
+      metadata[nft.tokenAddress] = nft;
+    }
+
+    if (Object.keys(metadata).length ==0 ) {
+      throw new Error("No metadata found for token address");
+    }
+
+    const nfts = [];
+
+    nftIdResponse.data.result.forEach(token => {
+      const nft = { ...metadata[token.token_address] };
+      nft.tokenId = token.token_id;
       nfts.push(nft);
     });
 
