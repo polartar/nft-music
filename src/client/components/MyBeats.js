@@ -28,7 +28,7 @@ function Collection(props) {
   const [nfts, setNFTs] = useState([]);
   const [displayName, setDisplayName] = useState();
   const [ownerAddress, setOwnerAddress] = useState(null);
-  const { account} = useWeb3React();
+  const { account, active} = useWeb3React();
 
 
   const refreshData = async () => {
