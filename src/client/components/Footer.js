@@ -13,6 +13,7 @@ import { ThemeProvider } from "@material-ui/styles";
 import PlayCircleIcon from "../images/PlayCircleIcon.svg";
 import ShuffleCircleIcon from "../images/ShuffleCircleIcon.svg";
 import StopCircleIcon from "../images/StopCircleIcon.svg";
+import { useWeb3React } from "@web3-react/core";
 
 // import Discord from "../images/discord.svg";
 // import Twitter from "../images/Twitter.svg";
@@ -23,7 +24,7 @@ import ControlsButton from "./ControlsButton";
 
 export default function Footer(props) {
   const {
-    loggedIntoMetamaskOverride,
+    // loggedIntoMetamaskOverride,
     hidePlayControls,
     showShare,
     shareURL,
@@ -38,24 +39,25 @@ export default function Footer(props) {
     setOpenControls,
     openControls
   } = props;
+  const { chainId, account, active, activate, deactivate, library } = useWeb3React();
   const [loaded, setLoaded] = useState(false);
-  const [address, setAddress] = useState();
+  // const [address, setAddress] = useState();
   const [openShare, setOpenShare] = useState(false);
 
   const [openEmail, setOpenEmail] = useState(false);
-  const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
+  // const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
   const [showMintMenu, setShowMintMenu] = useState(false);
 
-  const refreshData = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const accounts = await provider.listAccounts();
-    const address = await provider.getSigner(0).getAddress();
+  // const refreshData = async () => {
+  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //   const accounts = await provider.listAccounts();
+  //   const address = await provider.getSigner(0).getAddress();
 
-    if (accounts.length > 0) {
-      setIsLoggedIntoMetamask(true);
-      setAddress(address);
-    }
-  };
+  //   if (accounts.length > 0) {
+  //     setIsLoggedIntoMetamask(true);
+  //     setAddress(address);
+  //   }
+  // };
   const handleClose = () => {
     setOpenShare(false);
   };
@@ -67,9 +69,9 @@ export default function Footer(props) {
     setOpenEmail(false);
   };
 
-  useEffect(() => {
-    refreshData();
-  }, [loaded, loggedIntoMetamaskOverride]);
+  // useEffect(() => {
+  //   refreshData();
+  // }, [loaded, loggedIntoMetamaskOverride]);
 
   return (
     <React.Fragment>

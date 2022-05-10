@@ -47,6 +47,7 @@ import MonsteraLeaf from "./components/MonsteraLeaf";
 import Tulip from "./components/Tulip";
 import FlowerArrangement from "./components/FlowerArrangement";
 import Stopwatch from "./components/Stopwatch";
+import { withWeb3HOC } from "./Web3HOC";
 
 const sixBySixThreeGroups = [
   [
@@ -219,10 +220,6 @@ class Sequencer extends Component {
     totalSoundsPlaying: 0,
     openBidModal: false,
     nft: null,
-    isLoggedIntoMetamask: false,
-    provider: null,
-    address: null,
-    balance: 0,
     bids: [],
     users: {},
     queue: {},
@@ -253,7 +250,7 @@ class Sequencer extends Component {
     this.cablesCanvas = createRef();
     this.canvas = createRef();
 
-    this.initWallet();
+    // this.initWallet();
     this.myRef = React.createRef();
     this.clearSelections = this.clearSelections.bind(this);
     this.activePlayers = {};
@@ -267,43 +264,43 @@ class Sequencer extends Component {
     this.activeAnimations = {};
   }
 
-  initWallet = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+  // initWallet = async () => {
+  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-    const accounts = await provider.listAccounts();
+  //   const accounts = await provider.listAccounts();
 
-    window.ethereum.on("accountsChanged", function(accounts) {
-      location.reload();
-    });
+  //   window.ethereum.on("accountsChanged", function(accounts) {
+  //     location.reload();
+  //   });
 
-    window.ethereum.on("chainChanged", (chainId) => {
-      location.reload();
-    });
+  //   window.ethereum.on("chainChanged", (chainId) => {
+  //     location.reload();
+  //   });
 
-    if (accounts.length > 0) {
-      const address = await provider.getSigner(0).getAddress();
+  //   if (accounts.length > 0) {
+  //     const address = await provider.getSigner(0).getAddress();
 
-      this.setState({
-        isLoggedIntoMetamask: true,
-        provider,
-        address,
-        balance: await provider.getBalance(address),
-      });
-    }
-  };
+  //     this.setState({
+  //       isLoggedIntoMetamask: true,
+  //       provider,
+  //       address,
+  //       balance: await provider.getBalance(address),
+  //     });
+  //   }
+  // };
 
-  connectWallet = async () => {
-    await window.ethereum.enable();
+  // connectWallet = async () => {
+  //   await window.ethereum.enable();
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const address = await provider.getSigner(0).getAddress();
+  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //   const address = await provider.getSigner(0).getAddress();
 
-    this.setState({
-      isLoggedIntoMetamask: true,
-      provider,
-      address,
-    });
-  };
+  //   this.setState({
+  //     isLoggedIntoMetamask: true,
+  //     provider,
+  //     address,
+  //   });
+  // };
 
   exportRecording = async (blob) => {
     try {
@@ -601,24 +598,24 @@ class Sequencer extends Component {
     }
   }
 
-  handleClickOpen = async () => {
-    try {
-      if (!this.state.isLoggedIntoMetamask) {
-        await this.connectWallet();
-      }
-      this.setState({
-        openBidModal: true,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // handleClickOpen = async () => {
+  //   try {
+  //     if (!this.state.isLoggedIntoMetamask) {
+  //       await this.connectWallet();
+  //     }
+  //     this.setState({
+  //       openBidModal: true,
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  handleClose = (value) => {
-    this.setState({
-      openBidModal: false,
-    });
-  };
+  // handleClose = (value) => {
+  //   this.setState({
+  //     openBidModal: false,
+  //   });
+  // };
 
   executeScroll = () => this.myRef.current.scrollIntoView();
 
@@ -1656,10 +1653,10 @@ class Sequencer extends Component {
       notes,
       loaded,
       nft,
-      isLoggedIntoMetamask,
+      // isLoggedIntoMetamask,
       bids,
       users,
-      provider,
+      // provider,
       padFormat,
       padFormatStyleClass,
       padRecording,
@@ -1713,8 +1710,8 @@ class Sequencer extends Component {
 
                 <Navbar
                   white={false}
-                  didConnectWallet={this.initWallet}
-                  loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+                  // didConnectWallet={this.initWallet}
+                  // loggedIntoMetamaskOverride={this.}
                 />
                 <div className="container">
                   {mediaFileExtension === "mp4" && (
@@ -2236,7 +2233,7 @@ class Sequencer extends Component {
                   ","
                 )}`}
                 showShare={true}
-                loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+                // loggedIntoMetamaskOverride={isLoggedIntoMetamask}
                 muiTheme={this.muiTheme}
                 setVolume={this.setVolume.bind(this)}
                 volume={this.state.volume}
@@ -2257,4 +2254,5 @@ class Sequencer extends Component {
   }
 }
 
-export default Sequencer;
+
+export default withWeb3HOC(Sequencer);

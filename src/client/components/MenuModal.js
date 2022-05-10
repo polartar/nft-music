@@ -158,9 +158,9 @@ export default function SimpleDialog(props) {
                 </p>
                 <div className="walletOuter">
                   <img src={Wallet} className="wallet" />
-                  <span className="walletAmount">{`${parseFloat(
+                  <span className="walletAmount">{`${balance ? parseFloat(
                     utils.formatEther(balance)
-                  ).toFixed(4)} ETH`}</span>
+                  ).toFixed(4): 0} ETH`}</span>
                 </div>
                 <br />
                 <div className="userName">{displayName}</div>

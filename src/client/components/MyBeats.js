@@ -20,6 +20,7 @@ import "../css/directory.scss";
 
 import axios from "axios";
 import { ethers, utils } from "ethers";
+import { useWeb3React } from "@web3-react/core";
 
 function Collection(props) {
   const [loaded, setLoaded] = useState(false);
@@ -27,73 +28,46 @@ function Collection(props) {
   const [nfts, setNFTs] = useState([]);
   const [displayName, setDisplayName] = useState();
   const [ownerAddress, setOwnerAddress] = useState(null);
+  const { account} = useWeb3React();
+
 
   const refreshData = async () => {
-    let userAddress;
-    if (window.ethereum) {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts"
-      });
-
-      if (accounts.length > 0) {
-        userAddress = accounts[0];
-        if (userAddress !== ownerAddress) {
-          setOwnerAddress(accounts[0]);
-        }
+    const nftsResponse = await axios.get("/api/getNFTsForOwner", {
+      params: {
+        collection: props.match.params.address,
+        owner: account,
+        // owner: userAddress,
+        // chain: "rinkeby",
+        chain: "eth"
       }
-    }
+    });
 
-    // if (userAddress) {
-    if (userAddress || ownerAddress) {
-      const nftsResponse = await axios.get("/api/getNFTsForOwner", {
-        params: {
-          collection: props.match.params.address,
-          owner: userAddress || ownerAddress,
-          // owner: userAddress,
-          // chain: "rinkeby",
-          chain: "eth"
-        }
-      });
-
-      setNFTs(nftsResponse.data);
-      const userResponse = await axios.get("/api/getUser", {
-        params: {
-          // address: userAddress
-          address: userAddress || ownerAddress
-        }
-      });
-
-      if (userResponse.data.name) {
-        setDisplayName(userResponse.data.name);
-      } else {
-        setDisplayName(props.match.params.address);
+    setNFTs(nftsResponse.data);
+    const userResponse = await axios.get("/api/getUser", {
+      params: {
+        // address: userAddress
+        address: account
       }
-      setIsLoggedIntoMetamask(true);
+    });
+
+    if (userResponse.data.name) {
+      setDisplayName(userResponse.data.name);
+    } else {
+      setDisplayName(props.match.params.address);
     }
-
-    if (!ownerAddress) {
-      console.log("User not logged in.");
-    }
-
-    // const provider = new ethers.providers.Web3Provider(window.ethereum);
-    // const accounts = await provider.listAccounts();
-
-    // if (accounts.length > 0) {
-    //   setIsLoggedIntoMetamask(true);
-    // }
-
-    setLoaded(true);
   };
 
   useEffect(() => {
-    refreshData();
-  }, [loaded, ownerAddress]);
+    if (account && active) {
+      refreshData();
+    }
+  }, [account]);
 
   return (
     <React.StrictMode>
-      {loaded && (
+      {active && (
         <div className="containerDirectory scrollBar dark-background">
-          <Navbar white={false} didConnectWallet={refreshData} />
+          <Navbar white={false}/>
           <div className="directoryBody">
             {/* <div className="currentAuctionTitle">{`${displayName}'s Collection`}</div> */}
             {nfts.length === 0 && (

@@ -251,3 +251,8 @@
     transform: scale(0.9);
   }
 }
+.nfts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
