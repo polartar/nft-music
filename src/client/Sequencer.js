@@ -106,6 +106,7 @@ class Sequencer extends Component {
     isOwner: false,
     didFetchOwnerNFTs: false,
     hasNewRecording: false,
+    exportingStatus: "",
   };
 
   constructor(props) {
@@ -169,6 +170,15 @@ class Sequencer extends Component {
   };
 
   exportRecording = async (blob) => {
+    this.setState({
+      exportingStatus: "Exporting, please wait...",
+    });
+    setTimeout(() => {
+      this.setState({
+        exportingStatus: "",
+      });
+    }, 9000);
+
     try {
       const form = new FormData();
 
@@ -383,7 +393,7 @@ class Sequencer extends Component {
               isRecording: false,
               recordingStatus: "Preparing export...",
               recording,
-              hasNewRecording: true
+              hasNewRecording: true,
             });
           }
         }
@@ -1237,7 +1247,10 @@ class Sequencer extends Component {
   }
 
   setShowTutorial() {
-    this.setState({ showTutorial: !this.state.showTutorial, openControls: !this.state.openControls });
+    this.setState({
+      showTutorial: !this.state.showTutorial,
+      openControls: !this.state.openControls,
+    });
   }
 
   playMix = (padRecording) => {
@@ -1473,45 +1486,51 @@ class Sequencer extends Component {
                     <div className="song-info-wrapper">
                       {showTutorial && (
                         <div className="tutorial-wrapper">
-                        <React.Fragment>
-                          {tutorialStep === 0 && (
-                            <React.Fragment>
-                              <div className="body-medium white-text font-bold">
-                                Welcome to the Secret Garden.
-                              </div><br />
+                          <React.Fragment>
+                            {tutorialStep === 0 && (
+                              <React.Fragment>
+                                <div className="body-medium white-text font-bold">
+                                  Welcome to the Secret Garden.
+                                </div>
+                                <br />
+                                <div className="body-small white-text">
+                                  To begin, press one of the highlighted squares
+                                  on the left. These are the drum loops. <br />
+                                  <br />
+                                  Only one will play at a time.
+                                </div>
+                              </React.Fragment>
+                            )}
+                            {tutorialStep === 1 && (
                               <div className="body-small white-text">
-                                To begin, press one of the highlighted squares
-                                on the left. These are the drum loops. <br /><br />
-                                Only one will play at a time.
+                                Now, press one of the highlighted squares on the
+                                right. These are the bass loops. <br />
+                                <br />
+                                When the pad is flashing, the sound will wait to
+                                play until the next bar.
+                                <br />
+                                <br /> Only one will play at a time.
                               </div>
-                            </React.Fragment>
-                          )}
-                          {tutorialStep === 1 && (
-                            <div className="body-small white-text">
-                              Now, press one of the highlighted squares on the
-                              right. These are the bass loops. <br /><br />
-                              When the pad is flashing, the sound will wait to
-                              play until the next bar.
-                              <br /><br /> Only one will play at a time.
-                            </div>
-                          )}
-                          {tutorialStep === 2 && (
-                            <div className="body-small white-text">
-                              {`Lastly, press one of grey squares in the middle. These are
+                            )}
+                            {tutorialStep === 2 && (
+                              <div className="body-small white-text">
+                                {`Lastly, press one of grey squares in the middle. These are
                         chords and melodies. Up to ${nft.activeSoundLimits["sounds"]} can play at at time.`}
-                            </div>
-                          )}
-                          {tutorialStep === 3 && (
-                            <div className="body-small white-text">
-                              You're ready to make some music! <br /><br />
-                              Try out different combinations and share them with
-                              friends below. <br /><br />
-                              If you'd like to learn more about Secret Garden,
-                              scroll down.
-                            </div>
-                          )}
-                        </React.Fragment>
-                      </div>
+                              </div>
+                            )}
+                            {tutorialStep === 3 && (
+                              <div className="body-small white-text">
+                                You're ready to make some music! <br />
+                                <br />
+                                Try out different combinations and share them
+                                with friends below. <br />
+                                <br />
+                                If you'd like to learn more about Secret Garden,
+                                scroll down.
+                              </div>
+                            )}
+                          </React.Fragment>
+                        </div>
                       )}
 
                       <div className="song-info-container">
@@ -1523,10 +1542,22 @@ class Sequencer extends Component {
                                   display: "flex",
                                   justifyContent: "space-between",
                                   alignItems: "center",
+                                  width:
+                                    this.state.recordingStatus.length > 0 || this.state.exportingStatus.length > 0
+                                      ? "100%"
+                                      : "200px",
                                 }}
                               >
-                                {this.state.isOwner &&
-                                this.shouldRenderPostRecording() ? (
+                                {this.state.exportingStatus ===
+                                "Exporting, please wait..." ? (
+                                  <div
+                                    style={{ marginRight: "10px" }}
+                                    className="body-medium yellow-text"
+                                  >
+                                    {this.state.exportingStatus}
+                                  </div>
+                                ) : this.state.isOwner &&
+                                  this.shouldRenderPostRecording() ? (
                                   <button
                                     className="button record"
                                     style={{ marginRight: "10px" }}
@@ -1541,7 +1572,10 @@ class Sequencer extends Component {
                                     style={{ marginRight: "10px" }}
                                     className="body-medium yellow-text"
                                   >
-                                    {this.state.recordingStatus}
+                                    {this.state.exportingStatus ===
+                                    "Exporting, please wait..."
+                                      ? this.state.exportingStatus
+                                      : this.state.recordingStatus}
                                     {this.state.isRecording && <Stopwatch />}
                                   </div>
                                 )}
@@ -1581,13 +1615,16 @@ class Sequencer extends Component {
                               <div
                                 style={{
                                   display: "flex",
-                                  justifyContent: this.state.hasNewRecording ? "space-between" : 'flex-end',
+                                  justifyContent: this.state.hasNewRecording
+                                    ? "space-between"
+                                    : "flex-end",
                                   alignItems: "center",
-                                  width: "100%",
+                                  width: "200px",
                                 }}
                               >
                                 {this.state.isOwner &&
-                                  this.shouldRenderPostRecording() && this.state.hasNewRecording && (
+                                  this.shouldRenderPostRecording() &&
+                                  this.state.hasNewRecording && (
                                     <button
                                       style={{
                                         marginRight: "10px",
