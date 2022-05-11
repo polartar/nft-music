@@ -1,49 +1,18 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import Checkbox from "@material-ui/core/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import copy from "copy-to-clipboard";
-import {
-  RedditShareButton,
-  TelegramShareButton,
-  TwitterShareButton,
-  FacebookMessengerShareButton,
-} from "react-share";
-import {
-  FacebookMessengerIcon,
-  RedditIcon,
-  TelegramIcon,
-  TwitterIcon,
-} from "react-share";
-import X from "../images/x.png";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
 import CloseIcon from "@mui/icons-material/Close";
-import AlbumArt from "../images/albumArt.png";
-import InstaPic from "../images/instaPic.png";
-
-import Telegram from "../images/telegram.png";
-import Twitter from "../images/twitter.png";
-import Messenger from "../images/messenger.png";
-import CopyLink from "../images/link.png";
 import Link from "../images/link.svg";
-import ErrorLink from "../images/error-link.svg";
-
 import LoadingFlower from "./LoadingFlower";
 
 import "../css/bidModal.css";
 import IconButton from "@material-ui/core/IconButton";
-import { ethers, Contract, utils } from "ethers";
-import * as Web3 from "web3";
+import { ethers, Contract } from "ethers";
 import axios from "axios";
-import { OpenSeaPort, Network } from "opensea-js";
-import { WyvernSchemaName } from "opensea-js/lib/types";
 import AuctionABI from "../constants/AuctionABI.json";
-import { auctionAddress } from "../constants/config.json";
-import Typography from "@material-ui/core/Typography";
 import { parseEther } from "ethers/lib/utils";
+import { useWeb3React } from "@web3-react/core";
 
 const useStyles = makeStyles({
   dialog: {
@@ -90,13 +59,12 @@ const useStyles = makeStyles({
 
 export default function SimpleDialog(props) {
   const classes = useStyles();
-  const { onClose, open, shareURL, tokenAddress, discountedPrice } = props;
+  const { onClose, open, shareURL, tokenAddress, discountedPrice, onConnect} = props;
   const [text, setText] = React.useState("Copy Link");
-  const [metamaskAddress, setMetamaskAddress] = React.useState(null);
   const [transactionHash, setTransactionHash] = React.useState(
     "OX1892AKSD3981120030039"
   );
-
+  const { chainId, account, active, activate, deactivate, library } = useWeb3React();
   const [isMinting, setIsMinting] = React.useState(false);
   const [didMint, setDidMint] = React.useState(false);
   const [currentPrice, setCurrentPrice] = useState();
@@ -136,21 +104,10 @@ export default function SimpleDialog(props) {
   }, [open]);
 
   useEffect(() => {
-    if (window.ethereum) {
+    if (active) {
       async function init() {
-        let userAddress
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-        if (accounts.length > 0) {
-          userAddress = accounts[0]
-        }
         await checkNetwork();
-
-        if (userAddress) {
-          setMetamaskAddress(userAddress);
-
-          await createContractInstance();
-        }
+        await createContractInstance();
       }
 
       init();
@@ -158,14 +115,14 @@ export default function SimpleDialog(props) {
   }, []);
 
   useEffect(() => {
-    if (!metamaskAddress) return;
+    if (!account || !library) return;
 
     async function getStatus() {
       const mintStatusResponse = await axios.get(
         "/api/getMintStatusForAddress",
         {
           params: {
-            address: metamaskAddress.toLowerCase(),
+            address: account.toLowerCase(),
           },
         }
       );
@@ -178,7 +135,7 @@ export default function SimpleDialog(props) {
     getMintBalances();
 
     getStatus();
-  }, [metamaskAddress]);
+  }, [account]);
 
   useEffect(() => {
     if (!mintStatus) return;
@@ -189,10 +146,8 @@ export default function SimpleDialog(props) {
   const getMintBalances = async () => {
     let instance = contract;
     if (!instance) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner(0);
-
-      instance = new Contract(tokenAddress, AuctionABI, signer);
+      instance = new Contract(tokenAddress, AuctionABI, library.getSigner());
+      setContract(instance);
     }
 
     const myPublicAmountMinted = await instance.getPublicMinted();
@@ -202,8 +157,6 @@ export default function SimpleDialog(props) {
     const whitelistAmount = await instance.getWhitelistMinted();
     const publicLimitPerWallet = await instance.publicListMaxMint();
     const publicTotalLimit = await instance.publicTotalMaxMint();
-
-    console.log(totalSupply);
 
     setPublicMinted(
       myPublicAmountMinted.toNumber() + myWhitelistAmountMinted.toNumber()
@@ -241,11 +194,7 @@ export default function SimpleDialog(props) {
   };
 
   const checkNetwork = async () => {
-    const currentChainId = await window.ethereum.request({
-      method: "eth_chainId",
-    });
-
-    if (currentChainId !== "0x1" && currentChainId !== "0x4") {
+    if (chainId !== "0x1" && chainId !== "0x4") {
       switchNetwork("0x4");
     }
   };
@@ -275,13 +224,12 @@ export default function SimpleDialog(props) {
           "/api/makeWhitelistSignature",
           {
             params: {
-              address: metamaskAddress.toLowerCase(),
+              address: account.toLowerCase(),
             },
           }
         );
 
         if (signatureResponse.status === 200) {
-          console.log(signatureResponse.data);
           tx = await contract.mintWhitelist(
             signatureResponse.data.hash,
             signatureResponse.data.signature,
@@ -305,36 +253,10 @@ export default function SimpleDialog(props) {
   };
 
   const createContractInstance = () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner(0);
-
-    const instance = new Contract(tokenAddress, AuctionABI, signer);
+    const instance = new Contract(tokenAddress, AuctionABI, library.getSigner());
 
     setContract(instance);
   };
-
-  const handleMetamask = async () => {
-    if (window.ethereum) {
-      let userAddress;
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-      if (accounts.length > 0) {
-        userAddress = accounts[0]
-      }
-
-      checkNetwork();
-      createContractInstance();
-
-      setMetamaskAddress(userAddress);
-    }
-  };
-
-  const removeMetamask = () => {
-    setMetamaskAddress(null);
-  };
-
-  // var path = anime.path('#loading-flower path');
-  //
 
   return (
     <Dialog
@@ -393,10 +315,10 @@ export default function SimpleDialog(props) {
                   </p>
                 ) : (
                   <React.Fragment>
-                    {metamaskAddress ? (
+                    {account ? (
                       <div>
                         <p className="body-medium sm:body-large white-text text-uppercase">
-                          {metamaskAddress}
+                          {account}
                         </p>
                         {/* <button
                           className="metamask-button disconnect"
@@ -409,10 +331,10 @@ export default function SimpleDialog(props) {
                     ) : (
                       <button
                         className="metamask-button body-large"
-                        onClick={handleMetamask}
+                        onClick={() => onConnect(true)}
                       >
                         <img src={Link} />
-                        Connect Metamask
+                        Connect Wallet
                       </button>
                     )}
                   </React.Fragment>
@@ -425,7 +347,7 @@ export default function SimpleDialog(props) {
                       className="cta-button"
                       onClick={handleMint}
                       disabled={
-                        metamaskAddress && !isMinting && contract ? false : true
+                        account && !isMinting && contract ? false : true
                       }
                     >
                       MINT - {currentPrice} ETH
@@ -455,13 +377,13 @@ export default function SimpleDialog(props) {
                   </React.Fragment>
                 ) : (
                   <React.Fragment>
-                    {mintStatus === "CAPSULE HOUSE" && metamaskAddress && (
+                    {mintStatus === "CAPSULE HOUSE" && account && (
                       <React.Fragment>
                         <button
                           className="cta-button"
                           onClick={handleMint}
                           disabled={
-                            metamaskAddress &&
+                            account &&
                             !isMinting &&
                             contract &&
                             ((mintStatus === "PUBLIC" && canMint()) ||
@@ -488,7 +410,7 @@ export default function SimpleDialog(props) {
                     <p className="body-medium yellowish-gray-text text-uppercase">
                       <b>Limit 1 per wallet</b>
                     </p>
-                    {metamaskAddress && (
+                    {account && (
                       <p className="body-medium yellowish-gray-text text-uppercase">
                         Mint Status: <b>{mintStatus}</b>
                       </p>

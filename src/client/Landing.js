@@ -48,6 +48,8 @@ import Tulip from "./components/Tulip";
 import FlowerArrangement from "./components/FlowerArrangement";
 import Stopwatch from "./components/Stopwatch";
 import BouquetCarousel from "./components/BouquetCarousel";
+import { withWeb3HOC } from "./Web3HOC";
+import "./css/nftCarousel.scss";
 
 const sixBySixThreeGroups = [
   [
@@ -314,6 +316,8 @@ class Sequencer extends Component {
       form.append("artistName", this.state.nft.artistName);
       form.append("nftName", this.state.nft.name);
       form.append("edition", this.state.nft.edition);
+      //hardcoded launch date text, ideally this comes from the nft object
+      form.append("launchDate", "LAUNCH AND REVEAL " + "5/17");
 
       const response = await axios.post("/api/exportRecording", form, {
         responseType: "blob",
@@ -1712,13 +1716,101 @@ class Sequencer extends Component {
               >
                 <FlowerArrangement />
 
+
                 <Navbar
                   white={false}
                   didConnectWallet={this.initWallet}
                   loggedIntoMetamaskOverride={isLoggedIntoMetamask}
                 />
+
                 <div className="container">
 
+
+                  {mediaFileExtension === "mp4" && (
+                    <div className="video-container">
+                      <video
+                        className="waterLoopVideo"
+                        playsInline
+                        autoPlay
+                        loop
+                        muted
+                        data-autoplay
+                      >
+                        <source src={nft.imageURL} type="video/mp4" />
+                      </video>
+                    </div>
+                  )}
+                  {mediaFileExtension !== "mp4" && (
+                    <img className="waterLoopVideo" src={nft.imageURL} />
+                  )}
+
+                  <div className="gridTop">
+                    {this.rhythmPads.map((group, groupIndex) => (
+                      <React.Fragment>
+                        {group.map((pad, i) => (
+                          <div
+                            key={`pad-group-${i}`}
+                            className={cx("modifiedPad", {
+                              active:
+                                groupIndex ===
+                                (((step - 1) % steps) + steps) % steps,
+                              on: pad === 1,
+                            })}
+                          />
+                        ))}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                  <div className={`gridOuter ${padFormatStyleClass}`}>
+                    {padFormat.map((column, j) => {
+                      return column.map((remappedCoordinates, i) => {
+                        const group = remappedCoordinates[0];
+                        const soundIndex = remappedCoordinates[1];
+                        const additionalClasses = remappedCoordinates[2]
+                          ? remappedCoordinates[2]
+                          : "";
+
+                        const on =
+                          this.players[group][soundIndex].state === "started";
+
+                        const blinkClass =
+                          pads[group][soundIndex] === 1 &&
+                          this.players[group][soundIndex].state !== "started"
+                            ? "blink"
+                            : "";
+                        const whiteClass = group === "sounds" ? "whitePad" : "";
+                        let tutorialClass = "";
+                        const padClass =
+                          group == "sounds" ? "padWhiteVersion" : "pad";
+
+                        if (showTutorial) {
+                          if (tutorialStep === 0 && group !== "drums") {
+                            tutorialClass = "tutorialPad";
+                          } else if (tutorialStep === 1 && group !== "basses") {
+                            tutorialClass = "tutorialPad";
+                          } else if (tutorialStep === 2 && group !== "sounds") {
+                            tutorialClass = "tutorialPad";
+                          }
+                        }
+
+                        return (
+                          <div
+                            key={`pad-group-${i}`}
+                            className={`${cx(padClass, {
+                              on,
+                            })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                            onClick={() => {
+                              this.togglePad(group, soundIndex);
+                            }}
+                          />
+                        );
+                      });
+                    })}
+                  </div>
+
+
+                  {/*
+                    WORK IN PROGRESS
 
                   <BouquetCarousel
                     padFormat={padFormat}
@@ -1733,6 +1825,7 @@ class Sequencer extends Component {
                     showTutorial={showTutorial}
                     tutorialStep={tutorialStep}
                   />
+                  */}
 
                   <div className="song-info-wrapper">
                     {showTutorial && (

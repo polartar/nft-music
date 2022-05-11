@@ -154,6 +154,38 @@ async function getNFTsForUser(address) {
   }
 }
 
+async function getAllNFTsForUser(address, chain) {
+  const allNFTs = await getNFTsForUser(address);
+
+  if (allNFTs.status !== 200) {
+    return allNFTs
+  }
+  if (allNFTs.response.length === 0) {
+    return {
+      status: 200,
+      response: []
+    }
+  } else {
+    const allTokenAddresses = allNFTs.response.map(nft => nft.tokenAddress);
+    const uniqueTokenAddresses = Array.from(new Set(allTokenAddresses));
+
+    let tokens = [];
+
+    for (let i = 0; i < uniqueTokenAddresses.length; i ++) {
+      const tokenAddress = uniqueTokenAddresses[i];
+      const nfts = await getNFTsForOwner(tokenAddress, address, chain);
+      if (nfts.status === 200) {
+        tokens = tokens.concat(nfts.response)
+      }
+    }
+  
+    return {
+      status: 200,
+      response: tokens
+    }
+  }
+}
+
 async function getOrdersForNFT(nftID, useTestnet) {
   try {
     const nft = await db.collection("NFTs").findOne({
@@ -190,7 +222,6 @@ async function getOrdersForNFT(nftID, useTestnet) {
 }
 
 async function getNFTsForOwner(tokenAddress, ownerAddress, chain) {
-  console.log({ tokenAddress, ownerAddress });
   try {
     const nftIdResponse = await axios.get(
       `https://deep-index.moralis.io/api/v2/${ownerAddress}/nft/${tokenAddress}?chain=${chain}`,
@@ -238,5 +269,6 @@ module.exports = {
   getNFTsForUser,
   getOrdersForNFT,
   getNFTsForOwner,
-  getSequencerToken
+  getSequencerToken,
+  getAllNFTsForUser
 };

@@ -116,7 +116,8 @@ app.post("/api/exportRecording", upload.single("video"), async (req, res) => {
     req.file,
     req.body.artistName,
     req.body.nftName,
-    req.body.edition
+    req.body.edition,
+    req.body.launchDate
   );
 });
 
@@ -200,6 +201,15 @@ app.get("/api/getNFTsForOwner", async (req, res) => {
   const { status, response } = await nftController.getNFTsForOwner(
     req.query.collection,
     req.query.owner,
+    req.query.chain
+  );
+
+  res.status(status).send(response);
+});
+
+app.get("/api/getAllNFTsForUser", async (req, res) => {
+  const { status, response } = await nftController.getAllNFTsForUser(
+    req.query.address,
     req.query.chain
   );
 
