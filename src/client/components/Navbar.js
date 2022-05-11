@@ -139,6 +139,12 @@ export default function Navbar(props) {
     window.location.reload();
   };
 
+  const disconnectWallet = () => {
+    localStorage.setItem("metamaskConnected", false);
+    localStorage.setItem("walletConnected", false);
+    deactivate();
+  }
+
   const connectWallet = () => {
     setOpen(true);
   };
@@ -308,6 +314,17 @@ export default function Navbar(props) {
                   <a href={`/collection/`}>
                     <div className="userName">{displayName}</div>
                   </a>
+                  <button
+                    onClick={() => disconnectWallet()}
+                    id="wallet-button"
+                    className={
+                      white
+                        ? "metamask-button small dark"
+                        : "metamask-button small"
+                    }
+                  >
+                    Disconnect
+                  </button>
                 </div>
               ) : (
                 <button
