@@ -105,6 +105,7 @@ class Sequencer extends Component {
     hideBeatpad: false,
     isOwner: false,
     didFetchOwnerNFTs: false,
+    hasNewRecording: false,
   };
 
   constructor(props) {
@@ -382,6 +383,7 @@ class Sequencer extends Component {
               isRecording: false,
               recordingStatus: "Preparing export...",
               recording,
+              hasNewRecording: true
             });
           }
         }
@@ -1579,13 +1581,13 @@ class Sequencer extends Component {
                               <div
                                 style={{
                                   display: "flex",
-                                  justifyContent: "space-between",
+                                  justifyContent: this.state.hasNewRecording ? "space-between" : 'flex-end',
                                   alignItems: "center",
                                   width: "100%",
                                 }}
                               >
                                 {this.state.isOwner &&
-                                  this.shouldRenderPostRecording() && (
+                                  this.shouldRenderPostRecording() && this.state.hasNewRecording && (
                                     <button
                                       style={{
                                         marginRight: "10px",
