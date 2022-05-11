@@ -65,62 +65,62 @@ function Collection(props) {
 
   return (
     <React.StrictMode>
-      {active && (
         <div className="containerDirectory scrollBar dark-background">
-          <Navbar white={false}/>
-          <div className="directoryBody">
-            {/* <div className="currentAuctionTitle">{`${displayName}'s Collection`}</div> */}
-            {nfts.length === 0 && (
-              <div className="currentAuctionTitle yellowish-gray-text">
-                This user currently has no stem packs in their collection.
-              </div>
-            )}
-            {nfts.length > 0 &&
-              nfts.map(nft => {
-                const mediaFileExtension = nft.imageURL
-                  .split(".")
-                  .pop()
-                  .toLowerCase();
-                return (
-                  <a
-                    href={`/bouquet/${nft.artistName}/${nft.name}/${nft.tokenId}`}
-                  >
-                    <div className="beatPackItem">
-                      {mediaFileExtension === "mp4" && (
-                        <video
-                          width="300"
-                          height="300"
-                          playsinline="true"
-                          autoplay="true"
-                          muted="true"
-                          loop="true"
-                          style={{ marginBottom: "20px" }}
-                        >
-                          <source src={nft.imageURL} type="video/mp4" />
-                        </video>
-                      )}
-                      {mediaFileExtension !== "mp4" && (
-                        <img src={nft.imageURL} className="directoryAlbum" />
-                      )}
-                      <div className="directoryItemName white-text display-small">{nft.name}</div>
-                      <div className="directoryArtistName light-yellow-text body-medium">
-                        {nft.artistName}
+          <Navbar white={false} isConnected = {active} />
+          {active && (
+            <div className="directoryBody">
+              {/* <div className="currentAuctionTitle">{`${displayName}'s Collection`}</div> */}
+              {nfts.length === 0 && (
+                <div className="currentAuctionTitle yellowish-gray-text">
+                  This user currently has no stem packs in their collection.
+                </div>
+              )}
+              {nfts.length > 0 &&
+                nfts.map(nft => {
+                  const mediaFileExtension = nft.imageURL
+                    .split(".")
+                    .pop()
+                    .toLowerCase();
+                  return (
+                    <a
+                      href={`/bouquet/${nft.artistName}/${nft.name}/${nft.tokenId}`}
+                    >
+                      <div className="beatPackItem">
+                        {mediaFileExtension === "mp4" && (
+                          <video
+                            width="300"
+                            height="300"
+                            playsinline="true"
+                            autoplay="true"
+                            muted="true"
+                            loop="true"
+                            style={{ marginBottom: "20px" }}
+                          >
+                            <source src={nft.imageURL} type="video/mp4" />
+                          </video>
+                        )}
+                        {mediaFileExtension !== "mp4" && (
+                          <img src={nft.imageURL} className="directoryAlbum" />
+                        )}
+                        <div className="directoryItemName white-text display-small">{nft.name}</div>
+                        <div className="directoryArtistName light-yellow-text body-medium">
+                          {nft.artistName}
+                        </div>
+                        <div className="editionSold">
+                          <div className="editionSoldText yellowish-gray-text">{`Edition: #${nft.tokenId}`}</div>
+                        </div>
+                        {/* <div className="editionSold boughtFor">
+                          <div className="editionSoldText">{`Bought for: ${nft.saleAmount?.toFixed(
+                            2
+                          )} ETH`}</div>
+                        </div> */}
                       </div>
-                      <div className="editionSold">
-                        <div className="editionSoldText yellowish-gray-text">{`Edition: #${nft.tokenId}`}</div>
-                      </div>
-                      {/* <div className="editionSold boughtFor">
-                        <div className="editionSoldText">{`Bought for: ${nft.saleAmount?.toFixed(
-                          2
-                        )} ETH`}</div>
-                      </div> */}
-                    </div>
-                  </a>
-                );
-              })}
-          </div>
+                    </a>
+                  );
+                })}
+            </div>
+          )}
         </div>
-      )}
     </React.StrictMode>
   );
 }
