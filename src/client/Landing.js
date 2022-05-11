@@ -1716,7 +1716,6 @@ class Sequencer extends Component {
               >
                 <FlowerArrangement />
 
-
                 <Navbar
                   white={false}
                   didConnectWallet={this.initWallet}
@@ -1724,8 +1723,6 @@ class Sequencer extends Component {
                 />
 
                 <div className="container">
-
-
                   {mediaFileExtension === "mp4" && (
                     <div className="video-container">
                       <video
@@ -1807,7 +1804,6 @@ class Sequencer extends Component {
                       });
                     })}
                   </div>
-
 
                   {/*
                     WORK IN PROGRESS
