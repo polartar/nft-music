@@ -82,9 +82,12 @@ export default function Navbar(props) {
   const [nft, setNFT] = useState();
   const [openMint, setOpenMint] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
-    if (!active || !isConnected) {
+    if (disabled) return;
+
+    if (!active ||!isConnected) {
       if (localStorage.getItem("walletConnected") === "true") {
         activate(walletconnect)
       } else if (localStorage.getItem("metamaskConnected") === "true") {
@@ -128,7 +131,7 @@ export default function Navbar(props) {
     if (chainId && chainId !== 4 && chainId !== 1) {
       switchNetwork("0x4");
     }
-  }, [account, chainId, deactivate]);
+  }, [account, chainId]);
 
   const switchNetwork = async (targetNetworkId) => {
     await window.ethereum.request({
@@ -142,10 +145,12 @@ export default function Navbar(props) {
   const disconnectWallet = () => {
     localStorage.setItem("metamaskConnected", false);
     localStorage.setItem("walletConnected", false);
+    setDisabled(true);
     deactivate();
   }
 
   const connectWallet = () => {
+    setDisabled(false)
     setOpen(true);
   };
   const onConnectMetaMask = () => {
