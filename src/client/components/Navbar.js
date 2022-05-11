@@ -78,8 +78,15 @@ export default function Navbar(props) {
   const [openMenu, setOpenMenu] = useState(false);
 
   useEffect(() => {
-    if (!active || !isConnected)
-      connectWallet();
+    if (!active || !isConnected) {
+      if (localStorage.getItem("walletConnected") === "true") {
+        activate(walletconnect)
+      } else if (localStorage.getItem("metamaskConnected") === "true") {
+        activate(injectedConnector)
+      } else {
+        connectWallet();
+      }
+    }
   }, [active, isConnected]);
 
   useEffect(() => {
@@ -131,10 +138,14 @@ export default function Navbar(props) {
   };
   const onConnectMetaMask = () => {
     activate(injectedConnector);
+    localStorage.setItem("metamaskConnected", true);
+    localStorage.setItem("walletConnected", false);
     handleClose();
   };
   const onConnectWalletConnect = () => {
     activate(walletconnect);
+    localStorage.setItem("walletConnected", true);
+    localStorage.setItem("metamaskConnected", false);
     handleClose();
   };
 
