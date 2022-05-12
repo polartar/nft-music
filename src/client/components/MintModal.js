@@ -194,7 +194,7 @@ export default function SimpleDialog(props) {
   };
 
   const checkNetwork = async () => {
-    if (chainId !== "0x1" && chainId !== "0x4") {
+    if (chainId && chainId !== 4 && chainId !== 1) {
       switchNetwork("0x4");
     }
   };
