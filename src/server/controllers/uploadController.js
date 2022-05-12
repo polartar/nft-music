@@ -166,6 +166,8 @@ async function exportRecording(
         "zerolatency",
         "-map",
         "0:v:0",
+        "-crf",
+        "28",
         "-map",
         "1:a:0",
         "-shortest",
