@@ -4,6 +4,11 @@ const Bottleneck = require("bottleneck/es5");
 const config = require("../config.json");
 const fs = require("fs");
 const ffmpeg = require("fluent-ffmpeg");
+
+//to allow ffmpeg to work on m1 macbooks
+// const pathToFfmpeg = require("ffmpeg-static")
+// ffmpeg.setFfmpegPath(pathToFfmpeg);
+
 const { MongoClient, ObjectId } = require("mongodb");
 const { Readable, PassThrough } = require("stream");
 const { response } = require("express");
