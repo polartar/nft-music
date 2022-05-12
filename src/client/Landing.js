@@ -243,6 +243,10 @@ class Sequencer extends Component {
     recordingStatus: "",
     openControls: false,
     hideBeatpad: false,
+    exportingStatus: "",
+    startRecordingTime: "",
+    endTotalRecordingTime: "",
+    // downloadPercentage: 0,
   };
 
   constructor(props) {
@@ -309,6 +313,16 @@ class Sequencer extends Component {
   };
 
   exportRecording = async (blob) => {
+    this.setState({
+      exportingStatus: `Exporting, please wait...`,
+    });
+    this.calculateProgressPercentage();
+    // setTimeout(() => {
+    //   this.setState({
+    //     exportingStatus: "",
+    //   });
+    // }, ((this.state.endTotalRecordingTime - this.state.startRecordingTime))*1.3 || 20000);
+
     try {
       const form = new FormData();
 
@@ -331,8 +345,10 @@ class Sequencer extends Component {
       anchor.href = url;
       anchor.click();
 
+      console.log("exported");
+
       this.setState({
-        recordingStatus: "",
+        exportingStatus: "",
       });
     } catch (error) {
       console.log(error);
@@ -518,12 +534,14 @@ class Sequencer extends Component {
           if (this.state.shouldStopRecording) {
             // the recorded audio is returned as a blob
             const recording = await this.recorder.stop();
-            this.exportRecording(recording);
+            // this.exportRecording(recording);
 
             this.setState({
               shouldStopRecording: false,
               isRecording: false,
               recordingStatus: "Exporting...",
+              recording,
+              endTotalRecordingTime: Date.now(),
             });
           }
         }
@@ -768,7 +786,14 @@ class Sequencer extends Component {
       }
     }
 
-    const milliseconds = cloneDeep(this.state.timer);
+    // preserved for millisecond work
+    // const milliseconds = cloneDeep(this.state.timer);
+
+    if (this.state.padRecording.length <= 0) {
+      this.setState({
+        startRecordingTime: Date.now(),
+      });
+    }
 
     this.setState(
       (state) => {
@@ -825,26 +850,34 @@ class Sequencer extends Component {
           ];
         }
 
-        const pressedPad = [group, pad];
-        this.state.padFormat.forEach((column, j) => {
-          column.forEach((mappedPad, i) => {
-            if (
-              mappedPad[0] === pressedPad[0] &&
-              mappedPad[1] === pressedPad[1]
-            ) {
-              this.setState({
-                padRecording: [
-                  ...this.state.padRecording,
-                  [j * this.state.padFormat.length + i, milliseconds],
-                ],
-              });
-            }
+        if (this.state.shouldStartRecording || this.state.isRecording) {
+          const pressedPad = [group, pad];
+          const currentTime = Date.now();
+          this.state.padFormat.forEach((column, j) => {
+            column.forEach((mappedPad, i) => {
+              if (
+                mappedPad[0] === pressedPad[0] &&
+                mappedPad[1] === pressedPad[1]
+              ) {
+                this.setState({
+                  padRecording: [
+                    ...this.state.padRecording,
+                    // preserved for blockchain storage shape
+                    // [j * this.state.padFormat.length + i, milliseconds]
+                    // [group, pad, milliseconds]
+                    [
+                      group,
+                      pad,
+                      this.state.padRecording.length > 0
+                        ? Number(currentTime - this.state.startRecordingTime)
+                        : 0,
+                    ],
+                  ],
+                });
+              }
+            });
           });
-        });
-        console.log(
-          "this.state.padFormat.length: ",
-          this.state.padFormat.length
-        );
+        }
 
         return {
           pads: clonedPads,
@@ -863,16 +896,19 @@ class Sequencer extends Component {
     this.setState({
       shouldStartRecording: true,
       recordingStatus: "Waiting for next loop to start...",
+      padRecording: [],
     });
     let milliseconds = 0;
 
     const incrementMilliseconds = () => {
       this.setState({
-        timer: (milliseconds += 10),
+        timer: (milliseconds += 1000),
       });
     };
 
     window.timer = setInterval(incrementMilliseconds, 10);
+    // window.timer = window.setInterval(incrementMilliseconds, 10);
+    // intervals.push(setInterval(incrementMilliseconds, 10));
   }
 
   async stopRecording() {
@@ -922,6 +958,16 @@ class Sequencer extends Component {
   }
 
   clearSelections() {
+    // clear all setTimeouts for togglePad()'s
+    let highestId = window.setTimeout(() => {
+      for (let i = highestId; i >= 0; i--) {
+        window.clearInterval(i);
+      }
+    }, 0);
+
+    // stop Transport step count
+    Tone.Transport.stop();
+
     const updatedPads = {};
     const updatedQueue = {};
 
@@ -940,7 +986,16 @@ class Sequencer extends Component {
       queue: updatedQueue,
       shareablePadNumbers: [],
       totalSoundsPlaying: 0,
+      step: 0, // reset step count to 0
+      recordingStatus: "",
+      isRecording: false,
+      shouldStartRecording: false,
+      shouldStopRecording: false,
+      repeat: false,
+      isPlayingBack: false,
+      endOfPlayback: false,
     });
+
     for (const group in this.activePlayers) {
       if (this.activePlayers[group].length > 0) {
         // loop to stop active pads instead of entire player list
@@ -948,6 +1003,66 @@ class Sequencer extends Component {
           this.players[group][this.activePlayers[group][i]].stop();
         }
       }
+    }
+  }
+
+  playbackRecording(padRecording, callback) {
+    // this.clearSelections();
+    let highestId = window.setTimeout(() => {
+      for (let i = highestId; i >= 0; i--) {
+        window.clearInterval(i);
+      }
+    }, 0);
+
+    Tone.Transport.stop();
+
+    const updatedPads = {};
+    const updatedQueue = {};
+
+    Object.keys(this.players).forEach((group) => {
+      updatedPads[group] = [];
+      this.players[group].forEach((_, soundIndex) => {
+        updatedPads[group][soundIndex] = 0;
+        updatedQueue[group] = [];
+      });
+    });
+
+    // update queue and se
+    this.setState({
+      pads: updatedPads,
+      playing: false,
+      queue: updatedQueue,
+      shareablePadNumbers: [],
+      totalSoundsPlaying: 0,
+      // step: 0, // reset step count to 0,
+      step: this.state.steps - 1, // reset step count to 0,
+      isPlayingBack: true,
+    });
+
+    for (const group in this.activePlayers) {
+      if (this.activePlayers[group].length > 0) {
+        // loop to stop active pads instead of entire player list
+        for (let i = 0; i < this.activePlayers[group].length; i++) {
+          this.players[group][this.activePlayers[group][i]].stop();
+        }
+      }
+    }
+    // end clear pads work
+
+    for (let i = 0; i <= padRecording.length - 1; i++) {
+      setTimeout(() => {
+        // each loop, call passed in callback function
+        callback(padRecording[i]);
+        // stagger the pad's timeout by their milliseconds
+        // }, i * pad[2]);
+        // }, padRecording[i][2] + (padRecording[i - 1] ? padRecording[i - 1][2] : padRecording[0][2]));
+        if (i === padRecording.length - 1) {
+          this.setState({
+            // isPlayingBack: false,
+            endOfPlayback: true,
+          });
+        }
+      }, padRecording[i][2]);
     }
   }
 
@@ -1608,6 +1723,14 @@ class Sequencer extends Component {
     );
   }
 
+  shouldRenderPostRecording = () => {
+    return (
+      this.state.padRecording.length > 0 &&
+      !this.state.isRecording &&
+      !this.state.shouldStopRecording
+    );
+  };
+
   setOpenControls() {
     this.setState({ openControls: !this.state.openControls });
   }
@@ -1653,6 +1776,25 @@ class Sequencer extends Component {
       openControls: !this.state.openControls,
     });
   }
+
+  calculateProgressPercentage = async () => {
+    const totalDuration =
+      this.state.endTotalRecordingTime - this.state.startRecordingTime;
+    const scaledDuration = totalDuration * 1.3;
+    const wait = (ms) => new Promise((res) => setTimeout(res, ms));
+    let currentMs = 0;
+    while (currentMs * 1.3 <= scaledDuration) {
+      if (this.state.exportingStatus) {
+        this.setState({
+          exportingStatus: `Exporting, please wait... ${Math.floor(
+            ((currentMs * 1.3) / scaledDuration) * 100
+          )}%`,
+        });
+      }
+      await wait(1000 * 1.3);
+      currentMs += 1000;
+    }
+  };
 
   render() {
     const {
@@ -1871,7 +2013,7 @@ class Sequencer extends Component {
                       </div>
                     )}
                     <div className="song-info-container">
-                      {openControls && (
+                      {/* {openControls && (
                         <div className="controls-container">
                           <div className="record-container control-item">
                             <button
@@ -1918,7 +2060,165 @@ class Sequencer extends Component {
                               : "Show Tutorial"}
                           </button>
                         </div>
+                      )} */}
+
+                      {openControls && (
+                        <div className="controls-container">
+                          <div className="record-container control-item">
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                width:
+                                  this.state.recordingStatus.length > 0 ||
+                                  this.state.exportingStatus.length > 0
+                                    ? "100%"
+                                    : "200px",
+                              }}
+                            >
+                              {this.state.exportingStatus.includes(
+                                "Exporting, please wait..."
+                              ) ? (
+                                <div
+                                  style={{ marginRight: "10px" }}
+                                  className="body-medium yellow-text"
+                                >
+                                  {this.state.exportingStatus}
+                                </div>
+                              ) : this.shouldRenderPostRecording() ? (
+                                <button
+                                  className="button record"
+                                  style={{ marginRight: "10px" }}
+                                  onClick={() =>
+                                    this.exportRecording(this.state.recording)
+                                  }
+                                >
+                                  Export
+                                </button>
+                              ) : (
+                                <div
+                                  style={{ marginRight: "10px" }}
+                                  className="body-medium yellow-text"
+                                >
+                                  {/* {this.state.exportingStatus ===
+                                  "Exporting, please wait..."
+                                    ? this.state.exportingStatus
+                                    :  */}
+                                  {this.state.recordingStatus}
+                                  {this.state.isRecording && <Stopwatch />}
+                                </div>
+                              )}
+                              {
+                                <button
+                                  className={
+                                    this.state.shouldStartRecording ||
+                                    this.state.isRecording
+                                      ? "button record blink whitePad padWhiteVersion"
+                                      : this.state.isPlayingBack ||
+                                        this.state.repeat
+                                      ? "button disabled"
+                                      : "button record"
+                                  }
+                                  onClick={() => {
+                                    if (this.state.isRecording) {
+                                      this.stopRecording();
+                                    } else {
+                                      this.startRecording();
+                                    }
+                                  }}
+                                  disabled={
+                                    this.state.isPlayingBack ||
+                                    this.state.repeat
+                                  }
+                                >
+                                  <div className="circle" />
+                                  {this.state.isRecording
+                                    ? this.state.shouldStopRecording
+                                      ? "Stopping"
+                                      : "Stop Recording"
+                                    : "Record"}
+                                </button>
+                              }
+                              {/* {
+                                <button
+                                  onClick={this.calculateProgressPercentage()}
+                                >
+                                  click for logs
+                                </button>
+                              } */}
+                            </div>
+
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: this.state.hasNewRecording
+                                  ? "space-between"
+                                  : "flex-end",
+                                alignItems: "center",
+                                width: "200px",
+                              }}
+                            >
+                              {
+                                <button
+                                  style={{
+                                    visibility: this.shouldRenderPostRecording()
+                                      ? "visible"
+                                      : "hidden",
+                                  }}
+                                  className={
+                                    this.state.padRecording.length <= 0 ||
+                                    this.state.isRecording
+                                      ? "button disabled"
+                                      : "button record"
+                                  }
+                                  onClick={() => {
+                                    if (!this.state.isPlayingBack) {
+                                      this.playbackRecording(
+                                        this.state.padRecording,
+                                        (pad) => {
+                                          this.togglePad(pad[0], pad[1]);
+                                        }
+                                      );
+                                    } else {
+                                      this.setState({
+                                        isPlayingBack: false,
+                                      });
+                                      this.clearSelections();
+                                    }
+                                  }}
+                                  disabled={
+                                    this.state.padRecording.length <= 0 ||
+                                    this.state.isRecording
+                                  }
+                                >
+                                  {!this.state.isPlayingBack
+                                    ? "Playback"
+                                    : "Stop Playback"}
+                                </button>
+                              }
+                            </div>
+                          </div>
+                          <button
+                            className={"button record control-item"}
+                            onClick={this.setHideBeatpad.bind(this)}
+                          >
+                            {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
+                          </button>
+                          <button
+                            className={"button record control-item"}
+                            // onClick={this.setShowTutorial.bind(this)}
+                            onClick={this.calculateProgressPercentage.bind(
+                              this
+                            )}
+                          >
+                            {this.state.showTutorial
+                              ? "Hide Tutorial"
+                              : "Show Tutorial"}
+                          </button>
+                        </div>
                       )}
+
                       <div className="song-details">
                         <p className="launchdate-text body-medium yellow-text">
                           LAUNCH AND REVEAL 5/17
@@ -2286,4 +2586,4 @@ class Sequencer extends Component {
   }
 }
 
-export default Sequencer;
+export default withWeb3HOC(Sequencer);
