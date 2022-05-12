@@ -237,6 +237,7 @@ class Sequencer extends Component {
     recordingStatus: "",
     openControls: false,
     hideBeatpad: false,
+    exportingStatus: "",
   };
 
   constructor(props) {
@@ -303,6 +304,15 @@ class Sequencer extends Component {
   // };
 
   exportRecording = async (blob) => {
+    this.setState({
+      exportingStatus: "Exporting, please wait...",
+    });
+    setTimeout(() => {
+      this.setState({
+        exportingStatus: "",
+      });
+    }, 9000);
+
     try {
       const form = new FormData();
 
@@ -510,12 +520,13 @@ class Sequencer extends Component {
           if (this.state.shouldStopRecording) {
             // the recorded audio is returned as a blob
             const recording = await this.recorder.stop();
-            this.exportRecording(recording);
+            // this.exportRecording(recording);
 
             this.setState({
               shouldStopRecording: false,
               isRecording: false,
               recordingStatus: "Exporting...",
+              recording
             });
           }
         }
@@ -1599,6 +1610,14 @@ class Sequencer extends Component {
     );
   }
 
+  shouldRenderPostRecording = () => {
+    return (
+      this.state.padRecording.length > 0 &&
+      !this.state.isRecording &&
+      !this.state.shouldStopRecording
+    );
+  };
+
   setOpenControls() {
     this.setState({ openControls: !this.state.openControls });
   }
@@ -1848,7 +1867,7 @@ class Sequencer extends Component {
                       </div>
                     )}
                     <div className="song-info-container">
-                      {openControls && (
+                      {/* {openControls && (
                         <div className="controls-container">
                           <div className="record-container control-item">
                             <button
@@ -1895,7 +1914,154 @@ class Sequencer extends Component {
                               : "Show Tutorial"}
                           </button>
                         </div>
+                      )} */}
+
+                      {openControls && (
+                        <div className="controls-container">
+                          <div className="record-container control-item">
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                width:
+                                  this.state.recordingStatus.length > 0 ||
+                                  this.state.exportingStatus.length > 0
+                                    ? "100%"
+                                    : "200px",
+                              }}
+                            >
+                              {this.state.exportingStatus ===
+                              "Exporting, please wait..." ? (
+                                <div
+                                  style={{ marginRight: "10px" }}
+                                  className="body-medium yellow-text"
+                                >
+                                  {this.state.exportingStatus}
+                                </div>
+                              ) : this.shouldRenderPostRecording() ? (
+                                <button
+                                  className="button record"
+                                  style={{ marginRight: "10px" }}
+                                  onClick={() =>
+                                    this.exportRecording(this.state.recording)
+                                  }
+                                >
+                                  Export
+                                </button>
+                              ) : (
+                                <div
+                                  style={{ marginRight: "10px" }}
+                                  className="body-medium yellow-text"
+                                >
+                                  {/* {this.state.exportingStatus ===
+                                  "Exporting, please wait..."
+                                    ? this.state.exportingStatus
+                                    :  */}
+                                    {this.state.recordingStatus}
+                                  {this.state.isRecording && <Stopwatch />}
+                                </div>
+                              )}
+                              {
+                                <button
+                                  className={
+                                    this.state.shouldStartRecording ||
+                                    this.state.isRecording
+                                      ? "button record blink whitePad padWhiteVersion"
+                                      : this.state.isPlayingBack ||
+                                        this.state.repeat
+                                      ? "button disabled"
+                                      : "button record"
+                                  }
+                                  onClick={() => {
+                                    if (this.state.isRecording) {
+                                      this.stopRecording();
+                                    } else {
+                                      this.startRecording();
+                                    }
+                                  }}
+                                  disabled={
+                                    this.state.isPlayingBack ||
+                                    this.state.repeat
+                                  }
+                                >
+                                  <div className="circle" />
+                                  {this.state.isRecording
+                                    ? this.state.shouldStopRecording
+                                      ? "Stopping"
+                                      : "Stop Recording"
+                                    : "Record"}
+                                </button>
+                              }
+                            </div>
+
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: this.state.hasNewRecording
+                                  ? "space-between"
+                                  : "flex-end",
+                                alignItems: "center",
+                                width: "200px",
+                              }}
+                            >
+                              {
+                                <button
+                                  style={{
+                                    visibility: this.shouldRenderPostRecording()
+                                      ? "visible"
+                                      : "hidden",
+                                  }}
+                                  className={
+                                    this.state.padRecording.length <= 0 ||
+                                    this.state.isRecording
+                                      ? "button disabled"
+                                      : "button record"
+                                  }
+                                  onClick={() => {
+                                    if (!this.state.isPlayingBack) {
+                                      this.playbackRecording(
+                                        this.state.padRecording,
+                                        (pad) => {
+                                          this.togglePad(pad[0], pad[1]);
+                                        }
+                                      );
+                                    } else {
+                                      this.setState({
+                                        isPlayingBack: false,
+                                      });
+                                      this.clearSelections();
+                                    }
+                                  }}
+                                  disabled={
+                                    this.state.padRecording.length <= 0 ||
+                                    this.state.isRecording
+                                  }
+                                >
+                                  {!this.state.isPlayingBack
+                                    ? "Playback"
+                                    : "Stop Playback"}
+                                </button>
+                              }
+                            </div>
+                          </div>
+                          <button
+                            className={"button record control-item"}
+                            onClick={this.setHideBeatpad.bind(this)}
+                          >
+                            {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
+                          </button>
+                          <button
+                            className={"button record control-item"}
+                            onClick={this.setShowTutorial.bind(this)}
+                          >
+                            {this.state.showTutorial
+                              ? "Hide Tutorial"
+                              : "Show Tutorial"}
+                          </button>
+                        </div>
                       )}
+
                       <div className="song-details">
                         <div className="beatPackTitle display-medium">
                           {nft.name}
@@ -2253,6 +2419,5 @@ class Sequencer extends Component {
     return <Loading />;
   }
 }
-
 
 export default withWeb3HOC(Sequencer);
