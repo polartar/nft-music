@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Modal, Box, Typography} from "@material-ui/core";
+import { Button, Modal, Box, Typography } from "@material-ui/core";
 import AlbumArt from "../images/albumArt.png";
 import InstaPic from "../images/instaPic.png";
 import Wallet from "../images/wallet.png";
@@ -36,19 +36,18 @@ const useStyles = makeStyles({
     marginTop: "10px !important",
     background: "#6655f1",
     color: "white",
-    height: "50px"
+    height: "50px",
   },
   buttonConnect: {
     background: "#6655f1",
     color: "white",
-    margin: "0 10px"
+    margin: "0 10px",
   },
   icon: {
     width: "40px",
     position: "absolute",
     left: "20px",
-
-  }
+  },
 });
 const style = {
   position: "absolute",
@@ -66,7 +65,14 @@ const style = {
 export default function Navbar(props) {
   const classes = useStyles();
   const { white, loggedIntoMetamaskOverride, isConnected } = props;
-  const { chainId, account, active, activate, deactivate, library } = useWeb3React();
+  const {
+    chainId,
+    account,
+    active,
+    activate,
+    deactivate,
+    library,
+  } = useWeb3React();
   const [open, setOpen] = useState(false);
   const { data: balance, mutate } = useSWR(["getBalance", account, "latest"], {
     fetcher: fetcher(library, ERC20ABI),
@@ -76,10 +82,20 @@ export default function Navbar(props) {
   const [nft, setNFT] = useState();
   const [openMint, setOpenMint] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
-    if (!active || !isConnected)
-      connectWallet();
+    if (disabled) return;
+
+    if (!active ||!isConnected) {
+      if (localStorage.getItem("walletConnected") === "true") {
+        activate(walletconnect)
+      } else if (localStorage.getItem("metamaskConnected") === "true") {
+        activate(injectedConnector)
+      } else {
+        connectWallet();
+      }
+    }
   }, [active, isConnected]);
 
   useEffect(() => {
@@ -92,9 +108,9 @@ export default function Navbar(props) {
   }, [library, mutate]);
 
   useEffect(() => {
-    if(!active) return;
+    if (!active) return;
 
-    async function getUser () {
+    async function getUser() {
       const userResponse = await axios.get("/api/getUser", {
         params: {
           address: account,
@@ -106,16 +122,16 @@ export default function Navbar(props) {
       } else {
         setDisplayName(account);
       }
-    };
+    }
 
     getUser();
-  }, [account])
+  }, [account]);
 
   useEffect(() => {
-    if (chainId && (chainId !== 4 && chainId !== 1)) {
+    if (chainId && chainId !== 4 && chainId !== 1) {
       switchNetwork("0x4");
     }
-  }, [account, chainId, deactivate]);
+  }, [account, chainId]);
 
   const switchNetwork = async (targetNetworkId) => {
     await window.ethereum.request({
@@ -126,15 +142,27 @@ export default function Navbar(props) {
     window.location.reload();
   };
 
+  const disconnectWallet = () => {
+    localStorage.setItem("metamaskConnected", false);
+    localStorage.setItem("walletConnected", false);
+    setDisabled(true);
+    deactivate();
+  }
+
   const connectWallet = () => {
+    setDisabled(false)
     setOpen(true);
   };
   const onConnectMetaMask = () => {
     activate(injectedConnector);
+    localStorage.setItem("metamaskConnected", true);
+    localStorage.setItem("walletConnected", false);
     handleClose();
   };
   const onConnectWalletConnect = () => {
     activate(walletconnect);
+    localStorage.setItem("walletConnected", true);
+    localStorage.setItem("metamaskConnected", false);
     handleClose();
   };
 
@@ -200,7 +228,11 @@ export default function Navbar(props) {
                 className={classes.button}
                 onClick={onConnectMetaMask}
               >
-                <img className={classes.icon} src="https://github.com/MetaMask/brand-resources/raw/master/SVG/metamask-fox.svg" alt="metamask" />
+                <img
+                  className={classes.icon}
+                  src="https://github.com/MetaMask/brand-resources/raw/master/SVG/metamask-fox.svg"
+                  alt="metamask"
+                />
                 Connect MetaMask
               </Button>
               <Button
@@ -208,7 +240,11 @@ export default function Navbar(props) {
                 className={classes.button}
                 onClick={onConnectWalletConnect}
               >
-                <img className={classes.icon} src={WalletconnectIcon} alt="walletconnect" />
+                <img
+                  className={classes.icon}
+                  src={WalletconnectIcon}
+                  alt="walletconnect"
+                />
                 Connect WalletConnect
               </Button>
             </Box>
@@ -229,7 +265,7 @@ export default function Navbar(props) {
             <MintModal
               onClose={handleCloseMint}
               open={openMint}
-              onConnect = {setOpen}
+              onConnect={setOpen}
               discountedPrice={nft.discountedPrice?.toString()}
               tokenAddress={nft.tokenAddress}
             />
@@ -267,34 +303,48 @@ export default function Navbar(props) {
               />
             </div> */}
             <div className="wallet-container">
-              {
-                active ? <div id="signedInWrapper" className="signedInWrapper">
-                      <div className="walletOuter">
-                        <img
-                          src={white ? WalletBlack : Wallet}
-                          className="wallet"
-                        />
-                        <span className="walletAmount">{`${balance ? parseFloat(
-                          utils.formatEther(balance)
-                        ).toFixed(4): 0} ETH`}</span>
-                      </div>
-                      <a href={`/collection/${nft.tokenAddress}`}>
-                        <div className="userName">{displayName}</div>
-                      </a>
-                    </div>
-                  : <button
-                        onClick={connectWallet}
-                        id="wallet-button"
-                        className={
-                          white
-                            ? "metamask-button small dark"
-                            : "metamask-button small"
-                        }
-                      >
-                        CONNECT WALLET
-                      </button>
-              }
-               
+              {active ? (
+                <div id="signedInWrapper" className="signedInWrapper">
+                  <div className="walletOuter">
+                    <img
+                      src={white ? WalletBlack : Wallet}
+                      className="wallet"
+                    />
+                    <span className="walletAmount">{`${
+                      balance
+                        ? parseFloat(utils.formatEther(balance)).toFixed(4)
+                        : 0
+                    } ETH`}</span>
+                  </div>
+                  <a href={`/collection/`}>
+                    <div className="userName">{displayName}</div>
+                  </a>
+                  <button
+                    onClick={() => disconnectWallet()}
+                    id="wallet-button"
+                    className={
+                      white
+                        ? "metamask-button small dark"
+                        : "metamask-button small"
+                    }
+                  >
+                    Disconnect
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={connectWallet}
+                  id="wallet-button"
+                  className={
+                    white
+                      ? "metamask-button small dark"
+                      : "metamask-button small"
+                  }
+                >
+                  CONNECT WALLET
+                </button>
+              )}
+
               {nft && nft.showMintButton && (
                 <button
                   id="mint-button"

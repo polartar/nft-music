@@ -63,7 +63,7 @@ const useStyles = makeStyles({
     right: 0,
     left: isMobile ? 0 : "inherit",
     position: "absolute",
-    boxSizing: "border-box"
+    boxSizing: "border-box",
     // boxShadow: "0 0 40px 20px rgba(255,255,255,0.12)",
   },
   backButton: {
@@ -154,13 +154,15 @@ export default function SimpleDialog(props) {
             {isLoggedIntoMetamask && (
               <React.Fragment>
                 <p className="body-large white-text">
-                  <a href={`/collection/${tokenAddress}`}>My Collection</a>
+                  <a href={`/collection/`}>My Collection</a>
                 </p>
                 <div className="walletOuter">
                   <img src={Wallet} className="wallet" />
-                  <span className="walletAmount">{`${balance ? parseFloat(
-                    utils.formatEther(balance)
-                  ).toFixed(4): 0} ETH`}</span>
+                  <span className="walletAmount">{`${
+                    balance
+                      ? parseFloat(utils.formatEther(balance)).toFixed(4)
+                      : 0
+                  } ETH`}</span>
                 </div>
                 <br />
                 <div className="userName">{displayName}</div>
@@ -179,13 +181,11 @@ export default function SimpleDialog(props) {
               </a>
               <a href="https://instagram.com/SecretGarden_FM">
                 <div>
-                  <img src={Instagram} className="share-icon"/>
+                  <img src={Instagram} className="share-icon" />
                 </div>
               </a>
-              <div
-                onClick={() => setOpenShare(true)}
-              >
-                <img src={Share} className="share-icon"/>
+              <div onClick={() => setOpenShare(true)}>
+                <img src={Share} className="share-icon" />
               </div>
             </div>
           </div>
