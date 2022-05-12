@@ -771,7 +771,14 @@ class Sequencer extends Component {
       }
     }
 
-    const milliseconds = cloneDeep(this.state.timer);
+    // preserved for millisecond work
+    // const milliseconds = cloneDeep(this.state.timer);
+
+    if (this.state.padRecording.length <= 0) {
+      this.setState({
+        startRecordingTime: Date.now(),
+      });
+    }
 
     this.setState(
       (state) => {
@@ -828,26 +835,34 @@ class Sequencer extends Component {
           ];
         }
 
-        const pressedPad = [group, pad];
-        this.state.padFormat.forEach((column, j) => {
-          column.forEach((mappedPad, i) => {
-            if (
-              mappedPad[0] === pressedPad[0] &&
-              mappedPad[1] === pressedPad[1]
-            ) {
-              this.setState({
-                padRecording: [
-                  ...this.state.padRecording,
-                  [j * this.state.padFormat.length + i, milliseconds],
-                ],
-              });
-            }
+        if (this.state.shouldStartRecording || this.state.isRecording) {
+          const pressedPad = [group, pad];
+          const currentTime = Date.now();
+          this.state.padFormat.forEach((column, j) => {
+            column.forEach((mappedPad, i) => {
+              if (
+                mappedPad[0] === pressedPad[0] &&
+                mappedPad[1] === pressedPad[1]
+              ) {
+                this.setState({
+                  padRecording: [
+                    ...this.state.padRecording,
+                    // preserved for blockchain storage shape
+                    // [j * this.state.padFormat.length + i, milliseconds]
+                    // [group, pad, milliseconds]
+                    [
+                      group,
+                      pad,
+                      this.state.padRecording.length > 0
+                        ? Number(currentTime - this.state.startRecordingTime)
+                        : 0,
+                    ],
+                  ],
+                });
+              }
+            });
           });
-        });
-        console.log(
-          "this.state.padFormat.length: ",
-          this.state.padFormat.length
-        );
+        }
 
         return {
           pads: clonedPads,
@@ -866,16 +881,19 @@ class Sequencer extends Component {
     this.setState({
       shouldStartRecording: true,
       recordingStatus: "Waiting for next loop to start...",
+      padRecording: [],
     });
     let milliseconds = 0;
 
     const incrementMilliseconds = () => {
       this.setState({
-        timer: (milliseconds += 10),
+        timer: (milliseconds += 1000),
       });
     };
 
     window.timer = setInterval(incrementMilliseconds, 10);
+    // window.timer = window.setInterval(incrementMilliseconds, 10);
+    // intervals.push(setInterval(incrementMilliseconds, 10));
   }
 
   async stopRecording() {
@@ -925,6 +943,16 @@ class Sequencer extends Component {
   }
 
   clearSelections() {
+    // clear all setTimeouts for togglePad()'s
+    let highestId = window.setTimeout(() => {
+      for (let i = highestId; i >= 0; i--) {
+        window.clearInterval(i);
+      }
+    }, 0);
+
+    // stop Transport step count
+    Tone.Transport.stop();
+
     const updatedPads = {};
     const updatedQueue = {};
 
@@ -943,7 +971,16 @@ class Sequencer extends Component {
       queue: updatedQueue,
       shareablePadNumbers: [],
       totalSoundsPlaying: 0,
+      step: 0, // reset step count to 0
+      recordingStatus: "",
+      isRecording: false,
+      shouldStartRecording: false,
+      shouldStopRecording: false,
+      repeat: false,
+      isPlayingBack: false,
+      endOfPlayback: false,
     });
+
     for (const group in this.activePlayers) {
       if (this.activePlayers[group].length > 0) {
         // loop to stop active pads instead of entire player list
@@ -951,6 +988,66 @@ class Sequencer extends Component {
           this.players[group][this.activePlayers[group][i]].stop();
         }
       }
+    }
+  }
+
+  playbackRecording(padRecording, callback) {
+    // this.clearSelections();
+    let highestId = window.setTimeout(() => {
+      for (let i = highestId; i >= 0; i--) {
+        window.clearInterval(i);
+      }
+    }, 0);
+
+    Tone.Transport.stop();
+
+    const updatedPads = {};
+    const updatedQueue = {};
+
+    Object.keys(this.players).forEach((group) => {
+      updatedPads[group] = [];
+      this.players[group].forEach((_, soundIndex) => {
+        updatedPads[group][soundIndex] = 0;
+        updatedQueue[group] = [];
+      });
+    });
+
+    // update queue and se
+    this.setState({
+      pads: updatedPads,
+      playing: false,
+      queue: updatedQueue,
+      shareablePadNumbers: [],
+      totalSoundsPlaying: 0,
+      // step: 0, // reset step count to 0,
+      step: this.state.steps - 1, // reset step count to 0,
+      isPlayingBack: true,
+    });
+
+    for (const group in this.activePlayers) {
+      if (this.activePlayers[group].length > 0) {
+        // loop to stop active pads instead of entire player list
+        for (let i = 0; i < this.activePlayers[group].length; i++) {
+          this.players[group][this.activePlayers[group][i]].stop();
+        }
+      }
+    }
+    // end clear pads work
+
+    for (let i = 0; i <= padRecording.length - 1; i++) {
+      setTimeout(() => {
+        // each loop, call passed in callback function
+        callback(padRecording[i]);
+        // stagger the pad's timeout by their milliseconds
+        // }, i * pad[2]);
+        // }, padRecording[i][2] + (padRecording[i - 1] ? padRecording[i - 1][2] : padRecording[0][2]));
+        if (i === padRecording.length - 1) {
+          this.setState({
+            // isPlayingBack: false,
+            endOfPlayback: true,
+          });
+        }
+      }, padRecording[i][2]);
     }
   }
 
