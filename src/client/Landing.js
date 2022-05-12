@@ -50,6 +50,8 @@ import Stopwatch from "./components/Stopwatch";
 import BouquetCarousel from "./components/BouquetCarousel";
 import { withWeb3HOC } from "./Web3HOC";
 import "./css/nftCarousel.scss";
+import http from "http";
+import https from "https";
 
 const sixBySixThreeGroups = [
   [
@@ -326,6 +328,13 @@ class Sequencer extends Component {
     try {
       const form = new FormData();
 
+      const agentOptions = {
+        keepAlive: true, // Keep sockets around even when there are no outstanding requests, so they can be used for future requests without having to reestablish a TCP connection. Defaults to false
+        keepAliveMsecs: 1000, // When using the keepAlive option, specifies the initial delay for TCP Keep-Alive packets. Ignored when the keepAlive option is false or undefined. Defaults to 1000.
+        maxSockets: Infinity, // Maximum number of sockets to allow per host. Defaults to Infinity.
+        maxFreeSockets: 256, // Maximum number of sockets to leave open in a free state. Only relevant if keepAlive is set to true. Defaults to 256.
+      };
+
       form.append("video", blob);
       form.append("artistName", this.state.nft.artistName);
       form.append("nftName", this.state.nft.name);
@@ -335,6 +344,8 @@ class Sequencer extends Component {
 
       const response = await axios.post("/api/exportRecording", form, {
         responseType: "blob",
+        httpAgent: new http.Agent(agentOptions),
+        httpsAgent: new https.Agent(agentOptions),
       });
 
       const url = URL.createObjectURL(
@@ -537,21 +548,16 @@ class Sequencer extends Component {
             Object.keys(this.players).forEach((group) => {
               this.players[group].forEach((_, soundIndex) => {
                 if (this.players[group][soundIndex].state == "started") {
-                  console.log("found started player")
+                  console.log("found started player");
                   this.setState({
                     padRecording: [
                       ...this.state.padRecording,
-                      [
-                        group,
-                        soundIndex,
-                        Date.now()
-                      ],
+                      [group, soundIndex, Date.now()],
                     ],
                   });
                 }
               });
             });
-
           }
 
           if (this.state.shouldStopRecording) {
@@ -1807,7 +1813,10 @@ class Sequencer extends Component {
     const wait = (ms) => new Promise((res) => setTimeout(res, ms));
     let currentMs = 0;
     while (currentMs * 1.3 <= scaledDuration) {
-      if (this.state.exportingStatus && this.state.exportingStatus.includes("Exporting, please wait...")) {
+      if (
+        this.state.exportingStatus &&
+        this.state.exportingStatus.includes("Exporting, please wait...")
+      ) {
         this.setState({
           exportingStatus: `Exporting, please wait... ${Math.floor(
             ((currentMs * 1.3) / scaledDuration) * 100
@@ -1817,7 +1826,10 @@ class Sequencer extends Component {
       await wait(1000 * 1.3);
       currentMs += 1000;
     }
-    this.setState({exportingStatus: "Exporting, please wait...100%. Your download will initiate soon"})
+    this.setState({
+      exportingStatus:
+        "Exporting, please wait...100%. Your download will initiate soon",
+    });
   };
 
   render() {
@@ -2111,9 +2123,13 @@ class Sequencer extends Component {
                               )}
                               {this.shouldRenderPostRecording() ? (
                                 <button
-                                  className={this.state.exportingStatus.includes(
-                                    "Exporting, please wait..."
-                                  ) ? "button disabled" : "button record"}
+                                  className={
+                                    this.state.exportingStatus.includes(
+                                      "Exporting, please wait..."
+                                    )
+                                      ? "button disabled"
+                                      : "button record"
+                                  }
                                   style={{ marginRight: "10px" }}
                                   disabled={this.state.exportingStatus.includes(
                                     "Exporting, please wait..."
