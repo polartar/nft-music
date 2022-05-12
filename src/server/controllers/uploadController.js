@@ -70,7 +70,14 @@ async function commitVideo(video, soundPaths) {
     });
 }
 
-async function exportRecording(response, recording, artistName, name, edition, launchDate) {
+async function exportRecording(
+  response,
+  recording,
+  artistName,
+  name,
+  edition,
+  launchDate
+) {
   try {
     let nft = await db.collection("NFTs").findOne({
       artistName,
@@ -120,7 +127,7 @@ async function exportRecording(response, recording, artistName, name, edition, l
           y: "h-th-360",
         },
       },
-    ]
+    ];
 
     if (launchDate) {
       videoFilters.push({
@@ -133,7 +140,7 @@ async function exportRecording(response, recording, artistName, name, edition, l
           x: "(w-text_w)/2",
           y: 84,
         },
-      })
+      });
 
       videoFilters.push({
         filter: "drawtext",
@@ -145,8 +152,7 @@ async function exportRecording(response, recording, artistName, name, edition, l
           x: "(w-text_w)/2",
           y: 180,
         },
-      })
-
+      });
     }
 
     ffmpeg()
@@ -158,8 +164,6 @@ async function exportRecording(response, recording, artistName, name, edition, l
         "ultrafast",
         "-tune",
         "zerolatency",
-        "-crf",
-        "28",
         "-map",
         "0:v:0",
         "-map",
