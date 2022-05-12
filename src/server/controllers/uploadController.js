@@ -5,8 +5,8 @@ const config = require("../config.json");
 const fs = require("fs");
 const ffmpeg = require("fluent-ffmpeg");
 
-//to make ffmpeg work locally on m1 macbooks
-// const pathToFfmpeg = require("ffmpeg-static");
+//to allow ffmpeg to work on m1 macbooks
+// const pathToFfmpeg = require("ffmpeg-static")
 // ffmpeg.setFfmpegPath(pathToFfmpeg);
 
 const { MongoClient, ObjectId } = require("mongodb");
