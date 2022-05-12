@@ -990,6 +990,7 @@ class Sequencer extends Component {
       targets: [
         ".video-container",
         ".beatPackTitle",
+        ".launchdate-text",
         ".artistName",
         ".gridOuter",
       ],
@@ -1806,7 +1807,7 @@ class Sequencer extends Component {
                   </div>
 
                   {/*
-                    WORK IN PROGRESS
+                    //WORK IN PROGRESS
 
                   <BouquetCarousel
                     padFormat={padFormat}
@@ -1821,6 +1822,7 @@ class Sequencer extends Component {
                     showTutorial={showTutorial}
                     tutorialStep={tutorialStep}
                   />
+
                   */}
 
                   <div className="song-info-wrapper">
@@ -1918,6 +1920,9 @@ class Sequencer extends Component {
                         </div>
                       )}
                       <div className="song-details">
+                        <p className="launchdate-text body-medium yellow-text">
+                          LAUNCH AND REVEAL 5/17
+                        </p>
                         <div className="beatPackTitle display-medium">
                           {nft.name}
                         </div>
