@@ -352,6 +352,9 @@ class Sequencer extends Component {
       });
     } catch (error) {
       console.log(error);
+      this.setState({
+        exportingStatus: "Exporting failed, please try again.",
+      });
     }
   };
 
@@ -529,6 +532,26 @@ class Sequencer extends Component {
               isRecording: true,
               recordingStatus: "Recording...",
             });
+
+            //Check if there are existing stems playing and add them to the recording
+            Object.keys(this.players).forEach((group) => {
+              this.players[group].forEach((_, soundIndex) => {
+                if (this.players[group][soundIndex].state == "started") {
+                  console.log("found started player")
+                  this.setState({
+                    padRecording: [
+                      ...this.state.padRecording,
+                      [
+                        group,
+                        soundIndex,
+                        Date.now()
+                      ],
+                    ],
+                  });
+                }
+              });
+            });
+
           }
 
           if (this.state.shouldStopRecording) {
@@ -1784,7 +1807,7 @@ class Sequencer extends Component {
     const wait = (ms) => new Promise((res) => setTimeout(res, ms));
     let currentMs = 0;
     while (currentMs * 1.3 <= scaledDuration) {
-      if (this.state.exportingStatus) {
+      if (this.state.exportingStatus && this.state.exportingStatus.includes("Exporting, please wait...")) {
         this.setState({
           exportingStatus: `Exporting, please wait... ${Math.floor(
             ((currentMs * 1.3) / scaledDuration) * 100
@@ -1794,6 +1817,7 @@ class Sequencer extends Component {
       await wait(1000 * 1.3);
       currentMs += 1000;
     }
+    this.setState({exportingStatus: "Exporting, please wait...100%. Your download will initiate soon"})
   };
 
   render() {
@@ -2077,19 +2101,23 @@ class Sequencer extends Component {
                                     : "200px",
                               }}
                             >
-                              {this.state.exportingStatus.includes(
-                                "Exporting, please wait..."
-                              ) ? (
+                              {this.state.exportingStatus.length > 0 && (
                                 <div
                                   style={{ marginRight: "10px" }}
                                   className="body-medium yellow-text"
                                 >
                                   {this.state.exportingStatus}
                                 </div>
-                              ) : this.shouldRenderPostRecording() ? (
+                              )}
+                              {this.shouldRenderPostRecording() ? (
                                 <button
-                                  className="button record"
+                                  className={this.state.exportingStatus.includes(
+                                    "Exporting, please wait..."
+                                  ) ? "button disabled" : "button record"}
                                   style={{ marginRight: "10px" }}
+                                  disabled={this.state.exportingStatus.includes(
+                                    "Exporting, please wait..."
+                                  )}
                                   onClick={() =>
                                     this.exportRecording(this.state.recording)
                                   }
