@@ -307,15 +307,15 @@ class Sequencer extends Component {
   // };
 
   exportRecording = async (blob) => {
-    this.calculateProgressPercentage()
     this.setState({
       exportingStatus: `Exporting, please wait...`,
     });
-    setTimeout(() => {
-      this.setState({
-        exportingStatus: "",
-      });
-    }, ((this.state.endTotalRecordingTime - this.state.startRecordingTime))*1.3 || 20000);
+    this.calculateProgressPercentage();
+    // setTimeout(() => {
+    //   this.setState({
+    //     exportingStatus: "",
+    //   });
+    // }, ((this.state.endTotalRecordingTime - this.state.startRecordingTime))*1.3 || 20000);
 
     try {
       const form = new FormData();
@@ -337,8 +337,10 @@ class Sequencer extends Component {
       anchor.href = url;
       anchor.click();
 
+      console.log("exported");
+
       this.setState({
-        recordingStatus: "",
+        exportingStatus: "",
       });
     } catch (error) {
       console.log(error);
@@ -1773,13 +1775,16 @@ class Sequencer extends Component {
     const wait = (ms) => new Promise((res) => setTimeout(res, ms));
     let currentMs = 0;
     while (currentMs * 1.3 <= scaledDuration) {
-      this.setState({
-        exportingStatus: `Exporting, please wait... ${Math.floor((currentMs * 1.3 / scaledDuration) * 100)}%`
-      });
+      if (this.state.exportingStatus) {
+        this.setState({
+          exportingStatus: `Exporting, please wait... ${Math.floor(
+            ((currentMs * 1.3) / scaledDuration) * 100
+          )}%`,
+        });
+      }
       await wait(1000 * 1.3);
-      currentMs += (1000);
+      currentMs += 1000;
     }
-
   };
 
   render() {
@@ -2050,7 +2055,8 @@ class Sequencer extends Component {
                               }}
                             >
                               {this.state.exportingStatus.includes(
-                              "Exporting, please wait...") ? (
+                                "Exporting, please wait..."
+                              ) ? (
                                 <div
                                   style={{ marginRight: "10px" }}
                                   className="body-medium yellow-text"
@@ -2179,7 +2185,9 @@ class Sequencer extends Component {
                           <button
                             className={"button record control-item"}
                             // onClick={this.setShowTutorial.bind(this)}
-                            onClick={this.calculateProgressPercentage.bind(this)}
+                            onClick={this.calculateProgressPercentage.bind(
+                              this
+                            )}
                           >
                             {this.state.showTutorial
                               ? "Hide Tutorial"
