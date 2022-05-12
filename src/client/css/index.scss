@@ -262,7 +262,6 @@
 
 /* FAQ SLIDESHOW - END */
 
-
 .cta-link {
   text-transform: uppercase;
   font-size: 17px;
@@ -493,6 +492,7 @@ input[type="number"] {
 .song-details {
   order: 1;
   margin-top: 16px;
+  text-align: center;
 
   .beatPackTitle {
     font-size: 28px;
@@ -504,6 +504,7 @@ input[type="number"] {
     text-align: center;
   }
   @media only screen and (min-width: 768px) {
+    text-align: left;
     .beatPackTitle {
       font-size: 38px;
       line-height: 44px;
@@ -674,6 +675,10 @@ input[type="range"] {
   transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.9);
   margin-top: 210px;
   z-index: 1200;
+  &.carousel {
+    position: absolute !important;
+    opacity: 1 !important;
+  }
 }
 canvas {
   // border-bottom: solid 1px white;

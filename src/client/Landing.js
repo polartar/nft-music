@@ -47,7 +47,9 @@ import MonsteraLeaf from "./components/MonsteraLeaf";
 import Tulip from "./components/Tulip";
 import FlowerArrangement from "./components/FlowerArrangement";
 import Stopwatch from "./components/Stopwatch";
+import BouquetCarousel from "./components/BouquetCarousel";
 import { withWeb3HOC } from "./Web3HOC";
+import "./css/nftCarousel.scss";
 
 const sixBySixThreeGroups = [
   [
@@ -220,6 +222,10 @@ class Sequencer extends Component {
     totalSoundsPlaying: 0,
     openBidModal: false,
     nft: null,
+    isLoggedIntoMetamask: false,
+    provider: null,
+    address: null,
+    balance: 0,
     bids: [],
     users: {},
     queue: {},
@@ -254,7 +260,7 @@ class Sequencer extends Component {
     this.cablesCanvas = createRef();
     this.canvas = createRef();
 
-    // this.initWallet();
+    this.initWallet();
     this.myRef = React.createRef();
     this.clearSelections = this.clearSelections.bind(this);
     this.activePlayers = {};
@@ -268,43 +274,43 @@ class Sequencer extends Component {
     this.activeAnimations = {};
   }
 
-  // initWallet = async () => {
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
+  initWallet = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-  //   const accounts = await provider.listAccounts();
+    const accounts = await provider.listAccounts();
 
-  //   window.ethereum.on("accountsChanged", function(accounts) {
-  //     location.reload();
-  //   });
+    window.ethereum.on("accountsChanged", function(accounts) {
+      location.reload();
+    });
 
-  //   window.ethereum.on("chainChanged", (chainId) => {
-  //     location.reload();
-  //   });
+    window.ethereum.on("chainChanged", (chainId) => {
+      location.reload();
+    });
 
-  //   if (accounts.length > 0) {
-  //     const address = await provider.getSigner(0).getAddress();
+    if (accounts.length > 0) {
+      const address = await provider.getSigner(0).getAddress();
 
-  //     this.setState({
-  //       isLoggedIntoMetamask: true,
-  //       provider,
-  //       address,
-  //       balance: await provider.getBalance(address),
-  //     });
-  //   }
-  // };
+      this.setState({
+        isLoggedIntoMetamask: true,
+        provider,
+        address,
+        balance: await provider.getBalance(address),
+      });
+    }
+  };
 
-  // connectWallet = async () => {
-  //   await window.ethereum.enable();
+  connectWallet = async () => {
+    await window.ethereum.enable();
 
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //   const address = await provider.getSigner(0).getAddress();
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const address = await provider.getSigner(0).getAddress();
 
-  //   this.setState({
-  //     isLoggedIntoMetamask: true,
-  //     provider,
-  //     address,
-  //   });
-  // };
+    this.setState({
+      isLoggedIntoMetamask: true,
+      provider,
+      address,
+    });
+  };
 
   exportRecording = async (blob) => {
     this.setState({
@@ -324,6 +330,8 @@ class Sequencer extends Component {
       form.append("artistName", this.state.nft.artistName);
       form.append("nftName", this.state.nft.name);
       form.append("edition", this.state.nft.edition);
+      //hardcoded launch date text, ideally this comes from the nft object
+      form.append("launchDate", "LAUNCH AND REVEAL " + "5/17");
 
       const response = await axios.post("/api/exportRecording", form, {
         responseType: "blob",
@@ -616,24 +624,24 @@ class Sequencer extends Component {
     }
   }
 
-  // handleClickOpen = async () => {
-  //   try {
-  //     if (!this.state.isLoggedIntoMetamask) {
-  //       await this.connectWallet();
-  //     }
-  //     this.setState({
-  //       openBidModal: true,
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  handleClickOpen = async () => {
+    try {
+      if (!this.state.isLoggedIntoMetamask) {
+        await this.connectWallet();
+      }
+      this.setState({
+        openBidModal: true,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  // handleClose = (value) => {
-  //   this.setState({
-  //     openBidModal: false,
-  //   });
-  // };
+  handleClose = (value) => {
+    this.setState({
+      openBidModal: false,
+    });
+  };
 
   executeScroll = () => this.myRef.current.scrollIntoView();
 
@@ -1097,6 +1105,7 @@ class Sequencer extends Component {
       targets: [
         ".video-container",
         ".beatPackTitle",
+        ".launchdate-text",
         ".artistName",
         ".gridOuter",
       ],
@@ -1795,10 +1804,10 @@ class Sequencer extends Component {
       notes,
       loaded,
       nft,
-      // isLoggedIntoMetamask,
+      isLoggedIntoMetamask,
       bids,
       users,
-      // provider,
+      provider,
       padFormat,
       padFormatStyleClass,
       padRecording,
@@ -1852,9 +1861,10 @@ class Sequencer extends Component {
 
                 <Navbar
                   white={false}
-                  // didConnectWallet={this.initWallet}
-                  // loggedIntoMetamaskOverride={this.}
+                  didConnectWallet={this.initWallet}
+                  loggedIntoMetamaskOverride={isLoggedIntoMetamask}
                 />
+
                 <div className="container">
                   {mediaFileExtension === "mp4" && (
                     <div className="video-container">
@@ -1937,12 +1947,25 @@ class Sequencer extends Component {
                       });
                     })}
                   </div>
-                  <IconButton
-                    className="expandOuter animated-content"
-                    onClick={() => this.handleScroll("next")}
-                  >
-                    <img src={Expand} className="expand" />
-                  </IconButton>
+
+                  {/*
+                    //WORK IN PROGRESS
+
+                  <BouquetCarousel
+                    padFormat={padFormat}
+                    padFormatStyleClass={padFormatStyleClass}
+                    players={this.players}
+                    nfts={[nft, nft]}
+                    rhythmPads={this.rhythmPads}
+                    togglePad={this.togglePad.bind(this)}
+                    step={step}
+                    steps={steps}
+                    pads={pads}
+                    showTutorial={showTutorial}
+                    tutorialStep={tutorialStep}
+                  />
+
+                  */}
 
                   <div className="song-info-wrapper">
                     {showTutorial && (
@@ -2197,6 +2220,9 @@ class Sequencer extends Component {
                       )}
 
                       <div className="song-details">
+                        <p className="launchdate-text body-medium yellow-text">
+                          LAUNCH AND REVEAL 5/17
+                        </p>
                         <div className="beatPackTitle display-medium">
                           {nft.name}
                         </div>
@@ -2208,6 +2234,12 @@ class Sequencer extends Component {
                       </div>
                     </div>
                   </div>
+                  <IconButton
+                    className="expandOuter animated-content"
+                    onClick={() => this.handleScroll("next")}
+                  >
+                    <img src={Expand} className="expand" />
+                  </IconButton>
                   <div className="volumeMeter">
                     <canvas
                       ref={this.canvas}
@@ -2533,7 +2565,7 @@ class Sequencer extends Component {
                   ","
                 )}`}
                 showShare={true}
-                // loggedIntoMetamaskOverride={isLoggedIntoMetamask}
+                loggedIntoMetamaskOverride={isLoggedIntoMetamask}
                 muiTheme={this.muiTheme}
                 setVolume={this.setVolume.bind(this)}
                 volume={this.state.volume}
