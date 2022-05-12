@@ -70,7 +70,14 @@ async function commitVideo(video, soundPaths) {
     });
 }
 
-async function exportRecording(response, recording, artistName, name, edition) {
+async function exportRecording(
+  response,
+  recording,
+  artistName,
+  name,
+  edition,
+  launchDate
+) {
   try {
     let nft = await db.collection("NFTs").findOne({
       artistName,
@@ -84,6 +91,70 @@ async function exportRecording(response, recording, artistName, name, edition) {
 
     const uuid = md5(recording.buffer);
 
+    const videoFilters = [
+      {
+        filter: "drawtext",
+        options: {
+          fontfile: "Bentham-Regular.ttf",
+          text: name.toUpperCase(),
+          fontsize: 100,
+          fontcolor: "white",
+          x: "(w-text_w)/2",
+          y: "h-th-208",
+        },
+      },
+      {
+        filter: "drawtext",
+        options: {
+          fontfile: "Manrope-Medium.ttf",
+          text: `by ${nft.artistName} ${
+            nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
+          }`,
+          fontsize: 48,
+          fontcolor: "white",
+          x: "(w-text_w)/2",
+          y: "h-th-112",
+        },
+      },
+      {
+        filter: "drawtext",
+        options: {
+          fontfile: "Bentham-Regular.ttf",
+          text: "SECRET GARDEN",
+          fontsize: 48,
+          fontcolor: "#F4F4F1",
+          x: "(w-text_w)/2",
+          y: "h-th-360",
+        },
+      },
+    ];
+
+    if (launchDate) {
+      videoFilters.push({
+        filter: "drawtext",
+        options: {
+          fontfile: "Manrope-Medium.ttf",
+          text: "PREVIEW",
+          fontsize: 36,
+          fontcolor: "#F4F4F1",
+          x: "(w-text_w)/2",
+          y: 84,
+        },
+      });
+
+      videoFilters.push({
+        filter: "drawtext",
+        options: {
+          fontfile: "Manrope-Bold.ttf",
+          text: launchDate,
+          fontsize: 48,
+          fontcolor: "#E4F0A8",
+          x: "(w-text_w)/2",
+          y: 180,
+        },
+      });
+    }
+
     ffmpeg()
       .addInput(nft.localImageURL)
       .inputOption("-stream_loop -1")
@@ -93,8 +164,6 @@ async function exportRecording(response, recording, artistName, name, edition) {
         "ultrafast",
         "-tune",
         "zerolatency",
-        "-crf",
-        "28",
         "-map",
         "0:v:0",
         "-map",
@@ -105,43 +174,7 @@ async function exportRecording(response, recording, artistName, name, edition) {
         "-max_interleave_delta",
         "100M"
       )
-      .videoFilters([
-        {
-          filter: "drawtext",
-          options: {
-            fontfile: "Bentham-Regular.ttf",
-            text: name,
-            fontsize: 48,
-            fontcolor: "white",
-            x: "10",
-            y: "h-th-40",
-          },
-        },
-        {
-          filter: "drawtext",
-          options: {
-            fontfile: "Manrope-SemiBold.ttf",
-            text: `by ${nft.artistName} ${
-              nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
-            }`,
-            fontsize: 28,
-            fontcolor: "white",
-            x: "10",
-            y: "h-th-10",
-          },
-        },
-        {
-          filter: "drawtext",
-          options: {
-            fontfile: "Bentham-Regular.ttf",
-            text: "SECRET GARDEN",
-            fontsize: 36,
-            fontcolor: "white",
-            x: "w-tw-10",
-            y: "h-th-10",
-          },
-        },
-      ])
+      .videoFilters(videoFilters)
       .on("error", (error) => console.log(`Encoding Error: ${error.message}`))
       .saveToFile(`${uuid}.mp4`)
       .on("end", () => {

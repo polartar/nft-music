@@ -116,7 +116,8 @@ app.post("/api/exportRecording", upload.single("video"), async (req, res) => {
     req.file,
     req.body.artistName,
     req.body.nftName,
-    req.body.edition
+    req.body.edition,
+    req.body.launchDate
   );
 });
 
