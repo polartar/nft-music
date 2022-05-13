@@ -340,7 +340,7 @@ class Sequencer extends Component {
       form.append("nftName", this.state.nft.name);
       form.append("edition", this.state.nft.edition);
       //hardcoded launch date text, ideally this comes from the nft object
-      form.append("launchDate", "LAUNCH AND REVEAL " + "5/17");
+      form.append("launchDate", "LAUNCH AND REVEAL " + "5/24");
 
       const response = await axios.post("/api/exportRecording", form, {
         responseType: "blob",
@@ -2276,7 +2276,7 @@ class Sequencer extends Component {
 
                       <div className="song-details">
                         <p className="launchdate-text body-medium yellow-text">
-                          LAUNCH AND REVEAL 5/17
+                          LAUNCH AND REVEAL 5/24
                         </p>
                         <div className="beatPackTitle display-medium">
                           {nft.name}
