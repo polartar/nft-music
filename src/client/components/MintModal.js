@@ -57,6 +57,9 @@ const useStyles = makeStyles({
   },
 });
 
+const GENESIS_PRICE = "0.05";
+const EARLY_PRICE = "0.065";
+const public_PRICE = "0.08";
 export default function MintModal(props) {
   const classes = useStyles();
   const { onClose, open, shareURL, tokenAddress, discountedPrice, onConnect} = props;
@@ -186,8 +189,10 @@ export default function MintModal(props) {
       setTimeout(initializePrice, 1000 * 10);
     } else if (mintStatus === "MINT LIST") {
       price = discountedPrice;
-    } else if (mintStatus === "CAPSULE HOUSE") {
-      price = capsulePrice;
+    } else if (mintStatus === "EARLY") {
+      price = EARLY_PRICE;
+    } else if (mintStatus ==="GENESIS ") {
+      price = GENESIS_PRICE;
     }
 
     setCurrentPrice(price);
@@ -217,10 +222,9 @@ export default function MintModal(props) {
     try {
       let tx;
       if (mintStatus === "PUBLIC") {
-        const price = await getCurrentMintPrice();
+        // const price = await getCurrentMintPrice();
         tx = await contract.mintPublic(1, { value: parseEther(price) });
-      } else if (mintStatus === "CAPSULE HOUSE") {
-        const price = "0.2"
+      } else {
         const signatureResponse = await axios.get(
           "/api/makeWhitelistSignature",
           {
@@ -233,12 +237,6 @@ export default function MintModal(props) {
         );
 
         if (signatureResponse.status === 200) {
-          // tx = await contract.mintWhitelist(
-          //   signatureResponse.data.hash,
-          //   signatureResponse.data.signature,
-          //   1,
-          //   { value: parseEther(price) }
-          // );
           tx = await contract.mintWhitelistPrice(
             signatureResponse.data.hash,
             signatureResponse.data.signature,
