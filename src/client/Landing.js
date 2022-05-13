@@ -921,20 +921,15 @@ class Sequencer extends Component {
 
   // recording work
   startRecording() {
+    var padRecording = []
     //Check if there are existing stems playing and add them to the recording
-    var padRecording = this.state.padRecording
-    console.log(padRecording)
-    let currentTime = this.state.padRecording.length > 0 ? Number(Date.now() - this.state.startRecordingTime) : 0
     Object.keys(this.players).forEach((group) => {
       this.players[group].forEach((_, soundIndex) => {
         if (this.players[group][soundIndex].state == "started") {
-          console.log("found started player");
-          padRecording.push([group, soundIndex, currentTime])
+          padRecording.push([group, soundIndex, 0])
         }
       });
     });
-
-    console.log(padRecording)
 
     this.setState({
       padRecording,
