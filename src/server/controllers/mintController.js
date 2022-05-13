@@ -8,6 +8,7 @@ const { soliditySha3 } = require("web3-utils");
 const HASH_PREFIX_DISCOUNTED = "Sunday Journal Discounted Verification:";
 const HASH_PREFIX_WHITELISTED = "Sunday Journal Base Verification:";
 const EthCrypto = require("eth-crypto");
+const { parseEther } = require("ethers/lib/utils");
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 // connect to our mongodb database
@@ -134,7 +135,7 @@ async function makeWhitelistSignature(address, price, quantity) {
   }
   try {
     // const hash = soliditySha3(HASH_PREFIX_WHITELISTED, address);
-    const hash = soliditySha3(address, price, quantity);
+    const hash = soliditySha3(address, parseEther(price), quantity);
     const ownerSignature = EthCrypto.sign(PRIVATE_KEY, hash);
 
     return {

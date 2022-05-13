@@ -215,17 +215,18 @@ export default function MintModal(props) {
   const handleMint = async () => {
     setIsMinting(true);
     try {
-      const price = await getCurrentMintPrice();
       let tx;
       if (mintStatus === "PUBLIC") {
+        const price = await getCurrentMintPrice();
         tx = await contract.mintPublic(1, { value: parseEther(price) });
       } else if (mintStatus === "CAPSULE HOUSE") {
+        const price = "0.2"
         const signatureResponse = await axios.get(
           "/api/makeWhitelistSignature",
           {
             params: {
               address: account.toLowerCase(),
-              price: parseEther(price),
+              price,
               quantity: 1
             },
           }
@@ -241,6 +242,7 @@ export default function MintModal(props) {
           tx = await contract.mintWhitelistPrice(
             signatureResponse.data.hash,
             signatureResponse.data.signature,
+            parseEther(price),
             1,
             { value: parseEther(price) }
           );
