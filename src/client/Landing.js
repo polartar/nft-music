@@ -2257,10 +2257,7 @@ class Sequencer extends Component {
                           </button>
                           <button
                             className={"button record control-item"}
-                            // onClick={this.setShowTutorial.bind(this)}
-                            onClick={this.calculateProgressPercentage.bind(
-                              this
-                            )}
+                            onClick={this.setShowTutorial.bind(this)}
                           >
                             {this.state.showTutorial
                               ? "Hide Tutorial"
