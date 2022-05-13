@@ -127,13 +127,14 @@ async function makeDiscountedSignature(address) {
   }
 }
 
-async function makeWhitelistSignature(address) {
+async function makeWhitelistSignature(address, price, quantity) {
   const mintStatus = await getMintStatusForAddress(address);
   if (mintStatus.response !== "CAPSULE HOUSE") {
     return { status: 400, response: "invalid user" };
   }
   try {
-    const hash = soliditySha3(HASH_PREFIX_WHITELISTED, address);
+    // const hash = soliditySha3(HASH_PREFIX_WHITELISTED, address);
+    const hash = soliditySha3(address, price, quantity);
     const ownerSignature = EthCrypto.sign(PRIVATE_KEY, hash);
 
     return {

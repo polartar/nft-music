@@ -57,7 +57,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function SimpleDialog(props) {
+export default function MintModal(props) {
   const classes = useStyles();
   const { onClose, open, shareURL, tokenAddress, discountedPrice, onConnect} = props;
   const [text, setText] = React.useState("Copy Link");
@@ -225,12 +225,20 @@ export default function SimpleDialog(props) {
           {
             params: {
               address: account.toLowerCase(),
+              price: parseEther(price),
+              quantity: 1
             },
           }
         );
 
         if (signatureResponse.status === 200) {
-          tx = await contract.mintWhitelist(
+          // tx = await contract.mintWhitelist(
+          //   signatureResponse.data.hash,
+          //   signatureResponse.data.signature,
+          //   1,
+          //   { value: parseEther(price) }
+          // );
+          tx = await contract.mintWhitelistPrice(
             signatureResponse.data.hash,
             signatureResponse.data.signature,
             1,
@@ -462,7 +470,7 @@ export default function SimpleDialog(props) {
   );
 }
 
-SimpleDialog.propTypes = {
+MintModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
 };
