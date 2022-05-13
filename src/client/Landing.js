@@ -241,7 +241,7 @@ class Sequencer extends Component {
     shouldStartRecording: false,
     shouldStopRecording: false,
     isRecording: false,
-    timer: 0,
+    recordingTimer: 0,
     recordingStatus: "",
     openControls: false,
     hideBeatpad: false,
@@ -536,27 +536,26 @@ class Sequencer extends Component {
           if (this.state.shouldStartRecording) {
             this.recorder.start();
 
+            //track and limit recording to 60 seconds
+            let milliseconds = 0;
+
+            const incrementMilliseconds = () => {
+              if (this.state.recordingTimer >= 60000) {
+                this.stopRecording()
+              } else {
+                this.setState({
+                  recordingTimer: (milliseconds += 1000),
+                });
+              }
+            };
+            window.timer = setInterval(incrementMilliseconds, 1000);
+
             console.log("starting!");
 
             this.setState({
               shouldStartRecording: false,
               isRecording: true,
               recordingStatus: "Recording...",
-            });
-
-            //Check if there are existing stems playing and add them to the recording
-            Object.keys(this.players).forEach((group) => {
-              this.players[group].forEach((_, soundIndex) => {
-                if (this.players[group][soundIndex].state == "started") {
-                  console.log("found started player");
-                  this.setState({
-                    padRecording: [
-                      ...this.state.padRecording,
-                      [group, soundIndex, Date.now()],
-                    ],
-                  });
-                }
-              });
             });
           }
 
@@ -816,7 +815,7 @@ class Sequencer extends Component {
     }
 
     // preserved for millisecond work
-    // const milliseconds = cloneDeep(this.state.timer);
+    // const milliseconds = cloneDeep(this.state.recordingTimer);
 
     if (this.state.padRecording.length <= 0) {
       this.setState({
@@ -922,20 +921,26 @@ class Sequencer extends Component {
 
   // recording work
   startRecording() {
-    this.setState({
-      shouldStartRecording: true,
-      recordingStatus: "Waiting for next loop to start...",
-      padRecording: [],
-    });
-    let milliseconds = 0;
-
-    const incrementMilliseconds = () => {
-      this.setState({
-        timer: (milliseconds += 1000),
+    //Check if there are existing stems playing and add them to the recording
+    var padRecording = this.state.padRecording
+    console.log(padRecording)
+    let currentTime = this.state.padRecording.length > 0 ? Number(Date.now() - this.state.startRecordingTime) : 0
+    Object.keys(this.players).forEach((group) => {
+      this.players[group].forEach((_, soundIndex) => {
+        if (this.players[group][soundIndex].state == "started") {
+          console.log("found started player");
+          padRecording.push([group, soundIndex, currentTime])
+        }
       });
-    };
+    });
 
-    window.timer = setInterval(incrementMilliseconds, 10);
+    console.log(padRecording)
+
+    this.setState({
+      padRecording,
+      shouldStartRecording: true,
+      recordingStatus: "Waiting for next loop to start..."
+    });
     // window.timer = window.setInterval(incrementMilliseconds, 10);
     // intervals.push(setInterval(incrementMilliseconds, 10));
   }
@@ -947,10 +952,9 @@ class Sequencer extends Component {
     this.setState({
       shouldStopRecording: true,
       recordingStatus: "Waiting for loop to end...",
-      timer: 0,
+      recordingTimer: 0,
     });
   }
-  w1;
 
   muiTheme = createTheme({
     overrides: {
@@ -1756,6 +1760,7 @@ class Sequencer extends Component {
     return (
       this.state.padRecording.length > 0 &&
       !this.state.isRecording &&
+      !this.state.shouldStartRecording &&
       !this.state.shouldStopRecording
     );
   };
@@ -1826,10 +1831,16 @@ class Sequencer extends Component {
       await wait(1000 * 1.3);
       currentMs += 1000;
     }
-    this.setState({
-      exportingStatus:
-        "Exporting, please wait...100%. Your download will initiate soon",
-    });
+    //if loop ends and download hasn't commenced, show user the message below
+    if (
+      this.state.exportingStatus &&
+      this.state.exportingStatus.includes("Exporting, please wait...")
+    ) {
+      this.setState({
+        exportingStatus:
+          "Exporting, please wait...100%. Your download will initiate soon",
+      });
+    }
   };
 
   render() {
@@ -1849,7 +1860,7 @@ class Sequencer extends Component {
       padRecording,
       shareablePadNumbers,
       showTutorial,
-      timer,
+      recordingTimer,
       tutorialStep,
       volume,
       openControls,
