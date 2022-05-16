@@ -131,7 +131,8 @@ export default function MintModal(props) {
       );
 
       if (mintStatusResponse.status === 200) {
-        setMintStatus(mintStatusResponse.data);
+        setMintStatus(mintStatusResponse.data.status);
+        setCurrentPrice(mintStatusResponse.data.price);
       }
     }
 
@@ -140,11 +141,11 @@ export default function MintModal(props) {
     getStatus();
   }, [account]);
 
-  useEffect(() => {
-    if (!mintStatus) return;
+  // useEffect(() => {
+  //   if (!mintStatus) return;
 
-    initializePrice();
-  }, [mintStatus]);
+  //   initializePrice();
+  // }, [mintStatus]);
 
   const getMintBalances = async () => {
     let instance = contract;
@@ -180,20 +181,21 @@ export default function MintModal(props) {
     );
   };
 
-  const initializePrice = async () => {
-    let price;
-    if (mintStatus === "PUBLIC") {
-      price = PUBLIC_PRICE
-    } else if (mintStatus === "MINT LIST") {
-      price = discountedPrice;
-    } else if (mintStatus === "EARLY") {
-      price = EARLY_PRICE;
-    } else if (mintStatus ==="GENESIS ") {
-      price = GENESIS_PRICE;
-    }
-
-    setCurrentPrice(price);
-  };
+  // const initializePrice = async () => {
+  //   let price;
+  //   console.log(mintStatus)
+  //   if (mintStatus === "PUBLIC") {
+  //     price = PUBLIC_PRICE
+  //   } else if (mintStatus === "MINT LIST") {
+  //     price = discountedPrice;
+  //   } else if (mintStatus === "CAPSULE HOUSE") {
+  //     price = EARLY_PRICE;
+  //   } else if (mintStatus ==="GENESIS ") {
+  //     price = GENESIS_PRICE;
+  //   }
+  //   console.log({price})
+  //   setCurrentPrice(price);
+  // };
 
   const checkNetwork = async () => {
     if (chainId && chainId !== 4 && chainId !== 1) {
@@ -209,10 +211,10 @@ export default function MintModal(props) {
     window.location.reload();
   };
 
-  const getCurrentMintPrice = async () => {
-    const cost = await contract.cost(1);
-    return ethers.utils.formatEther(cost);
-  };
+  // const getCurrentMintPrice = async () => {
+  //   const cost = await contract.cost(1);
+  //   return ethers.utils.formatEther(cost);
+  // };
 
   const handleMint = async () => {
     setIsMinting(true);
@@ -242,7 +244,7 @@ export default function MintModal(props) {
             signatureResponse.data.signature,
             parseEther(signatureResponse.data.price),
             1,
-            { value: parseEther(price) }
+            { value: parseEther(signatureResponse.data.price) }
           );
         }
       }
