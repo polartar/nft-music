@@ -100,7 +100,6 @@ app.get("/api/makeDiscountedSignature", async (req, res) => {
 app.get("/api/makeWhitelistSignature", async (req, res) => {
   const { status, response } = await mintController.makeWhitelistSignature(
     req.query.address,
-    req.query.price,
     req.query.quantity
   );
 

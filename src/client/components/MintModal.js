@@ -14,6 +14,9 @@ import AuctionABI from "../constants/AuctionABI.json";
 import { parseEther } from "ethers/lib/utils";
 import { useWeb3React } from "@web3-react/core";
 
+const GENESIS_PRICE = "0.05";
+const EARLY_PRICE = "0.065";
+const PUBLIC_PRICE = "0.1";
 const useStyles = makeStyles({
   dialog: {
     width: "680px",
@@ -57,9 +60,6 @@ const useStyles = makeStyles({
   },
 });
 
-const GENESIS_PRICE = "0.05";
-const EARLY_PRICE = "0.065";
-const public_PRICE = "0.08";
 export default function MintModal(props) {
   const classes = useStyles();
   const { onClose, open, shareURL, tokenAddress, discountedPrice, onConnect} = props;
@@ -85,7 +85,7 @@ export default function MintModal(props) {
   const priceDropAmount = "Public auction drops 0.0125 ETH every 15 minutes";
   const currentNFT = "Sunday Journal";
   // const discountedPrice = "0.0075";
-  const capsulePrice = "0.2";
+  const WHITELIST_LIMIT = 2;
 
   const RoundUp = (intervalMilliseconds, datetime) => {
     datetime = datetime || new Date();
@@ -183,10 +183,7 @@ export default function MintModal(props) {
   const initializePrice = async () => {
     let price;
     if (mintStatus === "PUBLIC") {
-      if (!contract) return;
-      price = await getCurrentMintPrice();
-
-      setTimeout(initializePrice, 1000 * 10);
+      price = PUBLIC_PRICE
     } else if (mintStatus === "MINT LIST") {
       price = discountedPrice;
     } else if (mintStatus === "EARLY") {
@@ -222,25 +219,28 @@ export default function MintModal(props) {
     try {
       let tx;
       if (mintStatus === "PUBLIC") {
-        // const price = await getCurrentMintPrice();
+        // const price = "await getCurrentMintPrice();"
         tx = await contract.mintPublic(1, { value: parseEther(price) });
       } else {
+        if (mintInfo.whitelistMinted >= WHITELIST_LIMIT) {
+          return;
+        }
         const signatureResponse = await axios.get(
           "/api/makeWhitelistSignature",
           {
             params: {
               address: account.toLowerCase(),
-              price,
               quantity: 1
             },
           }
         );
 
         if (signatureResponse.status === 200) {
+          setCurrentPrice(signatureResponse.data.price)
           tx = await contract.mintWhitelistPrice(
             signatureResponse.data.hash,
             signatureResponse.data.signature,
-            parseEther(price),
+            parseEther(signatureResponse.data.price),
             1,
             { value: parseEther(price) }
           );
@@ -249,9 +249,16 @@ export default function MintModal(props) {
 
       setTransactionHash(tx.hash);
       await tx.wait();
-      setPublicMinted(publicMinted + 1);
+      if (mintStatus === "PUBLIC") {
+        setPublicMinted(publicMinted + 1);
+        setTotalPublicMinted(totalPublicMinted + 1);
+      } else {
+        setMintInfo({
+          ...mintInfo,
+          whitelistMinted: mintInfo.whitelistMinted + 1
+        })
+      }
       setTotalSupply(totalSupply + 1);
-      setTotalPublicMinted(totalPublicMinted + 1);
       setDidMint(true);
     } catch (err) {
       console.log({ err });
@@ -452,10 +459,10 @@ export default function MintModal(props) {
                         </p>
                       </>
                     )}
-                    {mintStatus === "CAPSULE HOUSE" && (
+                    {mintStatus === "CAPSULE HOUSE" || mintStatus === "GENESIS" && (
                       <>
                         <p className="body-medium yellowish-gray-text text-uppercase">
-                          You will be able to mint at 0.2 ETH.
+                          You will be able to mint at {currentPrice} ETH.
                         </p>
                       </>
                     )}

@@ -11,6 +11,8 @@ const EthCrypto = require("eth-crypto");
 const { parseEther } = require("ethers/lib/utils");
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
+const GENESIS_PRICE = "0.05";
+const EARLY_PRICE = "0.065";
 // connect to our mongodb database
 async function connectToDatabase() {
   let params = {};
@@ -128,10 +130,16 @@ async function makeDiscountedSignature(address) {
   }
 }
 
-async function makeWhitelistSignature(address, price, quantity) {
+async function makeWhitelistSignature(address, quantity) {
   const mintStatus = await getMintStatusForAddress(address);
-  if (mintStatus.response !== "CAPSULE HOUSE") {
+  if (mintStatus.response !== "CAPSULE HOUSE" || mintStatus.response !== "GENESIS") {
     return { status: 400, response: "invalid user" };
+  }
+  let price;
+  if (mintStatus.response === "CAPSULE HOUSE") {
+    price = EARLY_PRICE;
+  } else {
+    price = GENESIS_PRICE;
   }
   try {
     // const hash = soliditySha3(HASH_PREFIX_WHITELISTED, address);
@@ -143,6 +151,7 @@ async function makeWhitelistSignature(address, price, quantity) {
       response: {
         hash: hash,
         signature: ownerSignature,
+        price
       },
     };
   } catch (error) {
