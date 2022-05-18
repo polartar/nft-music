@@ -425,12 +425,6 @@ class Sequencer extends Component {
 
       if (nftResponse.data.blooms && nftResponse.data.blooms[0]) {
         padFormat.push(nftResponse.data.blooms[0]["stems"])
-        padFormat.push(nftResponse.data.blooms[0]["stems"])
-        padFormat.push(nftResponse.data.blooms[0]["stems"])
-        padFormat.push(nftResponse.data.blooms[0]["stems"])
-        padFormat.push(nftResponse.data.blooms[0]["stems"])
-        padFormat.push(nftResponse.data.blooms[0]["stems"])
-
       }
 
       this.setState({ pads, queue, padFormat, steps, padFormatStyleClass });
