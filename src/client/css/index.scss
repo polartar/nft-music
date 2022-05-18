@@ -679,11 +679,11 @@ input[type="range"] {
 
   position: absolute;
 
-  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.9);
-  transform: translateX(-50%) translateY(-50%) rotate(45deg) scale(0.9);
+  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg);
+  transform: translateX(-50%) translateY(-50%) rotate(45deg);
 
   @media only screen and (max-width: 700px) {
-    top: 41%;
+    top: 42%;
     transform: translate(-50%, -50%) rotate(45deg) scale(0.9);
     &.embed {
       top: 50%;
@@ -697,13 +697,18 @@ input[type="range"] {
   }
 }
 
-.pad-group {
+.main-pad-group {
   grid-area: main;
+  display: grid;
+  grid-gap: 12px;
+
   &.tile25 {
-    width: 270px;
+    //5 columns
+    grid-template-columns: 44px 44px 44px 44px 44px;
   }
   &.tile36 {
-    width: 324px;
+    //6 columns
+    grid-template-columns: 44px 44px 44px 44px 44px 44px;
   }
 }
 
@@ -795,7 +800,7 @@ canvas {
   box-sizing: border-box;
   width: 44px;
   height: 44px;
-  margin: 5px;
+
   border: 1px solid white;
 
   // background: lighten($dark, 10%);
@@ -834,8 +839,6 @@ canvas {
   // transform-origin: 50% 50%;
   // position: absolute;
   // text-align: right;
-  margin: 10px;
-
 
   &.top {
     grid-area: header;
@@ -862,7 +865,9 @@ canvas {
   align-content: center;
   align-items: center;
   justify-content: center;
-    grid-template-columns: 50px 50px 50px;
+  grid-template-columns: 44px 44px 44px;
+  grid-gap: 12px;
+
     .bloom {
       height: 20px !important;
     }
@@ -883,10 +888,10 @@ canvas {
       justify-items: center;
       align-items: center;
       justify-content: center;
-      grid-template-columns: 50px 50px 50px;
+      grid-template-columns: 44px 44px 44px;
+      grid-gap: 12px;
+
       transform: rotate(90deg);
-      -webkit-transform-origin: 50% 50%;
-      transform-origin: 50% 50%;
     }
 
     .bloom {
@@ -925,7 +930,6 @@ canvas {
   width: 44px;
   height: 44px;
   border-radius: 4px;
-  margin: 5px;
 
   border: 1px solid white;
 
@@ -1479,7 +1483,6 @@ canvas {
   cursor: pointer;
   // width: calc(#{$controller_size} / #{$steps} - 10px);
   // height: calc(#{$controller_size} / 10 - 10px);
-  margin: 5px;
 
   box-shadow: 0 1px 3px 0 rgba(black, 0.3);
   transition: background 100ms ease;
@@ -1834,6 +1837,7 @@ footer {
     '. header header header header .'
     'left main main main main right'
     '. footer footer footer footer .';
+  grid-gap: 24px;
 
 
 }

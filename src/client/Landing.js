@@ -425,6 +425,12 @@ class Sequencer extends Component {
 
       if (nftResponse.data.blooms && nftResponse.data.blooms[0]) {
         padFormat.push(nftResponse.data.blooms[0]["stems"])
+        padFormat.push(nftResponse.data.blooms[0]["stems"])
+        padFormat.push(nftResponse.data.blooms[0]["stems"])
+        padFormat.push(nftResponse.data.blooms[0]["stems"])
+        padFormat.push(nftResponse.data.blooms[0]["stems"])
+        padFormat.push(nftResponse.data.blooms[0]["stems"])
+
       }
 
       this.setState({ pads, queue, padFormat, steps, padFormatStyleClass });
@@ -2003,7 +2009,7 @@ class Sequencer extends Component {
         <div className="bloom-group bottom">
           {bloomObject["bottom"]}
         </div>
-        <div className={`pad-group ${padFormatStyleClass}`}>
+        <div className={`main-pad-group ${padFormatStyleClass}`}>
 
           {beatPads}
         </div>

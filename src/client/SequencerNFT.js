@@ -279,7 +279,9 @@ class Sequencer extends Component {
       const subSteps = nftResponse.data.subSteps;
 
       this.rhythmPads = new Array(steps).fill([0]);
-
+      if (nftResponse.data.blooms && nftResponse.data.blooms[0]) {
+        padFormat.push(nftResponse.data.blooms[0]["stems"])
+      }
       this.setState({ pads, queue, padFormat, steps, padFormatStyleClass });
 
       this.analysers = {};
@@ -1002,6 +1004,122 @@ class Sequencer extends Component {
       openControls
     } = this.state;
 
+
+        const renderPad = () => {
+          const beatPads = []
+          const blooms = []
+          const bloomObject = {"top":[], "right":[], "bottom": [], "left": []}
+
+          {padFormat.map((column, j) => {
+            return column.map((remappedCoordinates, i) => {
+              const group = remappedCoordinates[0];
+              const soundIndex = remappedCoordinates[1];
+              const additionalClasses = remappedCoordinates[2]
+                ? remappedCoordinates[2]
+                : "";
+
+              const on =
+                this.players[group][soundIndex].state === "started";
+
+              const blinkClass =
+                pads[group][soundIndex] === 1 &&
+                this.players[group][soundIndex].state !== "started"
+                  ? "blink"
+                  : "";
+              const whiteClass = group === "sounds" ? "whitePad" : "";
+              let tutorialClass = "";
+              const padClass =
+                group == "sounds" ? "padWhiteVersion" : "pad";
+
+              if (padFormatStyleClass == "tile36" && j >= 6) {
+                blooms.push(
+                  <div
+                    key={`pad-group-${i}`}
+                    className={`bloom ${cx(padClass, {
+                      on,
+                    })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                    onClick={() => {
+                      this.togglePad(group, soundIndex);
+                    }}
+                  />
+                )
+              } else if (padFormatStyleClass == "tile25" && j >= 5) {
+                blooms.push(
+                  <div
+                    key={`pad-group-${i}`}
+                    className={`bloom ${cx(padClass, {
+                      on,
+                    })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                    onClick={() => {
+                      this.togglePad(group, soundIndex);
+                    }}
+                  />
+                )
+              } else {
+                beatPads.push(
+                  <div
+                    key={`pad-group-${i}`}
+                    className={`${cx(padClass, {
+                      on,
+                    })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                    onClick={() => {
+                      this.togglePad(group, soundIndex);
+                    }}
+                  />
+                );
+              }
+
+            });
+          })}
+
+          var bloomOrder = 0
+          {blooms.map((bloom) => {
+            if (bloomOrder <= 2) {
+              bloomObject["top"].push(bloom)
+            } else if (bloomOrder > 2 && bloomOrder <= 5) {
+              bloomObject["bottom"].push(bloom)
+            } else if (bloomOrder > 5 && bloomOrder <= 8) {
+              bloomObject["right"].push(bloom)
+            } else {
+              bloomObject["left"].push(bloom)
+            }
+            if (bloomOrder < 11) {
+              bloomOrder = bloomOrder + 1
+            } else {
+              bloomOrder = 0
+            }
+          })}
+
+          return (
+            <>
+            <div className={`gridOuter blooming embed`}>
+
+            <div className="bloom-group top">
+              {bloomObject["top"]}
+            </div>
+            <div className="bloom-group right">
+              <div className="bloom-content">
+
+              {bloomObject["right"]}
+            </div>
+            </div>
+            <div className="bloom-group left">
+              <div className="bloom-content">
+              {bloomObject["left"]}
+            </div>
+            </div>
+            <div className="bloom-group bottom">
+              {bloomObject["bottom"]}
+            </div>
+            <div className={`main-pad-group ${padFormatStyleClass}`}>
+
+              {beatPads}
+            </div>
+
+            </div>
+            </>
+          )
+        }
     // Set up active sounds limit
     if (nft && loaded) {
       const mediaFileExtension = nft.imageURL
@@ -1081,53 +1199,7 @@ class Sequencer extends Component {
               <div className="artistName">{`by ${nft.artistName} ${
                 nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
               }`}</div> */}
-            <div className={`gridOuter ${padFormatStyleClass} embed`}>
-              {padFormat.map((column, j) => {
-                return column.map((remappedCoordinates, i) => {
-                  const group = remappedCoordinates[0];
-                  const soundIndex = remappedCoordinates[1];
-                  const additionalClasses = remappedCoordinates[2]
-                    ? remappedCoordinates[2]
-                    : "";
-
-                  const on =
-                    this.players[group][soundIndex].state === "started";
-
-                  const blinkClass =
-                    pads[group][soundIndex] === 1 &&
-                    this.players[group][soundIndex].state !== "started"
-                      ? "blink"
-                      : "";
-                  const whiteClass = group === "sounds" ? "whitePad" : "";
-                  // let tutorialClass = "";
-                  const padClass =
-                    group == "sounds" ? "padWhiteVersion" : "pad";
-
-                  // if (showTutorial) {
-                  //   if (tutorialStep === 0 && group !== "drums") {
-                  //     tutorialClass = "tutorialPad";
-                  //   } else if (tutorialStep === 1 && group !== "basses") {
-                  //     tutorialClass = "tutorialPad";
-                  //   } else if (tutorialStep === 2 && group !== "sounds") {
-                  //     tutorialClass = "tutorialPad";
-                  //   }
-                  // }
-
-                  return (
-                    <div
-                      key={`pad-group-${i}`}
-                      className={`${cx(padClass, {
-                        on
-                      })} ${blinkClass} ${whiteClass} ${additionalClasses}`}
-                      // })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                      onClick={() => {
-                        this.togglePad(group, soundIndex);
-                      }}
-                    />
-                  );
-                });
-              })}
-            </div>
+              {renderPad()}
             {openControls && (
               <div
                 className="song-info-wrapper"
