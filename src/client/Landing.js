@@ -224,6 +224,7 @@ class Sequencer extends Component {
     totalSoundsPlaying: 0,
     openBidModal: false,
     nft: null,
+    featuredNFTs:[],
     isLoggedIntoMetamask: false,
     provider: null,
     address: null,
@@ -371,6 +372,7 @@ class Sequencer extends Component {
 
   fetchNFT = async () => {
     let nftResponse;
+    let featuredNFTs = []
     if (this.props.match) {
       nftResponse = await axios.get("/api/getNFT", {
         params: this.props.match.params,
@@ -379,25 +381,55 @@ class Sequencer extends Component {
       nftResponse = await axios.get("/api/getFeaturedNFT");
     }
 
-    this.setState({
-      nft: nftResponse.data,
+    featuredNFTs.push(nftResponse.data)
+
+    nftResponse = await axios.get("/api/getNFT", {
+      params: {artistName: "oksami", nftName: "Sunday Journal", edition: "1"},
     });
 
+    featuredNFTs.push(nftResponse.data)
+
+    this.setState({
+      nft: nftResponse.data,
+      featuredNFTs: featuredNFTs
+    });
+
+    this.setupBouquetForIndex(0)
+  }
+
+
+  setupBouquetForIndex = (index) => {
+
+    if (this.state.playing) {
+      this.clearSelections()
+    }
+
+    let nft = this.state.featuredNFTs[index]
+
+    this.setState({nft});
+
+    this.setupPadsForNFT(nft)
+  }
+
+  setupPadsForNFT = (nft) => {
+    this.players = {}
+    this.activePlayers = {}
+    this.rhythmPads = []
     // Initial pads setup
-    if (!Object.keys(this.players).length) {
+    // if (!Object.keys(this.players).length) {
       const pads = {};
       const queue = {};
 
-      Object.keys(nftResponse.data.filePaths).map((group) => {
-        const filePaths = nftResponse.data.filePaths[group];
+      Object.keys(nft.filePaths).map((group) => {
+        const filePaths = nft.filePaths[group];
         this.players[group] = [];
         pads[group] = [];
         queue[group] = [];
 
         this.activePlayers[group] = [];
 
-        Object.keys(nftResponse.data.filePaths).map((group) => {
-          const filePaths = nftResponse.data.filePaths[group];
+        Object.keys(nft.filePaths).map((group) => {
+          const filePaths = nft.filePaths[group];
           this.players[group] = [];
           pads[group] = [];
           queue[group] = [];
@@ -415,16 +447,16 @@ class Sequencer extends Component {
         });
       });
 
-      const padFormat = nftResponse.data.padFormat;
-      const padFormatStyleClass = nftResponse.data.padStyle;
+      const padFormat = nft.padFormat.slice();
+      const padFormatStyleClass = nft.padStyle;
 
-      const steps = nftResponse.data.steps;
-      const subSteps = nftResponse.data.subSteps;
+      const steps = nft.steps;
+      const subSteps = nft.subSteps;
 
       this.rhythmPads = new Array(steps).fill([0]);
 
-      if (nftResponse.data.blooms && nftResponse.data.blooms[0]) {
-        padFormat.push(nftResponse.data.blooms[0]["stems"])
+      if (nft.blooms && nft.blooms[0]) {
+        padFormat.push(nft.blooms[0]["stems"])
       }
 
       this.setState({ pads, queue, padFormat, steps, padFormatStyleClass });
@@ -449,7 +481,7 @@ class Sequencer extends Component {
         }
       }
 
-      Tone.Transport.bpm.value = nftResponse.data.bpm;
+      Tone.Transport.bpm.value = nft.bpm;
       Tone.Transport.scheduleRepeat(async (time) => {
         if (this.state.step % subSteps === 0) {
           const updatedPads = {};
@@ -467,7 +499,7 @@ class Sequencer extends Component {
             );
 
             updatedQueue[group] = this.state.queue[group].slice(
-              -this.state.nft.activeSoundLimits[group]
+              -nft.activeSoundLimits[group]
             );
 
             if (updatedQueue[group].length !== this.state.queue[group].length) {
@@ -620,7 +652,7 @@ class Sequencer extends Component {
           }
         );
       });
-    }
+    // }
   };
 
   didRender = async (blob) => {
@@ -1886,133 +1918,6 @@ class Sequencer extends Component {
 
       this.patch.config.didRender = this.didRender;
     }
-
-    const renderPad = () => {
-      const beatPads = []
-      const blooms = []
-      const bloomObject = {"top":[], "right":[], "bottom": [], "left": []}
-
-      {padFormat.map((column, j) => {
-        return column.map((remappedCoordinates, i) => {
-          const group = remappedCoordinates[0];
-          const soundIndex = remappedCoordinates[1];
-          const additionalClasses = remappedCoordinates[2]
-            ? remappedCoordinates[2]
-            : "";
-
-          const on =
-            this.players[group][soundIndex].state === "started";
-
-          const blinkClass =
-            pads[group][soundIndex] === 1 &&
-            this.players[group][soundIndex].state !== "started"
-              ? "blink"
-              : "";
-          const whiteClass = group === "sounds" ? "whitePad" : "";
-          let tutorialClass = "";
-          const padClass =
-            group == "sounds" ? "padWhiteVersion" : "pad";
-
-          if (showTutorial) {
-            if (tutorialStep === 0 && group !== "drums") {
-              tutorialClass = "tutorialPad";
-            } else if (tutorialStep === 1 && group !== "basses") {
-              tutorialClass = "tutorialPad";
-            } else if (tutorialStep === 2 && group !== "sounds") {
-              tutorialClass = "tutorialPad";
-            }
-          }
-
-          if (padFormatStyleClass == "tile36" && j >= 6) {
-            blooms.push(
-              <div
-                key={`pad-group-${i}`}
-                className={`bloom ${cx(padClass, {
-                  on,
-                })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                onClick={() => {
-                  this.togglePad(group, soundIndex);
-                }}
-              />
-            )
-          } else if (padFormatStyleClass == "tile25" && j >= 5) {
-            blooms.push(
-              <div
-                key={`pad-group-${i}`}
-                className={`bloom ${cx(padClass, {
-                  on,
-                })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                onClick={() => {
-                  this.togglePad(group, soundIndex);
-                }}
-              />
-            )
-          } else {
-            beatPads.push(
-              <div
-                key={`pad-group-${i}`}
-                className={`${cx(padClass, {
-                  on,
-                })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                onClick={() => {
-                  this.togglePad(group, soundIndex);
-                }}
-              />
-            );
-          }
-
-        });
-      })}
-
-      var bloomOrder = 0
-      {blooms.map((bloom) => {
-        if (bloomOrder <= 2) {
-          bloomObject["top"].push(bloom)
-        } else if (bloomOrder > 2 && bloomOrder <= 5) {
-          bloomObject["bottom"].push(bloom)
-        } else if (bloomOrder > 5 && bloomOrder <= 8) {
-          bloomObject["right"].push(bloom)
-        } else {
-          bloomObject["left"].push(bloom)
-        }
-        if (bloomOrder < 11) {
-          bloomOrder = bloomOrder + 1
-        } else {
-          bloomOrder = 0
-        }
-      })}
-
-      return (
-        <>
-        <div className={`gridOuter blooming`}>
-
-        <div className="bloom-group top">
-          {bloomObject["top"]}
-        </div>
-        <div className="bloom-group right">
-          <div className="bloom-content">
-
-          {bloomObject["right"]}
-        </div>
-        </div>
-        <div className="bloom-group left">
-          <div className="bloom-content">
-          {bloomObject["left"]}
-        </div>
-        </div>
-        <div className="bloom-group bottom">
-          {bloomObject["bottom"]}
-        </div>
-        <div className={`main-pad-group ${padFormatStyleClass}`}>
-
-          {beatPads}
-        </div>
-
-        </div>
-        </>
-      )
-    }
-
     // Set up active sounds limit
     if (nft && loaded) {
       const mediaFileExtension = nft.imageURL
@@ -2038,52 +1943,14 @@ class Sequencer extends Component {
                 />
 
                 <div className="container">
-                  {mediaFileExtension === "mp4" && (
-                    <div className="video-container">
-                      <video
-                        className="waterLoopVideo"
-                        playsInline
-                        autoPlay
-                        loop
-                        muted
-                        data-autoplay
-                      >
-                        <source src={nft.imageURL} type="video/mp4" />
-                      </video>
-                    </div>
-                  )}
-                  {mediaFileExtension !== "mp4" && (
-                    <img className="waterLoopVideo" src={nft.imageURL} />
-                  )}
 
-                  <div className="gridTop">
-                    {this.rhythmPads.map((group, groupIndex) => (
-                      <React.Fragment>
-                        {group.map((pad, i) => (
-                          <div
-                            key={`pad-group-${i}`}
-                            className={cx("modifiedPad", {
-                              active:
-                                groupIndex ===
-                                (((step - 1) % steps) + steps) % steps,
-                              on: pad === 1,
-                            })}
-                          />
-                        ))}
-                      </React.Fragment>
-                    ))}
-                  </div>
-
-                    {renderPad()}
-
-                  {/*
-                    //WORK IN PROGRESS
 
                   <BouquetCarousel
+                    setupBouquetForIndex={this.setupBouquetForIndex.bind(this)}
                     padFormat={padFormat}
                     padFormatStyleClass={padFormatStyleClass}
                     players={this.players}
-                    nfts={[nft, nft]}
+                    nfts={this.state.featuredNFTs}
                     rhythmPads={this.rhythmPads}
                     togglePad={this.togglePad.bind(this)}
                     step={step}
@@ -2093,7 +1960,7 @@ class Sequencer extends Component {
                     tutorialStep={tutorialStep}
                   />
 
-                  */}
+
 
                   <div className="song-info-wrapper">
                     {showTutorial && (
