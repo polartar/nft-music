@@ -220,11 +220,12 @@ export default function MintModal(props) {
     setIsMinting(true);
     try {
       let tx;
-      if (mintStatus === "PUBLIC") {
-        // const price = "await getCurrentMintPrice();"
-        tx = await contract.mintPublic(1, { value: parseEther(price) });
-      } else {
-        if (mintInfo.whitelistMinted >= WHITELIST_LIMIT) {
+      // if (mintStatus === "PUBLIC") {
+      //   // const price = "await getCurrentMintPrice();"
+      //   tx = await contract.mintPublic(1, { value: parseEther(price) });
+      // } else 
+      {
+        if (mintStatus !== "PUBLIC" && mintInfo.whitelistMinted >= WHITELIST_LIMIT) {
           return;
         }
         const signatureResponse = await axios.get(
