@@ -1356,7 +1356,7 @@ class Sequencer extends Component {
           if (padFormatStyleClass == "tile36" && j >= 6) {
             blooms.push(
               <div
-                key={`pad-group-${i}`}
+                key={`pad-group-${j}-index-${i}`}
                 className={`bloom ${cx(padClass, {
                   on,
                 })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
@@ -1368,7 +1368,7 @@ class Sequencer extends Component {
           } else if (padFormatStyleClass == "tile25" && j >= 5) {
             blooms.push(
               <div
-                key={`pad-group-${i}`}
+                key={`pad-group-${j}-index-${i}`}
                 className={`bloom ${cx(padClass, {
                   on,
                 })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
@@ -1380,7 +1380,7 @@ class Sequencer extends Component {
           } else {
             beatPads.push(
               <div
-                key={`pad-group-${i}`}
+                key={`pad-group-${j}-index-${i}`}
                 className={`${cx(padClass, {
                   on,
                 })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
