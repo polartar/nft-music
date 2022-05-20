@@ -25,7 +25,10 @@
   will-change: transform;
   height: 82%;
   width: 100%;
+  @media only screen and (max-width: 700px) {
+    height: 100%;
 
+  }
   &:not(.prevNFT):not(.nextNFT):not(.activeNFT) {
     z-index: 0;
     transform: translate3d(25%, 0, 0) scale(0.67);

@@ -20,7 +20,6 @@ import ArrowRight from "./images/arrowright.svg";
 import BidModal from "./components/BidModal";
 
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
 import Twitter from "./images/twitter.png";
 import Discord from "./images/discord.png";
 import Instagram from "./images/instagram.png";
@@ -402,6 +401,7 @@ class Sequencer extends Component {
 
     if (this.state.playing) {
       this.clearSelections()
+      Tone.Transport.cancel()
     }
 
     let nft = this.state.featuredNFTs[index]
@@ -748,7 +748,7 @@ class Sequencer extends Component {
 
     if (!isAllZero) {
       canvas.width = window.innerWidth;
-      canvas.height = 500;
+      canvas.height = 100;
 
       var x = 0;
 
@@ -756,7 +756,7 @@ class Sequencer extends Component {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       var bufferLength = frequency_array.length;
-      var barWidth = (canvas.width / bufferLength) * 2.5;
+      var barWidth = 0.92;
       // ctx.globalCompositeOperation = 'destination-over'
 
       // ctx.fillStyle = "#1f1f1f";
@@ -775,7 +775,7 @@ class Sequencer extends Component {
         var b = 50;
 
         // ctx.fillStyle = 'rgb(' + 255 + ',' + 255 + ',' + 255 + ')'
-        ctx.fillStyle = `rgba(255, 255, 255, 1)`;
+        ctx.fillStyle = "rgb(" + 244 + "," + 244 + "," + 241 + ")";
         // ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 1)`;
         ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
 
@@ -789,7 +789,7 @@ class Sequencer extends Component {
     let frequency_array = new Uint8Array(analyser);
 
     canvas.width = window.innerWidth;
-    canvas.height = 500;
+    canvas.height = 100;
 
     var x = 0;
 
@@ -812,8 +812,8 @@ class Sequencer extends Component {
       var g = 250 * (i / bufferLength);
       var b = 50;
 
-      ctx.fillStyle = "rgb(" + 31 + "," + 31 + "," + 31 + ")";
-      ctx.strokeStyle = "rgba(0, 0, 0, 0.17)";
+      ctx.fillStyle = "rgb(" + 244 + "," + 244 + "," + 241 + ")";
+      // ctx.strokeStyle = "rgba(0, 0, 0, 0.17)";
       ctx.strokeRect(x, canvas.height - barHeight, barWidth, barHeight);
 
       x += barWidth + 1;
@@ -987,22 +987,6 @@ class Sequencer extends Component {
     });
   }
 
-  muiTheme = createTheme({
-    overrides: {
-      MuiSlider: {
-        thumb: {
-          color: "white",
-        },
-        track: {
-          color: "white",
-        },
-        rail: {
-          color: "white",
-        },
-      },
-    },
-  });
-
   setVolume(volume) {
     if (volume != null) {
       this.setState({
@@ -1017,9 +1001,6 @@ class Sequencer extends Component {
     }
   }
 
-  handleShuffle() {
-    //shuffle function here
-  }
 
   clearSelections() {
     // clear all setTimeouts for togglePad()'s
@@ -1070,6 +1051,23 @@ class Sequencer extends Component {
     }
   }
 
+  handlePlayback() {
+
+      if (!this.state.isPlayingBack) {
+        this.playbackRecording(
+          padRecording,
+          (pad) => {
+            this.togglePad(pad[0], pad[1]);
+          }
+        );
+      } else {
+        this.setState({
+          isPlayingBack: false,
+        });
+        this.clearSelections();
+      }
+
+  }
   playbackRecording(padRecording, callback) {
     // this.clearSelections();
     let highestId = window.setTimeout(() => {
@@ -1787,60 +1785,6 @@ class Sequencer extends Component {
     );
   }
 
-  shouldRenderPostRecording = () => {
-    return (
-      this.state.padRecording.length > 0 &&
-      !this.state.isRecording &&
-      !this.state.shouldStartRecording &&
-      !this.state.shouldStopRecording
-    );
-  };
-
-  setOpenControls() {
-    this.setState({ openControls: !this.state.openControls });
-  }
-
-  setHideBeatpad() {
-    if (this.state.hideBeatpad) {
-      anime({
-        targets: [".gridOuter"],
-        easing: "easeInOutSine",
-        duration: 250,
-        opacity: 1,
-        delay: 0,
-      });
-      anime({
-        targets: [".waterLoopVideo"],
-        easing: "easeInOutSine",
-        duration: 250,
-        filter: "brightness(40%)",
-        delay: 0,
-      });
-    } else {
-      anime({
-        targets: [".gridOuter"],
-        easing: "easeInOutSine",
-        duration: 250,
-        opacity: 0,
-        delay: 0,
-      });
-      anime({
-        targets: [".waterLoopVideo"],
-        easing: "easeInOutSine",
-        duration: 250,
-        filter: "brightness(100%)",
-        delay: 0,
-      });
-    }
-    this.setState({ hideBeatpad: !this.state.hideBeatpad });
-  }
-
-  setShowTutorial() {
-    this.setState({
-      showTutorial: !this.state.showTutorial,
-      openControls: !this.state.openControls,
-    });
-  }
 
   calculateProgressPercentage = async () => {
     const totalDuration =
@@ -1942,311 +1886,50 @@ class Sequencer extends Component {
                   loggedIntoMetamaskOverride={isLoggedIntoMetamask}
                 />
 
-                <div className="container">
 
+                <BouquetCarousel
+                  setupBouquetForIndex={this.setupBouquetForIndex.bind(this)}
+                  padFormat={padFormat}
+                  padFormatStyleClass={padFormatStyleClass}
+                  players={this.players}
+                  nfts={this.state.featuredNFTs}
+                  rhythmPads={this.rhythmPads}
+                  togglePad={this.togglePad.bind(this)}
+                  step={step}
+                  steps={steps}
+                  pads={pads}
+                  showTutorial={showTutorial}
+                  tutorialStep={tutorialStep}
+                  shouldStartRecording={this.state.shouldStartRecording}
+                  recordingStatus={this.state.recordingStatus}
+                  exportingStatus={this.state.exportingStatus}
+                  isRecording={this.state.isRecording}
+                  recording={this.state.recording}
+                  shouldStopRecording={this.state.shouldStopRecording}
+                  isPlayingBack={this.state.isPlayingBack}
+                  repeat={this.state.repeat}
+                  hasNewRecording={this.state.hasNewRecording}
+                  padRecording={this.state.padRecording}
+                  volume={this.state.volume}
+                  playing={this.state.playing}
+                  stopRecording={this.stopRecording.bind(this)}
+                  startRecording={this.startRecording.bind(this)}
+                  clearSelections={this.clearSelections}
+                  canvas={this.canvas}
+                  exportRecording={this.exportRecording.bind(this)}
+                  playbackRecording={this.playbackRecording.bind(this)}
+                  handlePlayback={this.handlePlayback.bind(this)}
+                  setVolume={this.setVolume.bind(this)}
+                  shareablePadNumbers={this.state.shareablePadNumbers}
+                  isLoggedIntoMetamask={isLoggedIntoMetamask}
+                />
 
-                  <BouquetCarousel
-                    setupBouquetForIndex={this.setupBouquetForIndex.bind(this)}
-                    padFormat={padFormat}
-                    padFormatStyleClass={padFormatStyleClass}
-                    players={this.players}
-                    nfts={this.state.featuredNFTs}
-                    rhythmPads={this.rhythmPads}
-                    togglePad={this.togglePad.bind(this)}
-                    step={step}
-                    steps={steps}
-                    pads={pads}
-                    showTutorial={showTutorial}
-                    tutorialStep={tutorialStep}
-                  />
-
-
-
-                  <div className="song-info-wrapper">
-                    {showTutorial && (
-                      <div className="tutorial-wrapper">
-                        <React.Fragment>
-                          {tutorialStep === 0 && (
-                            <React.Fragment>
-                              <div className="body-small white-text">
-                                To begin, press one of the highlighted squares
-                                on the left. These are the drum loops. <br />
-                                <br />
-                                Only one will play at a time.
-                              </div>
-                            </React.Fragment>
-                          )}
-                          {tutorialStep === 1 && (
-                            <div className="body-small white-text">
-                              Now, press one of the highlighted squares on the
-                              right. These are the bass loops. <br />
-                              <br />
-                              When the pad is flashing, the sound will wait to
-                              play until the next bar.
-                              <br />
-                              <br /> Only one will play at a time.
-                            </div>
-                          )}
-                          {tutorialStep === 2 && (
-                            <div className="body-small white-text">
-                              {`Lastly, press one of grey squares in the middle. These are
-                          chords and melodies. Up to ${nft.activeSoundLimits["sounds"]} can play at at time.`}
-                            </div>
-                          )}
-                          {tutorialStep === 3 && (
-                            <div className="body-small white-text">
-                              You're ready to make some music! <br />
-                              <br />
-                              Try out different combinations and share them with
-                              friends below. <br />
-                              <br />
-                              If you'd like to learn more about Secret Garden,
-                              scroll down.
-                            </div>
-                          )}
-                        </React.Fragment>
-                      </div>
-                    )}
-                    <div className="song-info-container">
-                      {/* {openControls && (
-                        <div className="controls-container">
-                          <div className="record-container control-item">
-                            <button
-                              className={
-                                this.state.shouldStartRecording ||
-                                this.state.isRecording
-                                  ? "button record blink whitePad padWhiteVersion"
-                                  : "button record"
-                              }
-                              onClick={() => {
-                                if (this.state.isRecording) {
-                                  this.stopRecording();
-                                } else {
-                                  this.startRecording();
-                                }
-                              }}
-                            >
-                              <div className="circle"></div>
-                              {this.state.isRecording
-                                ? this.state.shouldStopRecording
-                                  ? "Stopping"
-                                  : "Stop Recording"
-                                : "Record"}
-                            </button>
-                            {this.state.isRecording && (
-                              <p className="body-medium yellow-text">
-                                {this.state.recordingStatus}
-                                {this.state.isRecording && <Stopwatch />}
-                              </p>
-                            )}
-                          </div>
-                          <button
-                            className={"button record control-item"}
-                            onClick={this.setHideBeatpad.bind(this)}
-                          >
-                            {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
-                          </button>
-                          <button
-                            className={"button record control-item"}
-                            onClick={this.setShowTutorial.bind(this)}
-                          >
-                            {this.state.showTutorial
-                              ? "Hide Tutorial"
-                              : "Show Tutorial"}
-                          </button>
-                        </div>
-                      )} */}
-
-                      {openControls && (
-                        <div className="controls-container">
-                          <div className="record-container control-item">
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                width:
-                                  this.state.recordingStatus.length > 0 ||
-                                  this.state.exportingStatus.length > 0
-                                    ? "100%"
-                                    : "200px",
-                              }}
-                            >
-                              {this.state.exportingStatus.length > 0 && (
-                                <div
-                                  style={{ marginRight: "10px" }}
-                                  className="body-medium yellow-text"
-                                >
-                                  {this.state.exportingStatus}
-                                </div>
-                              )}
-                              {this.shouldRenderPostRecording() ? (
-                                <button
-                                  className={
-                                    this.state.exportingStatus.includes(
-                                      "Exporting, please wait..."
-                                    )
-                                      ? "button disabled"
-                                      : "button record"
-                                  }
-                                  style={{ marginRight: "10px" }}
-                                  disabled={this.state.exportingStatus.includes(
-                                    "Exporting, please wait..."
-                                  )}
-                                  onClick={() =>
-                                    this.exportRecording(this.state.recording)
-                                  }
-                                >
-                                  Export
-                                </button>
-                              ) : (
-                                <div
-                                  style={{ marginRight: "10px" }}
-                                  className="body-medium yellow-text"
-                                >
-                                  {/* {this.state.exportingStatus ===
-                                  "Exporting, please wait..."
-                                    ? this.state.exportingStatus
-                                    :  */}
-                                  {this.state.recordingStatus}
-                                  {this.state.isRecording && <Stopwatch />}
-                                </div>
-                              )}
-                              {
-                                <button
-                                  className={
-                                    this.state.shouldStartRecording ||
-                                    this.state.isRecording
-                                      ? "button record blink whitePad padWhiteVersion"
-                                      : this.state.isPlayingBack ||
-                                        this.state.repeat
-                                      ? "button disabled"
-                                      : "button record"
-                                  }
-                                  onClick={() => {
-                                    if (this.state.isRecording) {
-                                      this.stopRecording();
-                                    } else {
-                                      this.startRecording();
-                                    }
-                                  }}
-                                  disabled={
-                                    this.state.isPlayingBack ||
-                                    this.state.repeat
-                                  }
-                                >
-                                  <div className="circle" />
-                                  {this.state.isRecording
-                                    ? this.state.shouldStopRecording
-                                      ? "Stopping"
-                                      : "Stop Recording"
-                                    : "Record"}
-                                </button>
-                              }
-                              {/* {
-                                <button
-                                  onClick={this.calculateProgressPercentage()}
-                                >
-                                  click for logs
-                                </button>
-                              } */}
-                            </div>
-
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: this.state.hasNewRecording
-                                  ? "space-between"
-                                  : "flex-end",
-                                alignItems: "center",
-                                width: "200px",
-                              }}
-                            >
-                              {
-                                <button
-                                  style={{
-                                    visibility: this.shouldRenderPostRecording()
-                                      ? "visible"
-                                      : "hidden",
-                                  }}
-                                  className={
-                                    this.state.padRecording.length <= 0 ||
-                                    this.state.isRecording
-                                      ? "button disabled"
-                                      : "button record"
-                                  }
-                                  onClick={() => {
-                                    if (!this.state.isPlayingBack) {
-                                      this.playbackRecording(
-                                        this.state.padRecording,
-                                        (pad) => {
-                                          this.togglePad(pad[0], pad[1]);
-                                        }
-                                      );
-                                    } else {
-                                      this.setState({
-                                        isPlayingBack: false,
-                                      });
-                                      this.clearSelections();
-                                    }
-                                  }}
-                                  disabled={
-                                    this.state.padRecording.length <= 0 ||
-                                    this.state.isRecording
-                                  }
-                                >
-                                  {!this.state.isPlayingBack
-                                    ? "Playback"
-                                    : "Stop Playback"}
-                                </button>
-                              }
-                            </div>
-                          </div>
-                          <button
-                            className={"button record control-item"}
-                            onClick={this.setHideBeatpad.bind(this)}
-                          >
-                            {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
-                          </button>
-                          <button
-                            className={"button record control-item"}
-                            onClick={this.setShowTutorial.bind(this)}
-                          >
-                            {this.state.showTutorial
-                              ? "Hide Tutorial"
-                              : "Show Tutorial"}
-                          </button>
-                        </div>
-                      )}
-
-                      <div className="song-details">
-                        <p className="launchdate-text body-medium yellow-text">
-                          LAUNCH AND REVEAL 5/24
-                        </p>
-                        <div className="beatPackTitle display-medium">
-                          {nft.name}
-                        </div>
-                        <div className="artistName">{`by ${nft.artistName} ${
-                          nft.visualArtistName
-                            ? `& ${nft.visualArtistName}`
-                            : ""
-                        }`}</div>
-                      </div>
-                    </div>
-                  </div>
-                  <IconButton
-                    className="expandOuter animated-content"
-                    onClick={() => this.handleScroll("next")}
-                  >
-                    <img src={Expand} className="expand" />
-                  </IconButton>
-                  <div className="volumeMeter">
-                    <canvas
-                      ref={this.canvas}
-                      style={{ minWidth: "75%", zIndex: "-10" }}
-                    />
-                  </div>
-                </div>
+                <IconButton
+                  className="expandOuter animated-content"
+                  onClick={() => this.handleScroll("next")}
+                >
+                  <img src={Expand} className="expand" />
+                </IconButton>
               </div>
 
               <div className="section vslide next" data-slideindex="1">
@@ -2558,24 +2241,6 @@ class Sequencer extends Component {
                   </div>
                 </div>
               </div>
-
-              <Footer
-                white={false}
-                shareURL={`https://secretgarden.fm/?share=${shareablePadNumbers.join(
-                  ","
-                )}`}
-                showShare={true}
-                loggedIntoMetamaskOverride={isLoggedIntoMetamask}
-                muiTheme={this.muiTheme}
-                setVolume={this.setVolume.bind(this)}
-                volume={this.state.volume}
-                clearSelections={this.clearSelections}
-                handleShuffle={this.handleShuffle}
-                canvas={this.canvas}
-                playing={this.state.playing}
-                setOpenControls={this.setOpenControls.bind(this)}
-                openControls={openControls}
-              />
             </div>
           </div>
         </div>

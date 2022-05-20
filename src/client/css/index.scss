@@ -452,6 +452,7 @@ input[type="number"] {
   justify-content: start;
   align-items: center;
   width: 100%;
+  gap: 16px
 }
 
 .volumeWrapper {
@@ -1357,6 +1358,10 @@ canvas {
       height: 100%;
       background-color: $dark-gray;
     }
+
+    &.carousel {
+      height: 70%;
+    }
   }
 }
 
@@ -1389,13 +1394,13 @@ canvas {
   bottom: 0;
   left: 0;
   right: 0;
-  width: 67%;
-  margin-left: 33%;
+  // width: 67%;
+  // margin-left: 33%;
   z-index: 100000;
   pointer-events: none;
   -ms-overflow-style: none;
   canvas {
-    height: 30vw;
+    height: 100px;
     width: 100vw;
   }
 
