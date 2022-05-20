@@ -32,7 +32,7 @@ app.get("*.css", function(req, res, next) {
 });
 
 app.use(robots({ UserAgent: "*", Allow: "/" }));
-// app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 app.use(express.static("dist"));
@@ -122,7 +122,13 @@ app.post("/api/exportRecording", upload.single("video"), async (req, res) => {
 });
 
 app.post("/api/saveMix", async (req, res) => {
-  console.log("saving mix...");
+  console.log("saving mix...", {
+    address: req.body.address,
+    signature: req.body.signature,
+    tokenAddress: req.body.tokenAddress,
+    tokenId: req.body.tokenId,
+    padRecording: req.body.padRecording,
+  });
   const { status, response } = await uploadController.saveMix(
     req.body.address,
     req.body.signature,
