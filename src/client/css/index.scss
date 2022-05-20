@@ -11,6 +11,13 @@
   position: relative;
   height: 100%;
   background-color: $dark-gray;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+   -khtml-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 #slideshow {
@@ -451,7 +458,7 @@ input[type="number"] {
   display: flex;
   justify-content: start;
   align-items: center;
-  width: 100%;
+  // width: 100%;
   gap: 16px
 }
 
@@ -487,9 +494,42 @@ input[type="number"] {
   @media only screen and (min-width: 768px) {
     display: flex;
     align-items: flex-end;
+    &.no-details {
+      justify-content: flex-end;
+    }
   }
 }
 
+.bouquet-details {
+  position: absolute;
+  margin: 0 auto;
+  margin-bottom: 32px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+
+  .beatPackTitle {
+    font-size: 28px;
+    line-height: 32px;
+    text-align: center;
+  }
+  .artistName {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+  }
+  @media only screen and (min-width: 768px) {
+    bottom: 0;
+
+    .beatPackTitle {
+      font-size: 38px;
+      line-height: 44px;
+    }
+    .artistName {
+
+    }
+  }
+}
 .song-details {
   order: 1;
   margin-top: 16px;
@@ -1372,7 +1412,7 @@ canvas {
   height: 100%;
   z-index: 100;
   filter: brightness(40%);
-  border-radius: 8px;
+  border-radius: 16px;
 }
 
 .waterLoopVideo source {

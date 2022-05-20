@@ -493,6 +493,24 @@ export default function BouquetCarousel(props) {
                     >
                       <source src={nft.imageURL} type="video/mp4" />
                     </video>
+                    <div className="bouquet-details">
+
+                      {
+                        nft._id == "6226bbcb58e2c3413bea0310" &&
+                        <p className="launchdate-text body-medium yellow-text">
+                          LAUNCH AND REVEAL 5/24
+                        </p>
+                      }
+
+                      <div className="beatPackTitle display-medium">
+                        {nft.name}
+                      </div>
+                      <div className="artistName">{`by ${nft.artistName} ${
+                        nft.visualArtistName
+                          ? `& ${nft.visualArtistName}`
+                          : ""
+                      }`}</div>
+                    </div>
                   </div>
                 )}
                 {mediaFileExtension(nft) !== "mp4" && (
@@ -504,6 +522,8 @@ export default function BouquetCarousel(props) {
                   <>
 
                   {renderPad()}
+
+
                   </>
 
               )}
@@ -562,7 +582,7 @@ export default function BouquetCarousel(props) {
             </React.Fragment>
           </div>
         )}
-        <div className="song-info-container">
+        <div className="song-info-container no-details">
           {/* {openControls && (
             <div className="controls-container">
               <div className="record-container control-item">
@@ -760,20 +780,6 @@ export default function BouquetCarousel(props) {
             </div>
           )}
 
-
-            <div className="song-details">
-              <p className="launchdate-text body-medium yellow-text">
-                LAUNCH AND REVEAL 5/24
-              </p>
-              <div className="beatPackTitle display-medium">
-                {nfts[visibleSectionIndex.current].name}
-              </div>
-              <div className="artistName">{`by ${nfts[visibleSectionIndex.current].artistName} ${
-                nfts[visibleSectionIndex.current].visualArtistName
-                  ? `& ${nfts[visibleSectionIndex.current].visualArtistName}`
-                  : ""
-              }`}</div>
-            </div>
 
 
         </div>

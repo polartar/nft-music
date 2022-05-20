@@ -142,9 +142,23 @@ export default function Footer(props) {
             props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
           }
         >
+
+        <div className="volumeWrapper">
+          <ThemeProvider theme={muiTheme}>
+            <Slider
+              min={-50}
+              max={0}
+              defaultValue={volume}
+              onChange={(event, newValue) => setVolume(newValue)}
+            />
+          </ThemeProvider>
+        </div>
+
           {/* {showShare && !isLoggedIntoMetamask && ( */}
           {hidePlayControls || (
             <div className="play-controls">
+
+
               {handleSlide &&
                 <a href="#" onClick={() => handleSlide("prevNFT")}>
                   <img
@@ -191,18 +205,21 @@ export default function Footer(props) {
               </a>
             }
 
-              <div className="volumeContainer">
-                <div className="volumeWrapper">
-                  <ThemeProvider theme={muiTheme}>
-                    <Slider
-                      min={-50}
-                      max={0}
-                      defaultValue={volume}
-                      onChange={(event, newValue) => setVolume(newValue)}
-                    />
-                  </ThemeProvider>
-                </div>
-              </div>
+
+
+
+
+            </div>
+          )}
+          {hidePlayControls || (
+            <div style={{maxWidth: "440px", paddingLeft: "16px", width: "100%", display:"flex", justifyContent:"flex-end"}}>
+              <ControlsButton
+                className={`cta-button small ${
+                  openControls ? "white" : "light-dark"
+                }`}
+                onClick={setOpenControls}
+                fill={openControls ? "#575757" : "#FFF"}
+              />
             </div>
           )}
 
@@ -241,17 +258,7 @@ export default function Footer(props) {
               </div>
             </div>
           */}
-          {hidePlayControls || (
-            <div>
-              <ControlsButton
-                className={`cta-button small ${
-                  openControls ? "white" : "light-dark"
-                }`}
-                onClick={setOpenControls}
-                fill={openControls ? "#575757" : "#FFF"}
-              />
-            </div>
-          )}
+
 
           {/* <button className="button" onClick={() => handleMintMenu()}>
             TO MINT MENU
