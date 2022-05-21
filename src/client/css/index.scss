@@ -2456,3 +2456,75 @@ a {
     opacity: 1;
   }
 }
+
+.spinner-box {
+  left: 50%;
+  top: 50%;
+
+  z-index: 1200;
+
+
+  font-size: 0;
+  -webkit-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+  text-align: center;
+
+  position: absolute;
+
+  -webkit-transform: translateX(-50%) translateY(-50%) rotate(45deg);
+  transform: translateX(-50%) translateY(-50%) rotate(45deg);
+
+  @media only screen and (max-width: 700px) {
+    top: 42%;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0.9);
+    &.embed {
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(45deg) scale(0.9);
+    }
+  }
+
+  &.carousel {
+    position: absolute !important;
+    opacity: 1 !important;
+  }
+
+  margin: 0 auto;
+  width: 300px;
+  height: 300px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+}
+
+.configure-border-1 {
+  width: 88px;
+  border-radius: 8px;
+  height: 88px;
+  padding: 3px;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 27px 4px rgba(255, 255, 255, 0.2);
+  border-color:  white;
+  border-width: 1px;
+  border-style: solid;
+  animation: spin 3s ease-in-out 0s infinite alternate;
+}
+
+.configure-core {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+
+@keyframes spin {
+  from {
+    transform: rotate(0);
+  }
+  to{
+    transform: rotate(359deg);
+  }
+}

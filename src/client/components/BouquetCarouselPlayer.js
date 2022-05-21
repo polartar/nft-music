@@ -3,9 +3,9 @@ import cx from "classnames";
 import Footer from "./Footer";
 import anime from "animejs/lib/anime.es.js";
 
-export default function BouquetCarousel(props) {
+export default function BouquetCarouselPlayer(props) {
   let {
-    setupBouquetForIndex,
+    setupBouquetPlayerForIndex,
     padFormat,
     players,
     pads,
@@ -37,7 +37,8 @@ export default function BouquetCarousel(props) {
     handlePlayback,
     setVolume,
     shareablePadNumbers,
-    isLoggedIntoMetamask
+    isLoggedIntoMetamask,
+    playersLoaded
   } = props
 
   const [idle, setIdle] = useState(true);
@@ -75,16 +76,17 @@ export default function BouquetCarousel(props) {
   }, [oldX, idle, visibleSectionIndex]);
 
   useEffect(() => {
+    //set initial NFT to active
+
     let wrapper = document.querySelector("#collection-slide-wrapper");
     let items = wrapper.querySelectorAll(".collection-slide");
     items[0].classList.add("activeNFT")
   }, []);
 
   useEffect(() => {
-    let el = document.querySelector("#collection-slide-wrapper");
-    // let mobileEl = document
+    //setup touch start event
 
-    //scroll handling
+    let el = document.querySelector("#collection-slide-wrapper");
     el.addEventListener("touchstart", touchStart);
     return() => {
       el.removeEventListener("touchstart", touchStart);
@@ -92,8 +94,9 @@ export default function BouquetCarousel(props) {
   }, [touchStart]);
 
   useEffect(() => {
+    //setup touch end event
+
     let el = document.querySelector("#collection-slide-wrapper");
-    // let mobileEl = document
     el.addEventListener("touchend", touchMove);
     return() => {
       el.removeEventListener("touchend", touchMove);
@@ -101,10 +104,9 @@ export default function BouquetCarousel(props) {
   }, [touchMove]);
 
   useEffect(() => {
-    let el = document.querySelector("#collection-slide-wrapper");
-    // let mobileEl = document
+    //setup mouse down event
 
-    //scroll handling
+    let el = document.querySelector("#collection-slide-wrapper");
     el.addEventListener("mousedown", touchStart);
     return() => {
       el.removeEventListener("mousedown", touchStart);
@@ -112,8 +114,9 @@ export default function BouquetCarousel(props) {
   }, [touchStart]);
 
   useEffect(() => {
+    //setup mouse up event
+
     let el = document.querySelector("#collection-slide-wrapper");
-    // let mobileEl = document
     el.addEventListener("mouseup", touchMove);
     return() => {
       el.removeEventListener("mouseup", touchMove);
@@ -271,7 +274,7 @@ export default function BouquetCarousel(props) {
 
     activeSlide.addEventListener("transitionend", waitForIdle, {once: true});
 
-    setupBouquetForIndex(visibleSectionIndex.current)
+    setupBouquetPlayerForIndex(visibleSectionIndex.current)
 
   }
   const mediaFileExtension = (nft) => {
@@ -378,33 +381,44 @@ export default function BouquetCarousel(props) {
       }
     })}
 
+
     return (
       <>
-      <div id="beatpad" className={`gridOuter blooming carousel`}>
 
-      <div className="bloom-group top">
-        {bloomObject["top"]}
-      </div>
-      <div className="bloom-group right">
-        <div className="bloom-content">
+        {
+          playersLoaded ?
+          <div id="beatpad" className={`gridOuter blooming carousel`}>
+          <div className="bloom-group top">
+            {bloomObject["top"]}
+          </div>
+          <div className="bloom-group right">
+            <div className="bloom-content">
 
-        {bloomObject["right"]}
-      </div>
-      </div>
-      <div className="bloom-group left">
-        <div className="bloom-content">
-        {bloomObject["left"]}
-      </div>
-      </div>
-      <div className="bloom-group bottom">
-        {bloomObject["bottom"]}
-      </div>
-      <div className={`main-pad-group ${padFormatStyleClass}`}>
+            {bloomObject["right"]}
+          </div>
+          </div>
+          <div className="bloom-group left">
+            <div className="bloom-content">
+            {bloomObject["left"]}
+          </div>
+          </div>
+          <div className="bloom-group bottom">
+            {bloomObject["bottom"]}
+          </div>
+          <div className={`main-pad-group ${padFormatStyleClass}`}>
 
-        {beatPads}
-      </div>
+            {beatPads}
+          </div>
+          </div>
+          :
+          <div className="spinner-box">
+            <div className="configure-border-1">
+              <div className="configure-core"></div>
+            </div>
+          </div>
+        }
 
-      </div>
+
       </>
     )
   }
@@ -483,6 +497,7 @@ export default function BouquetCarousel(props) {
               <div className="collection-slide" data-collectionindex={index} key={index}>
                 {mediaFileExtension(nft) === "mp4" && (
                   <div className="video-container">
+
                     <video
                       className="waterLoopVideo"
                       playsInline
@@ -534,7 +549,10 @@ export default function BouquetCarousel(props) {
                 {visibleSectionIndex.current == index && (
                   <>
 
-                  {renderPad()}
+                  {
+                    renderPad()
+
+                  }
 
 
                   </>

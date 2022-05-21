@@ -46,7 +46,7 @@ import MonsteraLeaf from "./components/MonsteraLeaf";
 import Tulip from "./components/Tulip";
 import FlowerArrangement from "./components/FlowerArrangement";
 import Stopwatch from "./components/Stopwatch";
-import BouquetCarousel from "./components/BouquetCarousel";
+import BouquetCarouselPlayer from "./components/BouquetCarouselPlayer";
 import { withWeb3HOC } from "./Web3HOC";
 import "./css/nftCarousel.scss";
 import http from "http";
@@ -219,7 +219,8 @@ class Sequencer extends Component {
     steps: 0,
     playing: false,
     delay: false,
-    loaded: false,
+    initialNFTLoaded: false,
+    playersLoaded: false,
     totalSoundsPlaying: 0,
     openBidModal: false,
     nft: null,
@@ -257,7 +258,7 @@ class Sequencer extends Component {
     this.players = {};
     this.rhythmPads = [];
 
-    this.fetchNFT();
+    this.fetchNFTs();
 
     this.cablesCanvas = createRef();
     this.canvas = createRef();
@@ -369,7 +370,7 @@ class Sequencer extends Component {
     }
   };
 
-  fetchNFT = async () => {
+  fetchNFTs = async () => {
     let nftResponse;
     let featuredNFTs = []
     if (this.props.match) {
@@ -393,20 +394,21 @@ class Sequencer extends Component {
       featuredNFTs: featuredNFTs
     });
 
-    this.setupBouquetForIndex(0)
+    this.setupBouquetPlayerForIndex(0)
   }
 
 
-  setupBouquetForIndex = (index) => {
+  setupBouquetPlayerForIndex = (index) => {
 
     if (this.state.playing) {
       this.clearSelections()
+
       Tone.Transport.cancel()
     }
 
     let nft = this.state.featuredNFTs[index]
 
-    this.setState({nft});
+    this.setState({nft, playersLoaded: false});
 
     this.setupPadsForNFT(nft)
   }
@@ -621,7 +623,8 @@ class Sequencer extends Component {
         let _this = this;
         this.setState(
           () => ({
-            loaded: true,
+            initialNFTLoaded: true,
+            playersLoaded: true,
             showTutorial:
               this.state.showTutorial && sharedPadNumbers !== null
                 ? false
@@ -1045,6 +1048,7 @@ class Sequencer extends Component {
       if (this.activePlayers[group].length > 0) {
         // loop to stop active pads instead of entire player list
         for (let i = 0; i < this.activePlayers[group].length; i++) {
+          console.log("stopped player in group " + group + " and index " + i)
           this.players[group][this.activePlayers[group][i]].stop();
         }
       }
@@ -1195,7 +1199,7 @@ class Sequencer extends Component {
       ],
       easing: "easeInOutSine",
       duration: 500,
-      opacity: 1,
+      opacity: 0.3,
       delay: 0,
     });
   };
@@ -1407,7 +1411,7 @@ class Sequencer extends Component {
         ],
         easing: "easeInOutSine",
         duration: 500,
-        opacity: 1,
+        opacity: 0.3,
         delay: 0,
       });
 
@@ -1824,7 +1828,7 @@ class Sequencer extends Component {
       step,
       steps,
       notes,
-      loaded,
+      initialNFTLoaded,
       nft,
       isLoggedIntoMetamask,
       bids,
@@ -1863,7 +1867,7 @@ class Sequencer extends Component {
       this.patch.config.didRender = this.didRender;
     }
     // Set up active sounds limit
-    if (nft && loaded) {
+    if (nft && initialNFTLoaded) {
       const mediaFileExtension = nft.imageURL
         .split(".")
         .pop()
@@ -1887,8 +1891,9 @@ class Sequencer extends Component {
                 />
 
 
-                <BouquetCarousel
-                  setupBouquetForIndex={this.setupBouquetForIndex.bind(this)}
+                <BouquetCarouselPlayer
+                  setupBouquetPlayerForIndex={this.setupBouquetPlayerForIndex.bind(this)}
+                  playersLoaded={this.state.playersLoaded}
                   padFormat={padFormat}
                   padFormatStyleClass={padFormatStyleClass}
                   players={this.players}

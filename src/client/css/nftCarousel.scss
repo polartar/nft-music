@@ -32,34 +32,46 @@
   &:not(.prevNFT):not(.nextNFT):not(.activeNFT) {
     z-index: 0;
     transform: translate3d(25%, 0, 0) scale(0.67);
-    opacity: 0.2;
+    .waterLoopVideo {
+      filter: brightness(25%);
+    }
+
   }
 
   &.prevNFT {
     z-index: 0;
     transform: translate3d(-25%, 0, 0) scale(0.67);
     transition: 1s $easing;
-    opacity: 0.2;
+
+    .waterLoopVideo {
+      filter: brightness(25%);
+    }
   }
 
   &.activeNFT {
     z-index: 10;
     transform: translate3d(0, 0, 0) scale(1);
     transition: transform 1s $easing;
-    opacity: 1;
+    .waterLoopVideo {
+      filter: brightness(50%);
+    }
   }
 
   &.nextNFT {
     z-index: 5;
     transform: translate3d(25%, 0, 0) scale(0.67);
     transition: 1s $easing;
-    opacity: 0.2;
+    .waterLoopVideo {
+      filter: brightness(25%);
+    }
   }
 
   @at-root #collection-slide-wrapper.prevNFT & {
     &:not(.prevNFT):not(.nextNFT):not(.activeNFT) {
       transform: translate3d(-25%, 0, 0) scale(0.67);
-      opacity: 0.2;
+      .waterLoopVideo {
+        filter: brightness(25%);
+      }
     }
 
     &.prevNFT {
@@ -77,5 +89,6 @@
     }
   }
 }
+
 
 /* NFT CAROUSEL SLIDESHOW - END */
