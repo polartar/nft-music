@@ -1830,9 +1830,18 @@ class Sequencer extends Component {
                                       ? "Playback"
                                       : "Stop Playback"}
                                   </button>
+                                  
                                 )}
                               </div>
+                              {this.state.isOwner && (
+                                <a href="https://drive.google.com/drive/folders/19ngBYg5r6wLM7EFnEcVTfNuOWxO8mWx3?usp=sharing" target="_blank" rel="noreferrer noopener">
+                                  <button className={"button record"}>
+                                    Download Stems
+                                  </button>
+                                </a>
+                              )}
                             </div>
+
                             <button
                               className={"button record control-item"}
                               onClick={this.setHideBeatpad.bind(this)}

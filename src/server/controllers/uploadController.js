@@ -129,31 +129,31 @@ async function exportRecording(
       },
     ];
 
-    // if (launchDate) {
-    //   videoFilters.push({
-    //     filter: "drawtext",
-    //     options: {
-    //       fontfile: "Manrope-Medium.ttf",
-    //       text: "PREVIEW",
-    //       fontsize: 36,
-    //       fontcolor: "#F4F4F1",
-    //       x: "(w-text_w)/2",
-    //       y: 84,
-    //     },
-    //   });
+    if (launchDate) {
+      videoFilters.push({
+        filter: "drawtext",
+        options: {
+          fontfile: "Manrope-Medium.ttf",
+          text: "PREVIEW",
+          fontsize: 36,
+          fontcolor: "#F4F4F1",
+          x: "(w-text_w)/2",
+          y: 84,
+        },
+      });
 
-    //   videoFilters.push({
-    //     filter: "drawtext",
-    //     options: {
-    //       fontfile: "Manrope-Bold.ttf",
-    //       text: launchDate,
-    //       fontsize: 48,
-    //       fontcolor: "#E4F0A8",
-    //       x: "(w-text_w)/2",
-    //       y: 180,
-    //     },
-    //   });
-    // }
+      videoFilters.push({
+        filter: "drawtext",
+        options: {
+          fontfile: "Manrope-Bold.ttf",
+          text: launchDate,
+          fontsize: 48,
+          fontcolor: "#E4F0A8",
+          x: "(w-text_w)/2",
+          y: 180,
+        },
+      });
+    }
 
     ffmpeg()
       .addInput(nft.imageURL)
