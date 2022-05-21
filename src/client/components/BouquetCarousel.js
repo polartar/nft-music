@@ -493,15 +493,26 @@ export default function BouquetCarousel(props) {
                     >
                       <source src={nft.imageURL} type="video/mp4" />
                     </video>
+
+                    <div style={{opacity: visibleSectionIndex.current == index ? 1 : 0}}>
+                    {
+                      nft._id == "6226bbcb58e2c3413bea0310" &&
+                      <div style={{position:"absolute", top:"0", marginTop:"32px", left:0, right:0, zIndex:"1000"}} className=" is-hidden-mobile">
+                        <p className="body-small yellowish-gray-text">
+
+                        PREVIEW
+                      </p>
+                          <p className="launchdate-text body-medium yellow-text">
+                            LAUNCH AND REVEAL 5/24
+                          </p>
+
+                      </div>
+                    }
+
                     <div className="bouquet-details">
-
-                      {
-                        nft._id == "6226bbcb58e2c3413bea0310" &&
-                        <p className="launchdate-text body-medium yellow-text">
-                          LAUNCH AND REVEAL 5/24
-                        </p>
-                      }
-
+                      <p className="launchdate-text body-medium yellow-text is-hidden-desktop is-hidden-tablet">
+                        LAUNCH AND REVEAL 5/24
+                      </p>
                       <div className="beatPackTitle display-medium">
                         {nft.name}
                       </div>
@@ -511,6 +522,8 @@ export default function BouquetCarousel(props) {
                           : ""
                       }`}</div>
                     </div>
+                  </div>
+
                   </div>
                 )}
                 {mediaFileExtension(nft) !== "mp4" && (

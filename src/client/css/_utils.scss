@@ -79,6 +79,18 @@
   background-color: $dark-gray;
 }
 
+.is-hidden-mobile {
+  display: none;
+}
+
+.is-hidden-tablet {
+  display: block;
+}
+
+
+.is-hidden-desktop {
+  display: block;
+}
 
 @media (min-width: 640px) {
     .sm\:display-medium {
@@ -90,16 +102,28 @@
       font-size: 24px;
       line-height: 28px;
     }
+
+    .is-hidden-mobile {
+      display: block;
+    }
 }
 
 @media (min-width: 768px) {
     .md\:flex {
         display:flex
     }
+
+    .is-hidden-tablet {
+      display: none;
+    }
 }
 
 @media (min-width: 1024px) {
     .lg\:w-0 {
         width:0
+    }
+
+    .is-hidden-desktop {
+      display: none;
     }
 }
