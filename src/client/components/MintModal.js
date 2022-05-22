@@ -381,6 +381,7 @@ export default function MintModal(props) {
                 <div style={{ height: "44px" }} />
 
                 <React.Fragment>
+                  <div className="flex flex-col gap-2">
                   <button
                     className="cta-button"
                     onClick={() => handleMint(1)}
@@ -395,6 +396,7 @@ export default function MintModal(props) {
                   >
                     MINT 2 - {parseFloat(currentPrice) * 2} ETH
                   </button>
+                </div>
                   <p className="body-medium yellowish-gray-text">
                     By clicking Mint, you agree to our&nbsp;
                     <a
@@ -406,37 +408,37 @@ export default function MintModal(props) {
                     </a>
                   </p>
                   <div style={{ height: "44px" }} />
-                  <p className="body-medium yellowish-gray-text text-uppercase">
+                  <p className="body-small yellowish-gray-text text-uppercase">
                     <b>Limit 2 per wallet</b>
                   </p>
                   {account && (
-                    <p className="body-medium yellowish-gray-text text-uppercase">
+                    <p className="body-small yellowish-gray-text text-uppercase">
                       Mint Status: <b>{mintStatus}</b>
                     </p>
                   )}
 
-                  <p className="body-medium yellowish-gray-text text-uppercase">
+                  <p className="body-small yellowish-gray-text text-uppercase">
                     Total Editions Minted: <b>{totalSupply}</b>
                   </p>
-                  <p className="body-medium yellowish-gray-text text-uppercase">
+                  <p className="body-small yellowish-gray-text text-uppercase">
                     Total Public Editions Minted: <b>{totalPublicMinted}</b>
                   </p>
                   {/* {mintStatus === "PUBLIC" && (
                       <>
-                        <p className="body-medium yellowish-gray-text text-uppercase">
+                        <p className="body-small yellowish-gray-text text-uppercase">
                           Next Price Drop: <b>{nextPriceDropDate}</b>{" "}
                         </p>
-                        <p className="body-medium yellowish-gray-text text-uppercase">
+                        <p className="body-small yellowish-gray-text text-uppercase">
                           <b>{priceDropAmount}</b>
                         </p>
                       </>
                     )}
                     {mintStatus === "MINT LIST" && (
                       <>
-                        <p className="body-medium yellowish-gray-text text-uppercase">
+                        <p className="body-small yellowish-gray-text text-uppercase">
                           Mint List winners will always mint at 0.5 ETH.
                         </p>
-                        <p className="body-medium yellowish-gray-text text-uppercase">
+                        <p className="body-small yellowish-gray-text text-uppercase">
                           You will be able to claim a refund when sales end for
                           the difference between your price and the lowest Dutch
                           Auction price.
@@ -445,21 +447,21 @@ export default function MintModal(props) {
                     )} */}
                   {mintStatus === "PUBLIC" && (
                     <>
-                      <p className="body-medium yellowish-gray-text text-uppercase">
+                      <p className="body-small yellowish-gray-text text-uppercase">
                         <b>Mint Price: 0.1 ETH</b>
                       </p>
                     </>
                   )}
                   {mintStatus === "CAPSULE HOUSE" && (
                     <>
-                      <p className="body-medium yellowish-gray-text text-uppercase">
+                      <p className="body-small yellowish-gray-text text-uppercase">
                         <b>Mint Price: 0.065 ETH</b>
                       </p>
                     </>
                   )}
                   {mintStatus === "GENESIS" && (
                     <>
-                      <p className="body-medium yellowish-gray-text text-uppercase">
+                      <p className="body-small yellowish-gray-text text-uppercase">
                         <b>Mint Price: 0.05 ETH</b>
                       </p>
                     </>
