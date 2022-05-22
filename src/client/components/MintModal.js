@@ -317,7 +317,6 @@ export default function MintModal(props) {
         </div>
         <div
           className="modalBody2"
-          style={{ paddingTop: "0px", paddingBottom: "80px" }}
         >
           <div style={{ textAlign: "center" }}>
             {isMinting ? (
@@ -381,7 +380,7 @@ export default function MintModal(props) {
                 <div style={{ height: "44px" }} />
 
                 <React.Fragment>
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col items-center gap-2">
                   <button
                     className="cta-button"
                     onClick={() => handleMint(1)}

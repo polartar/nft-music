@@ -2179,6 +2179,11 @@ footer {
   display: flex;
   justify-content: flex-end;
 }
+
+.modalBody2 {
+  padding-top: 0px;
+  padding-bottom: 80px;
+}
 @media only screen and (max-width: 700px) {
   .mint-modal-container {
     padding: 0 8px;
@@ -2188,7 +2193,7 @@ footer {
     }
 
     .modalBody2 {
-      padding: 0px 16px !important;
+      padding-top: 16px;
     }
   }
 
