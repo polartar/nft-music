@@ -48,18 +48,21 @@ async function getMintStatusForAddress(address) {
       .collection("mintStatus")
       .findOne({ address: address.toLowerCase() });
     let price;
+
     if (mintStatus?.status === "CAPSULE HOUSE") {
       price = EARLY_PRICE;
     } else if (mintStatus?.status === "GENESIS") {
       price = GENESIS_PRICE;
-    } 
+    } else {
+    }
+
     if (mintStatus) {
       return {
         status: 200,
         response: {
           status: mintStatus.status,
-          price
-        }
+          price,
+        },
       };
     }
 
@@ -67,8 +70,8 @@ async function getMintStatusForAddress(address) {
       status: 200,
       response: {
         status: "PUBLIC",
-        price: PUBLIC_PRICE
-      }
+        price: PUBLIC_PRICE,
+      },
     };
   } catch (error) {
     console.log(error);
@@ -160,7 +163,7 @@ async function makeWhitelistSignature(address, quantity) {
       response: {
         hash: hash,
         signature: ownerSignature,
-        price
+        price,
       },
     };
   } catch (error) {
