@@ -156,7 +156,7 @@ async function exportRecording(
     }
 
     ffmpeg()
-      .addInput(nft.localImageURL)
+      .addInput(nft.imageURL)
       .inputOption("-stream_loop -1")
       .addInput(stream)
       .outputOptions(

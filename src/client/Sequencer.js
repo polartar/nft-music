@@ -107,6 +107,8 @@ class Sequencer extends Component {
     didFetchOwnerNFTs: false,
     hasNewRecording: false,
     exportingStatus: "",
+    startRecordingTime: "",
+    endTotalRecordingTime: "",    
   };
 
   constructor(props) {
@@ -171,13 +173,9 @@ class Sequencer extends Component {
 
   exportRecording = async (blob) => {
     this.setState({
-      exportingStatus: "Exporting, please wait...",
+      exportingStatus: `Exporting, please wait...`,
     });
-    setTimeout(() => {
-      this.setState({
-        exportingStatus: "",
-      });
-    }, 9000);
+    this.calculateProgressPercentage();
 
     try {
       const form = new FormData();
@@ -200,10 +198,14 @@ class Sequencer extends Component {
       anchor.click();
 
       this.setState({
-        recordingStatus: "",
+        // recordingStatus: "",
+        exportingStatus: "",
       });
     } catch (error) {
       console.log(error);
+      this.setState({
+        exportingStatus: "Exporting failed, please try again.",
+      });
     }
   };
 
@@ -398,6 +400,7 @@ class Sequencer extends Component {
               recordingStatus: "Preparing export...",
               recording,
               hasNewRecording: true,
+              endTotalRecordingTime: Date.now(),
             });
           }
         }
@@ -1273,6 +1276,38 @@ class Sequencer extends Component {
     this.setState({ openControls: !this.state.openControls });
   }
 
+  calculateProgressPercentage = async () => {
+    const totalDuration =
+      this.state.endTotalRecordingTime - this.state.startRecordingTime;
+    const scaledDuration = totalDuration * 1.3;
+    const wait = (ms) => new Promise((res) => setTimeout(res, ms));
+    let currentMs = 0;
+    while (currentMs * 1.3 <= scaledDuration) {
+      if (
+        this.state.exportingStatus &&
+        this.state.exportingStatus.includes("Exporting, please wait...")
+      ) {
+        this.setState({
+          exportingStatus: `Exporting, please wait... ${Math.floor(
+            ((currentMs * 1.3) / scaledDuration) * 100
+          )}%`,
+        });
+      }
+      await wait(1000 * 1.3);
+      currentMs += 1000;
+    }
+    //if loop ends and download hasn't commenced, show user the message below
+    if (
+      this.state.exportingStatus &&
+      this.state.exportingStatus.includes("Exporting, please wait...")
+    ) {
+      this.setState({
+        exportingStatus:
+          "Exporting, please wait...100%. Your download will initiate soon",
+      });
+    }
+  };
+
   render() {
     const {
       pads,
@@ -1617,17 +1652,18 @@ class Sequencer extends Component {
                           <div className="controls-container">
                             <div className="record-container control-item">
                               <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
-                                  width:
-                                    this.state.recordingStatus.length > 0 || this.state.exportingStatus.length > 0
-                                      ? "100%"
-                                      : "200px",
-                                }}
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                width:
+                                  this.state.recordingStatus.length > 0 ||
+                                  this.state.exportingStatus.length > 0
+                                    ? "100%"
+                                    : "200px",
+                              }}
                               >
-                                {this.state.exportingStatus ===
+                                {/* {this.state.exportingStatus ===
                                 "Exporting, please wait..." ? (
                                   <div
                                     style={{ marginRight: "10px" }}
@@ -1657,7 +1693,43 @@ class Sequencer extends Component {
                                       : this.state.recordingStatus}
                                     {this.state.isRecording && <Stopwatch />}
                                   </div>
-                                )}
+                                )} */}
+                                {this.state.exportingStatus.length > 0 && (
+                                <div
+                                  style={{ marginRight: "10px" }}
+                                  className="body-medium yellow-text"
+                                >
+                                  {this.state.exportingStatus}
+                                </div>
+                              )}
+                                {this.shouldRenderPostRecording() && this.state.isOwner ? (
+                                <button
+                                  className={
+                                    this.state.exportingStatus.includes(
+                                      "Exporting, please wait..."
+                                    )
+                                      ? "button disabled"
+                                      : "button record"
+                                  }
+                                  style={{ marginRight: "10px" }}
+                                  disabled={this.state.exportingStatus.includes(
+                                    "Exporting, please wait..."
+                                  )}
+                                  onClick={() =>
+                                    this.exportRecording(this.state.recording)
+                                  }
+                                >
+                                  Export
+                                </button>
+                              ) : (
+                                <div
+                                  style={{ marginRight: "10px" }}
+                                  className="body-medium yellow-text"
+                                >
+                                  {this.state.recordingStatus}
+                                  {this.state.isRecording && <Stopwatch />}
+                                </div>
+                              )}
                                 {this.state.isOwner && (
                                   <button
                                     className={
@@ -1758,9 +1830,18 @@ class Sequencer extends Component {
                                       ? "Playback"
                                       : "Stop Playback"}
                                   </button>
+                                  
                                 )}
                               </div>
+                              {this.state.isOwner && (
+                                <a href="https://drive.google.com/drive/folders/19ngBYg5r6wLM7EFnEcVTfNuOWxO8mWx3?usp=sharing" target="_blank" rel="noreferrer noopener">
+                                  <button className={"button record"}>
+                                    Download Stems
+                                  </button>
+                                </a>
+                              )}
                             </div>
+
                             <button
                               className={"button record control-item"}
                               onClick={this.setHideBeatpad.bind(this)}
