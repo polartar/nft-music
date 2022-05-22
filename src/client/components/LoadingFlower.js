@@ -18,19 +18,40 @@ const Carnation = (props) => (
 
 export default function LoadingFlower(props) {
   useEffect(() => {
+    // anime({
+    //   targets: '#loading-flower path',
+    //   easing: 'easeInOutQuad',
+    //   fill: ["#FFF", "#E4F0A8"],
+    //   // scale: [1.0, 0.99],
+    //   // direction: "alternate",
+    //   loop: true,
+    //   delay: 1000,
+    //   duration: 5000
+    // });
+
+    // anime({
+    //   targets: '#loading-flower-wrapper',
+    //   easing: 'easeInOutQuad',
+    //   // scale: [1.0, 0.99],
+    //   direction: "alternate",
+    //   loop: true,
+    //   duration: 5000
+    // });
+
     anime({
-      targets: '#loading-flower path',
+      targets: '#loading-flower-wrapper',
       easing: 'easeInOutQuad',
-      fill: ["#FFF", "#E4F0A8"],
+      scale: [0.33, 1.0],
+      rotate: 360,
       // scale: [1.0, 0.99],
-      // direction: "alternate",
+      direction: "alternate",
       loop: true,
-      delay: 1000,
-      duration: 1000
+      duration: 5000
     });
 
     // Create a timeline with default parameters
     var tl = anime.timeline({
+      direction: 'alternate',
       easing: 'easeOutExpo',
       duration: 750,
       loop: true
@@ -51,7 +72,7 @@ export default function LoadingFlower(props) {
       translateX: [-10, -20],
       translateY: [0, -10],
       rotate: [45,50],
-      duration: 500
+      duration: 1250
     })
     .add({
       targets: '#loading-flower-3',
@@ -60,7 +81,7 @@ export default function LoadingFlower(props) {
       translateX: [0, 10],
       translateY: [0, -10],
       rotate: [85,90],
-      duration: 500
+      duration: 1250
     })
     .add({
       targets: '#loading-flower-4',
@@ -69,7 +90,7 @@ export default function LoadingFlower(props) {
       translateX: [-10, 0],
       translateY: [0, 10],
       rotate: [130,135],
-      duration: 500
+      duration: 1250
     })
     .add({
       targets: '#loading-flower-5',
@@ -78,18 +99,18 @@ export default function LoadingFlower(props) {
       translateX: [-10, -20],
       translateY: [0, 10],
       rotate: [-270,-275],
-      duration: 500
+      duration: 1250
     });
 
   }, []);
 
   return (
-    <div>
+    <div id="loading-flower-wrapper">
       <Carnation id="loading-flower-2" fill="#3B3B3B" style={{position:"absolute", left:0, top: 0}}/>
       <Carnation id="loading-flower-3" fill="#575757" style={{position:"absolute", right:0, top: 0}}/>
       <Carnation id="loading-flower-4" fill="#737374" style={{position:"absolute", right:0, bottom: 0}}/>
       <Carnation id="loading-flower-5" fill="#8F8F8F" style={{position:"absolute", left:0, bottom: 0}}/>
-      <Carnation id="loading-flower" fill="#FFF"/>
+      <Carnation id="loading-flower" fill="#CCCCCC"/>
 
     </div>
   )
