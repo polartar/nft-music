@@ -241,7 +241,7 @@ class Sequencer extends Component {
     shouldStartRecording: false,
     shouldStopRecording: false,
     isRecording: false,
-    timer: 0,
+    recordingTimer: 0,
     recordingStatus: "",
     openControls: false,
     hideBeatpad: false,
@@ -340,7 +340,7 @@ class Sequencer extends Component {
       form.append("nftName", this.state.nft.name);
       form.append("edition", this.state.nft.edition);
       //hardcoded launch date text, ideally this comes from the nft object
-      form.append("launchDate", "LAUNCH AND REVEAL " + "5/17");
+      form.append("launchDate", "LAUNCH AND REVEAL " + "5/24");
 
       const response = await axios.post("/api/exportRecording", form, {
         responseType: "blob",
@@ -422,6 +422,10 @@ class Sequencer extends Component {
       const subSteps = nftResponse.data.subSteps;
 
       this.rhythmPads = new Array(steps).fill([0]);
+
+      if (nftResponse.data.blooms && nftResponse.data.blooms[0]) {
+        padFormat.push(nftResponse.data.blooms[0]["stems"])
+      }
 
       this.setState({ pads, queue, padFormat, steps, padFormatStyleClass });
 
@@ -536,27 +540,26 @@ class Sequencer extends Component {
           if (this.state.shouldStartRecording) {
             this.recorder.start();
 
+            //track and limit recording to 60 seconds
+            let milliseconds = 0;
+
+            const incrementMilliseconds = () => {
+              if (this.state.recordingTimer >= 60000) {
+                this.stopRecording()
+              } else {
+                this.setState({
+                  recordingTimer: (milliseconds += 1000),
+                });
+              }
+            };
+            window.timer = setInterval(incrementMilliseconds, 1000);
+
             console.log("starting!");
 
             this.setState({
               shouldStartRecording: false,
               isRecording: true,
               recordingStatus: "Recording...",
-            });
-
-            //Check if there are existing stems playing and add them to the recording
-            Object.keys(this.players).forEach((group) => {
-              this.players[group].forEach((_, soundIndex) => {
-                if (this.players[group][soundIndex].state == "started") {
-                  console.log("found started player");
-                  this.setState({
-                    padRecording: [
-                      ...this.state.padRecording,
-                      [group, soundIndex, Date.now()],
-                    ],
-                  });
-                }
-              });
             });
           }
 
@@ -816,7 +819,7 @@ class Sequencer extends Component {
     }
 
     // preserved for millisecond work
-    // const milliseconds = cloneDeep(this.state.timer);
+    // const milliseconds = cloneDeep(this.state.recordingTimer);
 
     if (this.state.padRecording.length <= 0) {
       this.setState({
@@ -922,20 +925,21 @@ class Sequencer extends Component {
 
   // recording work
   startRecording() {
-    this.setState({
-      shouldStartRecording: true,
-      recordingStatus: "Waiting for next loop to start...",
-      padRecording: [],
-    });
-    let milliseconds = 0;
-
-    const incrementMilliseconds = () => {
-      this.setState({
-        timer: (milliseconds += 1000),
+    var padRecording = []
+    //Check if there are existing stems playing and add them to the recording
+    Object.keys(this.players).forEach((group) => {
+      this.players[group].forEach((_, soundIndex) => {
+        if (this.players[group][soundIndex].state == "started") {
+          padRecording.push([group, soundIndex, 0])
+        }
       });
-    };
+    });
 
-    window.timer = setInterval(incrementMilliseconds, 10);
+    this.setState({
+      padRecording,
+      shouldStartRecording: true,
+      recordingStatus: "Waiting for next loop to start..."
+    });
     // window.timer = window.setInterval(incrementMilliseconds, 10);
     // intervals.push(setInterval(incrementMilliseconds, 10));
   }
@@ -947,10 +951,9 @@ class Sequencer extends Component {
     this.setState({
       shouldStopRecording: true,
       recordingStatus: "Waiting for loop to end...",
-      timer: 0,
+      recordingTimer: 0,
     });
   }
-  w1;
 
   muiTheme = createTheme({
     overrides: {
@@ -1756,6 +1759,7 @@ class Sequencer extends Component {
     return (
       this.state.padRecording.length > 0 &&
       !this.state.isRecording &&
+      !this.state.shouldStartRecording &&
       !this.state.shouldStopRecording
     );
   };
@@ -1826,10 +1830,16 @@ class Sequencer extends Component {
       await wait(1000 * 1.3);
       currentMs += 1000;
     }
-    this.setState({
-      exportingStatus:
-        "Exporting, please wait...100%. Your download will initiate soon",
-    });
+    //if loop ends and download hasn't commenced, show user the message below
+    if (
+      this.state.exportingStatus &&
+      this.state.exportingStatus.includes("Exporting, please wait...")
+    ) {
+      this.setState({
+        exportingStatus:
+          "Exporting, please wait...100%. Your download will initiate soon",
+      });
+    }
   };
 
   render() {
@@ -1849,7 +1859,7 @@ class Sequencer extends Component {
       padRecording,
       shareablePadNumbers,
       showTutorial,
-      timer,
+      recordingTimer,
       tutorialStep,
       volume,
       openControls,
@@ -1875,6 +1885,132 @@ class Sequencer extends Component {
       });
 
       this.patch.config.didRender = this.didRender;
+    }
+
+    const renderPad = () => {
+      const beatPads = []
+      const blooms = []
+      const bloomObject = {"top":[], "right":[], "bottom": [], "left": []}
+
+      {padFormat.map((column, j) => {
+        return column.map((remappedCoordinates, i) => {
+          const group = remappedCoordinates[0];
+          const soundIndex = remappedCoordinates[1];
+          const additionalClasses = remappedCoordinates[2]
+            ? remappedCoordinates[2]
+            : "";
+
+          const on =
+            this.players[group][soundIndex].state === "started";
+
+          const blinkClass =
+            pads[group][soundIndex] === 1 &&
+            this.players[group][soundIndex].state !== "started"
+              ? "blink"
+              : "";
+          const whiteClass = group === "sounds" ? "whitePad" : "";
+          let tutorialClass = "";
+          const padClass =
+            group == "sounds" ? "padWhiteVersion" : "pad";
+
+          if (showTutorial) {
+            if (tutorialStep === 0 && group !== "drums") {
+              tutorialClass = "tutorialPad";
+            } else if (tutorialStep === 1 && group !== "basses") {
+              tutorialClass = "tutorialPad";
+            } else if (tutorialStep === 2 && group !== "sounds") {
+              tutorialClass = "tutorialPad";
+            }
+          }
+
+          if (padFormatStyleClass == "tile36" && j >= 6) {
+            blooms.push(
+              <div
+                key={`pad-group-${i}`}
+                className={`bloom ${cx(padClass, {
+                  on,
+                })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                onClick={() => {
+                  this.togglePad(group, soundIndex);
+                }}
+              />
+            )
+          } else if (padFormatStyleClass == "tile25" && j >= 5) {
+            blooms.push(
+              <div
+                key={`pad-group-${i}`}
+                className={`bloom ${cx(padClass, {
+                  on,
+                })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                onClick={() => {
+                  this.togglePad(group, soundIndex);
+                }}
+              />
+            )
+          } else {
+            beatPads.push(
+              <div
+                key={`pad-group-${i}`}
+                className={`${cx(padClass, {
+                  on,
+                })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                onClick={() => {
+                  this.togglePad(group, soundIndex);
+                }}
+              />
+            );
+          }
+
+        });
+      })}
+
+      var bloomOrder = 0
+      {blooms.map((bloom) => {
+        if (bloomOrder <= 2) {
+          bloomObject["top"].push(bloom)
+        } else if (bloomOrder > 2 && bloomOrder <= 5) {
+          bloomObject["bottom"].push(bloom)
+        } else if (bloomOrder > 5 && bloomOrder <= 8) {
+          bloomObject["right"].push(bloom)
+        } else {
+          bloomObject["left"].push(bloom)
+        }
+        if (bloomOrder < 11) {
+          bloomOrder = bloomOrder + 1
+        } else {
+          bloomOrder = 0
+        }
+      })}
+
+      return (
+        <>
+        <div className={`gridOuter blooming`}>
+
+        <div className="bloom-group top">
+          {bloomObject["top"]}
+        </div>
+        <div className="bloom-group right">
+          <div className="bloom-content">
+
+          {bloomObject["right"]}
+        </div>
+        </div>
+        <div className="bloom-group left">
+          <div className="bloom-content">
+          {bloomObject["left"]}
+        </div>
+        </div>
+        <div className="bloom-group bottom">
+          {bloomObject["bottom"]}
+        </div>
+        <div className={`main-pad-group ${padFormatStyleClass}`}>
+
+          {beatPads}
+        </div>
+
+        </div>
+        </>
+      )
     }
 
     // Set up active sounds limit
@@ -1937,52 +2073,8 @@ class Sequencer extends Component {
                       </React.Fragment>
                     ))}
                   </div>
-                  <div className={`gridOuter ${padFormatStyleClass}`}>
-                    {padFormat.map((column, j) => {
-                      return column.map((remappedCoordinates, i) => {
-                        const group = remappedCoordinates[0];
-                        const soundIndex = remappedCoordinates[1];
-                        const additionalClasses = remappedCoordinates[2]
-                          ? remappedCoordinates[2]
-                          : "";
 
-                        const on =
-                          this.players[group][soundIndex].state === "started";
-
-                        const blinkClass =
-                          pads[group][soundIndex] === 1 &&
-                          this.players[group][soundIndex].state !== "started"
-                            ? "blink"
-                            : "";
-                        const whiteClass = group === "sounds" ? "whitePad" : "";
-                        let tutorialClass = "";
-                        const padClass =
-                          group == "sounds" ? "padWhiteVersion" : "pad";
-
-                        if (showTutorial) {
-                          if (tutorialStep === 0 && group !== "drums") {
-                            tutorialClass = "tutorialPad";
-                          } else if (tutorialStep === 1 && group !== "basses") {
-                            tutorialClass = "tutorialPad";
-                          } else if (tutorialStep === 2 && group !== "sounds") {
-                            tutorialClass = "tutorialPad";
-                          }
-                        }
-
-                        return (
-                          <div
-                            key={`pad-group-${i}`}
-                            className={`${cx(padClass, {
-                              on,
-                            })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                            onClick={() => {
-                              this.togglePad(group, soundIndex);
-                            }}
-                          />
-                        );
-                      });
-                    })}
-                  </div>
+                    {renderPad()}
 
                   {/*
                     //WORK IN PROGRESS
@@ -2251,10 +2343,7 @@ class Sequencer extends Component {
                           </button>
                           <button
                             className={"button record control-item"}
-                            // onClick={this.setShowTutorial.bind(this)}
-                            onClick={this.calculateProgressPercentage.bind(
-                              this
-                            )}
+                            onClick={this.setShowTutorial.bind(this)}
                           >
                             {this.state.showTutorial
                               ? "Hide Tutorial"
@@ -2265,7 +2354,7 @@ class Sequencer extends Component {
 
                       <div className="song-details">
                         <p className="launchdate-text body-medium yellow-text">
-                          LAUNCH AND REVEAL 5/17
+                          LAUNCH AND REVEAL 5/24
                         </p>
                         <div className="beatPackTitle display-medium">
                           {nft.name}
