@@ -1001,8 +1001,6 @@ class Sequencer extends Component {
       openControls,
     } = this.state;
 
-    console.log(nft);
-
     // Set up active sounds limit
     if (nft && loaded) {
       const mediaFileExtension = nft.imageURL
