@@ -118,10 +118,15 @@ async function getMetadata(address, tokenId) {
       name: `${metadata.name} #${tokenId}`,
       description: metadata.description,
       external_url: `https://${baseURL}/bouquet/${metadata.artistName}/${metadata.name}/${tokenId}`,
-      animation_url: `https://${baseURL}/bouquetEmbed/${address.toLowerCase()}/${tokenId}`,
       image: metadata.thumbnail,
       attributes: attributes,
     };
+
+    if (metadata.revealed) {
+      formattedMetadata[
+        "animation_url"
+      ] = `https://${baseURL}/bouquetEmbed/${address.toLowerCase()}/${tokenId}`;
+    }
 
     return { status: 200, response: formattedMetadata };
   } catch (error) {
@@ -155,7 +160,7 @@ async function makeDiscountedSignature(address) {
 async function makeWhitelistSignature(address, quantity) {
   const mintStatus = await getMintStatusForAddress(address);
 
-  if (mintStatus.response.status !== "GENESIS") {
+  if (mintStatus.response.status === "PUBLIC") {
     return { status: 400, response: "invalid user" };
   }
 

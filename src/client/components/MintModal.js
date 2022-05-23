@@ -97,7 +97,7 @@ export default function MintModal(props) {
   const [totalSupply, setTotalSupply] = useState(0);
 
   const priceDropAmount = "Public auction drops 0.0125 ETH every 15 minutes";
-  const currentNFT = "Sunday Journal";
+  const currentNFT = "Miami Nights";
   // const discountedPrice = "0.0075";
   const WHITELIST_LIMIT = 2;
 
@@ -378,7 +378,7 @@ export default function MintModal(props) {
                 <div style={{ height: "44px" }} />
 
                 <React.Fragment>
-                  {mintStatus === "GENESIS" && (
+                  {mintStatus !== "PUBLIC" && (
                     <div className="flex flex-col items-center gap-2">
                       <button
                         className="cta-button"
@@ -400,7 +400,7 @@ export default function MintModal(props) {
                       </button>
                     </div>
                   )}
-                  {mintStatus === "GENESIS" && (
+                  {mintStatus !== "PUBLIC" && (
                     <p className="body-medium yellowish-gray-text">
                       By clicking Mint, you agree to our&nbsp;
                       <a
@@ -413,7 +413,7 @@ export default function MintModal(props) {
                       </a>
                     </p>
                   )}
-                  {mintStatus !== "GENESIS" && (
+                  {mintStatus === "GENESIS" && (
                     <p className="body-medium yellowish-gray-text">
                       Minting is not yet open for your mint status.
                     </p>
