@@ -315,9 +315,7 @@ export default function MintModal(props) {
             />
           </IconButton>
         </div>
-        <div
-          className="modalBody2"
-        >
+        <div className="modalBody2">
           <div style={{ textAlign: "center" }}>
             {isMinting ? (
               <div className="display-small sm:display-medium white-text">
@@ -380,32 +378,46 @@ export default function MintModal(props) {
                 <div style={{ height: "44px" }} />
 
                 <React.Fragment>
-                  <div className="flex flex-col items-center gap-2">
-                  <button
-                    className="cta-button"
-                    onClick={() => handleMint(1)}
-                    disabled={account && !isMinting && contract ? false : true}
-                  >
-                    MINT 1 - {currentPrice} ETH
-                  </button>
-                  <button
-                    className="cta-button"
-                    onClick={() => handleMint(2)}
-                    disabled={account && !isMinting && contract ? false : true}
-                  >
-                    MINT 2 - {parseFloat(currentPrice) * 2} ETH
-                  </button>
-                </div>
-                  <p className="body-medium yellowish-gray-text">
-                    By clicking Mint, you agree to our&nbsp;
-                    <a
-                      className="white-text"
-                      href="https://secretgarden.fm/tos"
-                      target="_blank"
-                    >
-                      Terms of Service
-                    </a>
-                  </p>
+                  {mintStatus === "GENESIS" && (
+                    <div className="flex flex-col items-center gap-2">
+                      <button
+                        className="cta-button"
+                        onClick={() => handleMint(1)}
+                        disabled={
+                          account && !isMinting && contract ? false : true
+                        }
+                      >
+                        MINT 1 - {currentPrice} ETH
+                      </button>
+                      <button
+                        className="cta-button"
+                        onClick={() => handleMint(2)}
+                        disabled={
+                          account && !isMinting && contract ? false : true
+                        }
+                      >
+                        MINT 2 - {parseFloat(currentPrice) * 2} ETH
+                      </button>
+                    </div>
+                  )}
+                  {mintStatus === "GENESIS" && (
+                    <p className="body-medium yellowish-gray-text">
+                      By clicking Mint, you agree to our&nbsp;
+                      <a
+                        className="white-text"
+                        w
+                        href="https://secretgarden.fm/tos"
+                        target="_blank"
+                      >
+                        Terms of Service
+                      </a>
+                    </p>
+                  )}
+                  {mintStatus !== "GENESIS" && (
+                    <p className="body-medium yellowish-gray-text">
+                      Minting is not yet open for your mint status.
+                    </p>
+                  )}
                   <div style={{ height: "44px" }} />
                   <p className="body-small yellowish-gray-text text-uppercase">
                     <b>Limit 2 per wallet</b>

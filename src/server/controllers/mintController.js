@@ -49,11 +49,12 @@ async function getMintStatusForAddress(address) {
       .findOne({ address: address.toLowerCase() });
     let price;
 
+    if (mintStatus?.status === "GENESIS") {
+      price = GENESIS_PRICE;
+    }
+
     if (mintStatus?.status === "CAPSULE HOUSE") {
       price = EARLY_PRICE;
-    } else if (mintStatus?.status === "GENESIS") {
-      price = GENESIS_PRICE;
-    } else {
     }
 
     if (mintStatus) {
@@ -149,9 +150,10 @@ async function makeDiscountedSignature(address) {
 async function makeWhitelistSignature(address, quantity) {
   const mintStatus = await getMintStatusForAddress(address);
 
-  // if (mintStatus.response.status !== "CAPSULE HOUSE" && mintStatus.response !== "GENESIS") {
-  //   return { status: 400, response: "invalid user" };
-  // }
+  if (mintStatus.response.status !== "GENESIS") {
+    return { status: 400, response: "invalid user" };
+  }
+
   const price = mintStatus.response.price;
   try {
     // const hash = soliditySha3(HASH_PREFIX_WHITELISTED, address);
