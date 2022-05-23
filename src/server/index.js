@@ -123,7 +123,7 @@ app.post("/api/exportRecording", upload.single("video"), async (req, res) => {
 });
 
 app.post("/api/saveMix", async (req, res) => {
-  console.log("saving mix...", {
+  console.log("received post, routing mix...", {
     address: req.body.address,
     signature: req.body.signature,
     tokenAddress: req.body.tokenAddress,

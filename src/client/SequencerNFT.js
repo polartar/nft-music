@@ -223,11 +223,7 @@ class Sequencer extends Component {
 
     this.myRef = React.createRef();
     this.clearSelections = this.clearSelections.bind(this);
-    this.activePlayers = {
-      basses: [],
-      drums: [],
-      sounds: [],
-    };
+    this.activePlayers = {};
   }
 
   fetchNFT = async () => {
@@ -259,6 +255,7 @@ class Sequencer extends Component {
         this.players[group] = [];
         pads[group] = [];
         queue[group] = [];
+        this.activePlayers[group] = []
 
         filePaths.forEach((filePath) => {
           this.players[group].push(
@@ -271,22 +268,24 @@ class Sequencer extends Component {
         });
       });
 
-      const padFormat = padFormatMappings[nftResponse.data.padFormatName];
-      const padFormatStyleClass =
-        padFormatTileStyleMappings[nftResponse.data.padFormatName];
+      const padFormat = nftResponse.data.padFormat;
+      const padFormatStyleClass = nftResponse.data.padStyle;
 
       const steps = nftResponse.data.steps;
       const subSteps = nftResponse.data.subSteps;
 
       this.rhythmPads = new Array(steps).fill([0]);
+
       if (nftResponse.data.blooms && nftResponse.data.blooms[0]) {
-        padFormat.push(nftResponse.data.blooms[0]["stems"])
+        padFormat.push(nftResponse.data.blooms[0]["stems"]);
       }
+
       this.setState({ pads, queue, padFormat, steps, padFormatStyleClass });
 
       this.analysers = {};
 
       for (let group in this.players) {
+        console.log("this.players: ", this.players);
         var sounds = this.players[group];
         this.analysers[group] = [];
         for (var soundIndex = 0; soundIndex < sounds.length; soundIndex++) {
@@ -1003,122 +1002,110 @@ class Sequencer extends Component {
       openControls,
     } = this.state;
 
+    const renderPad = () => {
+      const beatPads = [];
+      const blooms = [];
+      const bloomObject = { top: [], right: [], bottom: [], left: [] };
 
-        const renderPad = () => {
-          const beatPads = []
-          const blooms = []
-          const bloomObject = {"top":[], "right":[], "bottom": [], "left": []}
+      {
+        padFormat.map((column, j) => {
+          return column.map((remappedCoordinates, i) => {
+            const group = remappedCoordinates[0];
+            const soundIndex = remappedCoordinates[1];
+            const additionalClasses = remappedCoordinates[2]
+              ? remappedCoordinates[2]
+              : "";
 
-          {padFormat.map((column, j) => {
-            return column.map((remappedCoordinates, i) => {
-              const group = remappedCoordinates[0];
-              const soundIndex = remappedCoordinates[1];
-              const additionalClasses = remappedCoordinates[2]
-                ? remappedCoordinates[2]
+            const on = this.players[group][soundIndex].state === "started";
+
+            const blinkClass =
+              pads[group][soundIndex] === 1 &&
+              this.players[group][soundIndex].state !== "started"
+                ? "blink"
                 : "";
+            const whiteClass = group === "sounds" ? "whitePad" : "";
+            let tutorialClass = "";
+            const padClass = group == "sounds" ? "padWhiteVersion" : "pad";
 
-              const on =
-                this.players[group][soundIndex].state === "started";
-
-              const blinkClass =
-                pads[group][soundIndex] === 1 &&
-                this.players[group][soundIndex].state !== "started"
-                  ? "blink"
-                  : "";
-              const whiteClass = group === "sounds" ? "whitePad" : "";
-              let tutorialClass = "";
-              const padClass =
-                group == "sounds" ? "padWhiteVersion" : "pad";
-
-              if (padFormatStyleClass == "tile36" && j >= 6) {
-                blooms.push(
-                  <div
-                    key={`pad-group-${i}`}
-                    className={`bloom ${cx(padClass, {
-                      on,
-                    })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                    onClick={() => {
-                      this.togglePad(group, soundIndex);
-                    }}
-                  />
-                )
-              } else if (padFormatStyleClass == "tile25" && j >= 5) {
-                blooms.push(
-                  <div
-                    key={`pad-group-${i}`}
-                    className={`bloom ${cx(padClass, {
-                      on,
-                    })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                    onClick={() => {
-                      this.togglePad(group, soundIndex);
-                    }}
-                  />
-                )
-              } else {
-                beatPads.push(
-                  <div
-                    key={`pad-group-${i}`}
-                    className={`${cx(padClass, {
-                      on,
-                    })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                    onClick={() => {
-                      this.togglePad(group, soundIndex);
-                    }}
-                  />
-                );
-              }
-
-            });
-          })}
-
-          var bloomOrder = 0
-          {blooms.map((bloom) => {
-            if (bloomOrder <= 2) {
-              bloomObject["top"].push(bloom)
-            } else if (bloomOrder > 2 && bloomOrder <= 5) {
-              bloomObject["bottom"].push(bloom)
-            } else if (bloomOrder > 5 && bloomOrder <= 8) {
-              bloomObject["right"].push(bloom)
+            if (padFormatStyleClass == "tile36" && j >= 6) {
+              blooms.push(
+                <div
+                  key={`pad-group-${i}`}
+                  className={`bloom ${cx(padClass, {
+                    on,
+                  })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                  onClick={() => {
+                    this.togglePad(group, soundIndex);
+                  }}
+                />
+              );
+            } else if (padFormatStyleClass == "tile25" && j >= 5) {
+              blooms.push(
+                <div
+                  key={`pad-group-${i}`}
+                  className={`bloom ${cx(padClass, {
+                    on,
+                  })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                  onClick={() => {
+                    this.togglePad(group, soundIndex);
+                  }}
+                />
+              );
             } else {
-              bloomObject["left"].push(bloom)
+              beatPads.push(
+                <div
+                  key={`pad-group-${i}`}
+                  className={`${cx(padClass, {
+                    on,
+                  })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                  onClick={() => {
+                    this.togglePad(group, soundIndex);
+                  }}
+                />
+              );
             }
-            if (bloomOrder < 11) {
-              bloomOrder = bloomOrder + 1
-            } else {
-              bloomOrder = 0
-            }
-          })}
+          });
+        });
+      }
 
-          return (
-            <>
-            <div className={`gridOuter blooming embed`}>
+      var bloomOrder = 0;
+      {
+        blooms.map((bloom) => {
+          if (bloomOrder <= 2) {
+            bloomObject["top"].push(bloom);
+          } else if (bloomOrder > 2 && bloomOrder <= 5) {
+            bloomObject["bottom"].push(bloom);
+          } else if (bloomOrder > 5 && bloomOrder <= 8) {
+            bloomObject["right"].push(bloom);
+          } else {
+            bloomObject["left"].push(bloom);
+          }
+          if (bloomOrder < 11) {
+            bloomOrder = bloomOrder + 1;
+          } else {
+            bloomOrder = 0;
+          }
+        });
+      }
 
-            <div className="bloom-group top">
-              {bloomObject["top"]}
-            </div>
+      return (
+        <>
+          <div className={`gridOuter blooming embed`}>
+            <div className="bloom-group top">{bloomObject["top"]}</div>
             <div className="bloom-group right">
-              <div className="bloom-content">
-
-              {bloomObject["right"]}
-            </div>
+              <div className="bloom-content">{bloomObject["right"]}</div>
             </div>
             <div className="bloom-group left">
-              <div className="bloom-content">
-              {bloomObject["left"]}
+              <div className="bloom-content">{bloomObject["left"]}</div>
             </div>
-            </div>
-            <div className="bloom-group bottom">
-              {bloomObject["bottom"]}
-            </div>
+            <div className="bloom-group bottom">{bloomObject["bottom"]}</div>
             <div className={`main-pad-group ${padFormatStyleClass}`}>
-
               {beatPads}
             </div>
-
-            </div>
-            </>
-          )
-        }
+          </div>
+        </>
+      );
+    };
     // Set up active sounds limit
     if (nft && loaded) {
       const mediaFileExtension = nft.imageURL
@@ -1200,20 +1187,18 @@ class Sequencer extends Component {
                 nft.visualArtistName ? `& ${nft.visualArtistName}` : ""
               }`}</div> */}
 
-              {renderPad()}
-            {openControls && (
-              <div
-                className="song-info-wrapper"
-              >
-                <div className="song-info-container">
-                  <div className="controls-container">
-                    <button
-                      className={"button record control-item"}
-                      onClick={this.setHideBeatpad.bind(this)}
-                    >
-                      {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
-                    </button>
-                    {/* <button
+                  {renderPad()}
+                  {openControls && (
+                    <div className="song-info-wrapper">
+                      <div className="song-info-container">
+                        <div className="controls-container">
+                          <button
+                            className={"button record control-item"}
+                            onClick={this.setHideBeatpad.bind(this)}
+                          >
+                            {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
+                          </button>
+                          {/* <button
                       className={"button record control-item"}
                       onClick={this.setShowTutorial.bind(this)}
                     >
