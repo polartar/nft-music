@@ -16,7 +16,7 @@ import { useWeb3React } from "@web3-react/core";
 
 const GENESIS_PRICE = "0.05";
 const EARLY_PRICE = "0.065";
-const PUBLIC_PRICE = "0.1";
+const PUBLIC_PRICE = "0.08";
 const useStyles = makeStyles({
   dialog: {
     width: "680px",
@@ -459,7 +459,7 @@ export default function MintModal(props) {
                   {mintStatus === "PUBLIC" && (
                     <>
                       <p className="body-small yellowish-gray-text text-uppercase">
-                        <b>Mint Price: 0.1 ETH</b>
+                        <b>Mint Price: 0.08 ETH</b>
                       </p>
                     </>
                   )}
