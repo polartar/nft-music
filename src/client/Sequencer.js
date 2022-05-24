@@ -63,6 +63,8 @@ nextYear.setFullYear(current.getFullYear() + 1);
 const didVisitSite = Boolean(cookies.get("didVisitSecretGarden"));
 cookies.set("didVisitSecretGarden", true, { path: "/", expires: nextYear });
 
+const sundayjournalwavlink = 'https://drive.google.com/drive/folders/19ngBYg5r6wLM7EFnEcVTfNuOWxO8mWx3?usp=sharing'
+const miaminightswavlink = 'https://drive.google.com/drive/folders/16F93IcyyazI6tDP-MHqhZX_0t3rEbC8q?usp=sharing'
 class Sequencer extends Component {
   state = {
     type: "sine",
@@ -1834,7 +1836,7 @@ class Sequencer extends Component {
                                 )}
                               </div>
                               {this.state.isOwner && (
-                                <a href="https://drive.google.com/drive/folders/19ngBYg5r6wLM7EFnEcVTfNuOWxO8mWx3?usp=sharing" target="_blank" rel="noreferrer noopener">
+                                <a href={nft.name === 'Sunday Journal' ? sundayjournalwavlink : miaminightswavlink} target="_blank" rel="noreferrer noopener">
                                   <button className={"button record"}>
                                     Download Stems
                                   </button>
