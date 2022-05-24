@@ -14,7 +14,7 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 const GENESIS_PRICE = "0.05";
 const EARLY_PRICE = "0.065";
-const PUBLIC_PRICE = "0.1";
+const PUBLIC_PRICE = "0.08";
 // connect to our mongodb database
 async function connectToDatabase() {
   let params = {};
@@ -49,11 +49,12 @@ async function getMintStatusForAddress(address) {
       .findOne({ address: address.toLowerCase() });
     let price;
 
+    if (mintStatus?.status === "GENESIS") {
+      price = GENESIS_PRICE;
+    }
+
     if (mintStatus?.status === "CAPSULE HOUSE") {
       price = EARLY_PRICE;
-    } else if (mintStatus?.status === "GENESIS") {
-      price = GENESIS_PRICE;
-    } else {
     }
 
     if (mintStatus) {
@@ -91,31 +92,41 @@ async function getMetadata(address, tokenId) {
       ? process.env.BASE_URL
       : "localhost:3001";
 
+    const attributes = [
+      {
+        trait_type: "Music Artist",
+        value: metadata.artistName,
+      },
+      {
+        trait_type: "Beats Per Minute",
+        value: metadata.bpm,
+      },
+      {
+        trait_type: "Key",
+        value: metadata.key,
+      },
+    ];
+
+    if (metadata.visualArtistName) {
+      attributes.push({
+        trait_type: "Visual Artist",
+        value: metadata.visualArtistName,
+      });
+    }
+
     const formattedMetadata = {
       name: `${metadata.name} #${tokenId}`,
       description: metadata.description,
       external_url: `https://${baseURL}/bouquet/${metadata.artistName}/${metadata.name}/${tokenId}`,
-      animation_url: `https://${baseURL}/bouquetEmbed/${address.toLowerCase()}/${tokenId}`,
       image: metadata.thumbnail,
-      attributes: [
-        {
-          trait_type: "Music Artist",
-          value: metadata.artistName,
-        },
-        {
-          trait_type: "Visual Artist",
-          value: metadata.visualArtistName,
-        },
-        {
-          trait_type: "Beats Per Minute",
-          value: metadata.bpm,
-        },
-        {
-          trait_type: "Key",
-          value: metadata.key,
-        },
-      ],
+      attributes: attributes,
     };
+
+    if (metadata.revealed) {
+      formattedMetadata[
+        "animation_url"
+      ] = `https://${baseURL}/bouquetEmbed/${address.toLowerCase()}/${tokenId}`;
+    }
 
     return { status: 200, response: formattedMetadata };
   } catch (error) {
@@ -149,9 +160,10 @@ async function makeDiscountedSignature(address) {
 async function makeWhitelistSignature(address, quantity) {
   const mintStatus = await getMintStatusForAddress(address);
 
-  // if (mintStatus.response.status !== "CAPSULE HOUSE" && mintStatus.response !== "GENESIS") {
-  //   return { status: 400, response: "invalid user" };
-  // }
+  if (mintStatus.response.status === "PUBLIC") {
+    return { status: 400, response: "invalid user" };
+  }
+
   const price = mintStatus.response.price;
   try {
     // const hash = soliditySha3(HASH_PREFIX_WHITELISTED, address);

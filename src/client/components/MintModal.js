@@ -16,7 +16,7 @@ import { useWeb3React } from "@web3-react/core";
 
 const GENESIS_PRICE = "0.05";
 const EARLY_PRICE = "0.065";
-const PUBLIC_PRICE = "0.1";
+const PUBLIC_PRICE = "0.08";
 const useStyles = makeStyles({
   dialog: {
     width: "680px",
@@ -97,7 +97,7 @@ export default function MintModal(props) {
   const [totalSupply, setTotalSupply] = useState(0);
 
   const priceDropAmount = "Public auction drops 0.0125 ETH every 15 minutes";
-  const currentNFT = "Sunday Journal";
+  const currentNFT = "Miami Nights";
   // const discountedPrice = "0.0075";
   const WHITELIST_LIMIT = 2;
 
@@ -315,9 +315,7 @@ export default function MintModal(props) {
             />
           </IconButton>
         </div>
-        <div
-          className="modalBody2"
-        >
+        <div className="modalBody2">
           <div style={{ textAlign: "center" }}>
             {isMinting ? (
               <div className="display-small sm:display-medium white-text">
@@ -380,32 +378,46 @@ export default function MintModal(props) {
                 <div style={{ height: "44px" }} />
 
                 <React.Fragment>
-                  <div className="flex flex-col items-center gap-2">
-                  <button
-                    className="cta-button"
-                    onClick={() => handleMint(1)}
-                    disabled={account && !isMinting && contract ? false : true}
-                  >
-                    MINT 1 - {currentPrice} ETH
-                  </button>
-                  <button
-                    className="cta-button"
-                    onClick={() => handleMint(2)}
-                    disabled={account && !isMinting && contract ? false : true}
-                  >
-                    MINT 2 - {parseFloat(currentPrice) * 2} ETH
-                  </button>
-                </div>
-                  <p className="body-medium yellowish-gray-text">
-                    By clicking Mint, you agree to our&nbsp;
-                    <a
-                      className="white-text"
-                      href="https://secretgarden.fm/tos"
-                      target="_blank"
-                    >
-                      Terms of Service
-                    </a>
-                  </p>
+                  {mintStatus !== "PUBLIC" && (
+                    <div className="flex flex-col items-center gap-2">
+                      <button
+                        className="cta-button"
+                        onClick={() => handleMint(1)}
+                        disabled={
+                          account && !isMinting && contract ? false : true
+                        }
+                      >
+                        MINT 1 - {currentPrice} ETH
+                      </button>
+                      <button
+                        className="cta-button"
+                        onClick={() => handleMint(2)}
+                        disabled={
+                          account && !isMinting && contract ? false : true
+                        }
+                      >
+                        MINT 2 - {parseFloat(currentPrice) * 2} ETH
+                      </button>
+                    </div>
+                  )}
+                  {mintStatus !== "PUBLIC" && (
+                    <p className="body-medium yellowish-gray-text">
+                      By clicking Mint, you agree to our&nbsp;
+                      <a
+                        className="white-text"
+                        w
+                        href="https://secretgarden.fm/tos"
+                        target="_blank"
+                      >
+                        Terms of Service
+                      </a>
+                    </p>
+                  )}
+                  {mintStatus === "GENESIS" && (
+                    <p className="body-medium yellowish-gray-text">
+                      Minting is not yet open for your mint status.
+                    </p>
+                  )}
                   <div style={{ height: "44px" }} />
                   <p className="body-small yellowish-gray-text text-uppercase">
                     <b>Limit 2 per wallet</b>
@@ -447,7 +459,7 @@ export default function MintModal(props) {
                   {mintStatus === "PUBLIC" && (
                     <>
                       <p className="body-small yellowish-gray-text text-uppercase">
-                        <b>Mint Price: 0.1 ETH</b>
+                        <b>Mint Price: 0.08 ETH</b>
                       </p>
                     </>
                   )}
