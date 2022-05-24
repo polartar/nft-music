@@ -340,7 +340,7 @@ class Sequencer extends Component {
       form.append("nftName", this.state.nft.name);
       form.append("edition", this.state.nft.edition);
       //hardcoded launch date text, ideally this comes from the nft object
-      form.append("launchDate", "LAUNCH AND REVEAL " + "5/24");
+      // form.append("launchDate", "LAUNCH AND REVEAL " + "5/24");
 
       const response = await axios.post("/api/exportRecording", form, {
         responseType: "blob",
@@ -424,7 +424,7 @@ class Sequencer extends Component {
       this.rhythmPads = new Array(steps).fill([0]);
 
       if (nftResponse.data.blooms && nftResponse.data.blooms[0]) {
-        padFormat.push(nftResponse.data.blooms[0]["stems"])
+        padFormat.push(nftResponse.data.blooms[0]["stems"]);
       }
 
       this.setState({ pads, queue, padFormat, steps, padFormatStyleClass });
@@ -545,7 +545,7 @@ class Sequencer extends Component {
 
             const incrementMilliseconds = () => {
               if (this.state.recordingTimer >= 60000) {
-                this.stopRecording()
+                this.stopRecording();
               } else {
                 this.setState({
                   recordingTimer: (milliseconds += 1000),
@@ -925,12 +925,12 @@ class Sequencer extends Component {
 
   // recording work
   startRecording() {
-    var padRecording = []
+    var padRecording = [];
     //Check if there are existing stems playing and add them to the recording
     Object.keys(this.players).forEach((group) => {
       this.players[group].forEach((_, soundIndex) => {
         if (this.players[group][soundIndex].state == "started") {
-          padRecording.push([group, soundIndex, 0])
+          padRecording.push([group, soundIndex, 0]);
         }
       });
     });
@@ -938,7 +938,7 @@ class Sequencer extends Component {
     this.setState({
       padRecording,
       shouldStartRecording: true,
-      recordingStatus: "Waiting for next loop to start..."
+      recordingStatus: "Waiting for next loop to start...",
     });
     // window.timer = window.setInterval(incrementMilliseconds, 10);
     // intervals.push(setInterval(incrementMilliseconds, 10));
@@ -1888,130 +1888,119 @@ class Sequencer extends Component {
     }
 
     const renderPad = () => {
-      const beatPads = []
-      const blooms = []
-      const bloomObject = {"top":[], "right":[], "bottom": [], "left": []}
+      const beatPads = [];
+      const blooms = [];
+      const bloomObject = { top: [], right: [], bottom: [], left: [] };
 
-      {padFormat.map((column, j) => {
-        return column.map((remappedCoordinates, i) => {
-          const group = remappedCoordinates[0];
-          const soundIndex = remappedCoordinates[1];
-          const additionalClasses = remappedCoordinates[2]
-            ? remappedCoordinates[2]
-            : "";
-
-          const on =
-            this.players[group][soundIndex].state === "started";
-
-          const blinkClass =
-            pads[group][soundIndex] === 1 &&
-            this.players[group][soundIndex].state !== "started"
-              ? "blink"
+      {
+        padFormat.map((column, j) => {
+          return column.map((remappedCoordinates, i) => {
+            const group = remappedCoordinates[0];
+            const soundIndex = remappedCoordinates[1];
+            const additionalClasses = remappedCoordinates[2]
+              ? remappedCoordinates[2]
               : "";
-          const whiteClass = group === "sounds" ? "whitePad" : "";
-          let tutorialClass = "";
-          const padClass =
-            group == "sounds" ? "padWhiteVersion" : "pad";
 
-          if (showTutorial) {
-            if (tutorialStep === 0 && group !== "drums") {
-              tutorialClass = "tutorialPad";
-            } else if (tutorialStep === 1 && group !== "basses") {
-              tutorialClass = "tutorialPad";
-            } else if (tutorialStep === 2 && group !== "sounds") {
-              tutorialClass = "tutorialPad";
+            const on = this.players[group][soundIndex].state === "started";
+
+            const blinkClass =
+              pads[group][soundIndex] === 1 &&
+              this.players[group][soundIndex].state !== "started"
+                ? "blink"
+                : "";
+            const whiteClass = group === "sounds" ? "whitePad" : "";
+            let tutorialClass = "";
+            const padClass = group == "sounds" ? "padWhiteVersion" : "pad";
+
+            if (showTutorial) {
+              if (tutorialStep === 0 && group !== "drums") {
+                tutorialClass = "tutorialPad";
+              } else if (tutorialStep === 1 && group !== "basses") {
+                tutorialClass = "tutorialPad";
+              } else if (tutorialStep === 2 && group !== "sounds") {
+                tutorialClass = "tutorialPad";
+              }
             }
-          }
 
-          if (padFormatStyleClass == "tile36" && j >= 6) {
-            blooms.push(
-              <div
-                key={`pad-group-${i}`}
-                className={`bloom ${cx(padClass, {
-                  on,
-                })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                onClick={() => {
-                  this.togglePad(group, soundIndex);
-                }}
-              />
-            )
-          } else if (padFormatStyleClass == "tile25" && j >= 5) {
-            blooms.push(
-              <div
-                key={`pad-group-${i}`}
-                className={`bloom ${cx(padClass, {
-                  on,
-                })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                onClick={() => {
-                  this.togglePad(group, soundIndex);
-                }}
-              />
-            )
-          } else {
-            beatPads.push(
-              <div
-                key={`pad-group-${i}`}
-                className={`${cx(padClass, {
-                  on,
-                })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                onClick={() => {
-                  this.togglePad(group, soundIndex);
-                }}
-              />
-            );
-          }
-
+            if (padFormatStyleClass == "tile36" && j >= 6) {
+              blooms.push(
+                <div
+                  key={`pad-group-${i}`}
+                  className={`bloom ${cx(padClass, {
+                    on,
+                  })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                  onClick={() => {
+                    this.togglePad(group, soundIndex);
+                  }}
+                />
+              );
+            } else if (padFormatStyleClass == "tile25" && j >= 5) {
+              blooms.push(
+                <div
+                  key={`pad-group-${i}`}
+                  className={`bloom ${cx(padClass, {
+                    on,
+                  })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                  onClick={() => {
+                    this.togglePad(group, soundIndex);
+                  }}
+                />
+              );
+            } else {
+              beatPads.push(
+                <div
+                  key={`pad-group-${i}`}
+                  className={`${cx(padClass, {
+                    on,
+                  })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
+                  onClick={() => {
+                    this.togglePad(group, soundIndex);
+                  }}
+                />
+              );
+            }
+          });
         });
-      })}
+      }
 
-      var bloomOrder = 0
-      {blooms.map((bloom) => {
-        if (bloomOrder <= 2) {
-          bloomObject["top"].push(bloom)
-        } else if (bloomOrder > 2 && bloomOrder <= 5) {
-          bloomObject["bottom"].push(bloom)
-        } else if (bloomOrder > 5 && bloomOrder <= 8) {
-          bloomObject["right"].push(bloom)
-        } else {
-          bloomObject["left"].push(bloom)
-        }
-        if (bloomOrder < 11) {
-          bloomOrder = bloomOrder + 1
-        } else {
-          bloomOrder = 0
-        }
-      })}
+      var bloomOrder = 0;
+      {
+        blooms.map((bloom) => {
+          if (bloomOrder <= 2) {
+            bloomObject["top"].push(bloom);
+          } else if (bloomOrder > 2 && bloomOrder <= 5) {
+            bloomObject["bottom"].push(bloom);
+          } else if (bloomOrder > 5 && bloomOrder <= 8) {
+            bloomObject["right"].push(bloom);
+          } else {
+            bloomObject["left"].push(bloom);
+          }
+          if (bloomOrder < 11) {
+            bloomOrder = bloomOrder + 1;
+          } else {
+            bloomOrder = 0;
+          }
+        });
+      }
 
       return (
         <>
-        <div className={`gridOuter blooming`}>
-
-        <div className="bloom-group top">
-          {bloomObject["top"]}
-        </div>
-        <div className="bloom-group right">
-          <div className="bloom-content">
-
-          {bloomObject["right"]}
-        </div>
-        </div>
-        <div className="bloom-group left">
-          <div className="bloom-content">
-          {bloomObject["left"]}
-        </div>
-        </div>
-        <div className="bloom-group bottom">
-          {bloomObject["bottom"]}
-        </div>
-        <div className={`main-pad-group ${padFormatStyleClass}`}>
-
-          {beatPads}
-        </div>
-
-        </div>
+          <div className={`gridOuter blooming`}>
+            <div className="bloom-group top">{bloomObject["top"]}</div>
+            <div className="bloom-group right">
+              <div className="bloom-content">{bloomObject["right"]}</div>
+            </div>
+            <div className="bloom-group left">
+              <div className="bloom-content">{bloomObject["left"]}</div>
+            </div>
+            <div className="bloom-group bottom">{bloomObject["bottom"]}</div>
+            <div className={`main-pad-group ${padFormatStyleClass}`}>
+              {beatPads}
+            </div>
+          </div>
         </>
-      )
-    }
+      );
+    };
 
     // Set up active sounds limit
     if (nft && loaded) {
@@ -2074,7 +2063,7 @@ class Sequencer extends Component {
                     ))}
                   </div>
 
-                    {renderPad()}
+                  {renderPad()}
 
                   {/*
                     //WORK IN PROGRESS
