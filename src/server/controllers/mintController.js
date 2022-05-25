@@ -118,8 +118,6 @@ async function getMetadata(address, tokenId) {
       name: `${metadata.name} #${tokenId}`,
       description: metadata.description,
       external_url: `https://${baseURL}/bouquet/${metadata.artistName}/${metadata.name}/${tokenId}`,
-      image: metadata.thumbnail,
-      attributes: attributes,
     };
 
     if (metadata.revealed) {
@@ -127,6 +125,12 @@ async function getMetadata(address, tokenId) {
         "animation_url"
       ] = `https://${baseURL}/bouquetEmbed/${address.toLowerCase()}/${tokenId}`;
     }
+
+    if (metadata.showThumbnail) {
+      formattedMetadata["image"] = metadata.thumbnail;
+    }
+
+    formattedMetadata["attributes"] = attributes;
 
     return { status: 200, response: formattedMetadata };
   } catch (error) {

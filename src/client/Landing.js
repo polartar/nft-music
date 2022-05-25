@@ -2342,9 +2342,9 @@ class Sequencer extends Component {
                       )}
 
                       <div className="song-details">
-                        <p className="launchdate-text body-medium yellow-text">
+                        {/* <p className="launchdate-text body-medium yellow-text">
                           LAUNCH AND REVEAL 5/24
-                        </p>
+                        </p> */}
                         <div className="beatPackTitle display-medium">
                           {nft.name}
                         </div>
