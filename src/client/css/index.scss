@@ -559,7 +559,7 @@ input[type="number"] {
 .record-container {
   display: flex;
   flex-direction: column;
-  opacity: 0;
+  // opacity: 0;
   order: 2;
   gap: 8px;
   display: flex;
@@ -573,6 +573,8 @@ input[type="number"] {
   gap:8px;
   flex-direction: column;
   justify-content: flex-end;
+
+  filter: drop-shadow(0px 2px 64px #1F1F1F);
 }
 
 .control-item {
@@ -781,6 +783,10 @@ canvas {
   p {
     margin: 0;
   }
+
+  bottom: 32px;
+  z-index: 1000000;
+
 }
 .tutorialStep {
 }
@@ -2174,7 +2180,7 @@ footer {
 }
 
 .button.record {
-  background: rgba(255, 255, 255, 0.25);
+  background: $mid-gray;
   /* Background Blur S */
   backdrop-filter: blur(2px);
   /* Note: backdrop-filter has minimal browser support */

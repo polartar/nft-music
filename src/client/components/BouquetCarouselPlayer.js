@@ -1,6 +1,9 @@
 import React, {useState, useEffect, useCallback, useRef} from "react";
 import cx from "classnames";
 import Footer from "./Footer";
+import Tutorial from "./Tutorial";
+import Stopwatch from "./Stopwatch";
+
 import anime from "animejs/lib/anime.es.js";
 
 export default function BouquetCarouselPlayer(props) {
@@ -16,34 +19,36 @@ export default function BouquetCarouselPlayer(props) {
     rhythmPads,
     step,
     steps,
+    isPlayingBack,
+    repeat,
+    volume,
+    playing,
+    clearSelections,
+    canvas,
+    handlePlayback,
+    setVolume,
+    shareablePadNumbers,
+    isLoggedIntoMetamask,
+    playersLoaded,
     recordingStatus,
     exportingStatus,
     isRecording,
     recording,
     shouldStopRecording,
     shouldStartRecording,
-    isPlayingBack,
-    repeat,
     hasNewRecording,
     padRecording,
-    volume,
-    playing,
     stopRecording,
     startRecording,
-    clearSelections,
-    canvas,
     exportRecording,
     playbackRecording,
-    handlePlayback,
-    setVolume,
-    shareablePadNumbers,
-    isLoggedIntoMetamask,
-    playersLoaded
+    showTutorial,
+    setShowTutorial
   } = props
 
   const [idle, setIdle] = useState(true);
   const [hideBeatPad, setHideBeatPad] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(false);
+  // const [showTutorial, setShowTutorial] = useState(false);
   const [openControls, setOpenControls] = useState(false);
 
 
@@ -431,7 +436,8 @@ export default function BouquetCarouselPlayer(props) {
 
 
     const toggleTutorial = () => {
-      setShowTutorial(!showTutorial)
+      // setShowTutorial(!showTutorial)
+      setShowTutorial()
       setOpenControls(!openControls)
     }
 
@@ -494,6 +500,7 @@ export default function BouquetCarouselPlayer(props) {
         <div id="collection-slides">
           {
             nfts.map((nft, index) => (
+              <>
               <div className="collection-slide" data-collectionindex={index} key={index}>
                 {mediaFileExtension(nft) === "mp4" && (
                   <div className="video-container">
@@ -561,6 +568,12 @@ export default function BouquetCarouselPlayer(props) {
 
 
             </div>
+            {showTutorial && (
+              <div className="tutorial-wrapper">
+                <Tutorial tutorialStep={tutorialStep} soundCount={nft.activeSoundLimits["sounds"]}/>
+              </div>
+            )}
+            </>
             ))
           }
 
@@ -569,50 +582,6 @@ export default function BouquetCarouselPlayer(props) {
       </div>
 
       <div className="song-info-wrapper">
-        {showTutorial && (
-          <div className="tutorial-wrapper">
-            <React.Fragment>
-              {tutorialStep === 0 && (
-                <React.Fragment>
-                  <div className="body-small white-text">
-                    To begin, press one of the highlighted squares
-                    on the left. These are the drum loops. <br />
-                    <br />
-                    Only one will play at a time.
-                  </div>
-                </React.Fragment>
-              )}
-              {tutorialStep === 1 && (
-                <div className="body-small white-text">
-                  Now, press one of the highlighted squares on the
-                  right. These are the bass loops. <br />
-                  <br />
-                  When the pad is flashing, the sound will wait to
-                  play until the next bar.
-                  <br />
-                  <br /> Only one will play at a time.
-                </div>
-              )}
-              {tutorialStep === 2 && (
-                <div className="body-small white-text">
-                  {`Lastly, press one of grey squares in the middle. These are
-              chords and melodies. Up to ${nfts[visibleSectionIndex].activeSoundLimits["sounds"]} can play at at time.`}
-                </div>
-              )}
-              {tutorialStep === 3 && (
-                <div className="body-small white-text">
-                  You're ready to make some music! <br />
-                  <br />
-                  Try out different combinations and share them with
-                  friends below. <br />
-                  <br />
-                  If you'd like to learn more about Secret Garden,
-                  scroll down.
-                </div>
-              )}
-            </React.Fragment>
-          </div>
-        )}
         <div className="song-info-container no-details">
           {/* {openControls && (
             <div className="controls-container">
@@ -771,9 +740,9 @@ export default function BouquetCarouselPlayer(props) {
                   {
                     <button
                       style={{
-                        visibility: shouldRenderPostRecording()
-                          ? "visible"
-                          : "hidden",
+                        display: shouldRenderPostRecording()
+                          ? "block"
+                          : "none",
                       }}
                       className={
                         padRecording.length <= 0 ||

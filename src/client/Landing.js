@@ -45,7 +45,6 @@ import QuakingGrass from "./components/QuakingGrass";
 import MonsteraLeaf from "./components/MonsteraLeaf";
 import Tulip from "./components/Tulip";
 import FlowerArrangement from "./components/FlowerArrangement";
-import Stopwatch from "./components/Stopwatch";
 import BouquetCarouselPlayer from "./components/BouquetCarouselPlayer";
 import { withWeb3HOC } from "./Web3HOC";
 import "./css/nftCarousel.scss";
@@ -314,6 +313,12 @@ class Sequencer extends Component {
       address,
     });
   };
+
+  setShowTutorial() {
+    this.setState({
+      showTutorial: !this.state.showTutorial,
+    });
+  }
 
   exportRecording = async (blob) => {
     this.setState({
@@ -679,18 +684,6 @@ class Sequencer extends Component {
     document.body.appendChild(script);
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevState.openControls !== this.state.openControls) {
-      anime({
-        targets: [".record-container"],
-        easing: "easeInOutSine",
-        duration: 750,
-        opacity: 1,
-        delay: 0,
-      });
-    }
-  }
-
   handleClickOpen = async () => {
     try {
       if (!this.state.isLoggedIntoMetamask) {
@@ -1048,7 +1041,6 @@ class Sequencer extends Component {
       if (this.activePlayers[group].length > 0) {
         // loop to stop active pads instead of entire player list
         for (let i = 0; i < this.activePlayers[group].length; i++) {
-          console.log("stopped player in group " + group + " and index " + i)
           this.players[group][this.activePlayers[group][i]].stop();
         }
       }
@@ -1059,7 +1051,7 @@ class Sequencer extends Component {
 
       if (!this.state.isPlayingBack) {
         this.playbackRecording(
-          padRecording,
+          this.state.padRecording,
           (pad) => {
             this.togglePad(pad[0], pad[1]);
           }
@@ -1903,7 +1895,6 @@ class Sequencer extends Component {
                   step={step}
                   steps={steps}
                   pads={pads}
-                  showTutorial={showTutorial}
                   tutorialStep={tutorialStep}
                   shouldStartRecording={this.state.shouldStartRecording}
                   recordingStatus={this.state.recordingStatus}
@@ -1927,6 +1918,8 @@ class Sequencer extends Component {
                   setVolume={this.setVolume.bind(this)}
                   shareablePadNumbers={this.state.shareablePadNumbers}
                   isLoggedIntoMetamask={isLoggedIntoMetamask}
+                  showTutorial={showTutorial}
+                  setShowTutorial={this.setShowTutorial.bind(this)}
                 />
 
                 <IconButton
