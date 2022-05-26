@@ -929,8 +929,6 @@ class Sequencer extends Component {
     };
 
     window.timer = setInterval(incrementMilliseconds, 10);
-    // window.timer = window.setInterval(incrementMilliseconds, 10);
-    // intervals.push(setInterval(incrementMilliseconds, 10));
   }
 
   async stopRecording() {
@@ -1114,9 +1112,6 @@ class Sequencer extends Component {
 
   saveMix = async (address, tokenAddress, tokenId, padRecording) => {
     const signature = await this.state.signer.signMessage(address);
-    // this.setState({
-    //   isLoading: true,
-    // });
     await axios
       .post("/api/saveMix", {
         address,
