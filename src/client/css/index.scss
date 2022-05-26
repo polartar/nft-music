@@ -1361,6 +1361,7 @@ canvas {
   display: inline-block;
   position: relative;
   max-width: 100%;
+  object-fit: contain;
   height: 100%;
   z-index: 100;
   filter: brightness(40%);

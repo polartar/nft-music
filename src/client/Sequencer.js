@@ -199,10 +199,7 @@ class Sequencer extends Component {
     this.setState({
       nft: nftResponse.data,
     });
-    if (this.props.match.params.artistName === "Capsule") {
-      return;
-    }
-
+  
     // Initial pads setup
     if (!Object.keys(this.players).length) {
       const pads = {};
@@ -572,7 +569,7 @@ class Sequencer extends Component {
     script.async = true;
 
     document.body.appendChild(script);
-
+    console.log(this.state.nft)
     if (this.state.address) {
       await axios
         .get("/api/getNFTsForOwner", {
@@ -618,27 +615,34 @@ class Sequencer extends Component {
     }
 
     if (!this.state.didFetchOwnerNFTs && this.state.address && this.state.nft) {
-      await axios
-        .get("/api/getNFTsForOwner", {
-          params: {
-            collection: this.state.nft.tokenAddress,
-            owner: this.state.address,
-            chain: "eth",
-          },
-        })
-        .then((response) => {
-          console.log("response: ", response);
-          if (
-            response.data.some(
-              (nft) => nft.tokenId === this.props.match.params.edition
-            )
-          ) {
-            this.setState({
-              isOwner: true,
-              didFetchOwnerNFTs: true,
-            });
-          }
+      if (this.props.match.params.artistName === "Capsule") {
+        this.setState({
+          isOwner: true,
+          didFetchOwnerNFTs: true,
         });
+      } else {
+        await axios
+          .get("/api/getNFTsForOwner", {
+            params: {
+              collection: this.state.nft.tokenAddress,
+              owner: this.state.address,
+              chain: "eth",
+            },
+          })
+          .then((response) => {
+            console.log("response: ", response);
+            if (
+              response.data.some(
+                (nft) => nft.tokenId === this.props.match.params.edition
+              )
+            ) {
+              this.setState({
+                isOwner: true,
+                didFetchOwnerNFTs: true,
+              });
+            }
+          });
+        }
     }
   }
 
@@ -1270,20 +1274,16 @@ class Sequencer extends Component {
       pads,
       step,
       steps,
-      notes,
       loaded,
       nft,
       isLoggedIntoMetamask,
       bids,
-      users,
       provider,
       padFormat,
       padFormatStyleClass,
       shareablePadNumbers,
       showTutorial,
       tutorialStep,
-      padRecording,
-      timer,
       openControls,
     } = this.state;
 

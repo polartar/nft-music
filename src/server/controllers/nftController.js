@@ -74,13 +74,16 @@ async function getNFT(artistName, name, edition) {
   try {
     if (artistName === "Capsule") {
       let nft = await axios.get(`https://hatch.capsulehouse.io/api/metadata/${edition}`);
-
-      // const response = await getNFTWithMetadata(nft._id.toString());
-       
+      let nftInfo = await db.collection("NFTs").findOne({
+        artistName: "oksami",
+        name
+      });
+      const response = await getNFTWithMetadata(nftInfo._id.toString());
+      
       return {
         status: 200,
         response: {
-          ... nft.data,
+          ... response,
           imageURL: nft.data.image
         }
       };
