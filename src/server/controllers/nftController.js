@@ -72,17 +72,31 @@ async function getFeaturedNFT() {
 
 async function getNFT(artistName, name, edition) {
   try {
-    let nft = await db.collection("NFTs").findOne({
-      artistName,
-      name
-    });
+    if (artistName === "Capsule") {
+      let nft = await axios.get(`https://hatch.capsulehouse.io/api/metadata/${edition}`);
 
-    nft = await getNFTWithMetadata(nft._id.toString());
-
-    return {
-      status: 200,
-      response: nft
-    };
+      // const response = await getNFTWithMetadata(nft._id.toString());
+       
+      return {
+        status: 200,
+        response: {
+          ... nft.data,
+          imageURL: nft.data.image
+        }
+      };
+    } else {
+      let nft = await db.collection("NFTs").findOne({
+        artistName,
+        name
+      });
+  
+      nft = await getNFTWithMetadata(nft._id.toString());
+  
+      return {
+        status: 200,
+        response: nft
+      };
+    }    
   } catch (error) {
     console.log(error);
     return { status: 400, response: error.toString() };
