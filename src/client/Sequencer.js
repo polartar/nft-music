@@ -195,7 +195,7 @@ class Sequencer extends Component {
     } else {
       nftResponse = await axios.get("/api/getFeaturedNFT");
     }
-
+    console.log("data", nftResponse.data);
     this.setState({
       nft: nftResponse.data,
     });
