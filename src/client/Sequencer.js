@@ -204,7 +204,6 @@ class Sequencer extends Component {
     if (!Object.keys(this.players).length) {
       const pads = {};
       const queue = {};
-
       Object.keys(nftResponse.data.filePaths).map((group) => {
         const filePaths = nftResponse.data.filePaths[group];
         this.players[group] = [];
@@ -619,6 +618,7 @@ class Sequencer extends Component {
         this.setState({
           isOwner: true,
           didFetchOwnerNFTs: true,
+          hasNewRecording: true
         });
       } else {
         await axios
@@ -1163,6 +1163,9 @@ class Sequencer extends Component {
   };
 
   shouldRenderPostRecording = () => {
+    if (this.props.match.params.artistName === "Capsule") {
+      return true;
+    }
     return (
       this.state.padRecording.length > 0 &&
       !this.state.isRecording &&
