@@ -84,6 +84,7 @@ async function getNFT(artistName, name, edition) {
         response = await getNFTWithMetadata(nftInfo._id.toString());
       } else {
         response = (await getFeaturedNFT()).response;
+        response.artistName = artistName;
       }
       
       return {
