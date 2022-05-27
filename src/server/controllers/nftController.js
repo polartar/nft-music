@@ -84,7 +84,11 @@ async function getNFT(artistName, name, edition) {
         response = await getNFTWithMetadata(nftInfo._id.toString());
       } else {
         response = (await getFeaturedNFT()).response;
+        
+        // replace featureNFT with caplsule information   
         response.artistName = artistName;
+        response.name = name;
+        response.tokenAddress = "0xfcb1315c4273954f74cb16d5b663dbf479eec62e";
       }
       
       return {
