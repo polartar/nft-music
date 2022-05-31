@@ -1,20 +1,8 @@
 /* eslint-disable react/no-unused-state, react/no-array-index-key */
 import React, { Component, createRef } from "react";
 import cx from "classnames";
-import Synth from "./Synth";
-// import Canvas from './Canvas';
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
-import cloneDeep from "lodash.clonedeep";
-
-import { makeStyles } from "@material-ui/core/styles";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import SecretGardenLogo from "./images/SecretGarden.png";
-import AlbumArt from "./images/albumArt.png";
-import InstaPic from "./images/instaPic.png";
-import WaterLoop from "./images/waterScaleLoop.mp4";
-import Wallet from "./images/wallet.png";
-import Expand from "./images/expand.png";
 import BidModal from "./components/BidModal";
 import Slider from "@material-ui/core/Slider";
 import { createTheme } from "@material-ui/core/styles";
@@ -27,33 +15,19 @@ import Twitter from "./images/twitter.png";
 import Discord from "./images/discord.png";
 import Instagram from "./images/instagram.png";
 import * as Tone from "tone";
-import { Limiter, ToneAudioNode } from "tone";
 import axios from "axios";
 import { ethers, utils } from "ethers";
 import Countdown from "react-countdown";
-import clone from "clone";
 import Loading from "./components/Loading";
 import Cookies from "universal-cookie";
-import { formatEther } from "@ethersproject/units";
 import FlowerArrangement from "./components/FlowerArrangement";
 import Stopwatch from "./components/Stopwatch";
-import OpaqueLoadingScreen from "./components/OpaqueLoading";
 import LoadingFlower from "./components/LoadingFlower";
 import "./css/bidModal.css";
 
 import anime from "animejs/lib/anime.es.js";
 
-let ctx, x_end, y_end, bar_height;
-
 // constants
-const width = window.innerWidth;
-const height = window.innerHeight;
-const bars = 555;
-const bar_width = 1;
-const radius = 0;
-const center_x = width / 2;
-const center_y = height / 2;
-
 const cookies = new Cookies();
 const current = new Date();
 const nextYear = new Date();
@@ -214,22 +188,22 @@ class Sequencer extends Component {
   fetchNFT = async () => {
     let nftResponse;
     if (this.props.match) {
+      console.log("params", this.props.match.params)
       nftResponse = await axios.get("/api/getNFT", {
         params: this.props.match.params,
       });
     } else {
       nftResponse = await axios.get("/api/getFeaturedNFT");
     }
-
+    console.log("data", nftResponse.data);
     this.setState({
       nft: nftResponse.data,
     });
-
+  
     // Initial pads setup
     if (!Object.keys(this.players).length) {
       const pads = {};
       const queue = {};
-
       Object.keys(nftResponse.data.filePaths).map((group) => {
         const filePaths = nftResponse.data.filePaths[group];
         this.players[group] = [];
@@ -594,7 +568,7 @@ class Sequencer extends Component {
     script.async = true;
 
     document.body.appendChild(script);
-
+    console.log(this.state.nft)
     if (this.state.address) {
       await axios
         .get("/api/getNFTsForOwner", {
@@ -639,40 +613,36 @@ class Sequencer extends Component {
       );
     }
 
-    // autoplay that works on local
-    // if (
-    //   prevState.padRecording.length <= 0 &&
-    //   this.state.padRecording.length > 0 &&
-    //   !this.state.isRecording &&
-    //   !this.state.shouldStartRecording
-    // ) {
-    //   this.playbackRecording(this.state.padRecording, pad =>
-    //     this.togglePad(pad[0], pad[1])
-    //   );
-    // }
-
     if (!this.state.didFetchOwnerNFTs && this.state.address && this.state.nft) {
-      await axios
-        .get("/api/getNFTsForOwner", {
-          params: {
-            collection: this.state.nft.tokenAddress,
-            owner: this.state.address,
-            chain: "eth",
-          },
-        })
-        .then((response) => {
-          console.log("response: ", response);
-          if (
-            response.data.some(
-              (nft) => nft.tokenId === this.props.match.params.edition
-            )
-          ) {
-            this.setState({
-              isOwner: true,
-              didFetchOwnerNFTs: true,
-            });
-          }
+      if (this.props.match.params.artistName === "Capsule") {
+        this.setState({
+          isOwner: true,
+          didFetchOwnerNFTs: true,
+          hasNewRecording: true
         });
+      } else {
+        await axios
+          .get("/api/getNFTsForOwner", {
+            params: {
+              collection: this.state.nft.tokenAddress,
+              owner: this.state.address,
+              chain: "eth",
+            },
+          })
+          .then((response) => {
+            console.log("response: ", response);
+            if (
+              response.data.some(
+                (nft) => nft.tokenId === this.props.match.params.edition
+              )
+            ) {
+              this.setState({
+                isOwner: true,
+                didFetchOwnerNFTs: true,
+              });
+            }
+          });
+        }
     }
   }
 
@@ -959,8 +929,6 @@ class Sequencer extends Component {
     };
 
     window.timer = setInterval(incrementMilliseconds, 10);
-    // window.timer = window.setInterval(incrementMilliseconds, 10);
-    // intervals.push(setInterval(incrementMilliseconds, 10));
   }
 
   async stopRecording() {
@@ -1125,17 +1093,6 @@ class Sequencer extends Component {
     }
     // end clear pads work
 
-    // this.setState({
-    //   isPlayingBack: true,
-    // });
-
-    // if (!this.state.repeat) {
-    //   // reset step so that playback isn't dependent on waiting for "next loop"
-    //   this.setState({
-    //     step: 0,
-    //   });
-    // }
-
     for (let i = 0; i <= padRecording.length - 1; i++) {
       setTimeout(() => {
         // each loop, call passed in callback function
@@ -1155,9 +1112,6 @@ class Sequencer extends Component {
 
   saveMix = async (address, tokenAddress, tokenId, padRecording) => {
     const signature = await this.state.signer.signMessage(address);
-    // this.setState({
-    //   isLoading: true,
-    // });
     await axios
       .post("/api/saveMix", {
         address,
@@ -1209,6 +1163,9 @@ class Sequencer extends Component {
   };
 
   shouldRenderPostRecording = () => {
+    if (this.props.match.params.artistName === "Capsule") {
+      return true;
+    }
     return (
       this.state.padRecording.length > 0 &&
       !this.state.isRecording &&
@@ -1315,20 +1272,16 @@ class Sequencer extends Component {
       pads,
       step,
       steps,
-      notes,
       loaded,
       nft,
       isLoggedIntoMetamask,
       bids,
-      users,
       provider,
       padFormat,
       padFormatStyleClass,
       shareablePadNumbers,
       showTutorial,
       tutorialStep,
-      padRecording,
-      timer,
       openControls,
     } = this.state;
 
@@ -1540,12 +1493,6 @@ class Sequencer extends Component {
               </button>
             </div>
           )}
-          {/* <canvas
-            ref={this.cablesCanvas}
-            id="glcanvas"
-            width="500"
-            height="500"
-          ></canvas> */}
           <div id="main-wrapper">
             <div id="slideshow">
               <div id="slides-main">
@@ -1665,37 +1612,6 @@ class Sequencer extends Component {
                                     : "200px",
                               }}
                               >
-                                {/* {this.state.exportingStatus ===
-                                "Exporting, please wait..." ? (
-                                  <div
-                                    style={{ marginRight: "10px" }}
-                                    className="body-medium yellow-text"
-                                  >
-                                    {this.state.exportingStatus}
-                                  </div>
-                                ) : this.state.isOwner &&
-                                  this.shouldRenderPostRecording() ? (
-                                  <button
-                                    className="button record"
-                                    style={{ marginRight: "10px" }}
-                                    onClick={() =>
-                                      this.exportRecording(this.state.recording)
-                                    }
-                                  >
-                                    Export
-                                  </button>
-                                ) : (
-                                  <div
-                                    style={{ marginRight: "10px" }}
-                                    className="body-medium yellow-text"
-                                  >
-                                    {this.state.exportingStatus ===
-                                    "Exporting, please wait..."
-                                      ? this.state.exportingStatus
-                                      : this.state.recordingStatus}
-                                    {this.state.isRecording && <Stopwatch />}
-                                  </div>
-                                )} */}
                                 {this.state.exportingStatus.length > 0 && (
                                 <div
                                   style={{ marginRight: "10px" }}
@@ -1962,51 +1878,6 @@ class Sequencer extends Component {
                 <div className=" bidOnDesktop">
                   Sign in on Desktop to place bid
                 </div>
-                {/* <div className="historyWrapper">
-                  <div className="auctionTitle">Auction History</div>
-                </div>
-                <div className="tableWrapper scrollBar">
-                  <table className="auctionPrices">
-                    <tr>
-                      <th>Price</th>
-                      <th>Collector</th>
-                      <th>Time</th>
-                    </tr>
-                    {bids.map((bid) => {
-                      const formattedBidAmount =
-                        parseFloat(
-                          utils.formatEther(bid.base_price)
-                        ).toPrecision(4) / 1;
-
-                      const bidCurrency = bid.payment_token_contract.symbol;
-
-                      return (
-                        <tr>
-                          <td>{`${formattedBidAmount} ${bidCurrency}`}</td>
-                          <td>
-                            <a href={`/collection/${bid.maker.address}`}>
-                              <div className="makerAddr">
-                                {users[bid.maker.address]
-                                  ? users[bid.maker.address].name
-                                  : bid.maker.address}
-                              </div>
-                            </a>
-                          </td>
-                          <td>
-                            {`${new Date(
-                              bid.created_date + "Z"
-                            ).toLocaleDateString("en-US", {
-                              month: "numeric",
-                              day: "numeric",
-                            })}, ${new Date(
-                              bid.created_date + "Z"
-                            ).toLocaleTimeString()}`}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </table>
-                </div> */}
               </div>
             </div>
             <div className="privacyAndTos">

@@ -78,12 +78,16 @@ async function getNFT(artistName, name, edition) {
     });
 
     nft = await getNFTWithMetadata(nft._id.toString());
+    if (artistName === "Capsule") {
+      metadata = await axios.get(`https://hatch.capsulehouse.io/api/metadata/${edition}`);
+      nft.imageURL = metadata.data.image
+    }
 
     return {
       status: 200,
       response: nft
     };
-  } catch (error) {
+   } catch (error) {
     console.log(error);
     return { status: 400, response: error.toString() };
   }
