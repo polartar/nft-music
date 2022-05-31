@@ -408,8 +408,8 @@ class Sequencer extends Component {
     if (this.state.playing) {
       this.clearSelections()
 
-      Tone.Transport.cancel()
     }
+    Tone.Transport.cancel()
 
     let nft = this.state.featuredNFTs[index]
 
@@ -1125,11 +1125,14 @@ class Sequencer extends Component {
   }
 
   touchStart = function(e) {
+    e.preventDefault()
     this.mobileTouchStart = parseInt(e.changedTouches[0].clientY);
     window.scrollTop = 0;
   };
 
   touchMove = function(e) {
+    e.preventDefault()
+
     let idle = this.idle;
 
     let mobileTouchEnd = parseInt(e.changedTouches[0].clientY);
@@ -1558,7 +1561,9 @@ class Sequencer extends Component {
     }
   }
 
-  waitForIdle() {
+  waitForIdle(e) {
+    e.preventDefault();
+
     let wrapper = document.querySelector("#main-wrapper");
     let items = wrapper.querySelectorAll(".vslide");
 
@@ -1571,7 +1576,9 @@ class Sequencer extends Component {
     }, 500);
   }
 
-  waitForFAQIdle() {
+  waitForFAQIdle(e) {
+    e.preventDefault();
+
     //set timeout to make sure extra scrolls doesn't fire
     setTimeout(() => {
       this.idle = true;

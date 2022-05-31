@@ -56,12 +56,15 @@ export default function BouquetCarouselPlayer(props) {
   var visibleSectionIndex = useRef(0)
 
   const touchStart = useCallback(e => {
+    e.preventDefault();
     oldX.current = e.pageX || parseInt(e.changedTouches[0].clientX);
 
     window.scrollLeft = 0;
   }, []);
 
   const touchMove = useCallback(e => {
+    e.preventDefault();
+
     let mobileTouchEnd = e.pageX || parseInt(e.changedTouches[0].clientX);
 
     window.scrollLeft = 0;
@@ -75,7 +78,6 @@ export default function BouquetCarouselPlayer(props) {
         ? "nextNFT"
         : "prevNFT";
 
-      console.log(direction)
       handleSlide(direction)
     }
   }, [oldX, idle, visibleSectionIndex]);
@@ -150,7 +152,9 @@ export default function BouquetCarouselPlayer(props) {
     );
   };
 
-  const waitForIdle = () => {
+  const waitForIdle = (e) => {
+    e.preventDefault();
+
     //set timeout to make sure extra scrolls doesn't fire
     let wrapper = document.querySelector("#collection-slide-wrapper");
     let items = wrapper.querySelectorAll(".collection-slide");
@@ -158,7 +162,6 @@ export default function BouquetCarouselPlayer(props) {
     removeClasses(items, ["transition"]);
     // setTimeout(() => {
     setIdle(true)
-    console.log("idle")
     // }, 500);
   }
 
