@@ -655,6 +655,7 @@ input[type="range"] {
   width: 100%;
   height: auto;
   z-index: 10000;
+  position: absolute;
 }
 .gridTop > div {
   position: relative !important;
