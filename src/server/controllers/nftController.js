@@ -13,7 +13,7 @@ async function connectToDatabase() {
       useNewurlParser: true,
       useUnifiedTopology: true,
       tls: true,
-      tlsCAFile: "./ca-certificate.crt"
+      tlsCAFile: "./ca-certificate.crt",
     };
   }
   const client = await MongoClient.connect(
@@ -33,11 +33,11 @@ setTimeout(() => {
 
 async function getNFTWithMetadata(nftID) {
   const nft = await db.collection("NFTs").findOne({
-    _id: ObjectId(nftID)
+    _id: ObjectId(nftID),
   });
 
   const artist = await db.collection("artists").findOne({
-    name: nft.artistName
+    name: nft.artistName,
   });
 
   nft.artist = artist;
@@ -55,14 +55,14 @@ async function getNFTWithMetadata(nftID) {
 async function getFeaturedNFT() {
   try {
     const settings = await db.collection("settings").findOne({
-      _id: ObjectId("605d225f34d1d94b02ef8591")
+      _id: ObjectId("605d225f34d1d94b02ef8591"),
     });
 
     const featuredNFT = await getNFTWithMetadata(settings.featuredNFTID);
 
     return {
       status: 200,
-      response: featuredNFT
+      response: featuredNFT,
     };
   } catch (error) {
     console.log(error);
@@ -70,41 +70,48 @@ async function getFeaturedNFT() {
   }
 }
 
-async function getNFT(artistName, name, edition) {
+async function getNFT(artistName, name, tokenId) {
   try {
     let nft = await db.collection("NFTs").findOne({
       artistName,
-      name
+      name,
     });
 
     nft = await getNFTWithMetadata(nft._id.toString());
     if (artistName === "Capsule") {
-      metadata = await axios.get(`https://hatch.capsulehouse.io/api/metadata/${edition}`);
-      nft.imageURL = metadata.data.image
+      metadata = await axios.get(
+        `https://hatch.capsulehouse.io/api/metadata/${tokenId}`
+      );
+      nft.imageURL = metadata.data.image;
     }
 
     return {
       status: 200,
-      response: nft
+      response: nft,
     };
-   } catch (error) {
+  } catch (error) {
     console.log(error);
     return { status: 400, response: error.toString() };
   }
 }
 
 async function getSequencerToken(tokenAddress, tokenId) {
-  console.log(tokenAddress);
   try {
     let nft = await db.collection("NFTs").findOne({
-      tokenAddress
+      tokenAddress,
     });
 
     nft = await getNFTWithMetadata(nft._id.toString());
+    if (nft.artistName === "Capsule") {
+      metadata = await axios.get(
+        `https://hatch.capsulehouse.io/api/metadata/${tokenId}`
+      );
+      nft.imageURL = metadata.data.image;
+    }
 
     return {
       status: 200,
-      response: nft
+      response: nft,
     };
   } catch (error) {
     console.log(error);
@@ -127,7 +134,7 @@ async function getAllNFTs() {
 
     return {
       status: 200,
-      response: nfts
+      response: nfts,
     };
   } catch (error) {
     console.log(error);
@@ -138,7 +145,7 @@ async function getAllNFTs() {
 async function getNFTsForUser(address) {
   try {
     const nftQuery = await db.collection("NFTs").find({
-      ownerAddress: address.toLowerCase()
+      ownerAddress: address.toLowerCase(),
     });
 
     const nfts = [];
@@ -150,7 +157,7 @@ async function getNFTsForUser(address) {
 
     return {
       status: 200,
-      response: nfts
+      response: nfts,
     };
   } catch (error) {
     console.log(error);
@@ -162,38 +169,38 @@ async function getAllNFTsForUser(address, chain) {
   const allNFTs = await getAllNFTs(address, chain);
 
   if (allNFTs.status !== 200) {
-    return allNFTs
+    return allNFTs;
   }
   if (allNFTs.response.length === 0) {
     return {
       status: 200,
-      response: []
-    }
+      response: [],
+    };
   } else {
-    const allTokenAddresses = allNFTs.response.map(nft => nft.tokenAddress);
+    const allTokenAddresses = allNFTs.response.map((nft) => nft.tokenAddress);
     const uniqueTokenAddresses = Array.from(new Set(allTokenAddresses));
 
     let tokens = [];
 
-    for (let i = 0; i < uniqueTokenAddresses.length; i ++) {
+    for (let i = 0; i < uniqueTokenAddresses.length; i++) {
       const tokenAddress = uniqueTokenAddresses[i];
       const nfts = await getNFTsForOwner(tokenAddress, address, chain);
       if (nfts.status === 200) {
-        tokens = tokens.concat(nfts.response)
+        tokens = tokens.concat(nfts.response);
       }
     }
-  
+
     return {
       status: 200,
-      response: tokens
-    }
+      response: tokens,
+    };
   }
 }
 
 async function getOrdersForNFT(nftID, useTestnet) {
   try {
     const nft = await db.collection("NFTs").findOne({
-      _id: ObjectId(nftID)
+      _id: ObjectId(nftID),
     });
 
     const orderResponse = await axios.get(
@@ -207,17 +214,17 @@ async function getOrdersForNFT(nftID, useTestnet) {
           limit: 50,
           side: 0,
           order_by: "eth_price",
-          order_direction: "desc"
+          order_direction: "desc",
         },
         headers: {
-          "X-API-KEY": "e6de7b0f341949a1a3258887428c1ebc"
-        }
+          "X-API-KEY": "e6de7b0f341949a1a3258887428c1ebc",
+        },
       }
     );
 
     return {
       status: 200,
-      response: orderResponse.data
+      response: orderResponse.data,
     };
   } catch (error) {
     console.log(error);
@@ -232,15 +239,15 @@ async function getNFTsForOwner(tokenAddress, ownerAddress, chain) {
       {
         headers: {
           "X-API-KEY":
-            "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y"
-        }
+            "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y",
+        },
       }
     );
 
-    const nftIds = nftIdResponse.data.result.map(item => item.token_id);
+    const nftIds = nftIdResponse.data.result.map((item) => item.token_id);
 
     const metadata = await db.collection("NFTs").findOne({
-      tokenAddress
+      tokenAddress,
     });
 
     if (!metadata) {
@@ -249,7 +256,7 @@ async function getNFTsForOwner(tokenAddress, ownerAddress, chain) {
 
     const nfts = [];
 
-    nftIds.forEach(nftId => {
+    nftIds.forEach((nftId) => {
       const nft = { ...metadata };
       nft.tokenId = nftId;
       nfts.push(nft);
@@ -257,7 +264,7 @@ async function getNFTsForOwner(tokenAddress, ownerAddress, chain) {
 
     return {
       status: 200,
-      response: nfts
+      response: nfts,
     };
   } catch (error) {
     console.log(error);
@@ -272,15 +279,17 @@ async function getAllNFTs(ownerAddress, chain) {
       {
         headers: {
           "X-API-KEY":
-            "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y"
-        }
+            "ak4ClPYq259ou7IVWWx1OmFr5xDHrzWHk9A3cwgpM1gXB0TBjZRHN7s8ViUZGQ4y",
+        },
       }
     );
 
-    let tokenAddresses = nftIdResponse.data.result.map(item => item.token_address);
+    let tokenAddresses = nftIdResponse.data.result.map(
+      (item) => item.token_address
+    );
     tokenAddresses = Array.from(new Set(tokenAddresses));
     const metadataQuery = await db.collection("NFTs").find({
-      tokenAddress: { $in: tokenAddresses}
+      tokenAddress: { $in: tokenAddresses },
     });
 
     let metadata = {};
@@ -289,13 +298,13 @@ async function getAllNFTs(ownerAddress, chain) {
       metadata[nft.tokenAddress] = nft;
     }
 
-    if (Object.keys(metadata).length ==0 ) {
+    if (Object.keys(metadata).length == 0) {
       throw new Error("No metadata found for token address");
     }
 
     const nfts = [];
 
-    nftIdResponse.data.result.forEach(token => {
+    nftIdResponse.data.result.forEach((token) => {
       const nft = { ...metadata[token.token_address] };
       nft.tokenId = token.token_id;
       nfts.push(nft);
@@ -303,7 +312,7 @@ async function getAllNFTs(ownerAddress, chain) {
 
     return {
       status: 200,
-      response: nfts
+      response: nfts,
     };
   } catch (error) {
     console.log(error);
@@ -319,5 +328,5 @@ module.exports = {
   getOrdersForNFT,
   getNFTsForOwner,
   getSequencerToken,
-  getAllNFTsForUser
+  getAllNFTsForUser,
 };
