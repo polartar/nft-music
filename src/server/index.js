@@ -58,6 +58,18 @@ app.get("/api/metadata/:id", async (req, res) => {
   });
 });
 
+app.get("/api/metadata/capsule/:id", async (req, res) => {
+  res.status(200).json({
+    description:
+      "Friendly OpenSea Creature that enjoys long swims in the ocean.",
+    external_url: `https://openseacreatures.io/${req.params.id}`,
+    image:
+      `https://storage.googleapis.com/opensea-prod.appspot.com/puffs/${req.params.id}.png`,
+    name: "Dave Starbelly",
+    animation_url: `https://secretgarden.fm/bouquetEmbed/0xfcb1315c4273954f74cb16d5b663dbf479eec62e/${req.params.id}`
+  });
+});
+
 app.get("/api/getUser", async (req, res) => {
   const { status, response } = await userController.getUser(req.query.address);
 
@@ -218,6 +230,15 @@ app.get("/api/getAllNFTsForUser", async (req, res) => {
   const { status, response } = await nftController.getAllNFTsForUser(
     req.query.address,
     req.query.chain
+  );
+
+  res.status(status).send(response);
+});
+
+app.get("/api/updateCapsuleURI", async (req, res) => {
+  const { status, response } = await nftController.updateCapsuleURI(
+    req.query.tokenId,
+    req.query.isMusic
   );
 
   res.status(status).send(response);

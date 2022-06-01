@@ -2,6 +2,11 @@ const { MongoClient, ObjectId } = require("mongodb");
 const config = require("../config.json");
 const userController = require("./userController");
 const axios = require("axios");
+const { ethers, Contract } = require("ethers");
+// const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const {PRIVATE_KEY} = require("../private.json")
+
+const { RPC_URL_1 } = require("../../client/private.json");
 const CHAIN = process.env.CHAIN ? process.env.CHAIN : "rinkeby";
 
 // connect to our mongodb database
@@ -320,6 +325,55 @@ async function getAllNFTs(ownerAddress, chain) {
   }
 }
 
+async function updateCapsuleURI(tokenId, isMusic) {
+  const CapsuleABI = [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_tokenURI",
+          "type": "string"
+        }
+      ],
+      "name": "setTokenURI",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
+
+  const provider = new ethers.providers.JsonRpcProvider(RPC_URL_1);
+  let signer = new ethers.Wallet(PRIVATE_KEY, provider);
+  try {
+    const instance = new Contract(
+      "0xfcb1315c4273954f74cb16d5b663dbf479eec62e",
+      CapsuleABI,
+      signer
+    );
+    console.log({tokenId})
+    console.log({signer})
+    if (isMusic) {
+      await instance.setTokenURI(tokenId, `https://secretgarden.fm/api/metadata/capsule/${tokenId}`)
+    } else {
+      await instance.setTokenURI(tokenId, `https://hatch.capsulehouse.io/api/metadata/${tokenId}`)
+    }
+
+    return {
+      status: 200,
+      response: "ok",
+    };
+  }
+  catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
+
 module.exports = {
   getNFT,
   getFeaturedNFT,
@@ -329,4 +383,5 @@ module.exports = {
   getNFTsForOwner,
   getSequencerToken,
   getAllNFTsForUser,
+  updateCapsuleURI
 };

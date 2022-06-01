@@ -9,7 +9,7 @@ import StopCircleIcon from "../images/StopCircleIcon.svg";
 import SkipIcon from "../images/skip.svg";
 import { createTheme } from "@material-ui/core/styles";
 import ControlsButton from "./ControlsButton";
-
+import axios from "axios";
 import "../css/footer.css";
 
 export default function Footer(props) {
@@ -27,8 +27,8 @@ export default function Footer(props) {
     nftCount
   } = props;
   const params = useParams();
-  console.log({params})
   const [isMusic, setIsMusic] = useState(true);
+  const [isProcess, setIsProcess] = useState(false);
   const [openShare, setOpenShare] = useState(false);
 
   const [openEmail, setOpenEmail] = useState(false);
@@ -60,8 +60,22 @@ export default function Footer(props) {
     },
   });
 
-  const toggleMusic = () => {
-    setIsMusic(!isMusic);
+  const toggleMusic = async() => {
+    if (isProcess) return;
+    setIsProcess(true);
+    console.log({params})
+    axios.get("/api/updateCapsuleURI", {
+      params: {
+        tokenId: params.edition,
+        isMusic: !isMusic
+      },
+      xsrfCookieName: null,
+      withCredentials: false,
+    }). then(() => {
+      setIsMusic(!isMusic);
+    }).finally(()=> {
+      setIsProcess(false);
+    })
   }
   return (
     <React.Fragment>
@@ -139,7 +153,7 @@ export default function Footer(props) {
               <button
                 onClick={() => toggleMusic()}
                 id="wallet-button"
-                className="metamask-button small"
+                className="metamask-button small toggle-music"
               >
                 {isMusic ? "Hide Music" : "Show Music"}
             </button>
