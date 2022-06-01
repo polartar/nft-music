@@ -188,14 +188,13 @@ class Sequencer extends Component {
   fetchNFT = async () => {
     let nftResponse;
     if (this.props.match) {
-      console.log("params", this.props.match.params)
       nftResponse = await axios.get("/api/getNFT", {
         params: this.props.match.params,
       });
     } else {
       nftResponse = await axios.get("/api/getFeaturedNFT");
     }
-    console.log("data", nftResponse.data);
+
     this.setState({
       nft: nftResponse.data,
     });

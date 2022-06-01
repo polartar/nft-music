@@ -1,43 +1,24 @@
-import React, { useState, useEffect } from "react";
-import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
-import IconButton from "@material-ui/core/IconButton";
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import Slider from "@material-ui/core/Slider";
-
 import ShareModal from "./ShareModal";
 import EmailModal from "./EmailModal";
-import "../css/footer.css";
-import { ethers, utils } from "ethers";
 import { ThemeProvider } from "@material-ui/styles";
-
 import PlayCircleIcon from "../images/PlayCircleIcon.svg";
-import ShuffleCircleIcon from "../images/ShuffleCircleIcon.svg";
 import StopCircleIcon from "../images/StopCircleIcon.svg";
 import SkipIcon from "../images/skip.svg";
 import { createTheme } from "@material-ui/core/styles";
-
-import { useWeb3React } from "@web3-react/core";
-
-// import Discord from "../images/discord.svg";
-// import Twitter from "../images/Twitter.svg";
-// import Instagram from "../images/Instagram.svg";
-// import Share from "../images/Share.svg";
-
 import ControlsButton from "./ControlsButton";
-import SkipButton from "./SkipButton";
+
+import "../css/footer.css";
 
 export default function Footer(props) {
   const {
-    // loggedIntoMetamaskOverride,
-    hidePlayControls,
-    showShare,
     shareURL,
     setVolume,
     volume,
     clearSelections,
-    canvas,
     playing,
-    handleShuffle,
     playMix,
     setOpenControls,
     openControls,
@@ -45,25 +26,13 @@ export default function Footer(props) {
     currentNFTIndex,
     nftCount
   } = props;
-  const { chainId, account, active, activate, deactivate, library } = useWeb3React();
-  const [loaded, setLoaded] = useState(false);
-  // const [address, setAddress] = useState();
+  const params = useParams();
+  console.log({params})
+  const [isMusic, setIsMusic] = useState(true);
   const [openShare, setOpenShare] = useState(false);
 
   const [openEmail, setOpenEmail] = useState(false);
-  // const [isLoggedIntoMetamask, setIsLoggedIntoMetamask] = useState(false);
-  const [showMintMenu, setShowMintMenu] = useState(false);
 
-  // const refreshData = async () => {
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //   const accounts = await provider.listAccounts();
-  //   const address = await provider.getSigner(0).getAddress();
-
-  //   if (accounts.length > 0) {
-  //     setIsLoggedIntoMetamask(true);
-  //     setAddress(address);
-  //   }
-  // };
   const handleClose = () => {
     setOpenShare(false);
   };
@@ -91,52 +60,13 @@ export default function Footer(props) {
     },
   });
 
-  // useEffect(() => {
-  //   refreshData();
-  // }, [loaded, loggedIntoMetamaskOverride]);
-
+  const toggleMusic = () => {
+    setIsMusic(!isMusic);
+  }
   return (
     <React.Fragment>
       <ShareModal shareURL={shareURL} onClose={handleClose} open={openShare} />
       <EmailModal onClose={handleCloseEmail} open={openEmail} />
-
-      {/* <a href="/directory">
-                <div className="bottomItem mobileLink">DIRECTORY</div>
-              </a> */}
-      {/* {isLoggedIntoMetamask && (
-                <a href={`/collection/${address}`} className="notMobileLink">
-                  <div className="bottomItem">MY COLLECTION</div>
-                </a>
-              )} */}
-      {/*
-              <div onClick={handleClickOpenEmail} className="bottomItem mobileLink">
-                FUTURE DROPS
-              </div> */}
-      {/* {isLoggedIntoMetamask && (
-                <a href={`/profile`} className=" notMobileLink">
-                  <div className="bottomItem">PROFILE</div>
-                </a>
-              )} */}
-      {showMintMenu ? (
-        <div
-          className={
-            props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
-          }
-        >
-          <div className="bottomItem mobileLink" style={{ fontWeight: "700" }}>
-            CONNECTED ADDRESS
-          </div>
-          <div className="bottomItem mobileLink" style={{ fontWeight: "700" }}>
-            SALE BEGINS IN
-          </div>
-          <div className="bottomItem mobileLink" style={{ fontWeight: "700" }}>
-            XX ETH
-          </div>
-          <button className="button" onClick={() => handleMintMenu()}>
-            MINT
-          </button>
-        </div>
-      ) : (
         <div
           className={
             props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
@@ -154,117 +84,78 @@ export default function Footer(props) {
           </ThemeProvider>
         </div>
 
-          {/* {showShare && !isLoggedIntoMetamask && ( */}
-          {hidePlayControls || (
-            <div className="play-controls">
+          
+        <div className="play-controls">
 
 
-              {handleSlide &&
-                <a href="#" onClick={() => handleSlide("prevNFT")}>
+          {handleSlide &&
+            <a href="#" onClick={() => handleSlide("prevNFT")}>
+              <img
+                src={SkipIcon}
+                style={{ height: "36px", transform: "rotate(180deg)", opacity:  currentNFTIndex == 0 ? "0.5" : "1.0", cursor:  currentNFTIndex == 0 ? "not-allowed" : "pointer" }}
+              />
+            </a>
+          }
+
+          <div className="stopBtnContainer">
+            <div className="stopBtnWrapper">
+              {playing ? (
+                <span
+                  style={{
+                    display: "flex",
+                    gap: "8px"
+                  }}
+                >
+                  <a href="#" onClick={clearSelections}>
+                    <img src={StopCircleIcon} style={{ height: "36px"}} />
+                  </a>
+                </span>
+              ) : (
+                <a href="#" onClick={playMix}>
                   <img
-                    src={SkipIcon}
-                    style={{ height: "36px", transform: "rotate(180deg)", opacity:  currentNFTIndex == 0 ? "0.5" : "1.0", cursor:  currentNFTIndex == 0 ? "not-allowed" : "pointer" }}
+                    src={PlayCircleIcon}
+                    style={{ height: "36px"}}
                   />
                 </a>
-              }
-
-              <div className="stopBtnContainer">
-                <div className="stopBtnWrapper">
-                  {playing ? (
-                    <span
-                      style={{
-                        display: "flex",
-                        gap: "8px"
-                      }}
-                    >
-                      <a href="#" onClick={clearSelections}>
-                        <img src={StopCircleIcon} style={{ height: "36px"}} />
-                      </a>
-                      {/* <a href="#" onClick={handleShuffle}>
-                          <img src={ShuffleCircleIcon} style={{ height: "35px" }} />
-                        </a> */}
-                    </span>
-                  ) : (
-                    <a href="#" onClick={playMix}>
-                      <img
-                        src={PlayCircleIcon}
-                        style={{ height: "36px"}}
-                      />
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              {handleSlide &&
-
-              <a href="#" onClick={() => handleSlide("nextNFT")}>
-                <img
-                  src={SkipIcon}
-                  style={{ height: "36px", opacity:  currentNFTIndex == (nftCount - 1) ? "0.5" : "1.0", cursor:  currentNFTIndex == (nftCount - 1) ? "not-allowed" : "pointer" }}
-                />
-              </a>
-            }
-
-
-
-
-
+              )}
             </div>
-          )}
-          {hidePlayControls || (
-            <div style={{maxWidth: "440px", paddingLeft: "16px", width: "100%", display:"flex", justifyContent:"flex-end"}}>
-              <ControlsButton
-                className={`cta-button small ${
-                  openControls ? "white" : "light-dark"
-                }`}
-                onClick={setOpenControls}
-                fill={openControls ? "#575757" : "#FFF"}
-              />
-            </div>
-          )}
-
-          {/* )} */}
-
-          {/* {showShare && isLoggedIntoMetamask && (
-          <div
-            className="bottomItem mobileLink"
-            onClick={() => setOpenShare(true)}
-            style={{ fontWeight: "700" }}
-          >
-            SHARE
           </div>
-          )}
-          {showShare && (
-            <div style={{ display: "flex", gap: "16px", marginRight:"16px" }}>
-              <a href="https://discord.gg/ykrzXB9ZsV">
-                <div className=""><img src={Discord}/></div>
-              </a>
-              <a href="https://twitter.com/SecretGarden_FM">
-                <div className="">
-                  <img src={Twitter} />
-                </div>
-              </a>
-              <a href="https://instagram.com/SecretGarden_FM">
-                <div className="">
-                  <img src={Instagram} />
-                </div>
-              </a>
-              <div
-                className=""
-                onClick={() => setOpenShare(true)}
-                style={{ fontWeight: "700" }}
-              >
-                <img src={Share} />
-              </div>
-            </div>
-          */}
 
-
-          {/* <button className="button" onClick={() => handleMintMenu()}>
-            TO MINT MENU
-          </button> */}
+          {
+            handleSlide &&
+            <a href="#" onClick={() => handleSlide("nextNFT")}>
+              <img
+                src={SkipIcon}
+                style={{ height: "36px", opacity:  currentNFTIndex == (nftCount - 1) ? "0.5" : "1.0", cursor:  currentNFTIndex == (nftCount - 1) ? "not-allowed" : "pointer" }}
+              />
+            </a>
+          }
         </div>
-      )}
+            
+        <div style={{maxWidth: "440px", paddingLeft: "16px", width: "100%", display:"flex", justifyContent:"flex-end"}}>
+          {
+            params.artistName == "Capsule" && 
+            (
+              <button
+                onClick={() => toggleMusic()}
+                id="wallet-button"
+                className="metamask-button small"
+              >
+                {isMusic ? "Hide Music" : "Show Music"}
+            </button>
+            )
+          }
+          
+            <ControlsButton
+              className={`cta-button small ${
+                openControls ? "white" : "light-dark"
+              }`}
+              onClick={setOpenControls}
+              fill={openControls ? "#575757" : "#FFF"}
+            />
+        </div>
+          
+        </div>
     </React.Fragment>
   );
 }
