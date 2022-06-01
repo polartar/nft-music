@@ -43,7 +43,8 @@ export default function BouquetCarouselPlayer(props) {
     exportRecording,
     playbackRecording,
     showTutorial,
-    setShowTutorial
+    setShowTutorial,
+    canRecord
   } = props
 
   const [idle, setIdle] = useState(true);
@@ -524,11 +525,10 @@ export default function BouquetCarouselPlayer(props) {
                       nft._id == "6226bbcb58e2c3413bea0310" &&
                       <div style={{position:"absolute", top:"0", marginTop:"32px", left:0, right:0, zIndex:"1000"}} className=" is-hidden-mobile">
                         <p className="body-small yellowish-gray-text">
-
                         PREVIEW
                       </p>
                           <p className="launchdate-text body-medium yellow-text">
-                            LAUNCH AND REVEAL 5/24
+                            LAUNCH AND REVEAL {nft.launchDate}
                           </p>
 
                       </div>
@@ -538,7 +538,7 @@ export default function BouquetCarouselPlayer(props) {
                       {/*
 
                       <p className="launchdate-text body-medium yellow-text is-hidden-desktop is-hidden-tablet">
-                        LAUNCH AND REVEAL 5/24
+                        LAUNCH AND REVEAL {nft.launchDate}
                       </p>
                       */}
 
@@ -695,7 +695,7 @@ export default function BouquetCarouselPlayer(props) {
                       {isRecording && <Stopwatch />}
                     </div>
                   )}
-                  {
+                  {canRecord &&
                     <button
                       className={
                         shouldStartRecording ||

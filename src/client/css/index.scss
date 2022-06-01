@@ -292,10 +292,7 @@ body > div {
   // height: 100%;
   // width: 100%;
 }
-.flex {
-  display: flex;
-  flex-direction: row;
-}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -736,7 +733,7 @@ input[type="range"] {
 
   &.carousel {
     position: absolute !important;
-    opacity: 1 !important;
+    opacity: 1;
   }
 }
 
@@ -1034,7 +1031,6 @@ canvas {
   .video-container,
   .beatPackTitle,
   .artistName,
-  .gridOuter,
   .play-controls {
     opacity: 0;
   }
@@ -1415,6 +1411,7 @@ canvas {
   display: inline-block;
   position: relative;
   max-width: 100%;
+  object-fit: contain;
   height: 100%;
   z-index: 100;
   filter: brightness(40%);
@@ -2233,6 +2230,11 @@ footer {
   display: flex;
   justify-content: flex-end;
 }
+
+.modalBody2 {
+  padding-top: 0px;
+  padding-bottom: 80px;
+}
 @media only screen and (max-width: 700px) {
   .mint-modal-container {
     padding: 0 8px;
@@ -2242,7 +2244,7 @@ footer {
     }
 
     .modalBody2 {
-      padding: 0px 16px !important;
+      padding-top: 16px;
     }
   }
 
@@ -2491,7 +2493,7 @@ a {
 
   &.carousel {
     position: absolute !important;
-    opacity: 1 !important;
+    opacity: 1;
   }
 
   margin: 0 auto;

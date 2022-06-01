@@ -14,6 +14,9 @@ import AuctionABI from "../constants/AuctionABI.json";
 import { parseEther } from "ethers/lib/utils";
 import { useWeb3React } from "@web3-react/core";
 
+const GENESIS_PRICE = "0.05";
+const EARLY_PRICE = "0.065";
+const PUBLIC_PRICE = "0.08";
 const useStyles = makeStyles({
   dialog: {
     width: "680px",
@@ -57,14 +60,28 @@ const useStyles = makeStyles({
   },
 });
 
-export default function SimpleDialog(props) {
+export default function MintModal(props) {
   const classes = useStyles();
-  const { onClose, open, shareURL, tokenAddress, discountedPrice, onConnect} = props;
+  const {
+    onClose,
+    open,
+    shareURL,
+    tokenAddress,
+    discountedPrice,
+    onConnect,
+  } = props;
   const [text, setText] = React.useState("Copy Link");
   const [transactionHash, setTransactionHash] = React.useState(
     "OX1892AKSD3981120030039"
   );
-  const { chainId, account, active, activate, deactivate, library } = useWeb3React();
+  const {
+    chainId,
+    account,
+    active,
+    activate,
+    deactivate,
+    library,
+  } = useWeb3React();
   const [isMinting, setIsMinting] = React.useState(false);
   const [didMint, setDidMint] = React.useState(false);
   const [currentPrice, setCurrentPrice] = useState();
@@ -80,9 +97,9 @@ export default function SimpleDialog(props) {
   const [totalSupply, setTotalSupply] = useState(0);
 
   const priceDropAmount = "Public auction drops 0.0125 ETH every 15 minutes";
-  const currentNFT = "Sunday Journal";
+  const currentNFT = "Miami Nights";
   // const discountedPrice = "0.0075";
-  const capsulePrice = "0.2";
+  const WHITELIST_LIMIT = 2;
 
   const RoundUp = (intervalMilliseconds, datetime) => {
     datetime = datetime || new Date();
@@ -128,7 +145,8 @@ export default function SimpleDialog(props) {
       );
 
       if (mintStatusResponse.status === 200) {
-        setMintStatus(mintStatusResponse.data);
+        setMintStatus(mintStatusResponse.data.status);
+        setCurrentPrice(mintStatusResponse.data.price);
       }
     }
 
@@ -137,11 +155,11 @@ export default function SimpleDialog(props) {
     getStatus();
   }, [account]);
 
-  useEffect(() => {
-    if (!mintStatus) return;
+  // useEffect(() => {
+  //   if (!mintStatus) return;
 
-    initializePrice();
-  }, [mintStatus]);
+  //   initializePrice();
+  // }, [mintStatus]);
 
   const getMintBalances = async () => {
     let instance = contract;
@@ -177,21 +195,21 @@ export default function SimpleDialog(props) {
     );
   };
 
-  const initializePrice = async () => {
-    let price;
-    if (mintStatus === "PUBLIC") {
-      if (!contract) return;
-      price = await getCurrentMintPrice();
-
-      setTimeout(initializePrice, 1000 * 10);
-    } else if (mintStatus === "MINT LIST") {
-      price = discountedPrice;
-    } else if (mintStatus === "CAPSULE HOUSE") {
-      price = capsulePrice;
-    }
-
-    setCurrentPrice(price);
-  };
+  // const initializePrice = async () => {
+  //   let price;
+  //   console.log(mintStatus)
+  //   if (mintStatus === "PUBLIC") {
+  //     price = PUBLIC_PRICE
+  //   } else if (mintStatus === "MINT LIST") {
+  //     price = discountedPrice;
+  //   } else if (mintStatus === "CAPSULE HOUSE") {
+  //     price = EARLY_PRICE;
+  //   } else if (mintStatus ==="GENESIS ") {
+  //     price = GENESIS_PRICE;
+  //   }
+  //   console.log({price})
+  //   setCurrentPrice(price);
+  // };
 
   const checkNetwork = async () => {
     if (chainId && chainId !== 4 && chainId !== 1) {
@@ -207,43 +225,60 @@ export default function SimpleDialog(props) {
     window.location.reload();
   };
 
-  const getCurrentMintPrice = async () => {
-    const cost = await contract.cost(1);
-    return ethers.utils.formatEther(cost);
-  };
+  // const getCurrentMintPrice = async () => {
+  //   const cost = await contract.cost(1);
+  //   return ethers.utils.formatEther(cost);
+  // };
 
-  const handleMint = async () => {
+  const handleMint = async (quantity) => {
     setIsMinting(true);
     try {
-      const price = await getCurrentMintPrice();
       let tx;
-      if (mintStatus === "PUBLIC") {
-        tx = await contract.mintPublic(1, { value: parseEther(price) });
-      } else if (mintStatus === "CAPSULE HOUSE") {
+      // if (mintStatus === "PUBLIC") {
+      //   // const price = "await getCurrentMintPrice();"
+      //   tx = await contract.mintPublic(1, { value: parseEther(price) });
+      // } else
+      {
+        if (
+          mintStatus !== "PUBLIC" &&
+          mintInfo.whitelistMinted >= WHITELIST_LIMIT
+        ) {
+          return;
+        }
         const signatureResponse = await axios.get(
           "/api/makeWhitelistSignature",
           {
             params: {
               address: account.toLowerCase(),
+              quantity,
             },
           }
         );
 
         if (signatureResponse.status === 200) {
-          tx = await contract.mintWhitelist(
+          setCurrentPrice(signatureResponse.data.price);
+          tx = await contract.mintWhitelistPrice(
             signatureResponse.data.hash,
             signatureResponse.data.signature,
-            1,
-            { value: parseEther(price) }
+            parseEther(signatureResponse.data.price),
+            quantity,
+            { value: parseEther(signatureResponse.data.price).mul(quantity) }
           );
         }
       }
 
       setTransactionHash(tx.hash);
       await tx.wait();
-      setPublicMinted(publicMinted + 1);
+      if (mintStatus === "PUBLIC") {
+        setPublicMinted(publicMinted + 1);
+        setTotalPublicMinted(totalPublicMinted + 1);
+      } else {
+        setMintInfo({
+          ...mintInfo,
+          whitelistMinted: mintInfo.whitelistMinted + 1,
+        });
+      }
       setTotalSupply(totalSupply + 1);
-      setTotalPublicMinted(totalPublicMinted + 1);
       setDidMint(true);
     } catch (err) {
       console.log({ err });
@@ -253,7 +288,11 @@ export default function SimpleDialog(props) {
   };
 
   const createContractInstance = () => {
-    const instance = new Contract(tokenAddress, AuctionABI, library.getSigner());
+    const instance = new Contract(
+      tokenAddress,
+      AuctionABI,
+      library.getSigner()
+    );
 
     setContract(instance);
   };
@@ -276,10 +315,7 @@ export default function SimpleDialog(props) {
             />
           </IconButton>
         </div>
-        <div
-          className="modalBody2"
-          style={{ paddingTop: "0px", paddingBottom: "80px" }}
-        >
+        <div className="modalBody2">
           <div style={{ textAlign: "center" }}>
             {isMinting ? (
               <div className="display-small sm:display-medium white-text">
@@ -341,118 +377,107 @@ export default function SimpleDialog(props) {
                 )}
                 <div style={{ height: "44px" }} />
 
-                {didMint && publicMinted === 0 ? (
-                  <React.Fragment>
-                    <button
-                      className="cta-button"
-                      onClick={handleMint}
-                      disabled={
-                        account && !isMinting && contract ? false : true
-                      }
-                    >
-                      MINT - {currentPrice} ETH
-                    </button>
-                    <div style={{ height: "44px" }} />
-                    <p className="body-medium yellowish-gray-text text-uppercase">
+                <React.Fragment>
+                  {mintStatus !== "PUBLIC" && (
+                    <div className="flex flex-col items-center gap-2">
+                      <button
+                        className="cta-button"
+                        onClick={() => handleMint(1)}
+                        disabled={
+                          account && !isMinting && contract ? false : true
+                        }
+                      >
+                        MINT 1 - {currentPrice} ETH
+                      </button>
+                      <button
+                        className="cta-button"
+                        onClick={() => handleMint(2)}
+                        disabled={
+                          account && !isMinting && contract ? false : true
+                        }
+                      >
+                        MINT 2 - {parseFloat(currentPrice) * 2} ETH
+                      </button>
+                    </div>
+                  )}
+                  {mintStatus !== "PUBLIC" && (
+                    <p className="body-medium yellowish-gray-text">
+                      By clicking Mint, you agree to our&nbsp;
+                      <a
+                        className="white-text"
+                        w
+                        href="https://secretgarden.fm/tos"
+                        target="_blank"
+                      >
+                        Terms of Service
+                      </a>
+                    </p>
+                  )}
+                  {mintStatus === "GENESIS" && (
+                    <p className="body-medium yellowish-gray-text">
+                      Minting is not yet open for your mint status.
+                    </p>
+                  )}
+                  <div style={{ height: "44px" }} />
+                  <p className="body-small yellowish-gray-text text-uppercase">
+                    <b>Limit 2 per wallet</b>
+                  </p>
+                  {account && (
+                    <p className="body-small yellowish-gray-text text-uppercase">
                       Mint Status: <b>{mintStatus}</b>
                     </p>
-                    <p className="body-medium yellowish-gray-text text-uppercase">
-                      Total Editions Minted: <b>{totalSupply}</b>
-                    </p>
-                    <p className="body-medium yellowish-gray-text text-uppercase">
-                      Total Public Editions Minted: <b>{totalPublicMinted}</b>
-                    </p>
-                    <p className="body-medium yellowish-gray-text text-uppercase">
-                      Next Price Drop: <b>{nextPriceDropDate}</b>{" "}
-                    </p>
-                    <p className="body-medium yellowish-gray-text text-uppercase">
-                      Price Drop Amount: <b>{priceDropAmount}</b>{" "}
-                    </p>
-                    <p className="body-medium yellowish-gray-text text-uppercase">
-                      Transaction Hash
-                    </p>
-                    <p className="body-medium sm:body-large yellow-text text-uppercase">
-                      {transactionHash}
-                    </p>
-                  </React.Fragment>
-                ) : (
-                  <React.Fragment>
-                    {mintStatus === "CAPSULE HOUSE" && account && (
-                      <React.Fragment>
-                        <button
-                          className="cta-button"
-                          onClick={handleMint}
-                          disabled={
-                            account &&
-                            !isMinting &&
-                            contract &&
-                            ((mintStatus === "PUBLIC" && canMint()) ||
-                              mintStatus !== "PUBLIC")
-                              ? false
-                              : true
-                          }
-                        >
-                          BUY NOW - {currentPrice} ETH
-                        </button>
-                        <p className="body-medium yellowish-gray-text">
-                          By clicking Buy Now, you agree to our&nbsp;
-                          <a
-                            className="white-text"
-                            href="https://secretgarden.fm/tos"
-                            target="_blank"
-                          >
-                            Terms of Service
-                          </a>
-                        </p>
-                      </React.Fragment>
-                    )}
-                    <div style={{ height: "44px" }} />
-                    <p className="body-medium yellowish-gray-text text-uppercase">
-                      <b>Limit 1 per wallet</b>
-                    </p>
-                    {account && (
-                      <p className="body-medium yellowish-gray-text text-uppercase">
-                        Mint Status: <b>{mintStatus}</b>
-                      </p>
-                    )}
+                  )}
 
-                    <p className="body-medium yellowish-gray-text text-uppercase">
-                      Total Editions Minted: <b>{totalSupply}</b>
-                    </p>
-                    <p className="body-medium yellowish-gray-text text-uppercase">
-                      Total Public Editions Minted: <b>{totalPublicMinted}</b>
-                    </p>
-                    {mintStatus === "PUBLIC" && (
+                  <p className="body-small yellowish-gray-text text-uppercase">
+                    Total Editions Minted: <b>{totalSupply}</b>
+                  </p>
+                  <p className="body-small yellowish-gray-text text-uppercase">
+                    Total Public Editions Minted: <b>{totalPublicMinted}</b>
+                  </p>
+                  {/* {mintStatus === "PUBLIC" && (
                       <>
-                        <p className="body-medium yellowish-gray-text text-uppercase">
+                        <p className="body-small yellowish-gray-text text-uppercase">
                           Next Price Drop: <b>{nextPriceDropDate}</b>{" "}
                         </p>
-                        <p className="body-medium yellowish-gray-text text-uppercase">
+                        <p className="body-small yellowish-gray-text text-uppercase">
                           <b>{priceDropAmount}</b>
                         </p>
                       </>
                     )}
                     {mintStatus === "MINT LIST" && (
                       <>
-                        <p className="body-medium yellowish-gray-text text-uppercase">
+                        <p className="body-small yellowish-gray-text text-uppercase">
                           Mint List winners will always mint at 0.5 ETH.
                         </p>
-                        <p className="body-medium yellowish-gray-text text-uppercase">
+                        <p className="body-small yellowish-gray-text text-uppercase">
                           You will be able to claim a refund when sales end for
                           the difference between your price and the lowest Dutch
                           Auction price.
                         </p>
                       </>
-                    )}
-                    {mintStatus === "CAPSULE HOUSE" && (
-                      <>
-                        <p className="body-medium yellowish-gray-text text-uppercase">
-                          You will be able to mint at 0.2 ETH.
-                        </p>
-                      </>
-                    )}
-                  </React.Fragment>
-                )}
+                    )} */}
+                  {mintStatus === "PUBLIC" && (
+                    <>
+                      <p className="body-small yellowish-gray-text text-uppercase">
+                        <b>Mint Price: 0.08 ETH</b>
+                      </p>
+                    </>
+                  )}
+                  {mintStatus === "CAPSULE HOUSE" && (
+                    <>
+                      <p className="body-small yellowish-gray-text text-uppercase">
+                        <b>Mint Price: 0.065 ETH</b>
+                      </p>
+                    </>
+                  )}
+                  {mintStatus === "GENESIS" && (
+                    <>
+                      <p className="body-small yellowish-gray-text text-uppercase">
+                        <b>Mint Price: 0.05 ETH</b>
+                      </p>
+                    </>
+                  )}
+                </React.Fragment>
               </div>
             )}
           </div>
@@ -462,7 +487,7 @@ export default function SimpleDialog(props) {
   );
 }
 
-SimpleDialog.propTypes = {
+MintModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
 };

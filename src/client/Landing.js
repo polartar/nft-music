@@ -346,7 +346,7 @@ class Sequencer extends Component {
       form.append("nftName", this.state.nft.name);
       form.append("edition", this.state.nft.edition);
       //hardcoded launch date text, ideally this comes from the nft object
-      form.append("launchDate", "LAUNCH AND REVEAL " + "5/24");
+      // form.append("launchDate", "LAUNCH AND REVEAL " + "5/24");
 
       const response = await axios.post("/api/exportRecording", form, {
         responseType: "blob",
@@ -584,7 +584,7 @@ class Sequencer extends Component {
 
             const incrementMilliseconds = () => {
               if (this.state.recordingTimer >= 60000) {
-                this.stopRecording()
+                this.stopRecording();
               } else {
                 this.setState({
                   recordingTimer: (milliseconds += 1000),
@@ -953,12 +953,12 @@ class Sequencer extends Component {
 
   // recording work
   startRecording() {
-    var padRecording = []
+    var padRecording = [];
     //Check if there are existing stems playing and add them to the recording
     Object.keys(this.players).forEach((group) => {
       this.players[group].forEach((_, soundIndex) => {
         if (this.players[group][soundIndex].state == "started") {
-          padRecording.push([group, soundIndex, 0])
+          padRecording.push([group, soundIndex, 0]);
         }
       });
     });
@@ -966,7 +966,7 @@ class Sequencer extends Component {
     this.setState({
       padRecording,
       shouldStartRecording: true,
-      recordingStatus: "Waiting for next loop to start..."
+      recordingStatus: "Waiting for next loop to start...",
     });
     // window.timer = window.setInterval(incrementMilliseconds, 10);
     // intervals.push(setInterval(incrementMilliseconds, 10));
@@ -1168,7 +1168,6 @@ class Sequencer extends Component {
         ".beatPackTitle",
         ".launchdate-text",
         ".artistName",
-        ".gridOuter",
       ],
       easing: "easeInOutSine",
       duration: 750,
@@ -1865,6 +1864,7 @@ class Sequencer extends Component {
 
       this.patch.config.didRender = this.didRender;
     }
+
     // Set up active sounds limit
     if (nft && initialNFTLoaded) {
       const mediaFileExtension = nft.imageURL
@@ -1927,6 +1927,7 @@ class Sequencer extends Component {
                   isLoggedIntoMetamask={isLoggedIntoMetamask}
                   showTutorial={showTutorial}
                   setShowTutorial={this.setShowTutorial.bind(this)}
+                  canRecord={false}
                 />
 
                 <IconButton

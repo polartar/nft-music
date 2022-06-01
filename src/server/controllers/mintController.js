@@ -8,8 +8,13 @@ const { soliditySha3 } = require("web3-utils");
 const HASH_PREFIX_DISCOUNTED = "Sunday Journal Discounted Verification:";
 const HASH_PREFIX_WHITELISTED = "Sunday Journal Base Verification:";
 const EthCrypto = require("eth-crypto");
+const { parseEther } = require("ethers/lib/utils");
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
+// const {PRIVATE_KEY} = require("../private.json")
 
+const GENESIS_PRICE = "0.05";
+const EARLY_PRICE = "0.065";
+const PUBLIC_PRICE = "0.08";
 // connect to our mongodb database
 async function connectToDatabase() {
   let params = {};
@@ -42,17 +47,32 @@ async function getMintStatusForAddress(address) {
     const mintStatus = await db
       .collection("mintStatus")
       .findOne({ address: address.toLowerCase() });
+    let price;
+
+    if (mintStatus?.status === "GENESIS") {
+      price = GENESIS_PRICE;
+    }
+
+    if (mintStatus?.status === "CAPSULE HOUSE") {
+      price = EARLY_PRICE;
+    }
 
     if (mintStatus) {
       return {
         status: 200,
-        response: mintStatus.status,
+        response: {
+          status: mintStatus.status,
+          price,
+        },
       };
     }
 
     return {
       status: 200,
-      response: "PUBLIC",
+      response: {
+        status: "PUBLIC",
+        price: PUBLIC_PRICE,
+      },
     };
   } catch (error) {
     console.log(error);
@@ -72,31 +92,45 @@ async function getMetadata(address, tokenId) {
       ? process.env.BASE_URL
       : "localhost:3001";
 
+    const attributes = [
+      {
+        trait_type: "Music Artist",
+        value: metadata.artistName,
+      },
+      {
+        trait_type: "Beats Per Minute",
+        value: metadata.bpm,
+      },
+      {
+        trait_type: "Key",
+        value: metadata.key,
+      },
+    ];
+
+    if (metadata.visualArtistName) {
+      attributes.push({
+        trait_type: "Visual Artist",
+        value: metadata.visualArtistName,
+      });
+    }
+
     const formattedMetadata = {
       name: `${metadata.name} #${tokenId}`,
       description: metadata.description,
       external_url: `https://${baseURL}/bouquet/${metadata.artistName}/${metadata.name}/${tokenId}`,
-      animation_url: `https://${baseURL}/bouquetEmbed/${address.toLowerCase()}/${tokenId}`,
-      image: metadata.thumbnail,
-      attributes: [
-        {
-          trait_type: "Music Artist",
-          value: metadata.artistName,
-        },
-        {
-          trait_type: "Visual Artist",
-          value: metadata.visualArtistName,
-        },
-        {
-          trait_type: "Beats Per Minute",
-          value: metadata.bpm,
-        },
-        {
-          trait_type: "Key",
-          value: metadata.key,
-        },
-      ],
     };
+
+    if (metadata.revealed) {
+      formattedMetadata[
+        "animation_url"
+      ] = `https://${baseURL}/bouquetEmbed/${address.toLowerCase()}/${tokenId}`;
+    }
+
+    if (metadata.showThumbnail) {
+      formattedMetadata["image"] = metadata.thumbnail;
+    }
+
+    formattedMetadata["attributes"] = attributes;
 
     return { status: 200, response: formattedMetadata };
   } catch (error) {
@@ -107,7 +141,7 @@ async function getMetadata(address, tokenId) {
 
 async function makeDiscountedSignature(address) {
   const mintStatus = await getMintStatusForAddress(address);
-  if (mintStatus.response !== "CAPSULE HOUSE") {
+  if (mintStatus.response.status !== "CAPSULE HOUSE") {
     return { status: 400, response: "invalid user" };
   }
   try {
@@ -127,13 +161,17 @@ async function makeDiscountedSignature(address) {
   }
 }
 
-async function makeWhitelistSignature(address) {
+async function makeWhitelistSignature(address, quantity) {
   const mintStatus = await getMintStatusForAddress(address);
-  if (mintStatus.response !== "CAPSULE HOUSE") {
+
+  if (mintStatus.response.status === "PUBLIC") {
     return { status: 400, response: "invalid user" };
   }
+
+  const price = mintStatus.response.price;
   try {
-    const hash = soliditySha3(HASH_PREFIX_WHITELISTED, address);
+    // const hash = soliditySha3(HASH_PREFIX_WHITELISTED, address);
+    const hash = soliditySha3(address, parseEther(price), quantity);
     const ownerSignature = EthCrypto.sign(PRIVATE_KEY, hash);
 
     return {
@@ -141,6 +179,7 @@ async function makeWhitelistSignature(address) {
       response: {
         hash: hash,
         signature: ownerSignature,
+        price,
       },
     };
   } catch (error) {
