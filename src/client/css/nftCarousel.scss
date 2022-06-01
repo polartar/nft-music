@@ -23,49 +23,64 @@
 .collection-slide {
   position: absolute;
   will-change: transform;
-  height: 82%;
+  height: 90%;
   width: 100%;
+  @media only screen and (max-width: 700px) {
+    height: 100%;
 
+  }
   &:not(.prevNFT):not(.nextNFT):not(.activeNFT) {
     z-index: 0;
-    transform: translate3d(25%, 0, 0) scale(0.67);
-    opacity: 0.2;
+    transform: translate3d(25%, 0, 0) scale(0.78);
+    .waterLoopVideo {
+      filter: brightness(25%);
+    }
+
   }
 
   &.prevNFT {
     z-index: 0;
-    transform: translate3d(-25%, 0, 0) scale(0.67);
+    transform: translate3d(-25%, 0, 0) scale(0.78);
     transition: 1s $easing;
-    opacity: 0.2;
+
+    .waterLoopVideo {
+      filter: brightness(25%);
+    }
   }
 
   &.activeNFT {
     z-index: 10;
     transform: translate3d(0, 0, 0) scale(1);
     transition: transform 1s $easing;
-    opacity: 1;
+    .waterLoopVideo {
+      filter: brightness(50%);
+    }
   }
 
   &.nextNFT {
     z-index: 5;
-    transform: translate3d(25%, 0, 0) scale(0.67);
+    transform: translate3d(25%, 0, 0) scale(0.78);
     transition: 1s $easing;
-    opacity: 0.2;
+    .waterLoopVideo {
+      filter: brightness(25%);
+    }
   }
 
   @at-root #collection-slide-wrapper.prevNFT & {
     &:not(.prevNFT):not(.nextNFT):not(.activeNFT) {
-      transform: translate3d(-25%, 0, 0) scale(0.67);
-      opacity: 0.2;
+      transform: translate3d(-25%, 0, 0) scale(0.78);
+      .waterLoopVideo {
+        filter: brightness(25%);
+      }
     }
 
     &.prevNFT {
-      transform: translate3d(25%, 0, 0) scale(0.67);
+      transform: translate3d(25%, 0, 0) scale(0.78);
       z-index: 5;
     }
 
     &.nextNFT {
-      transform: translate3d(-25%, 0, 0) scale(0.67);
+      transform: translate3d(-25%, 0, 0) scale(0.78);
       z-index: 15;
     }
 
@@ -74,5 +89,6 @@
     }
   }
 }
+
 
 /* NFT CAROUSEL SLIDESHOW - END */

@@ -13,6 +13,9 @@ import { ThemeProvider } from "@material-ui/styles";
 import PlayCircleIcon from "../images/PlayCircleIcon.svg";
 import ShuffleCircleIcon from "../images/ShuffleCircleIcon.svg";
 import StopCircleIcon from "../images/StopCircleIcon.svg";
+import SkipIcon from "../images/skip.svg";
+import { createTheme } from "@material-ui/core/styles";
+
 import { useWeb3React } from "@web3-react/core";
 
 // import Discord from "../images/discord.svg";
@@ -21,6 +24,7 @@ import { useWeb3React } from "@web3-react/core";
 // import Share from "../images/Share.svg";
 
 import ControlsButton from "./ControlsButton";
+import SkipButton from "./SkipButton";
 
 export default function Footer(props) {
   const {
@@ -30,14 +34,16 @@ export default function Footer(props) {
     shareURL,
     setVolume,
     volume,
-    muiTheme,
     clearSelections,
     canvas,
     playing,
     handleShuffle,
     playMix,
     setOpenControls,
-    openControls
+    openControls,
+    handleSlide,
+    currentNFTIndex,
+    nftCount
   } = props;
   const { chainId, account, active, activate, deactivate, library } = useWeb3React();
   const [loaded, setLoaded] = useState(false);
@@ -68,6 +74,22 @@ export default function Footer(props) {
   const handleCloseEmail = () => {
     setOpenEmail(false);
   };
+
+  const muiTheme = createTheme({
+    overrides: {
+      MuiSlider: {
+        thumb: {
+          color: "white",
+        },
+        track: {
+          color: "white",
+        },
+        rail: {
+          color: "white",
+        },
+      },
+    },
+  });
 
   // useEffect(() => {
   //   refreshData();
@@ -120,21 +142,43 @@ export default function Footer(props) {
             props.white ? "bottomNav scrollBar white" : "bottomNav scrollBar"
           }
         >
+
+        <div className="volumeWrapper">
+          <ThemeProvider theme={muiTheme}>
+            <Slider
+              min={-50}
+              max={0}
+              defaultValue={volume}
+              onChange={(event, newValue) => setVolume(newValue)}
+            />
+          </ThemeProvider>
+        </div>
+
           {/* {showShare && !isLoggedIntoMetamask && ( */}
           {hidePlayControls || (
             <div className="play-controls">
+
+
+              {handleSlide &&
+                <a href="#" onClick={() => handleSlide("prevNFT")}>
+                  <img
+                    src={SkipIcon}
+                    style={{ height: "36px", transform: "rotate(180deg)", opacity:  currentNFTIndex == 0 ? "0.5" : "1.0", cursor:  currentNFTIndex == 0 ? "not-allowed" : "pointer" }}
+                  />
+                </a>
+              }
+
               <div className="stopBtnContainer">
                 <div className="stopBtnWrapper">
                   {playing ? (
                     <span
                       style={{
                         display: "flex",
-                        gap: "8px",
-                        marginRight: "8px"
+                        gap: "8px"
                       }}
                     >
                       <a href="#" onClick={clearSelections}>
-                        <img src={StopCircleIcon} style={{ height: "35px" }} />
+                        <img src={StopCircleIcon} style={{ height: "36px"}} />
                       </a>
                       {/* <a href="#" onClick={handleShuffle}>
                           <img src={ShuffleCircleIcon} style={{ height: "35px" }} />
@@ -144,25 +188,38 @@ export default function Footer(props) {
                     <a href="#" onClick={playMix}>
                       <img
                         src={PlayCircleIcon}
-                        style={{ height: "35px", marginRight: "8px" }}
+                        style={{ height: "36px"}}
                       />
                     </a>
                   )}
                 </div>
               </div>
 
-              <div className="volumeContainer">
-                <div className="volumeWrapper">
-                  <ThemeProvider theme={muiTheme}>
-                    <Slider
-                      min={-50}
-                      max={0}
-                      defaultValue={volume}
-                      onChange={(event, newValue) => setVolume(newValue)}
-                    />
-                  </ThemeProvider>
-                </div>
-              </div>
+              {handleSlide &&
+
+              <a href="#" onClick={() => handleSlide("nextNFT")}>
+                <img
+                  src={SkipIcon}
+                  style={{ height: "36px", opacity:  currentNFTIndex == (nftCount - 1) ? "0.5" : "1.0", cursor:  currentNFTIndex == (nftCount - 1) ? "not-allowed" : "pointer" }}
+                />
+              </a>
+            }
+
+
+
+
+
+            </div>
+          )}
+          {hidePlayControls || (
+            <div style={{maxWidth: "440px", paddingLeft: "16px", width: "100%", display:"flex", justifyContent:"flex-end"}}>
+              <ControlsButton
+                className={`cta-button small ${
+                  openControls ? "white" : "light-dark"
+                }`}
+                onClick={setOpenControls}
+                fill={openControls ? "#575757" : "#FFF"}
+              />
             </div>
           )}
 
@@ -201,17 +258,7 @@ export default function Footer(props) {
               </div>
             </div>
           */}
-          {hidePlayControls || (
-            <div>
-              <ControlsButton
-                className={`cta-button small ${
-                  openControls ? "white" : "light-dark"
-                }`}
-                onClick={setOpenControls}
-                fill={openControls ? "#575757" : "#FFF"}
-              />
-            </div>
-          )}
+
 
           {/* <button className="button" onClick={() => handleMintMenu()}>
             TO MINT MENU

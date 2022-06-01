@@ -20,7 +20,6 @@ import ArrowRight from "./images/arrowright.svg";
 import BidModal from "./components/BidModal";
 
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
 import Twitter from "./images/twitter.png";
 import Discord from "./images/discord.png";
 import Instagram from "./images/instagram.png";
@@ -46,8 +45,7 @@ import QuakingGrass from "./components/QuakingGrass";
 import MonsteraLeaf from "./components/MonsteraLeaf";
 import Tulip from "./components/Tulip";
 import FlowerArrangement from "./components/FlowerArrangement";
-import Stopwatch from "./components/Stopwatch";
-import BouquetCarousel from "./components/BouquetCarousel";
+import BouquetCarouselPlayer from "./components/BouquetCarouselPlayer";
 import { withWeb3HOC } from "./Web3HOC";
 import "./css/nftCarousel.scss";
 import http from "http";
@@ -220,10 +218,12 @@ class Sequencer extends Component {
     steps: 0,
     playing: false,
     delay: false,
-    loaded: false,
+    initialNFTLoaded: false,
+    playersLoaded: false,
     totalSoundsPlaying: 0,
     openBidModal: false,
     nft: null,
+    featuredNFTs:[],
     isLoggedIntoMetamask: false,
     provider: null,
     address: null,
@@ -257,7 +257,7 @@ class Sequencer extends Component {
     this.players = {};
     this.rhythmPads = [];
 
-    this.fetchNFT();
+    this.fetchNFTs();
 
     this.cablesCanvas = createRef();
     this.canvas = createRef();
@@ -314,6 +314,12 @@ class Sequencer extends Component {
     });
   };
 
+  setShowTutorial() {
+    this.setState({
+      showTutorial: !this.state.showTutorial,
+    });
+  }
+
   exportRecording = async (blob) => {
     this.setState({
       exportingStatus: `Exporting, please wait...`,
@@ -369,8 +375,9 @@ class Sequencer extends Component {
     }
   };
 
-  fetchNFT = async () => {
+  fetchNFTs = async () => {
     let nftResponse;
+    let featuredNFTs = []
     if (this.props.match) {
       nftResponse = await axios.get("/api/getNFT", {
         params: this.props.match.params,
@@ -379,25 +386,57 @@ class Sequencer extends Component {
       nftResponse = await axios.get("/api/getFeaturedNFT");
     }
 
-    this.setState({
-      nft: nftResponse.data,
+    featuredNFTs.push(nftResponse.data)
+
+    nftResponse = await axios.get("/api/getNFT", {
+      params: {artistName: "oksami", nftName: "Sunday Journal", edition: "1"},
     });
 
+    featuredNFTs.push(nftResponse.data)
+
+    this.setState({
+      nft: nftResponse.data,
+      featuredNFTs: featuredNFTs
+    });
+
+    this.setupBouquetPlayerForIndex(0)
+  }
+
+
+  setupBouquetPlayerForIndex = (index) => {
+
+    if (this.state.playing) {
+      this.clearSelections()
+
+    }
+    Tone.Transport.cancel()
+
+    let nft = this.state.featuredNFTs[index]
+
+    this.setState({nft, playersLoaded: false});
+
+    this.setupPadsForNFT(nft)
+  }
+
+  setupPadsForNFT = (nft) => {
+    this.players = {}
+    this.activePlayers = {}
+    this.rhythmPads = []
     // Initial pads setup
-    if (!Object.keys(this.players).length) {
+    // if (!Object.keys(this.players).length) {
       const pads = {};
       const queue = {};
 
-      Object.keys(nftResponse.data.filePaths).map((group) => {
-        const filePaths = nftResponse.data.filePaths[group];
+      Object.keys(nft.filePaths).map((group) => {
+        const filePaths = nft.filePaths[group];
         this.players[group] = [];
         pads[group] = [];
         queue[group] = [];
 
         this.activePlayers[group] = [];
 
-        Object.keys(nftResponse.data.filePaths).map((group) => {
-          const filePaths = nftResponse.data.filePaths[group];
+        Object.keys(nft.filePaths).map((group) => {
+          const filePaths = nft.filePaths[group];
           this.players[group] = [];
           pads[group] = [];
           queue[group] = [];
@@ -415,16 +454,16 @@ class Sequencer extends Component {
         });
       });
 
-      const padFormat = nftResponse.data.padFormat;
-      const padFormatStyleClass = nftResponse.data.padStyle;
+      const padFormat = nft.padFormat.slice();
+      const padFormatStyleClass = nft.padStyle;
 
-      const steps = nftResponse.data.steps;
-      const subSteps = nftResponse.data.subSteps;
+      const steps = nft.steps;
+      const subSteps = nft.subSteps;
 
       this.rhythmPads = new Array(steps).fill([0]);
 
-      if (nftResponse.data.blooms && nftResponse.data.blooms[0]) {
-        padFormat.push(nftResponse.data.blooms[0]["stems"]);
+      if (nft.blooms && nft.blooms[0]) {
+        padFormat.push(nft.blooms[0]["stems"])
       }
 
       this.setState({ pads, queue, padFormat, steps, padFormatStyleClass });
@@ -449,7 +488,7 @@ class Sequencer extends Component {
         }
       }
 
-      Tone.Transport.bpm.value = nftResponse.data.bpm;
+      Tone.Transport.bpm.value = nft.bpm;
       Tone.Transport.scheduleRepeat(async (time) => {
         if (this.state.step % subSteps === 0) {
           const updatedPads = {};
@@ -467,7 +506,7 @@ class Sequencer extends Component {
             );
 
             updatedQueue[group] = this.state.queue[group].slice(
-              -this.state.nft.activeSoundLimits[group]
+              -nft.activeSoundLimits[group]
             );
 
             if (updatedQueue[group].length !== this.state.queue[group].length) {
@@ -589,7 +628,8 @@ class Sequencer extends Component {
         let _this = this;
         this.setState(
           () => ({
-            loaded: true,
+            initialNFTLoaded: true,
+            playersLoaded: true,
             showTutorial:
               this.state.showTutorial && sharedPadNumbers !== null
                 ? false
@@ -620,7 +660,7 @@ class Sequencer extends Component {
           }
         );
       });
-    }
+    // }
   };
 
   didRender = async (blob) => {
@@ -642,18 +682,6 @@ class Sequencer extends Component {
     script.async = true;
 
     document.body.appendChild(script);
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevState.openControls !== this.state.openControls) {
-      anime({
-        targets: [".record-container"],
-        easing: "easeInOutSine",
-        duration: 750,
-        opacity: 1,
-        delay: 0,
-      });
-    }
   }
 
   handleClickOpen = async () => {
@@ -716,7 +744,7 @@ class Sequencer extends Component {
 
     if (!isAllZero) {
       canvas.width = window.innerWidth;
-      canvas.height = 500;
+      canvas.height = 100;
 
       var x = 0;
 
@@ -724,7 +752,7 @@ class Sequencer extends Component {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       var bufferLength = frequency_array.length;
-      var barWidth = (canvas.width / bufferLength) * 2.5;
+      var barWidth = 0.92;
       // ctx.globalCompositeOperation = 'destination-over'
 
       // ctx.fillStyle = "#1f1f1f";
@@ -743,7 +771,7 @@ class Sequencer extends Component {
         var b = 50;
 
         // ctx.fillStyle = 'rgb(' + 255 + ',' + 255 + ',' + 255 + ')'
-        ctx.fillStyle = `rgba(255, 255, 255, 1)`;
+        ctx.fillStyle = "rgb(" + 244 + "," + 244 + "," + 241 + ")";
         // ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 1)`;
         ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
 
@@ -757,7 +785,7 @@ class Sequencer extends Component {
     let frequency_array = new Uint8Array(analyser);
 
     canvas.width = window.innerWidth;
-    canvas.height = 500;
+    canvas.height = 100;
 
     var x = 0;
 
@@ -780,8 +808,8 @@ class Sequencer extends Component {
       var g = 250 * (i / bufferLength);
       var b = 50;
 
-      ctx.fillStyle = "rgb(" + 31 + "," + 31 + "," + 31 + ")";
-      ctx.strokeStyle = "rgba(0, 0, 0, 0.17)";
+      ctx.fillStyle = "rgb(" + 244 + "," + 244 + "," + 241 + ")";
+      // ctx.strokeStyle = "rgba(0, 0, 0, 0.17)";
       ctx.strokeRect(x, canvas.height - barHeight, barWidth, barHeight);
 
       x += barWidth + 1;
@@ -955,22 +983,6 @@ class Sequencer extends Component {
     });
   }
 
-  muiTheme = createTheme({
-    overrides: {
-      MuiSlider: {
-        thumb: {
-          color: "white",
-        },
-        track: {
-          color: "white",
-        },
-        rail: {
-          color: "white",
-        },
-      },
-    },
-  });
-
   setVolume(volume) {
     if (volume != null) {
       this.setState({
@@ -985,9 +997,6 @@ class Sequencer extends Component {
     }
   }
 
-  handleShuffle() {
-    //shuffle function here
-  }
 
   clearSelections() {
     // clear all setTimeouts for togglePad()'s
@@ -1038,6 +1047,23 @@ class Sequencer extends Component {
     }
   }
 
+  handlePlayback() {
+
+      if (!this.state.isPlayingBack) {
+        this.playbackRecording(
+          this.state.padRecording,
+          (pad) => {
+            this.togglePad(pad[0], pad[1]);
+          }
+        );
+      } else {
+        this.setState({
+          isPlayingBack: false,
+        });
+        this.clearSelections();
+      }
+
+  }
   playbackRecording(padRecording, callback) {
     // this.clearSelections();
     let highestId = window.setTimeout(() => {
@@ -1099,11 +1125,14 @@ class Sequencer extends Component {
   }
 
   touchStart = function(e) {
+    e.preventDefault()
     this.mobileTouchStart = parseInt(e.changedTouches[0].clientY);
     window.scrollTop = 0;
   };
 
   touchMove = function(e) {
+    e.preventDefault()
+
     let idle = this.idle;
 
     let mobileTouchEnd = parseInt(e.changedTouches[0].clientY);
@@ -1139,7 +1168,6 @@ class Sequencer extends Component {
         ".beatPackTitle",
         ".launchdate-text",
         ".artistName",
-        ".gridOuter",
       ],
       easing: "easeInOutSine",
       duration: 750,
@@ -1165,7 +1193,7 @@ class Sequencer extends Component {
       ],
       easing: "easeInOutSine",
       duration: 500,
-      opacity: 1,
+      opacity: 0.3,
       delay: 0,
     });
   };
@@ -1377,7 +1405,7 @@ class Sequencer extends Component {
         ],
         easing: "easeInOutSine",
         duration: 500,
-        opacity: 1,
+        opacity: 0.3,
         delay: 0,
       });
 
@@ -1532,7 +1560,9 @@ class Sequencer extends Component {
     }
   }
 
-  waitForIdle() {
+  waitForIdle(e) {
+    e.preventDefault();
+
     let wrapper = document.querySelector("#main-wrapper");
     let items = wrapper.querySelectorAll(".vslide");
 
@@ -1545,7 +1575,9 @@ class Sequencer extends Component {
     }, 500);
   }
 
-  waitForFAQIdle() {
+  waitForFAQIdle(e) {
+    e.preventDefault();
+
     //set timeout to make sure extra scrolls doesn't fire
     setTimeout(() => {
       this.idle = true;
@@ -1755,60 +1787,6 @@ class Sequencer extends Component {
     );
   }
 
-  shouldRenderPostRecording = () => {
-    return (
-      this.state.padRecording.length > 0 &&
-      !this.state.isRecording &&
-      !this.state.shouldStartRecording &&
-      !this.state.shouldStopRecording
-    );
-  };
-
-  setOpenControls() {
-    this.setState({ openControls: !this.state.openControls });
-  }
-
-  setHideBeatpad() {
-    if (this.state.hideBeatpad) {
-      anime({
-        targets: [".gridOuter"],
-        easing: "easeInOutSine",
-        duration: 250,
-        opacity: 1,
-        delay: 0,
-      });
-      anime({
-        targets: [".waterLoopVideo"],
-        easing: "easeInOutSine",
-        duration: 250,
-        filter: "brightness(40%)",
-        delay: 0,
-      });
-    } else {
-      anime({
-        targets: [".gridOuter"],
-        easing: "easeInOutSine",
-        duration: 250,
-        opacity: 0,
-        delay: 0,
-      });
-      anime({
-        targets: [".waterLoopVideo"],
-        easing: "easeInOutSine",
-        duration: 250,
-        filter: "brightness(100%)",
-        delay: 0,
-      });
-    }
-    this.setState({ hideBeatpad: !this.state.hideBeatpad });
-  }
-
-  setShowTutorial() {
-    this.setState({
-      showTutorial: !this.state.showTutorial,
-      openControls: !this.state.openControls,
-    });
-  }
 
   calculateProgressPercentage = async () => {
     const totalDuration =
@@ -1848,7 +1826,7 @@ class Sequencer extends Component {
       step,
       steps,
       notes,
-      loaded,
+      initialNFTLoaded,
       nft,
       isLoggedIntoMetamask,
       bids,
@@ -1887,123 +1865,8 @@ class Sequencer extends Component {
       this.patch.config.didRender = this.didRender;
     }
 
-    const renderPad = () => {
-      const beatPads = [];
-      const blooms = [];
-      const bloomObject = { top: [], right: [], bottom: [], left: [] };
-
-      {
-        padFormat.map((column, j) => {
-          return column.map((remappedCoordinates, i) => {
-            const group = remappedCoordinates[0];
-            const soundIndex = remappedCoordinates[1];
-            const additionalClasses = remappedCoordinates[2]
-              ? remappedCoordinates[2]
-              : "";
-
-            const on = this.players[group][soundIndex].state === "started";
-
-            const blinkClass =
-              pads[group][soundIndex] === 1 &&
-              this.players[group][soundIndex].state !== "started"
-                ? "blink"
-                : "";
-            const whiteClass = group === "sounds" ? "whitePad" : "";
-            let tutorialClass = "";
-            const padClass = group == "sounds" ? "padWhiteVersion" : "pad";
-
-            if (showTutorial) {
-              if (tutorialStep === 0 && group !== "drums") {
-                tutorialClass = "tutorialPad";
-              } else if (tutorialStep === 1 && group !== "basses") {
-                tutorialClass = "tutorialPad";
-              } else if (tutorialStep === 2 && group !== "sounds") {
-                tutorialClass = "tutorialPad";
-              }
-            }
-
-            if (padFormatStyleClass == "tile36" && j >= 6) {
-              blooms.push(
-                <div
-                  key={`pad-group-${i}`}
-                  className={`bloom ${cx(padClass, {
-                    on,
-                  })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                  onClick={() => {
-                    this.togglePad(group, soundIndex);
-                  }}
-                />
-              );
-            } else if (padFormatStyleClass == "tile25" && j >= 5) {
-              blooms.push(
-                <div
-                  key={`pad-group-${i}`}
-                  className={`bloom ${cx(padClass, {
-                    on,
-                  })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                  onClick={() => {
-                    this.togglePad(group, soundIndex);
-                  }}
-                />
-              );
-            } else {
-              beatPads.push(
-                <div
-                  key={`pad-group-${i}`}
-                  className={`${cx(padClass, {
-                    on,
-                  })} ${blinkClass} ${whiteClass} ${tutorialClass} ${additionalClasses}`}
-                  onClick={() => {
-                    this.togglePad(group, soundIndex);
-                  }}
-                />
-              );
-            }
-          });
-        });
-      }
-
-      var bloomOrder = 0;
-      {
-        blooms.map((bloom) => {
-          if (bloomOrder <= 2) {
-            bloomObject["top"].push(bloom);
-          } else if (bloomOrder > 2 && bloomOrder <= 5) {
-            bloomObject["bottom"].push(bloom);
-          } else if (bloomOrder > 5 && bloomOrder <= 8) {
-            bloomObject["right"].push(bloom);
-          } else {
-            bloomObject["left"].push(bloom);
-          }
-          if (bloomOrder < 11) {
-            bloomOrder = bloomOrder + 1;
-          } else {
-            bloomOrder = 0;
-          }
-        });
-      }
-
-      return (
-        <>
-          <div className={`gridOuter blooming`}>
-            <div className="bloom-group top">{bloomObject["top"]}</div>
-            <div className="bloom-group right">
-              <div className="bloom-content">{bloomObject["right"]}</div>
-            </div>
-            <div className="bloom-group left">
-              <div className="bloom-content">{bloomObject["left"]}</div>
-            </div>
-            <div className="bloom-group bottom">{bloomObject["bottom"]}</div>
-            <div className={`main-pad-group ${padFormatStyleClass}`}>
-              {beatPads}
-            </div>
-          </div>
-        </>
-      );
-    };
-
     // Set up active sounds limit
-    if (nft && loaded) {
+    if (nft && initialNFTLoaded) {
       const mediaFileExtension = nft.imageURL
         .split(".")
         .pop()
@@ -2026,349 +1889,53 @@ class Sequencer extends Component {
                   loggedIntoMetamaskOverride={isLoggedIntoMetamask}
                 />
 
-                <div className="container">
-                  {mediaFileExtension === "mp4" && (
-                    <div className="video-container">
-                      <video
-                        className="waterLoopVideo"
-                        playsInline
-                        autoPlay
-                        loop
-                        muted
-                        data-autoplay
-                      >
-                        <source src={nft.imageURL} type="video/mp4" />
-                      </video>
-                    </div>
-                  )}
-                  {mediaFileExtension !== "mp4" && (
-                    <img className="waterLoopVideo" src={nft.imageURL} />
-                  )}
 
-                  <div className="gridTop">
-                    {this.rhythmPads.map((group, groupIndex) => (
-                      <React.Fragment>
-                        {group.map((pad, i) => (
-                          <div
-                            key={`pad-group-${i}`}
-                            className={cx("modifiedPad", {
-                              active:
-                                groupIndex ===
-                                (((step - 1) % steps) + steps) % steps,
-                              on: pad === 1,
-                            })}
-                          />
-                        ))}
-                      </React.Fragment>
-                    ))}
-                  </div>
+                <BouquetCarouselPlayer
+                  setupBouquetPlayerForIndex={this.setupBouquetPlayerForIndex.bind(this)}
+                  playersLoaded={this.state.playersLoaded}
+                  padFormat={padFormat}
+                  padFormatStyleClass={padFormatStyleClass}
+                  players={this.players}
+                  nfts={this.state.featuredNFTs}
+                  rhythmPads={this.rhythmPads}
+                  togglePad={this.togglePad.bind(this)}
+                  step={step}
+                  steps={steps}
+                  pads={pads}
+                  tutorialStep={tutorialStep}
+                  shouldStartRecording={this.state.shouldStartRecording}
+                  recordingStatus={this.state.recordingStatus}
+                  exportingStatus={this.state.exportingStatus}
+                  isRecording={this.state.isRecording}
+                  recording={this.state.recording}
+                  shouldStopRecording={this.state.shouldStopRecording}
+                  isPlayingBack={this.state.isPlayingBack}
+                  repeat={this.state.repeat}
+                  hasNewRecording={this.state.hasNewRecording}
+                  padRecording={this.state.padRecording}
+                  volume={this.state.volume}
+                  playing={this.state.playing}
+                  stopRecording={this.stopRecording.bind(this)}
+                  startRecording={this.startRecording.bind(this)}
+                  clearSelections={this.clearSelections}
+                  canvas={this.canvas}
+                  exportRecording={this.exportRecording.bind(this)}
+                  playbackRecording={this.playbackRecording.bind(this)}
+                  handlePlayback={this.handlePlayback.bind(this)}
+                  setVolume={this.setVolume.bind(this)}
+                  shareablePadNumbers={this.state.shareablePadNumbers}
+                  isLoggedIntoMetamask={isLoggedIntoMetamask}
+                  showTutorial={showTutorial}
+                  setShowTutorial={this.setShowTutorial.bind(this)}
+                  canRecord={false}
+                />
 
-                  {renderPad()}
-
-                  {/*
-                    //WORK IN PROGRESS
-
-                  <BouquetCarousel
-                    padFormat={padFormat}
-                    padFormatStyleClass={padFormatStyleClass}
-                    players={this.players}
-                    nfts={[nft, nft]}
-                    rhythmPads={this.rhythmPads}
-                    togglePad={this.togglePad.bind(this)}
-                    step={step}
-                    steps={steps}
-                    pads={pads}
-                    showTutorial={showTutorial}
-                    tutorialStep={tutorialStep}
-                  />
-
-                  */}
-
-                  <div className="song-info-wrapper">
-                    {showTutorial && (
-                      <div className="tutorial-wrapper">
-                        <React.Fragment>
-                          {tutorialStep === 0 && (
-                            <React.Fragment>
-                              <div className="body-small white-text">
-                                To begin, press one of the highlighted squares
-                                on the left. These are the drum loops. <br />
-                                <br />
-                                Only one will play at a time.
-                              </div>
-                            </React.Fragment>
-                          )}
-                          {tutorialStep === 1 && (
-                            <div className="body-small white-text">
-                              Now, press one of the highlighted squares on the
-                              right. These are the bass loops. <br />
-                              <br />
-                              When the pad is flashing, the sound will wait to
-                              play until the next bar.
-                              <br />
-                              <br /> Only one will play at a time.
-                            </div>
-                          )}
-                          {tutorialStep === 2 && (
-                            <div className="body-small white-text">
-                              {`Lastly, press one of grey squares in the middle. These are
-                          chords and melodies. Up to ${nft.activeSoundLimits["sounds"]} can play at at time.`}
-                            </div>
-                          )}
-                          {tutorialStep === 3 && (
-                            <div className="body-small white-text">
-                              You're ready to make some music! <br />
-                              <br />
-                              Try out different combinations and share them with
-                              friends below. <br />
-                              <br />
-                              If you'd like to learn more about Secret Garden,
-                              scroll down.
-                            </div>
-                          )}
-                        </React.Fragment>
-                      </div>
-                    )}
-                    <div className="song-info-container">
-                      {/* {openControls && (
-                        <div className="controls-container">
-                          <div className="record-container control-item">
-                            <button
-                              className={
-                                this.state.shouldStartRecording ||
-                                this.state.isRecording
-                                  ? "button record blink whitePad padWhiteVersion"
-                                  : "button record"
-                              }
-                              onClick={() => {
-                                if (this.state.isRecording) {
-                                  this.stopRecording();
-                                } else {
-                                  this.startRecording();
-                                }
-                              }}
-                            >
-                              <div className="circle"></div>
-                              {this.state.isRecording
-                                ? this.state.shouldStopRecording
-                                  ? "Stopping"
-                                  : "Stop Recording"
-                                : "Record"}
-                            </button>
-                            {this.state.isRecording && (
-                              <p className="body-medium yellow-text">
-                                {this.state.recordingStatus}
-                                {this.state.isRecording && <Stopwatch />}
-                              </p>
-                            )}
-                          </div>
-                          <button
-                            className={"button record control-item"}
-                            onClick={this.setHideBeatpad.bind(this)}
-                          >
-                            {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
-                          </button>
-                          <button
-                            className={"button record control-item"}
-                            onClick={this.setShowTutorial.bind(this)}
-                          >
-                            {this.state.showTutorial
-                              ? "Hide Tutorial"
-                              : "Show Tutorial"}
-                          </button>
-                        </div>
-                      )} */}
-
-                      {openControls && (
-                        <div className="controls-container">
-                          <div className="record-container control-item">
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                width:
-                                  this.state.recordingStatus.length > 0 ||
-                                  this.state.exportingStatus.length > 0
-                                    ? "100%"
-                                    : "200px",
-                              }}
-                            >
-                              {this.state.exportingStatus.length > 0 && (
-                                <div
-                                  style={{ marginRight: "10px" }}
-                                  className="body-medium yellow-text"
-                                >
-                                  {this.state.exportingStatus}
-                                </div>
-                              )}
-                              {this.shouldRenderPostRecording() ? (
-                                <button
-                                  className={
-                                    this.state.exportingStatus.includes(
-                                      "Exporting, please wait..."
-                                    )
-                                      ? "button disabled"
-                                      : "button record"
-                                  }
-                                  style={{ marginRight: "10px" }}
-                                  disabled={this.state.exportingStatus.includes(
-                                    "Exporting, please wait..."
-                                  )}
-                                  onClick={() =>
-                                    this.exportRecording(this.state.recording)
-                                  }
-                                >
-                                  Export
-                                </button>
-                              ) : (
-                                <div
-                                  style={{ marginRight: "10px" }}
-                                  className="body-medium yellow-text"
-                                >
-                                  {/* {this.state.exportingStatus ===
-                                  "Exporting, please wait..."
-                                    ? this.state.exportingStatus
-                                    :  */}
-                                  {this.state.recordingStatus}
-                                  {this.state.isRecording && <Stopwatch />}
-                                </div>
-                              )}
-                              {
-                                <button
-                                  className={
-                                    this.state.shouldStartRecording ||
-                                    this.state.isRecording
-                                      ? "button record blink whitePad padWhiteVersion"
-                                      : this.state.isPlayingBack ||
-                                        this.state.repeat
-                                      ? "button disabled"
-                                      : "button record"
-                                  }
-                                  onClick={() => {
-                                    if (this.state.isRecording) {
-                                      this.stopRecording();
-                                    } else {
-                                      this.startRecording();
-                                    }
-                                  }}
-                                  disabled={
-                                    this.state.isPlayingBack ||
-                                    this.state.repeat
-                                  }
-                                >
-                                  <div className="circle" />
-                                  {this.state.isRecording
-                                    ? this.state.shouldStopRecording
-                                      ? "Stopping"
-                                      : "Stop Recording"
-                                    : "Record"}
-                                </button>
-                              }
-                              {/* {
-                                <button
-                                  onClick={this.calculateProgressPercentage()}
-                                >
-                                  click for logs
-                                </button>
-                              } */}
-                            </div>
-
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: this.state.hasNewRecording
-                                  ? "space-between"
-                                  : "flex-end",
-                                alignItems: "center",
-                                width: "200px",
-                              }}
-                            >
-                              {
-                                <button
-                                  style={{
-                                    visibility: this.shouldRenderPostRecording()
-                                      ? "visible"
-                                      : "hidden",
-                                  }}
-                                  className={
-                                    this.state.padRecording.length <= 0 ||
-                                    this.state.isRecording
-                                      ? "button disabled"
-                                      : "button record"
-                                  }
-                                  onClick={() => {
-                                    if (!this.state.isPlayingBack) {
-                                      this.playbackRecording(
-                                        this.state.padRecording,
-                                        (pad) => {
-                                          this.togglePad(pad[0], pad[1]);
-                                        }
-                                      );
-                                    } else {
-                                      this.setState({
-                                        isPlayingBack: false,
-                                      });
-                                      this.clearSelections();
-                                    }
-                                  }}
-                                  disabled={
-                                    this.state.padRecording.length <= 0 ||
-                                    this.state.isRecording
-                                  }
-                                >
-                                  {!this.state.isPlayingBack
-                                    ? "Playback"
-                                    : "Stop Playback"}
-                                </button>
-                              }
-                            </div>
-                          </div>
-                          <button
-                            className={"button record control-item"}
-                            onClick={this.setHideBeatpad.bind(this)}
-                          >
-                            {this.state.hideBeatpad ? "Show Pad" : "Hide Pad"}
-                          </button>
-                          <button
-                            className={"button record control-item"}
-                            onClick={this.setShowTutorial.bind(this)}
-                          >
-                            {this.state.showTutorial
-                              ? "Hide Tutorial"
-                              : "Show Tutorial"}
-                          </button>
-                        </div>
-                      )}
-
-                      <div className="song-details">
-                        {/* <p className="launchdate-text body-medium yellow-text">
-                          LAUNCH AND REVEAL 5/24
-                        </p> */}
-                        <div className="beatPackTitle display-medium">
-                          {nft.name}
-                        </div>
-                        <div className="artistName">{`by ${nft.artistName} ${
-                          nft.visualArtistName
-                            ? `& ${nft.visualArtistName}`
-                            : ""
-                        }`}</div>
-                      </div>
-                    </div>
-                  </div>
-                  <IconButton
-                    className="expandOuter animated-content"
-                    onClick={() => this.handleScroll("next")}
-                  >
-                    <img src={Expand} className="expand" />
-                  </IconButton>
-                  <div className="volumeMeter">
-                    <canvas
-                      ref={this.canvas}
-                      style={{ minWidth: "75%", zIndex: "-10" }}
-                    />
-                  </div>
-                </div>
+                <IconButton
+                  className="expandOuter animated-content"
+                  onClick={() => this.handleScroll("next")}
+                >
+                  <img src={Expand} className="expand" />
+                </IconButton>
               </div>
 
               <div className="section vslide next" data-slideindex="1">
@@ -2680,24 +2247,6 @@ class Sequencer extends Component {
                   </div>
                 </div>
               </div>
-
-              <Footer
-                white={false}
-                shareURL={`https://secretgarden.fm/?share=${shareablePadNumbers.join(
-                  ","
-                )}`}
-                showShare={true}
-                loggedIntoMetamaskOverride={isLoggedIntoMetamask}
-                muiTheme={this.muiTheme}
-                setVolume={this.setVolume.bind(this)}
-                volume={this.state.volume}
-                clearSelections={this.clearSelections}
-                handleShuffle={this.handleShuffle}
-                canvas={this.canvas}
-                playing={this.state.playing}
-                setOpenControls={this.setOpenControls.bind(this)}
-                openControls={openControls}
-              />
             </div>
           </div>
         </div>
