@@ -101,6 +101,15 @@ app.post("/api/addEmail", async (req, res) => {
   res.status(status).send(response);
 });
 
+app.post("/api/updateCapsuleURI", async (req, res) => {
+  const { status, response } = await nftController.updateCapsuleURI(
+    req.body.tokenId,
+    req.body.isMusic
+  );
+
+  res.status(status).send(response);
+});
+
 app.get("/api/makeDiscountedSignature", async (req, res) => {
   const { status, response } = await mintController.makeDiscountedSignature(
     req.query.address
@@ -230,15 +239,6 @@ app.get("/api/getAllNFTsForUser", async (req, res) => {
   const { status, response } = await nftController.getAllNFTsForUser(
     req.query.address,
     req.query.chain
-  );
-
-  res.status(status).send(response);
-});
-
-app.get("/api/updateCapsuleURI", async (req, res) => {
-  const { status, response } = await nftController.updateCapsuleURI(
-    req.query.tokenId,
-    req.query.isMusic
   );
 
   res.status(status).send(response);

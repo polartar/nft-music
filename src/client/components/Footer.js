@@ -64,13 +64,9 @@ export default function Footer(props) {
     if (isProcess) return;
     setIsProcess(true);
     console.log({params})
-    axios.get("/api/updateCapsuleURI", {
-      params: {
-        tokenId: params.edition,
-        isMusic: !isMusic
-      },
-      xsrfCookieName: null,
-      withCredentials: false,
+    axios.post("/api/updateCapsuleURI", {
+      tokenId: params.edition,
+      isMusic: !isMusic
     }). then(() => {
       setIsMusic(!isMusic);
     }).finally(()=> {
