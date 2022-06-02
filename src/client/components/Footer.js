@@ -45,7 +45,8 @@ export default function Footer(props) {
         chainId 
       }
     }). then((res) => {
-      setIsMusic(!res.data);
+
+      setIsMusic(res.data);
     })
   }, [chainId])
   const handleClose = () => {
