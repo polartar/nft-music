@@ -264,7 +264,6 @@ app.get("/api/metadata/:address/:id", async (req, res) => {
 
 
 app.get("/api/getMusicStatus", async (req, res) => {
-  console.log({req})
   const { status, response } = await nftController.getMusicStatus(
     req.query.tokenId,
     req.query.chainId
