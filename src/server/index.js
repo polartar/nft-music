@@ -104,7 +104,8 @@ app.post("/api/addEmail", async (req, res) => {
 app.post("/api/updateCapsuleURI", async (req, res) => {
   const { status, response } = await nftController.updateCapsuleURI(
     req.body.tokenId,
-    req.body.isMusic
+    req.body.isMusic,
+    req.body.chainId
   );
 
   res.status(status).send(response);
@@ -258,6 +259,17 @@ app.get("/api/metadata/:address/:id", async (req, res) => {
     req.params.address,
     req.params.id
   );
+  res.status(status).send(response);
+});
+
+
+app.get("/api/getMusicStatus", async (req, res) => {
+  console.log({req})
+  const { status, response } = await nftController.getMusicStatus(
+    req.query.tokenId,
+    req.query.chainId
+  );
+
   res.status(status).send(response);
 });
 

@@ -6,7 +6,8 @@ const { ethers, Contract } = require("ethers");
 // const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const {PRIVATE_KEY} = require("../private.json")
 
-const { RPC_URL_1 } = require("../../client/private.json");
+const { RPC_URL_1, RPC_URL_4 } = require("../../client/private.json");
+
 const CHAIN = process.env.CHAIN ? process.env.CHAIN : "rinkeby";
 
 // connect to our mongodb database
@@ -325,7 +326,7 @@ async function getAllNFTs(ownerAddress, chain) {
   }
 }
 
-async function updateCapsuleURI(tokenId, isMusic) {
+async function updateCapsuleURI(tokenId, isMusic, chainId) {
   const CapsuleABI = [
     {
       "inputs": [
@@ -344,28 +345,76 @@ async function updateCapsuleURI(tokenId, isMusic) {
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
-    }
+    },
   ]
 
-  const provider = new ethers.providers.JsonRpcProvider(RPC_URL_1);
+  const provider = new ethers.providers.JsonRpcProvider(chainId === 1 ? RPC_URL_1 : RPC_URL_4);
   let signer = new ethers.Wallet(PRIVATE_KEY, provider);
   try {
     const instance = new Contract(
-      "0xfcb1315c4273954f74cb16d5b663dbf479eec62e",
+      chainId === 1 ? "0xfcb1315c4273954f74cb16d5b663dbf479eec62e" : "0xDF6Deac2a927A34bfB603f2582DDA5aFf9CEA181",
       CapsuleABI,
       signer
     );
-    console.log({tokenId})
-    console.log({signer})
+    
     if (isMusic) {
       await instance.setTokenURI(tokenId, `https://secretgarden.fm/api/metadata/capsule/${tokenId}`)
     } else {
       await instance.setTokenURI(tokenId, `https://hatch.capsulehouse.io/api/metadata/${tokenId}`)
     }
-
+    
     return {
       status: 200,
       response: "ok",
+    };
+  }
+  catch (error) {
+    console.log(error);
+    return { status: 400, response: error.toString() };
+  }
+}
+
+async function getMusicStatus(tokenId, chainId) {
+  const CapsuleABI = [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "tokenURI",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+
+  const provider = new ethers.providers.JsonRpcProvider(chainId === 1 ? RPC_URL_1 : RPC_URL_4);
+  try {
+    const instance = new Contract(
+      chainId === 1 ? "0xfcb1315c4273954f74cb16d5b663dbf479eec62e" : "0xDF6Deac2a927A34bfB603f2582DDA5aFf9CEA181",
+      CapsuleABI,
+      provider
+    );
+    const tokenURI = await instance.tokenURI(tokenId);
+    let isMusic;
+    if (tokenURI.includes("https://hatch.capsulehouse.io/api/metadata")) {
+      isMusic = false;
+    } else {
+      isMusic = true;
+    }
+    
+    return {
+      status: 200,
+      response: isMusic,
     };
   }
   catch (error) {
@@ -383,5 +432,6 @@ module.exports = {
   getNFTsForOwner,
   getSequencerToken,
   getAllNFTsForUser,
-  updateCapsuleURI
+  updateCapsuleURI,
+  getMusicStatus
 };

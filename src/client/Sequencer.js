@@ -567,7 +567,6 @@ class Sequencer extends Component {
     script.async = true;
 
     document.body.appendChild(script);
-    console.log(this.state.nft)
     if (this.state.address) {
       await axios
         .get("/api/getNFTsForOwner", {

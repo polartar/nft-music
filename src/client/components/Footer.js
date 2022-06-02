@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Slider from "@material-ui/core/Slider";
 import ShareModal from "./ShareModal";
@@ -10,6 +10,8 @@ import SkipIcon from "../images/skip.svg";
 import { createTheme } from "@material-ui/core/styles";
 import ControlsButton from "./ControlsButton";
 import axios from "axios";
+import { useWeb3React } from "@web3-react/core";
+
 import "../css/footer.css";
 
 export default function Footer(props) {
@@ -26,6 +28,7 @@ export default function Footer(props) {
     currentNFTIndex,
     nftCount
   } = props;
+  const { chainId } = useWeb3React();
   const params = useParams();
   const [isMusic, setIsMusic] = useState(true);
   const [isProcess, setIsProcess] = useState(false);
@@ -33,6 +36,18 @@ export default function Footer(props) {
 
   const [openEmail, setOpenEmail] = useState(false);
 
+  useEffect(() => {
+    if (!chainId) return;
+
+    axios.get("/api/getMusicStatus", {
+      params: {
+        tokenId: params.edition,
+        chainId 
+      }
+    }). then((res) => {
+      setIsMusic(!res.data);
+    })
+  }, [chainId])
   const handleClose = () => {
     setOpenShare(false);
   };
@@ -63,10 +78,11 @@ export default function Footer(props) {
   const toggleMusic = async() => {
     if (isProcess) return;
     setIsProcess(true);
-    console.log({params})
+
     axios.post("/api/updateCapsuleURI", {
       tokenId: params.edition,
-      isMusic: !isMusic
+      isMusic: !isMusic,
+      chainId
     }). then(() => {
       setIsMusic(!isMusic);
     }).finally(()=> {
@@ -151,7 +167,11 @@ export default function Footer(props) {
                 id="wallet-button"
                 className="metamask-button small toggle-music"
               >
-                {isMusic ? "Hide Music" : "Show Music"}
+                {
+                  isProcess ? "Upating URI" : (
+                    isMusic ? "Hide Music" : "Show Music"
+                  )
+                }
             </button>
             )
           }
