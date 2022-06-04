@@ -59,15 +59,23 @@ app.get("/api/metadata/:id", async (req, res) => {
 });
 
 app.get("/api/metadata/capsule/:id", async (req, res) => {
-  res.status(200).json({
-    description:
-      "Friendly OpenSea Creature that enjoys long swims in the ocean.",
-    external_url: `https://openseacreatures.io/${req.params.id}`,
-    image:
-      `https://storage.googleapis.com/opensea-prod.appspot.com/puffs/${req.params.id}.png`,
-    name: "Dave Starbelly",
-    animation_url: `https://secretgarden.fm/bouquetEmbed/0xfcb1315c4273954f74cb16d5b663dbf479eec62e/${req.params.id}`
-  });
+  try {
+    const response = await nftController.getBouquetStatus(req.params.id, 1);
+    let isBouquet = response.data;
+
+    const metadata = await axios.get(`https://hatch.capsulehouse.io/api/metadata/${req.params.id}`);
+    if (isBouquet) {
+      res.status(200).json({
+       ...metadata,
+        animation_url: `https://secretgarden.fm/bouquetEmbed/0xfcb1315c4273954f74cb16d5b663dbf479eec62e/${req.params.id}`
+      });
+    } else {
+      res.status(200).json(...metadata);
+    }
+    
+  } catch(err) {
+    return { status: 400, response: err.toString() };
+  }
 });
 
 app.get("/api/getUser", async (req, res) => {
@@ -101,10 +109,10 @@ app.post("/api/addEmail", async (req, res) => {
   res.status(status).send(response);
 });
 
-app.post("/api/updateCapsuleURI", async (req, res) => {
-  const { status, response } = await nftController.updateCapsuleURI(
+app.post("/api/updateBouquetStatus", async (req, res) => {
+  const { status, response } = await nftController.updateBouquetStatus(
     req.body.tokenId,
-    req.body.isMusic,
+    req.body.isBouquet,
     req.body.chainId
   );
 
@@ -263,8 +271,8 @@ app.get("/api/metadata/:address/:id", async (req, res) => {
 });
 
 
-app.get("/api/getMusicStatus", async (req, res) => {
-  const { status, response } = await nftController.getMusicStatus(
+app.get("/api/getBouquetStatus", async (req, res) => {
+  const { status, response } = await nftController.getBouquetStatus(
     req.query.tokenId,
     req.query.chainId
   );

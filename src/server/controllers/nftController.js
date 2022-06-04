@@ -1,14 +1,6 @@
 const { MongoClient, ObjectId } = require("mongodb");
-const config = require("../config.json");
 const userController = require("./userController");
 const axios = require("axios");
-const { ethers, Contract } = require("ethers");
-// const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const {PRIVATE_KEY} = require("../private.json")
-
-const { RPC_URL_1, RPC_URL_4 } = require("../../client/private.json");
-
-const CHAIN = process.env.CHAIN ? process.env.CHAIN : "rinkeby";
 
 // connect to our mongodb database
 async function connectToDatabase() {
@@ -326,43 +318,19 @@ async function getAllNFTs(ownerAddress, chain) {
   }
 }
 
-async function updateCapsuleURI(tokenId, isMusic, chainId) {
-  const CapsuleABI = [
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "_tokenURI",
-          "type": "string"
-        }
-      ],
-      "name": "setTokenURI",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-  ]
-
-  const provider = new ethers.providers.JsonRpcProvider(chainId === 1 ? RPC_URL_1 : RPC_URL_4);
-  let signer = new ethers.Wallet(PRIVATE_KEY, provider);
+async function updateBouquetStatus(tokenId, isBouquet, chainId) {
   try {
-    const instance = new Contract(
-      chainId === 1 ? "0xfcb1315c4273954f74cb16d5b663dbf479eec62e" : "0xDF6Deac2a927A34bfB603f2582DDA5aFf9CEA181",
-      CapsuleABI,
-      signer
+    const tokenAddress = chainId === 1 ? "0xfcb1315c4273954f74cb16d5b663dbf479eec62e" : "0xDF6Deac2a927A34bfB603f2582DDA5aFf9CEA181";
+    await db.collection("capsuleBouquet").updateOne(
+      {tokenAddress, tokenId},
+      {
+        $set: {
+         isBouquet
+        },
+      },
+      { upsert: true }
     );
-    
-    if (isMusic) {
-      await instance.setTokenURI(tokenId, `https://secretgarden.fm/api/metadata/capsule/${tokenId}`)
-    } else {
-      await instance.setTokenURI(tokenId, `https://hatch.capsulehouse.io/api/metadata/${tokenId}`)
-    }
-    
+     
     return {
       status: 200,
       response: "ok",
@@ -374,47 +342,22 @@ async function updateCapsuleURI(tokenId, isMusic, chainId) {
   }
 }
 
-async function getMusicStatus(tokenId, chainId) {
-  const CapsuleABI = [
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        }
-      ],
-      "name": "tokenURI",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    }
-  ]
-
-  const provider = new ethers.providers.JsonRpcProvider(chainId === 1 ? RPC_URL_1 : RPC_URL_4);
+async function getBouquetStatus(tokenId, chainId) {
   try {
-    const instance = new Contract(
-      chainId === 1 ? "0xfcb1315c4273954f74cb16d5b663dbf479eec62e" : "0xDF6Deac2a927A34bfB603f2582DDA5aFf9CEA181",
-      CapsuleABI,
-      provider
-    );
-    const tokenURI = await instance.tokenURI(tokenId);
-    let isMusic;
-    if (tokenURI.includes("https://hatch.capsulehouse.io/api/metadata")) {
-      isMusic = false;
-    } else {
-      isMusic = true;
+    const tokenAddress = chainId === 1 ? "0xfcb1315c4273954f74cb16d5b663dbf479eec62e" : "0xDF6Deac2a927A34bfB603f2582DDA5aFf9CEA181";
+    const response = await db.collection("capsuleBouquet").findOne({
+      tokenAddress,
+      tokenId
+    });
+    
+    let isBouquet = false;
+    if (response) {
+      isBouquet = response.isBouquet;
     }
     
     return {
       status: 200,
-      response: isMusic,
+      response: isBouquet,
     };
   }
   catch (error) {
@@ -432,6 +375,6 @@ module.exports = {
   getNFTsForOwner,
   getSequencerToken,
   getAllNFTsForUser,
-  updateCapsuleURI,
-  getMusicStatus
+  updateBouquetStatus,
+  getBouquetStatus
 };

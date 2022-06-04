@@ -30,7 +30,7 @@ export default function Footer(props) {
   } = props;
   const { chainId } = useWeb3React();
   const params = useParams();
-  const [isMusic, setIsMusic] = useState(true);
+  const [isBouquet, setIsBouquet] = useState(true);
   const [isProcess, setIsProcess] = useState(false);
   const [openShare, setOpenShare] = useState(false);
 
@@ -39,14 +39,14 @@ export default function Footer(props) {
   useEffect(() => {
     if (!chainId) return;
 
-    axios.get("/api/getMusicStatus", {
+    axios.get("/api/getBouquetStatus", {
       params: {
         tokenId: params.edition,
         chainId 
       }
     }). then((res) => {
 
-      setIsMusic(res.data);
+      setIsBouquet(res.data);
     })
   }, [chainId])
   const handleClose = () => {
@@ -80,12 +80,12 @@ export default function Footer(props) {
     if (isProcess) return;
     setIsProcess(true);
 
-    axios.post("/api/updateCapsuleURI", {
+    axios.post("/api/updateBouquetStatus", {
       tokenId: params.edition,
-      isMusic: !isMusic,
+      isBouquet: !isBouquet,
       chainId
     }). then(() => {
-      setIsMusic(!isMusic);
+      setIsBouquet(!isBouquet);
     }).finally(()=> {
       setIsProcess(false);
     })
@@ -170,7 +170,7 @@ export default function Footer(props) {
               >
                 {
                   isProcess ? "Upating URI" : (
-                    isMusic ? "Hide Music" : "Show Music"
+                    isBouquet ? "Hide Music" : "Show Music"
                   )
                 }
             </button>
