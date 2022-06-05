@@ -37,7 +37,7 @@ export default function Footer(props) {
   const [openEmail, setOpenEmail] = useState(false);
 
   useEffect(() => {
-    if (!chainId) return;
+    if (params.artistName !== "Capsule" || !chainId) return;
 
     axios.get("/api/getBouquetStatus", {
       params: {
@@ -49,6 +49,7 @@ export default function Footer(props) {
       setIsBouquet(res.data);
     })
   }, [chainId])
+
   const handleClose = () => {
     setOpenShare(false);
   };
@@ -161,7 +162,7 @@ export default function Footer(props) {
             
         <div style={{maxWidth: "440px", paddingLeft: "16px", width: "100%", display:"flex", justifyContent:"flex-end"}}>
           {
-            params.artistName == "Capsule" && 
+            params.artistName === "Capsule" && 
             (
               <button
                 onClick={() => toggleMusic()}
@@ -169,7 +170,7 @@ export default function Footer(props) {
                 className="metamask-button small toggle-music"
               >
                 {
-                  isProcess ? "Upating URI" : (
+                  isProcess ? "Updating..." : (
                     isBouquet ? "Hide Music" : "Show Music"
                   )
                 }
