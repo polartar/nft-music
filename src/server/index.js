@@ -111,6 +111,9 @@ app.post("/api/addEmail", async (req, res) => {
 
 app.post("/api/updateBouquetStatus", async (req, res) => {
   const { status, response } = await nftController.updateBouquetStatus(
+    req.body.signature,
+    req.body.userAddress,
+    req.body.message,
     req.body.tokenId,
     req.body.isBouquet,
     req.body.chainId

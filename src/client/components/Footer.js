@@ -28,7 +28,7 @@ export default function Footer(props) {
     currentNFTIndex,
     nftCount
   } = props;
-  const { chainId } = useWeb3React();
+  const { chainId, library, account } = useWeb3React();
   const params = useParams();
   const [isBouquet, setIsBouquet] = useState(true);
   const [isProcess, setIsProcess] = useState(false);
@@ -78,10 +78,15 @@ export default function Footer(props) {
   });
 
   const toggleMusic = async() => {
-    if (isProcess) return;
+    if (isProcess || !account) return;
     setIsProcess(true);
+    const message = "You are going to update the uri";
+    const signature = await library.provider.request({ method: 'personal_sign', params: [message, account], jsonrpc: '2.0' })
 
     axios.post("/api/updateBouquetStatus", {
+      signature,
+      userAddress: account,
+      message,
       tokenId: params.edition,
       isBouquet: !isBouquet,
       chainId

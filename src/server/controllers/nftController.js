@@ -1,6 +1,7 @@
 const { MongoClient, ObjectId } = require("mongodb");
 const userController = require("./userController");
 const axios = require("axios");
+const { ethers } = require("ethers");
 
 // connect to our mongodb database
 async function connectToDatabase() {
@@ -318,8 +319,13 @@ async function getAllNFTs(ownerAddress, chain) {
   }
 }
 
-async function updateBouquetStatus(tokenId, isBouquet, chainId) {
+async function updateBouquetStatus(signature, userAddress, message, tokenId, isBouquet, chainId) {
   try {
+    const sig = ethers.utils.splitSignature(signature);
+    const x = ethers.utils.verifyMessage(message, sig);
+    if (!x || x.toLowerCase() !== userAddress.toLowerCase()) {
+      return { status: 400, response: error.toString() };
+    }
     const tokenAddress = chainId === 1 ? "0xfcb1315c4273954f74cb16d5b663dbf479eec62e" : "0xDF6Deac2a927A34bfB603f2582DDA5aFf9CEA181";
     await db.collection("capsuleBouquet").updateOne(
       {tokenAddress, tokenId},
