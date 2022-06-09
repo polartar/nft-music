@@ -2,7 +2,7 @@ const { MongoClient, ObjectId } = require("mongodb");
 const userController = require("./userController");
 const axios = require("axios");
 const { ethers } = require("ethers");
-
+const { RPC_URL_1, RPC_URL_4 } = require("../../client/private.json");
 // connect to our mongodb database
 async function connectToDatabase() {
   let params = {};
@@ -321,12 +321,46 @@ async function getAllNFTs(ownerAddress, chain) {
 
 async function updateBouquetStatus(signature, userAddress, message, tokenId, isBouquet, chainId) {
   try {
+    const CapsuleABI = [
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          }
+        ],
+        "name": "ownerOf",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+    ]
     const sig = ethers.utils.splitSignature(signature);
     const x = ethers.utils.verifyMessage(message, sig);
     if (!x || x.toLowerCase() !== userAddress.toLowerCase()) {
-      return { status: 400, response: error.toString() };
+      return { status: 400, response: "invalid user" };
     }
     const tokenAddress = chainId === 1 ? "0xfcb1315c4273954f74cb16d5b663dbf479eec62e" : "0xDF6Deac2a927A34bfB603f2582DDA5aFf9CEA181";
+    
+    const provider = new ethers.providers.JsonRpcProvider(chainId === 1 ? RPC_URL_1 : RPC_URL_4);
+    
+    const instance = new Contract(
+      tokenAddress,
+      CapsuleABI,
+      provider
+    );
+    const ownerAddress = await instance.ownerOf(tokenId);
+    if (ownerAddress !== userAddress) {
+      return { status: 400, response: "invalid owner of token" };
+    }
+
     await db.collection("capsuleBouquet").updateOne(
       {tokenAddress, tokenId},
       {

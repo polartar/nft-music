@@ -79,22 +79,33 @@ export default function Footer(props) {
 
   const toggleMusic = async() => {
     if (isProcess || !account) return;
-    setIsProcess(true);
-    const message = "You are going to update the uri";
-    const signature = await library.provider.request({ method: 'personal_sign', params: [message, account], jsonrpc: '2.0' })
+    try {
+      const metadata = await axios.get(`https://hatch.capsulehouse.io/api/metadata/${params.edition}`);
+      const attributes = metadata.data.attributes;
+      const specifies = attributes.find(attribute => attribute.trait_type === "Species");
+      if (params.nftName !== specifies.value) {
+        console.log("Error: different species");
+        return;
+      };
+      setIsProcess(true);
+      const message = "You are going to update the uri for " + params.edition + (new Date()).toString();
+      const signature = await library.provider.request({ method: 'personal_sign', params: [message, account], jsonrpc: '2.0' })
 
-    axios.post("/api/updateBouquetStatus", {
-      signature,
-      userAddress: account,
-      message,
-      tokenId: params.edition,
-      isBouquet: !isBouquet,
-      chainId
-    }). then(() => {
-      setIsBouquet(!isBouquet);
-    }).finally(()=> {
-      setIsProcess(false);
-    })
+      axios.post("/api/updateBouquetStatus", {
+        signature,
+        userAddress: account,
+        message,
+        tokenId: params.edition,
+        isBouquet: !isBouquet,
+        chainId
+      }). then(() => {
+        setIsBouquet(!isBouquet);
+      }).finally(()=> {
+        setIsProcess(false);
+      })
+    } catch (err) {
+      console.log({err})
+    }
   }
   return (
     <React.Fragment>
